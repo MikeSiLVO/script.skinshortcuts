@@ -2,27 +2,32 @@
 import os, sys, datetime, unicodedata
 import xbmc, xbmcgui, xbmcvfs, urllib
 import xml.etree.ElementTree as xmltree
-import thread
 from xml.dom.minidom import parse
 from xml.sax.saxutils import escape as escapeXML
 from traceback import print_exc
 from unidecode import unidecode
 from unicodeutils import try_decode
 import datafunctions, nodefunctions
+import json as simplejson
+
+if sys.version_info.major == 3:
+    import _thread
+else:
+    import thread
+
 DATA = datafunctions.DataFunctions()
 NODE = nodefunctions.NodeFunctions()
-
-if sys.version_info < (2, 7):
-    import simplejson
-else:
-    import json as simplejson
 
 ADDON        = sys.modules[ "__main__" ].ADDON
 ADDONID      = sys.modules[ "__main__" ].ADDONID
 CWD          = sys.modules[ "__main__" ].CWD
-DATAPATH     = os.path.join( xbmc.translatePath( "special://profile/addon_data/" ).decode('utf-8'), ADDONID )
 LANGUAGE     = sys.modules[ "__main__" ].LANGUAGE
 KODIVERSION  = xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0]
+
+if sys.version_info.major == 3:
+    DATAPATH = os.path.join(xbmc.translatePath("special://profile/"), "addon_data", ADDONID)
+else:
+    DATAPATH = os.path.join(xbmc.translatePath("special://profile/").decode('utf-8' ), "addon_data", ADDONID)
 
 def log(txt):
     if ADDON.getSetting( "enable_logging" ) == "true":

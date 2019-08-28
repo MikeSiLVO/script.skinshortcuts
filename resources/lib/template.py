@@ -1,5 +1,5 @@
 # coding=utf-8
-import os
+import os, sys
 import xbmc, xbmcaddon, xbmcvfs
 import xml.etree.ElementTree as xmltree
 import hashlib, hashlist
@@ -8,9 +8,13 @@ from traceback import print_exc
 import simpleeval, operator, ast
 from simpleeval import simple_eval
 
-ADDON        = xbmcaddon.Addon()
-ADDONID      = ADDON.getAddonInfo('id').decode( 'utf-8' )
-SKINPATH     = xbmc.translatePath( "special://skin/shortcuts/" ).decode('utf-8')
+ADDON    = xbmcaddon.Addon()
+ADDONID  = ADDON.getAddonInfo('id')
+
+if sys.version_info.major == 3:
+    SKINPATH = xbmc.translatePath("special://skin/shortcuts/")
+else:
+    SKINPATH = xbmc.translatePath("special://skin/shortcuts/").decode('utf-8')
 
 STRINGCOMPARE = "StringCompare"
 if int( xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0] ) >= 17:
@@ -44,7 +48,7 @@ class Template():
                     includeName = "skinshortcuts-template-%s" %( otherTemplate.attrib.get( "include" ) )
                 if includeName not in self.otherTemplates:
                     self.otherTemplates.append( includeName )
-            
+
             # Add the template.xml to the hash file
             self._save_hash( templatepath, xbmcvfs.File( templatepath ).read() )
         except:
@@ -54,10 +58,10 @@ class Template():
                 log( "Unable to parse template.xml. Invalid xml?" )
                 self._save_hash( templatepath, xbmcvfs.File( templatepath ).read() )
             else:
-                # No template.xml            
+                # No template.xml
                 self.tree = None
                 self._save_hash( templatepath, None )
-            
+
         # Empty variable which will contain our base elementree (passed from buildxml)
         self.includes = None
 
@@ -65,7 +69,7 @@ class Template():
         self.progress = None
         self.percent = None
         self.current = None
-        
+
         # List which will contain 'other' elements we will need to finalize (we won't have all the
         # visibility conditions until the end)
         self.finalize = []
@@ -73,12 +77,12 @@ class Template():
         # Initialize simple eval
         self.simple_eval = simpleeval.SimpleEval()
         self.simple_eval.operators[ast.In] = operator.contains
-            
+
     def parseItems( self, menuType, level, items, profile, profileVisibility, visibilityCondition, menuName, mainmenuID = None, buildOthers = False, mainmenuitems = None ):
         # This will build an item in our includes for a menu
         if self.includes is None or self.tree is None:
             return
-            
+
         # Get the template for this menu
         if menuType == "mainmenu":
             template = self.tree.find( "mainmenu" )
@@ -87,20 +91,20 @@ class Template():
         else:
             if len( items.findall( "item" ) ) == 0: return
             template = self.findSubmenu( menuName, level )
-            
+
         if template is not None:
             # Found a template - let's build it
             if menuType == "mainmenu":
                 log( "Main menu template found" )
             else:
                 log( " - Submenu template found" )
-        
+
             # We need to check that the relevant includes existing
             # First, the overarching include
             includeName = "skinshortcuts-template"
             if "include" in template.attrib:
                 includeName += "-%s" %( template.attrib.get( "include" ) )
-            
+
             treeRoot = self.getInclude( self.includes, includeName, profileVisibility, profile )
             includeTree = self.getInclude( self.includes, includeName + "-%s" %( profile ), None, None )
 
@@ -108,14 +112,14 @@ class Template():
             properties = {}
             if mainmenuitems is not None:
                 properties = self.getProperties( template, mainmenuitems )
-            
+
             # Now replace all <skinshortcuts> elements with correct data
             self.replaceElements( template.find( "controls" ), visibilityCondition, profileVisibility, items, properties, customitems = template.findall( "items" ) )
-            
+
             # Add the template to the includes
             for child in template.find( "controls" ):
                 includeTree.append( child )
-            
+
         # Now we want to see if any of the main menu items match a template
         if not buildOthers or len( self.otherTemplates ) == 0:
             return
@@ -142,7 +146,7 @@ class Template():
                     if "name" in element.attrib and element.attrib.get( "name" ) == "submenuVisibility":
                         visibilityName = element.text
                         break
-                
+
                 finalVisibility = "%s(Container(%s).ListItem.Property(submenuVisibility),%s)" %( STRINGCOMPARE, mainmenuID, visibilityName )
             else:
                 # First we need to build the visibilityCondition, based on the visibility condition
@@ -153,11 +157,11 @@ class Template():
                         visibilityName = element.text
                         break
 
-                # Handle auto visibility condition if the labelID is a number that translates to 
+                # Handle auto visibility condition if the labelID is a number that translates to
                 # a localised string
                 if visibilityName.isdigit() and xbmc.getLocalizedString(int(visibilityName)) != "":
                     visibilityName = "$LOCALIZE[%s]" %(visibilityName)
-                
+
                 finalVisibility = "[%s + %s(Container(::SUBMENUCONTAINER::).ListItem.Property(labelID),%s)]" %( visibilityCondition, STRINGCOMPARE, visibilityName )
 
             # Now find a matching template - if one matches, it will be saved to be processed
@@ -167,19 +171,19 @@ class Template():
                 self.progress.update( int( self.current + ( ( float( self.percent ) / float( len( items ) ) ) * progressCount ) ) )
         if numTemplates != 0:
             log( " - %d templates" %( numTemplates ) )
-                    
+
     def writeOthers( self ):
         # This will write any 'other' elements we have into the includes file
         # (now we have all the visibility conditions for them)
         if self.includes is None or self.tree is None:
             return
-        
+
         if len( self.finalize ) == 0:
             return
 
         finalVariables = {}
         finalVariableNames = []
-            
+
         for template in self.finalize:
             # Get the group name
             name = "skinshortcuts-template"
@@ -189,7 +193,7 @@ class Template():
                 # Remove the include from our list of other templates, as we don't need to build an empty one
                 if name in self.otherTemplates:
                     self.otherTemplates.remove( name )
-            
+
             # Loop through any profiles we have
             for profile in template.findall( "skinshortcuts-profile" ):
                 visibilityCondition = None
@@ -199,15 +203,15 @@ class Template():
                         visibilityCondition = condition.text
                     elif condition.text != "":
                         visibilityCondition += " | " + condition.text
-                
+
                 # Get the include this will be done under
                 root = self.getInclude( self.includes, name, profile.attrib.get( "visible" ), profile.attrib.get( "profile" ) )
                 include = self.getInclude( self.includes, "%s-%s" %( name, profile.attrib.get( "profile" ) ), None, None ) #profile.attrib.get( "visible" ) )
-                
+
                 # Create a copy of the node with any changes within (this time it'll be visibility)
                 final = self.copy_tree( template )
                 self.replaceElements( final, visibilityCondition, profile.attrib.get( "visible" ), [] )
-                
+
                 # Add the template to the includes
                 controls = final.find( "controls" )
                 if controls is not None:
@@ -310,41 +314,41 @@ class Template():
                         returnVariables.append( ( "%s + [%s]" %( condition, value[ 0 ] ), value[ 1 ] ) )
 
         return returnVariables + noCondition
-            
+
     def getInclude( self, tree, name, condition, profile ):
         # This function gets an existing <include/>, or creates it
         for include in tree.findall( "include" ):
             if include.attrib.get( "name" ) == name:
                 if condition is None:
                     return include
-                    
+
                 # We've been passed a condition, check there's an include with that
                 # as condition and name as text
                 for visInclude in include.findall( "include" ):
                     if visInclude.attrib.get( "condition" ) == condition:
                         return include
-                        
+
                 # We didn't find condition,so create it
                 visInclude = xmltree.SubElement( include, "include" )
                 visInclude.set( "condition", condition )
                 visInclude.text = name + "-" + profile
-                
+
                 return include
-        
+
         # We didn't find the node, so create it
         newInclude = xmltree.SubElement( tree, "include" )
         newInclude.set( "name", name )
-        
+
         # If we've been passed a condition, create an include with that as condition
         # and name as text
         if condition is not None:
             visInclude = xmltree.SubElement( newInclude, "include" )
             visInclude.set( "condition", condition )
             visInclude.text = name + "-" + profile
-        
+
         return newInclude
-        
-        
+
+
     def findSubmenu( self, name, level ):
         # Find the correct submenu template
         returnElem = None
@@ -371,9 +375,9 @@ class Template():
             # Save this, in case we don't find a better match
             returnElem = elem
 
-        if returnElem is None: return None            
+        if returnElem is None: return None
         return self.copy_tree( returnElem )
-        
+
     def findOther( self, item, profile, profileVisibility, simpleVisibility, visibilityCondition, menuType, rootID ):
         # Find a template matching the item we have been passed
         foundTemplateIncludes = []
@@ -404,7 +408,7 @@ class Template():
                 elif menuType != 0:
                     matched = False
                     continue
-                
+
                 # Next we either extend the visibility condition to also match the submenu
                 # (if the template provides the submenu container ID), or drop the visibility condition
                 if "container" in elem.attrib:
@@ -422,7 +426,7 @@ class Template():
                     matchType = "all"
                 elif matchType == "any":
                     matched = False
-            
+
             # Check the conditions
             for condition in template.findall( "condition" ):
                 if matchType == "all":
@@ -438,24 +442,24 @@ class Template():
                         matched = True
                         break
 
-                
+
             # If the conditions didn't match, we're done here
             if matched == False:
                 continue
 
             numTemplates += 1
-                
+
             # All the rules matched, so next we'll get any properties
             properties = self.getProperties( template, item )
             if rootID is not None:
                 properties[ "auto-rootID" ] = rootID
-            
+
             # Next up, we do any replacements - EXCEPT for visibility, which
             # we'll store for later (in case multiple items would have an
             # identical template
             self.replaceElements( template.find( "controls" ), None, None, [], properties )
             self.replaceElements( template.find( "variables" ), None, None, [], properties )
-            
+
             # Now we need to check if we've already got a template identical to this
             textVersion = None
             foundInPrevious = False
@@ -466,11 +470,11 @@ class Template():
                     includeNameCheck = "NONE"
                 if previous.find( "skinshortcuts-includeName" ).text != includeNameCheck:
                     continue
-                    
+
                 # Compare templates
                 if self.compare_tree( template.find( "controls" ), previous.find( "controls" ) ) and self.compare_tree( template.find( "variables" ), previous.find( "variables" ) ) :
                     # They are the same
-                    
+
                     # Add our details to the previous version, so we can build it
                     # with full visibility details later
                     for profileMatch in previous.findall( "skinshortcuts-profile" ):
@@ -480,22 +484,22 @@ class Template():
                                 if visible.text == finalVisibility:
                                     # The condition is already there
                                     foundInPrevious = True
-                            
+
                             # We didn't find it, so add it
                             xmltree.SubElement( profileMatch, "visible" ).text = finalVisibility
                             foundInPrevious = True
 
                     if foundInPrevious == True:
                         break
-                            
+
                     # We didn't find this profile, so add it
                     newElement = xmltree.SubElement( previous, "skinshortcuts-profile" )
                     newElement.set( "profile", profile )
                     newElement.set( "visible", profileVisibility )
-                    
+
                     # And save the visibility condition
                     xmltree.SubElement( newElement, "visible" ).text = finalVisibility
-                    
+
                     # And we're done
                     foundTemplateIncludes.append( includeName )
                     foundInPrevious = True
@@ -514,7 +518,7 @@ class Template():
                     newElement.text = "NONE"
                 else:
                     newElement.text = includeName
-                
+
                 # Add it to our finalize list
                 self.finalize.append( template )
 
@@ -522,7 +526,7 @@ class Template():
                 foundTemplateIncludes.append( includeName )
 
         return numTemplates
-            
+
     def checkCondition( self, condition, items ):
         # Check if a particular condition is matched for an 'other' template
         if "tag" not in condition.attrib:
@@ -530,11 +534,11 @@ class Template():
             return False
         else:
             tag = condition.attrib.get( "tag" )
-            
+
         attrib = None
         if "attribute" in condition.attrib:
             attrib = condition.attrib.get( "attribute" ).split( "|" )
-            
+
         # Find all elements with matching tag
         matchedRule = False
         for item in items.findall( tag ):
@@ -545,16 +549,16 @@ class Template():
                 if attrib[ 1 ] != item.attrib.get( attrib[ 0 ] ):
                     # This property doesn't match
                     continue
-                    
+
             if condition.text is not None and item.text != condition.text:
                 # This property doesn't match
                 continue
-            
+
             # The rule has been matched :)
             return True
-            
+
         return False
-        
+
     def getProperties( self, elem, items ):
         # Get any properties specified in an 'other' template
         properties = {}
@@ -581,7 +585,7 @@ class Template():
             propertyValue = None
             if "propertyValue" in property.attrib:
                 propertyValue = property.attrib.get( "propertyValue" )
-            
+
             # Check for multiple items to match against this single value
             for singleMatch in property.findall( "rule" ):
                 tag = None
@@ -643,7 +647,7 @@ class Template():
                     tag = rule[ 0 ]
                     attrib = rule[ 1 ]
                     value = rule[ 2 ]
-                    
+
                     for item in items.findall( tag ):
                         if attrib is not None:
                             if attrib[ 0 ] not in item.attrib:
@@ -656,11 +660,11 @@ class Template():
                         if not item.text:
                             # The item doesn't have a value to match
                             continue
-                                
+
                         if value is not None and item.text not in value:
                             # The value doesn't match
                             continue
-                            
+
                         # We've matched a property :)
                         if rule[ 3 ] is not None:
                             properties[ name ] = rule[ 3 ]
@@ -679,7 +683,7 @@ class Template():
                     tag = rule[ 0 ]
                     attrib = rule[ 1 ]
                     value = rule[ 2 ]
-                    
+
                     for item in items.findall( tag ):
                         log( repr( attrib ) )
                         if attrib is not None:
@@ -695,12 +699,12 @@ class Template():
                             # The item doesn't have a value to match
                             matchedRule = False
                             continue
-                                
+
                         if value is not None and item.text not in value:
                             # The value doesn't match
                             matchedRule = False
                             continue
-                            
+
                 if matchedRule:
                     # We've matched a property :)
                     if rule[ 3 ] is not None:
@@ -709,7 +713,7 @@ class Template():
                         # This method only supports setting the property value directly, so if it wasn't specified,
                         # include a log error
                         log( "Invalid template - cannot set property directly to menu item elements value when using multiple rules for single property")
-        
+
         return properties
 
     def combineProperties( self, elem, items, currentProperties ):
@@ -720,8 +724,8 @@ class Template():
                 continue
             currentProperties[ propertyName ] = newProperties[ propertyName ]
 
-        return currentProperties  
-    
+        return currentProperties
+
     def replaceElements( self, tree, visibilityCondition, profileVisibility, items, properties = {}, customitems = None ):
         if tree is None: return
         for elem in tree:
@@ -729,7 +733,7 @@ class Template():
             if "skinshortcuts" in elem.attrib:
                 # Get index of the element
                 index = list( tree ).index( elem )
-                
+
                 # Get existing attributes, text and tag
                 attribs = []
                 for singleAttrib in elem.attrib:
@@ -739,28 +743,28 @@ class Template():
                         attribs.append( ( singleAttrib, elem.attrib.get( singleAttrib ) ) )
                 text = elem.text
                 tag = elem.tag
-                
+
                 # Don't continue is type = visibility, and no visibilityCondition
                 if type == "visibility" and visibilityCondition is None:
                     continue
-                
+
                 # Remove the existing element
                 tree.remove( elem )
-                
+
                 # Make replacement element
                 newElement = xmltree.Element( tag )
                 if text is not None:
                     newElement.text = text
                 for singleAttrib in attribs:
                     newElement.set( singleAttrib[ 0 ], singleAttrib[ 1 ] )
-                    
+
                 # Make replacements
                 if type == "visibility" and visibilityCondition is not None:
                     newElement.set( "condition", visibilityCondition )
-                    
+
                 # Insert it
                 tree.insert( index, newElement )
-            
+
             # <tag>$skinshortcuts[var]</tag> -> <tag>[value]</tag>
             # <tag>$skinshortcuts[var]</tag> -> <tag><include>[includeName]</include></tag> (property = $INCLUDE[includeName])
             if elem.text is not None:
@@ -783,7 +787,7 @@ class Template():
                             elem.text = stringStart[ 0 ] + properties[ stringEnd[ 0 ] ] + stringEnd[ 1 ]
                     else:
                         elem.text = stringStart[ 0 ] + stringEnd[ 1 ]
-            
+
             # <tag attrib="$skinshortcuts[var]" /> -> <tag attrib="[value]" />
             for attrib in elem.attrib:
                 value = elem.attrib.get( attrib )
@@ -814,9 +818,9 @@ class Template():
                     # stringEnd[ 1 ] = Any code after the $MATHS property
 
                     stringEnd[ 0 ] = simple_eval( "%s" %( stringEnd[ 0 ] ), names=properties )
-                    
+
                     elem.text = stringStart[ 0 ] + str( stringEnd[ 0 ] ) + stringEnd[ 1 ]
-            
+
             # <tag attrib="$PYTHON[var]" /> -> <tag attrib="[value]" />
             for attrib in elem.attrib:
                 value = elem.attrib.get( attrib )
@@ -828,23 +832,23 @@ class Template():
                     stringEnd[ 0 ] = simple_eval( "%s" %( stringEnd[ 0 ] ), names=properties )
 
                     elem.set( attrib, stringStart[ 0 ] + str( stringEnd[ 0 ] ) + stringEnd[ 1 ] )
-            
+
             # <skinshortcuts>visible</skinshortcuts> -> <visible>[condition]</visible>
             # <skinshortcuts>items</skinshortcuts> -> <item/><item/>...
             if elem.tag == "skinshortcuts":
                 # Get index of the element
                 index = list( tree ).index( elem )
-                
+
                 # Get the type of replacement
                 type = elem.text
-                
+
                 # Don't continue is type = visibility, and no visibilityCondition
                 if type == "visibility" and visibilityCondition is None:
                     continue
-                
+
                 # Remove the existing element
                 tree.remove( elem )
-                
+
                 # Make replacements
                 if type == "visibility" and visibilityCondition is not None:
                     # Create a new visible element
@@ -870,7 +874,7 @@ class Template():
                             if visibility.text != profileVisibility:
                                 continue
                             newitem.remove( visibility )
-                        
+
                         # Add a copy to the array
                         newelements.insert( 0, newitem )
                     if len( newelements ) != 0:
@@ -902,14 +906,14 @@ class Template():
             self.replaceElements( newElement, None, None, [], self.combineProperties( itemTemplate, item, currentProperties.copy() ) )
             newelements.insert( 0, newElement )
         return newelements
-            
+
     def _save_hash( self, filename, file ):
         if file is not None:
             hasher = hashlib.md5()
             hasher.update( file )
             hashlist.list.append( [filename, hasher.hexdigest()] )
         else:
-            hashlist.list.append( [filename, None] )            
+            hashlist.list.append( [filename, None] )
 
     def copy_tree( self, elem ):
         if elem is None: return None

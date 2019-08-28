@@ -6,21 +6,32 @@ import hashlib, hashlist
 import ast
 from xml.dom.minidom import parse
 from traceback import print_exc
-from htmlentitydefs import name2codepoint
 from unidecode import unidecode
 from unicodeutils import try_decode
+
+if sys.version_info.major == 3:
+    from html.entities import name2codepoint
+else:
+    from htmlentitydefs import name2codepoint
 
 import nodefunctions
 NODE = nodefunctions.NodeFunctions()
 
 ADDON        = xbmcaddon.Addon()
-ADDONID      = ADDON.getAddonInfo('id').decode( 'utf-8' )
+ADDONID      = ADDON.getAddonInfo('id')
 KODIVERSION  = xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0]
 LANGUAGE     = ADDON.getLocalizedString
-CWD          = ADDON.getAddonInfo('path').decode("utf-8")
-DATAPATH     = os.path.join( xbmc.translatePath( "special://profile/addon_data/" ).decode('utf-8'), ADDONID )
-SKINPATH     = xbmc.translatePath( "special://skin/shortcuts/" ).decode('utf-8')
-DEFAULTPATH  = xbmc.translatePath( os.path.join( CWD, 'resources', 'shortcuts').encode("utf-8") ).decode("utf-8")
+
+if sys.version_info.major == 3:
+    CWD          = ADDON.getAddonInfo('path')
+    DATAPATH     = os.path.join(xbmc.translatePath("special://profile/"), "addon_data", ADDONID)
+    SKINPATH     = xbmc.translatePath("special://skin/shortcuts/")
+    DEFAULTPATH  = xbmc.translatePath(os.path.join(CWD, 'resources', 'shortcuts'))
+else:
+    CWD          = ADDON.getAddonInfo('path').decode('utf-8')
+    DATAPATH     = os.path.join(xbmc.translatePath("special://profile/").decode('utf-8' ), "addon_data", ADDONID)
+    SKINPATH     = xbmc.translatePath("special://skin/shortcuts/").decode('utf-8')
+    DEFAULTPATH  = xbmc.translatePath(os.path.join(CWD, 'resources', 'shortcuts').encode("utf-8")).decode("utf-8")
 
 # character entity reference
 CHAR_ENTITY_REXP = re.compile('&(%s);' % '|'.join(name2codepoint))
@@ -44,7 +55,7 @@ def log(txt):
             xbmc.log(msg=message.encode('utf-8'), level=xbmc.LOGDEBUG)
         except:
             pass
-    
+
 class DataFunctions():
     def __init__(self):
         self.overrides = {}
@@ -61,30 +72,30 @@ class DataFunctions():
 
         self.propertyInformation = { "fallbackProperties": {}, "fallbacks": {},
                 "otherProperties": [], "requires": None, "templateOnly": None }
-        
-    
+
+
     def _get_labelID( self, labelID, action, getDefaultID = False, includeAddOnID = True, noNonLocalized = False ):
         # This gets the unique labelID for the item we've been passed. We'll also store it, to make sure
         # we don't give it to any other item.
-        
+
         labelID = self.createNiceName( self.slugify( labelID.replace( " ", "" ).lower() ), noNonLocalized )
-        
+
         if includeAddOnID:
             addon_labelID = self._get_addon_labelID( action )
             if addon_labelID is not None:
                 labelID = addon_labelID
-        
+
         # If we're getting the defaultID, just return this
         if getDefaultID == True:
             return labelID
-        
+
         # Check if the labelID exists in the list
         if labelID in self.labelIDList:
             # We're going to add an --[int] to the end of this
             count = 0
             while labelID + "--" + str( count ) in self.labelIDList:
                 count += 1
-            
+
             # We can now use this one
             self.labelIDList.append( labelID + "--" + str( count ) )
             return labelID + "--" + str( count )
@@ -92,20 +103,20 @@ class DataFunctions():
             # We can use this one
             self.labelIDList.append( labelID )
             return labelID
-            
+
     def _get_addon_labelID( self, action ):
         # This will check the action to see if this is a program or the root of a plugin and, if so, return that as the labelID
-        
+
         if action is None:
             return None
-        
+
         try:
             if action.startswith( "RunAddOn(" ) and "," not in action:
                 return action[9:-1]
-                
+
             if action.startswith( "RunScript(" ) and "," not in action:
                 return action[10:-1]
-                
+
             if "plugin://" in action and "?" not in action:
                 # Return the action
                 # - less ActivateWindow(
@@ -114,26 +125,26 @@ class DataFunctions():
                 return action[15:-1].split( "," )[1].replace( '"', '' )[9:]
         except:
             return None
-            
+
         return None
-    
+
     def _clear_labelID( self ):
         # This clears our stored list of labelID's
         self.labelIDList = []
-        
-    
+
+
     def _pop_labelID( self ):
         self.labelIDList.pop()
-    
-                
+
+
     def _get_shortcuts( self, group, defaultGroup = None, isXML = False, profileDir = None, defaultsOnly = False, processShortcuts = True, isSubLevel = False ):
         # This will load the shortcut file
         # Additionally, if the override files haven't been loaded, we'll load them too
         log( "Loading shortcuts for group " + group )
-                
+
         if profileDir is None:
             profileDir = xbmc.translatePath( "special://profile/" ).decode( "utf-8" )
-        
+
         userShortcuts = os.path.join( profileDir, "addon_data", ADDONID, self.slugify( group, True, isSubLevel = isSubLevel ) + ".DATA.xml" )
         skinShortcuts = os.path.join( SKINPATH , self.slugify( group ) + ".DATA.xml")
         defaultShortcuts = os.path.join( DEFAULTPATH , self.slugify( group ) + ".DATA.xml" )
@@ -145,7 +156,7 @@ class DataFunctions():
             paths = [skinShortcuts, defaultShortcuts ]
         else:
             paths = [userShortcuts, skinShortcuts, defaultShortcuts ]
-        
+
         for path in paths:
             log( " - Attempting to load file %s" %( path ) )
             path = try_decode( path )
@@ -154,15 +165,15 @@ class DataFunctions():
                 file = xbmcvfs.File( path ).read()
                 self._save_hash( path, file )
                 tree = xmltree.parse( path )
-            
+
             if tree is not None and processShortcuts:
                 # If this is a user-selected list of shortcuts...
                 if path == userShortcuts:
                     if group == "mainmenu":
                         self._get_skin_required( tree, group, profileDir )
-                    # Process shortcuts, marked as user-selected                    
+                    # Process shortcuts, marked as user-selected
                     self._process_shortcuts( tree, group, profileDir, True )
-                    
+
                 else:
                     if group == "mainmenu":
                         self._get_skin_required( tree, group, profileDir )
@@ -176,19 +187,19 @@ class DataFunctions():
                 return tree
             else:
                 self._save_hash( path, None )
-                
+
         # No file loaded
         log( " - No shortcuts" )
         return xmltree.ElementTree( xmltree.Element( "shortcuts" ) )
-                            
+
     def _process_shortcuts( self, tree, group, profileDir = "special:\\profile", isUserShortcuts = False, allowAdditionalRequired = True ):
         # This function will process any overrides and add them to the tree ready to be displayed
         #  - We will process graphics overrides, action overrides, visibility conditions
         skinoverrides = self._get_overrides_skin()
         useroverrides = self._get_overrides_user( profileDir )
-        
+
         self._clear_labelID()
-        
+
         # Iterate through all <shortcut/> nodes
         for node in tree.getroot().findall( "shortcut" ):
             # If not user shortcuts, remove locked nodes (in case of naughty skinners!)
@@ -196,17 +207,17 @@ class DataFunctions():
                 searchNode = node.find( "locked" )
                 if searchNode is not None:
                     node.remove( searchNode )
-                    
+
             # Remove any labelID node (because it confuses us!)
             searchNode = node.find( "labelID" )
             if searchNode is not None:
                 node.remove( searchNode )
-                    
+
             # Get the action
             action = node.find( "action" )
             if not action.text:
                 action.text = "noop"
-            
+
             # group overrides: add an additional onclick action for a particular menu
             # this will allow you to close a modal dialog before calling any other window
             # http://forum.kodi.tv/showthread.php?tid=224683
@@ -216,17 +227,17 @@ class DataFunctions():
                     newaction = xmltree.SubElement( node, "additional-action" )
                     newaction.text = override.text
                     newaction.set( "condition", override.attrib.get( "condition" ) )
-            
+
             # Generate the labelID
             labelID = self._get_labelID( self.local( node.find( "label" ).text )[3].replace( " ", "" ).lower(), action.text )
             xmltree.SubElement( node, "labelID" ).text = labelID
-            
+
             # If there's no defaultID, set it to the labelID
             defaultID = labelID
             if node.find( "defaultID" ) is not None:
                 defaultID = node.find( "defaultID" ).text
             xmltree.SubElement( node, "defaultID" ).text = defaultID
-            
+
             # Check that any version node matches current XBMC version
             version = node.find( "version" )
             if version is not None:
@@ -238,7 +249,7 @@ class DataFunctions():
             # Get any disabled element
             if node.find( "disabled" ) is not None:
                 xmltree.SubElement( node, "disabled" ).text = "True"
-                    
+
             # Load additional properties
             additionalProperties = self.checkAdditionalProperties( group, labelID, defaultID, isUserShortcuts, profileDir )
 
@@ -263,17 +274,17 @@ class DataFunctions():
             iconNode = node.find( "icon" )
             if iconNode.text is None or iconNode.text == "":
                 iconNode.text = "DefaultShortcut.png"
-                        
+
             # Get a skin-overriden icon
             overridenIcon = self._get_icon_overrides( skinoverrides, node.find( "icon" ).text, group, labelID )
             if overridenIcon is not None:
                 # Add a new node with the overriden icon
                 xmltree.SubElement( node, "override-icon" ).text = overridenIcon
-            
+
             # If the action uses the special://skin protocol, translate it
             if "special://skin/" in action.text:
                 action.text = xbmc.translatePath( action.text )
-                
+
             # Get visibility condition
             visibilityCondition = self.checkVisibility( action.text )
             visibilityNode = None
@@ -308,7 +319,7 @@ class DataFunctions():
                     # The skin hasn't overriden the visibility
                     visibilityNode = xmltree.SubElement( node, "visibility" )
                     visibilityNode.text = visibilityCondition
-            
+
             # Get action and visibility overrides
             overrideTrees = [useroverrides, skinoverrides]
             hasOverriden = False
@@ -339,7 +350,7 @@ class DataFunctions():
                                 if "version" in elem.attrib:
                                     if elem.attrib.get( "version" ) != KODIVERSION:
                                         continue
-                                    
+
                                 hasOverriden = True
                                 itemToOverride.set( "overriden", "True" )
 
@@ -348,7 +359,7 @@ class DataFunctions():
                                 overrideVisibility = None
                                 if condition is not None:
                                     overrideVisibility = condition.text
-                                
+
                                 # Get the new action
                                 for actions in elem.findall( "action" ):
                                     newaction = xmltree.SubElement( node, "override-action" )
@@ -380,7 +391,7 @@ class DataFunctions():
                 else:
                     # The item hasn't been overriden, so change it to an override-action element
                     elem.tag = "override-action"
-                       
+
             # Get visibility condition of any skin-provided shortcuts
             for elem in skinoverrides.findall( "shortcut" ):
                 if elem.text == action.text and "condition" in elem.attrib:
@@ -388,7 +399,7 @@ class DataFunctions():
                         xmltree.SubElement( node, "visibility" ).text = elem.attrib.get( "condition" )
                     else:
                         visibilityNode.text = "[" + visibilityNode.text + "] + [" + elem.attrib.get( "condition" ) + "]"
-                            
+
             # Get any visibility conditions in the .DATA.xml file
             additionalVisibility = node.find( "visible" )
             if additionalVisibility is not None:
@@ -396,32 +407,32 @@ class DataFunctions():
                     xmltree.SubElement( node, "visibility" ).text = additionalVisibility.text
                 else:
                     visibilityNode.text = "[" + visibilityNode.text + "] + [" + additionalVisibility.text + "]"
-        
+
         return tree
-        
+
     def _get_skin_required( self, listitems, group, profileDir ):
         # This function builds a tree of any skin-required shortcuts not currently in the menu
         # Once the tree is built, it sends them to _process_shortcuts for any overrides, etc, then adds them to the menu tree
-        
+
         tree = self._get_overrides_skin()
-            
+
         # Get an array of all actions currently in the menu
         actions = []
         for node in listitems.getroot().findall( "shortcut" ):
             for action in node.findall( "action" ):
                 actions.append( action.text )
-                
+
         # Get a list of all skin-required shortcuts
         requiredShortcuts = []
         for elem in tree.findall( "requiredshortcut" ):
             if not elem.text in actions:
                 # We need to add this shortcut - add it to the listitems
                 requiredShortcut = xmltree.SubElement( listitems.getroot(), "shortcut" )
-                
+
                 # Label and label2
                 xmltree.SubElement( requiredShortcut, "label" ).text = elem.attrib.get( "label" )
                 xmltree.SubElement( requiredShortcut, "label2" ).text = xbmc.getSkinDir()
-                
+
                 # Icon and thumbnail
                 if "icon" in elem.attrib:
                     xmltree.SubElement( requiredShortcut, "icon" ).text = elem.attrib.get( "icon" )
@@ -429,29 +440,29 @@ class DataFunctions():
                     xmltree.SubElement( requiredShortcut, "icon" ).text = "DefaultShortcut.png"
                 if "thumb" in elem.attrib:
                     xmltree.SubElement( requiredShortcut, "thumb" ).text = elem.attrib.get( "thumbnail" )
-                    
+
                 # Action
                 xmltree.SubElement( requiredShortcut, "action" ).text = elem.text
-                
+
                 # Locked
                 # - This is set to the skin directory, so it will only be locked in the management directory when using this skin
                 xmltree.SubElement( requiredShortcut, "lock" ).text = xbmc.getSkinDir()
-                
-                
-    def _get_icon_overrides( self, tree, icon, group, labelID, setToDefault = True ):        
+
+
+    def _get_icon_overrides( self, tree, icon, group, labelID, setToDefault = True ):
         # This function will get any icon overrides based on labelID or group
         if icon is None:
             return
 
         icon = try_decode( icon )
-            
+
         # If the icon is a VAR or an INFO, we aren't going to override
         if icon.startswith( "$" ):
             return icon
-            
+
         oldicon = None
         newicon = icon
-        
+
         # Check for overrides
         if tree is not None:
             for elem in tree.findall( "icon" ):
@@ -463,18 +474,18 @@ class DataFunctions():
                                 # Group also matches - change icon
                                 oldicon = icon
                                 newicon = elem.text
-                                
+
                         elif "grouping" not in elem.attrib:
                             # No group - change icon
                             oldicon = icon
                             newicon = elem.text
-        
+
         if not (xbmc.skinHasImage(newicon.encode("utf-8")) or xbmcvfs.exists(newicon.encode("utf-8"))) and setToDefault == True:
             newicon = self._get_icon_overrides( tree, "DefaultShortcut.png", group, labelID, False )
 
         return newicon
 
-        
+
     def _get_overrides_script( self ):
         # Get overrides.xml provided by script
         if "script" in self.overrides:
@@ -497,7 +508,7 @@ class DataFunctions():
             return tree
 
     def _get_overrides_skin( self ):
-        # Get overrides.xml provided by skin 
+        # Get overrides.xml provided by skin
         if "skin" in self.overrides:
             return self.overrides[ "skin" ]
 
@@ -544,10 +555,10 @@ class DataFunctions():
 
         if self.currentProperties is not None:
             return[ self.currentProperties, self.defaultProperties ]
-            
+
         self.currentProperties = []
         self.defaultProperties = []
-        
+
         path = os.path.join( profileDir, "addon_data", ADDONID, xbmc.getSkinDir().decode('utf-8') + ".properties" ).encode( "utf-8" )
         #path = os.path.join( DATAPATH , xbmc.getSkinDir().decode('utf-8') + ".properties" )
         if xbmcvfs.exists( path ):
@@ -556,7 +567,7 @@ class DataFunctions():
                 file = xbmcvfs.File( path ).read()
                 listProperties = ast.literal_eval( file )
                 self._save_hash( path, file )
-                
+
                 for listProperty in listProperties:
                     # listProperty[0] = groupname
                     # listProperty[1] = labelID
@@ -574,7 +585,7 @@ class DataFunctions():
                 self.currentProperties = [ None ]
         else:
             self.currentProperties = [ None ]
-            
+
         # Load skin defaults (in case we need them...)
         tree = self._get_overrides_skin()
         for elemSearch in [["widget", tree.findall( "widgetdefault" )], ["widget:node", tree.findall( "widgetdefaultnode" )], ["background", tree.findall( "backgrounddefault" )], ["custom", tree.findall( "propertydefault" )] ]:
@@ -595,13 +606,13 @@ class DataFunctions():
                     # Widget or background
                     if "group" not in elem.attrib:
                         self.defaultProperties.append( [ "mainmenu", labelID, elemSearch[ 0 ].split( ":" )[ 0 ], elem.text, defaultID ] )
-                        
+
                         if elemSearch[ 0 ] == "background":
                             # Get and set the background name
                             backgroundName = self._getBackgroundName( elem.text )
                             if backgroundName is not None:
                                 self.defaultProperties.append( [ "mainmenu", labelID, "backgroundName", backgroundName, defaultID ] )
-                            
+
                         if elemSearch[0] == "widget":
                             # Get and set widget type and name
                             widgetDetails = self._getWidgetNameAndType( elem.text )
@@ -628,13 +639,13 @@ class DataFunctions():
                                 self.defaultProperties.append( [ "mainmenu", labelID, "widgetTarget", elem.attrib.get( "target" ), defaultID ] )
                     else:
                         self.defaultProperties.append( [ elem.attrib.get( "group" ), labelID, elemSearch[ 0 ].split( ":" )[ 0 ], elem.text, defaultID ] )
-                        
+
                         if elemSearch[ 0 ] == "background":
                             # Get and set the background name
                             backgroundName = self._getBackgroundName( elem.text )
                             if backgroundName is not None:
                                 self.defaultProperties.append( [ elem.attrib.get( "group" ), labelID, "backgroundName", backgroundName, defaultID ] )
-                        
+
                         if elemSearch[0] == "widget":
                             # Get and set widget type and name
                             widgetDetails = self._getWidgetNameAndType( elem.text )
@@ -669,7 +680,7 @@ class DataFunctions():
                 action = node.find( "action.text" )
                 labelID = self._get_labelID( label, action, getDefaultID = True )
                 self.defaultProperties.append( [ "mainmenu", labelID, "icon", node.find( "icon" ).text ] )
-                                        
+
         returnVal = [ self.currentProperties, self.defaultProperties ]
         return returnVal
 
@@ -710,7 +721,7 @@ class DataFunctions():
         # Save all the results for this group
         self.propertyInformation[ "fallbackProperties" ][ group ] = fallbackProperties
         self.propertyInformation[ "fallbacks" ][ group ] = fallbacks
-        
+
         return( self.propertyInformation[ "fallbackProperties" ][ group ], self.propertyInformation[ "fallbacks" ][ group ] )
 
     def _getPropertyRequires( self ):
@@ -738,9 +749,9 @@ class DataFunctions():
         # Save all the results
         self.propertyInformation[ "requires" ] = requires
         self.propertyInformation[ "templateOnly" ] = templateOnly
-        
+
         return( self.propertyInformation[ "otherProperties" ], self.propertyInformation[ "requires" ], self.propertyInformation[ "templateOnly" ] )
-        
+
     def _getWidgetNameAndType( self, widgetID ):
         if widgetID in self.widgetNameAndType:
             return self.widgetNameAndType[ widgetID ]
@@ -757,10 +768,10 @@ class DataFunctions():
                     widgetInfo[ "target" ] = elem.attrib.get( "target" )
                 self.widgetNameAndType[ widgetID ] = widgetInfo
                 return widgetInfo
-                        
+
         self.widgetNameAndType[ widgetID ] = None
         return None
-        
+
     def _getBackgroundName( self, backgroundID ):
         if backgroundID in self.backgroundName:
             return self.backgroundName[ backgroundID ]
@@ -771,10 +782,10 @@ class DataFunctions():
                 returnString = elem.attrib.get( "label" )
                 self.backgroundName[ backgroundID ] = returnString
                 return returnString
-                        
+
         self.backgroundName[ backgroundID ] = None
         return None
-                
+
     def _reset_backgroundandwidgets( self ):
         # This function resets all skin properties used to identify if specific backgrounds or widgets are active
         tree = self._get_overrides_skin()
@@ -782,8 +793,8 @@ class DataFunctions():
             xbmc.executebuiltin( "Skin.Reset(skinshortcuts-widget-" + elem.text + ")" )
         for elem in tree.findall( "background" ):
             xbmc.executebuiltin( "Skin.Reset(skinshortcuts-background-" + elem.text + ")" )
-                
-    
+
+
     def createNiceName ( self, item, noNonLocalized = False ):
         # Translate certain localized strings into non-localized form for labelID
         if noNonLocalized == False:
@@ -817,9 +828,9 @@ class DataFunctions():
                 return "settings"
             if item == "32087":
                 return "radio"
-        
+
         return item.lower( ).replace( " ", "" )
-            
+
     def checkVisibility ( self, action ):
         # Return whether mainmenu items should be displayed
         action = action.lower().replace( " ", "" ).replace( "\"", "" )
@@ -830,7 +841,7 @@ class DataFunctions():
 
         # Video node visibility
         if action.startswith( ( "activatewindow(videos,videodb://", "activatewindow(videolibrary,videodb://",
-                 "activatewindow(10025,videodb://", "activatewindow(videos,library://video/", 
+                 "activatewindow(10025,videodb://", "activatewindow(videos,library://video/",
                  "activatewindow(videolibrary,library://video", "activatewindow(10025,library://video/" ) ):
             path = action.split( "," )
             if path[ 1 ].endswith( ")" ):
@@ -913,7 +924,7 @@ class DataFunctions():
             return "System.HasMediaDVD"
         elif action.startswith( "activatewindow(eventlog" ):
             return "system.getbool(eventlog.enabled)"
-            
+
         return ""
 
 
@@ -959,21 +970,21 @@ class DataFunctions():
                 break
 
         return False
-        
+
     def checkAdditionalProperties( self, group, labelID, defaultID, isUserShortcuts, profileDir ):
         # Return any additional properties, including widgets, backgrounds, icons and thumbnails
         allProperties = self._get_additionalproperties( profileDir )
         currentProperties = allProperties[1]
-        
+
         returnProperties = []
-        
+
         # This returns two lists...
         #  allProperties[0] = Saved properties
         #  allProperties[1] = Default properties
-        
+
         if isUserShortcuts and ( len( allProperties[ 0 ] ) == 0 or allProperties[ 0 ][ 0 ] is not None ):
             currentProperties = allProperties[0]
-            
+
         # Loop through the current properties, looking for the current item
         for currentProperty in currentProperties:
             # currentProperty[0] = Group name
@@ -986,9 +997,9 @@ class DataFunctions():
             elif len( currentProperty ) is not 4:
                 if defaultID is not None and currentProperty[0] == group and currentProperty[4] == defaultID:
                     returnProperties.append( self.upgradeAdditionalProperties( currentProperty[2], currentProperty[3] ) )
-                
+
         return returnProperties
-        
+
     def checkShortcutLabelOverride( self, action ):
         tree = self._get_overrides_skin()
         if tree is not None:
@@ -1089,7 +1100,7 @@ class DataFunctions():
                 skinName = hash[1]
                 if canImport == True:
                     return( True, skinName )
-        
+
         return( canImport, skinName )
 
     def importSkinMenu( self, files, skinName = None ):
@@ -1118,8 +1129,8 @@ class DataFunctions():
             hashlist.list.append( [filename, hasher.hexdigest()] )
         else:
             hashlist.list.append( [filename, None] )
-            
-            
+
+
     # in-place prettyprint formatter
     def indent( self, elem, level=0 ):
         i = "\n" + level*"\t"
@@ -1135,8 +1146,8 @@ class DataFunctions():
         else:
             if level and (not elem.tail or not elem.tail.strip()):
                 elem.tail = i
-                
-                
+
+
     def local( self, data ):
         # This is our function to manage localisation
         # It accepts strings in one of the following formats:
@@ -1146,56 +1157,56 @@ class DataFunctions():
         # If returns a list containing:
         #   [Number/$SKIN, $LOCALIZE/$ADDON/Local string, Local string]
         #   [Used for saving, used for building xml, used for displaying in dialog]
-        
+
         if data is None:
             return ["","","",""]
-        
+
         data = try_decode( data )
 
         skinid = None
         lasttranslation = None
-        
+
         # Get just the integer of the string, for the input forms where this is valid
         if not data.find( "::SCRIPT::" ) == -1:
             data = data[10:]
-        elif not data.find( "::LOCAL::" ) == -1:            
+        elif not data.find( "::LOCAL::" ) == -1:
             data = data[9:]
         elif not data.find( "$LOCALIZE[" ) == -1:
             data = data.replace( "$LOCALIZE[", "" ).replace( "]", "" ).replace( " ", "" )
         elif not data.find( "$ADDON[script.skinshortcuts" ) == -1:
             data = data.replace( "$ADDON[script.skinshortcuts", "" ).replace( "]", "" ).replace( " ", "" )
-        
+
         # Get the integer and skin id, from $SKIN input forms
         elif not data.find( "$SKIN[" ) == -1:
             splitdata = data[6:-1].split( "|" )
             data = splitdata[0]
             skinid = splitdata[1]
             lasttranslation = splitdata[2]
-            
+
         if data.isdigit():
             if int( data ) >= 31000 and int( data ) < 32000:
                 # A number from a skin - we're going to return a $SKIN[#####|skin.id|last translation] unit
                 if skinid is None:
                     # Set the skinid to the current skin id
                     skinid = xbmc.getSkinDir()
-                    
+
                 # If we're on the same skin as the skinid, get the latest translation
                 if skinid == xbmc.getSkinDir():
                     lasttranslation = xbmc.getLocalizedString( int( data ) )
                     returnString = "$SKIN[" + data + "|" + skinid + "|" + lasttranslation + "]"
                     return [ returnString, "$LOCALIZE[" + data + "]", lasttranslation, data ]
-                    
+
                 returnString = "$SKIN[" + data + "|" + skinid + "|" + lasttranslation + "]"
                 return [ returnString, lasttranslation, lasttranslation, data ]
-                
+
             elif int( data ) >= 32000 and int( data ) < 33000:
                 # A number from the script
                 return [ data, "$ADDON[script.skinshortcuts " + data + "]", LANGUAGE( int( data ) ), data ]
-                
+
             else:
                 # A number from XBMC itself (probably)
                 return [ data, "$LOCALIZE[" + data + "]", xbmc.getLocalizedString( int( data ) ), data ]
-                
+
         # This isn't anything we can localize, just return it (in triplicate ;))
         return[ data, data, data, data ]
 
@@ -1228,7 +1239,7 @@ class DataFunctions():
         # Handle integers
         if convertInteger and text.isdigit():
             text = "NUM-" + text
-    
+
         # text to unicode
         if type(text) != types.UnicodeType:
             text = unicode(text, 'utf-8', 'ignore')
@@ -1375,7 +1386,7 @@ class DataFunctions():
         # This function fixes any changes to additional properties between Kodi versions
         if propertyName.startswith( "widgetTarget" ) and propertyValue == "video":
             propertyValue = "videos"
-        
+
         return [ propertyName, propertyValue ]
 
     def buildReplacementMusicAddonAction( self, action, window ):
@@ -1384,7 +1395,7 @@ class DataFunctions():
         # [0] = ActivateWindow([window]
         # [1] = "plugin://plugin.name/path?params"
         # [2] = return)
-        
+
         if len(splitAction) == 2:
             return "ActivateWindow(%s,%s)" %( window, splitAction[ 1 ] )
         else:

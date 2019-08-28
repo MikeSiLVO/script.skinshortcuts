@@ -3,24 +3,30 @@ import os, sys, datetime, unicodedata, re, types
 import xbmc, xbmcaddon, xbmcgui, xbmcvfs, urllib
 import xml.etree.ElementTree as xmltree
 import hashlib, hashlist
-import cPickle as pickle
 from xml.dom.minidom import parse
 from traceback import print_exc
-from htmlentitydefs import name2codepoint
 from unidecode import unidecode
 from unicodeutils import try_decode
+import json as simplejson
 
-if sys.version_info < (2, 7):
-    import simplejson
+if sys.version_info.major == 3:
+    import pickle
+    from html.entities import name2codepoint
 else:
-    import json as simplejson
+    import cPickle as pickle
+    from htmlentitydefs import name2codepoint
 
 ADDON        = xbmcaddon.Addon()
-ADDONID      = ADDON.getAddonInfo('id').decode( 'utf-8' )
+ADDONID      = ADDON.getAddonInfo('id')
 KODIVERSION  = xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0]
 LANGUAGE     = ADDON.getLocalizedString
-CWD          = ADDON.getAddonInfo('path').decode("utf-8")
-DATAPATH     = os.path.join( xbmc.translatePath( "special://profile/addon_data/" ).decode('utf-8'), ADDONID )
+
+if sys.version_info.major == 3:
+    CWD      = ADDON.getAddonInfo('path')
+    DATAPATH = os.path.join(xbmc.translatePath("special://profile/"), "addon_data", ADDONID)
+else:
+    CWD      = ADDON.getAddonInfo('path').decode('utf-8')
+    DATAPATH = os.path.join(xbmc.translatePath("special://profile/").decode('utf-8' ), "addon_data", ADDONID)
 
 # character entity reference
 CHAR_ENTITY_REXP = re.compile('&(%s);' % '|'.join(name2codepoint))

@@ -1,34 +1,45 @@
 # coding=utf-8
 import os, sys
-import xbmc, xbmcaddon, xbmcgui, xbmcplugin, urllib, xbmcvfs
+import xbmc, xbmcaddon, xbmcgui, xbmcplugin, xbmcvfs
 import xml.etree.ElementTree as xmltree
-import cPickle as pickle
 import pstats
 import random
 import time
 import calendar
-import thread
 from time import gmtime, strftime
 from datetime import datetime
 from traceback import print_exc
+import json as simplejson
+
+if sys.version_info.major == 3:
+    import urllib.request, urllib.parse, urllib.error
+    import pickle
+    import _thread
+else:
+    import urllib
+    import cPickle as pickle
+    import thread
 
 # Uncomment when profiling performance
 # import cProfile
 
-if sys.version_info < (2, 7):
-    import simplejson
-else:
-    import json as simplejson
+ADDON            = xbmcaddon.Addon()
+ADDONID          = ADDON.getAddonInfo('id')
+ADDONVERSION     = ADDON.getAddonInfo('version')
+LANGUAGE         = ADDON.getLocalizedString
 
-ADDON        = xbmcaddon.Addon()
-ADDONID      = ADDON.getAddonInfo('id').decode( 'utf-8' )
-ADDONVERSION = ADDON.getAddonInfo('version')
-LANGUAGE     = ADDON.getLocalizedString
-CWD          = ADDON.getAddonInfo('path').decode("utf-8")
-ADDONNAME    = ADDON.getAddonInfo('name').decode("utf-8")
-RESOURCE     = xbmc.translatePath( os.path.join( CWD, 'resources', 'lib' ) ).decode("utf-8")
-DATAPATH     = os.path.join( xbmc.translatePath( "special://profile/" ).decode( 'utf-8' ), "addon_data", ADDONID )
-MASTERPATH   = os.path.join( xbmc.translatePath( "special://masterprofile/" ).decode( 'utf-8' ), "addon_data", ADDONID )
+if sys.version_info.major == 3:
+    CWD          = ADDON.getAddonInfo('path')
+    ADDONNAME    = ADDON.getAddonInfo('name')
+    RESOURCE     = xbmc.translatePath(os.path.join(CWD, 'resources', 'lib'))
+    DATAPATH     = os.path.join(xbmc.translatePath("special://profile/"), "addon_data", ADDONID)
+    MASTERPATH   = os.path.join(xbmc.translatePath("special://masterprofile/"), "addon_data", ADDONID)
+else:
+    CWD          = ADDON.getAddonInfo('path').decode('utf-8')
+    ADDONNAME    = ADDON.getAddonInfo('NAME').decode('utf-8')
+    RESOURCE     = xbmc.translatePath(os.path.join(CWD, 'resources', 'lib')).decode("utf-8")
+    DATAPATH     = os.path.join(xbmc.translatePath("special://profile/").decode('utf-8' ), "addon_data", ADDONID)
+    MASTERPATH   = os.path.join(xbmc.translatePath("special://masterprofile/").decode('utf-8'), "addon_data", ADDONID)
 
 sys.path.append(RESOURCE)
 
@@ -276,15 +287,24 @@ class Main:
         self.DEFAULTGROUP = params.get( "defaultGroup", None )
 
         # Properties from context menu addon
-        self.CONTEXTFILENAME = urllib.unquote( params.get( "filename", "" ) )
+        if sys.version_info.major == 3:
+            self.CONTEXTFILENAME = urllib.parse.unquote(params.get("filename", "" ))
+        else:
+            self.CONTEXTFILENAME = urllib.unquote(params.get("filename", "" ))
+
         self.CONTEXTLABEL = params.get( "label", "" )
         self.CONTEXTICON = params.get( "icon", "" )
         self.CONTEXTCONTENT = params.get( "content", "" )
         self.CONTEXTWINDOW = params.get( "window", "" )
 
         # Properties from external request to set properties
-        self.PROPERTIES = urllib.unquote( params.get( "property", "" ) )
-        self.VALUES = urllib.unquote( params.get( "value", "" ) )
+        if sys.version_info.major == 3:
+            self.PROPERTIES = urllib.parse.unquote(params.get("property", "" ))
+            self.VALUES = urllib.parse.unquote(params.get("value", "" ))
+        else:
+            self.PROPERTIES = urllib.unquote(params.get("property", "" ))
+            self.VALUES = urllib.unquote(params.get("value", "" ))
+
         self.LABELID = params.get( "labelID", "" )
 
 
