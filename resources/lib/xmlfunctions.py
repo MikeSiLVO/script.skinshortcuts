@@ -140,7 +140,12 @@ class XMLFunctions():
             else:
                 # Enable any debug logging needed
                 json_query = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "id": 0, "method": "Settings.getSettings" }')
-                json_query = unicode(json_query, 'utf-8', errors='ignore')
+
+                if sys.version_info.major == 3:
+                    json_query = json_query
+                else:
+                    json_query = unicode(json_query, 'utf-8', errors='ignore')
+
                 json_response = simplejson.loads(json_query)
 
                 enabledSystemDebug = False
