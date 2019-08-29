@@ -79,13 +79,23 @@ class XMLFunctions():
             for profile in profiles:
                 name = profile.find( "name" ).text.encode( "utf-8" )
                 dir = profile.find( "directory" ).text.encode( "utf-8" )
-                log( "Profile found: " + name + " (" + dir + ")" )
-                # Localise the directory
-                if b"://" in dir:
-                    dir = xbmc.translatePath( dir ).decode( "utf-8" )
+                if sys.version_info.major == 3:
+                    # Placeholder code to get script to run
+                    log("Profile found:")
                 else:
-                    # Base if off of the master profile
-                    dir = xbmc.translatePath( os.path.join( "special://masterprofile", dir ) ).decode( "utf-8" )
+                    log("Profile found: " + name + " (" + dir + ")")
+
+                # Localise the directory
+                if b"://" in dir and sys.version_info.major == 3:
+                    dir = xbmc.translatePath(dir)
+                elif "://" in dir and sys.version_info.major == 2:
+                    dir = xbmc.translatePath(dir).decode("utf-8")
+                # Base if off of the master profile
+                elif sys.version_info.major == 3:
+                    dir = xbmc.translatePath(os.path.join("special://masterprofile", dir))
+                else:
+                    dir = xbmc.translatePath(os.path.join("special://masterprofile", dir )).decode("utf-8")
+
                 profilelist.append( [ dir, "%s(System.ProfileName,%s)" %( STRINGCOMPARE, name.decode( "utf-8" ) ), name.decode( "utf-8" ) ] )
 
         else:
