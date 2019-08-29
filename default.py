@@ -62,7 +62,10 @@ def log(txt):
                 txt = txt.decode('utf-8')
 
         message = u'%s: %s' % (ADDONID, txt)
-        xbmc.log(msg=message.encode('utf-8'), level=xbmc.LOGDEBUG)
+        if sys.version_info.major == 3:
+            xbmc.log(msg=message, level=xbmc.LOGDEBUG)
+        else:
+            xbmc.log(msg=message.encode('utf-8'), level=xbmc.LOGDEBUG)
 
 class Main:
     # MAIN ENTRY POINT
