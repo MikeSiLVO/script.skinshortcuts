@@ -29,8 +29,10 @@ import hashlib, hashlist
 
 def log(txt):
     if ADDON.getSetting( "enable_logging" ) == "true":
-        if isinstance (txt,str):
-            txt = txt.decode('utf-8')
+        if sys.version_info.major == 2:
+            if isinstance (txt,str):
+                txt = txt.decode('utf-8')
+
         message = u'%s: %s' % (ADDONID, txt)
         xbmc.log(msg=message.encode('utf-8'), level=xbmc.LOGDEBUG)
 
