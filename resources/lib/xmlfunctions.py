@@ -81,7 +81,7 @@ class XMLFunctions():
                 dir = profile.find( "directory" ).text.encode( "utf-8" )
                 log( "Profile found: " + name + " (" + dir + ")" )
                 # Localise the directory
-                if "://" in dir:
+                if b"://" in dir:
                     dir = xbmc.translatePath( dir ).decode( "utf-8" )
                 else:
                     # Base if off of the master profile
