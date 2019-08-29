@@ -151,7 +151,7 @@ class XMLFunctions():
                 enabledSystemDebug = False
                 enabledScriptDebug = False
 
-                if json_response.has_key('result') and json_response['result'].has_key('settings') and json_response['result']['settings'] is not None:
+                if json_response in ['result'] and json_response['settings'] in ['result'] and json_response['result']['settings'] is not None:
                     for item in json_response['result']['settings']:
                         if item["id"] == "debug.showloginfo":
                             if item["value"] == False:
