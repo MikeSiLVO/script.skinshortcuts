@@ -4,23 +4,23 @@ import xbmc, xbmcgui, xbmcvfs, urllib
 import xml.etree.ElementTree as xmltree
 from xml.dom.minidom import parse
 from xml.sax.saxutils import escape as escapeXML
-import thread
 from traceback import print_exc
 from unicodeutils import try_decode
 import calendar
 from time import gmtime, strftime
 import random
+import json as simplejson
+
+if sys.version_info.major == 3:
+    import _thread
+else:
+    import thread
 
 import datafunctions
 DATA = datafunctions.DataFunctions()
 
 import library
 LIBRARY = library.LibraryFunctions()
-
-if sys.version_info < (2, 7):
-    import simplejson
-else:
-    import json as simplejson
 
 ADDON        = sys.modules[ "__main__" ].ADDON
 ADDONID      = sys.modules[ "__main__" ].ADDONID
