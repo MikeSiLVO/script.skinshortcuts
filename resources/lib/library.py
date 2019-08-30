@@ -722,7 +722,11 @@ class LibraryFunctions():
             prefix = "library://music"
             action = "||AUDIO||"
 
-        rootdir = os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", library )
+        if sys.version_info.major == 3:
+            rootdir = os.path.join(xbmc.translatePath("special://profile"), "library", library)
+        else:
+            rootdir = os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", library )
+
         if type == "custom":
             log( "Listing custom %s nodes..." %( library ) )
         else:
