@@ -910,7 +910,7 @@ class Template():
     def _save_hash( self, filename, file ):
         if file is not None:
             hasher = hashlib.md5()
-            hasher.update( file )
+            hasher.update(file.encode("utf8"))
             hashlist.list.append( [filename, hasher.hexdigest()] )
         else:
             hashlist.list.append( [filename, None] )
