@@ -729,6 +729,9 @@ class LibraryFunctions():
 
         if type == "custom":
             log( "Listing custom %s nodes..." %( library ) )
+        elif sys.version_info.major == 3:
+            rootdir = os.path.join(xbmc.translatePath("special://xbmc"), "system", "library", library)
+            log("Listing default %s nodes..." %(library))
         else:
             rootdir = os.path.join( xbmc.translatePath( "special://xbmc".decode('utf-8') ), "system", "library", library )
             log( "Listing default %s nodes..." %( library ) )
