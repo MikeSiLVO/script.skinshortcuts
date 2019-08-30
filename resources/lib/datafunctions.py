@@ -1241,15 +1241,21 @@ class DataFunctions():
             text = "NUM-" + text
 
         # text to unicode
-        if type(text) != types.UnicodeType:
-            text = unicode(text, 'utf-8', 'ignore')
+        if sys.version_info.major == 3:
+            text = text
+        else:
+            if type(text) != types.UnicodeType:
+                text = unicode(text, 'utf-8', 'ignore')
 
         # decode unicode ( ??? = Ying Shi Ma)
         text = unidecode(text)
 
         # text back to unicode
-        if type(text) != types.UnicodeType:
-            text = unicode(text, 'utf-8', 'ignore')
+        if sys.version_info.major == 3:
+            text = text
+        else:
+            if type(text) != types.UnicodeType:
+                text = unicode(text, 'utf-8', 'ignore')
 
         # character entity reference
         if entities:
