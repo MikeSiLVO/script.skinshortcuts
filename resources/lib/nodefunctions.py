@@ -197,10 +197,16 @@ class NodeFunctions():
         else:
             return ""
 
-        customPath = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", pathEnd ) ) + "index.xml"
-        customFile = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", pathEnd ) )[:-1] + ".xml"
-        defaultPath = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://xbmc".decode('utf-8') ), "system", "library", pathEnd ) ) + "index.xml"
-        defaultFile = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://xbmc".decode('utf-8') ), "system", "library", pathEnd ) )[:-1] + ".xml"
+        if sys.version_info.major == 3:
+            customPath = path.replace( pathStart, os.path.join( xbmc.translatePath("special://profile"), "library", pathEnd ) ) + "index.xml"
+            customFile = path.replace( pathStart, os.path.join( xbmc.translatePath("special://profile"), "library", pathEnd ) )[:-1] + ".xml"
+            defaultPath = path.replace( pathStart, os.path.join( xbmc.translatePath("special://xbmc"), "system", "library", pathEnd ) ) + "index.xml"
+            defaultFile = path.replace( pathStart, os.path.join( xbmc.translatePath("special://xbmc"), "system", "library", pathEnd ) )[:-1] + ".xml"
+        else:
+            customPath = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", pathEnd ) ) + "index.xml"
+            customFile = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", pathEnd ) )[:-1] + ".xml"
+            defaultPath = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://xbmc".decode('utf-8') ), "system", "library", pathEnd ) ) + "index.xml"
+            defaultFile = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://xbmc".decode('utf-8') ), "system", "library", pathEnd ) )[:-1] + ".xml"
 
         # Check whether the node exists - either as a parent node (with an index.xml) or a view node (append .xml)
         # in first custom video nodes, then default video nodes
