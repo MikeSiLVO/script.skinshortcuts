@@ -241,7 +241,10 @@ class GUI( xbmcgui.WindowXMLDialog ):
                     log( "No widget button on GUI (id 401)" )
 
             # Load library shortcuts in thread
-            thread.start_new_thread( LIBRARY.loadAllLibrary, () )
+            if sys.version_info.major == 3:
+                _thread.start_new_thread( LIBRARY.loadAllLibrary, () )
+            else:
+                thread.start_new_thread( LIBRARY.loadAllLibrary, () )
 
             if has111:
                 try:
