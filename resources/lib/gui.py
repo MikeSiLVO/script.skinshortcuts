@@ -894,7 +894,10 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
         # Get backgrounds and thumbnails - we do this in a separate thread as the json used to load VFS paths
         # is very expensive
-        thread.start_new_thread( self._load_backgrounds_thumbnails, () )
+        if sys.version_info.major == 3:
+            _thread.start_new_thread( self._load_backgrounds_thumbnails, () )
+        else:
+            thread.start_new_thread( self._load_backgrounds_thumbnails, () )
 
         # Should we allow the user to browse for background images...
         elem = tree.find('backgroundBrowse')
