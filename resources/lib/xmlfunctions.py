@@ -461,7 +461,7 @@ class XMLFunctions():
                 submenuDefaultID = None
                 templateCurrentMainMenuItem = None
 
-                if not isinstance( item, basestring ):
+                if not isinstance(item, str):
                     # This is a main menu item (we know this because it's an element, not a string)
                     submenu = item.find( "labelID" ).text
 
