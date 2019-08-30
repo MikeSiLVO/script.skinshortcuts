@@ -480,8 +480,12 @@ class DataFunctions():
                             oldicon = icon
                             newicon = elem.text
 
-        if not (xbmc.skinHasImage(newicon.encode("utf-8")) or xbmcvfs.exists(newicon.encode("utf-8"))) and setToDefault == True:
-            newicon = self._get_icon_overrides( tree, "DefaultShortcut.png", group, labelID, False )
+        if sys.version_info.major == 3:
+            if not (xbmc.skinHasImage(newicon) or xbmcvfs.exists(newicon)) and setToDefault == True:
+                newicon = self._get_icon_overrides( tree, "DefaultShortcut.png", group, labelID, False )
+        else:
+            if not (xbmc.skinHasImage(newicon.encode("utf-8")) or xbmcvfs.exists(newicon.encode("utf-8"))) and setToDefault == True:
+                newicon = self._get_icon_overrides( tree, "DefaultShortcut.png", group, labelID, False )
 
         return newicon
 
