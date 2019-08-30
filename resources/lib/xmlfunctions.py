@@ -857,7 +857,12 @@ class XMLFunctions():
 
                     if matches:
                         additionalproperty = xmltree.SubElement( newelement, "property" )
-                        additionalproperty.set( "name", key.decode( "utf-8" ) )
+
+                        if sys.version_info.major == 3:
+                            additionalproperty.set("name",key)
+                        else:
+                            additionalproperty.set( "name", key.decode( "utf-8" ) )
+
                         additionalproperty.text = propertyMatch[ 0 ]
                         allProps[ key ] = additionalproperty
                         break
