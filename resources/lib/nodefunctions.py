@@ -198,10 +198,10 @@ class NodeFunctions():
             return ""
 
         if sys.version_info.major == 3:
-            customPath = path.replace( pathStart, os.path.join( xbmc.translatePath("special://profile"), "library", pathEnd ) ) + "index.xml"
-            customFile = path.replace( pathStart, os.path.join( xbmc.translatePath("special://profile"), "library", pathEnd ) )[:-1] + ".xml"
-            defaultPath = path.replace( pathStart, os.path.join( xbmc.translatePath("special://xbmc"), "system", "library", pathEnd ) ) + "index.xml"
-            defaultFile = path.replace( pathStart, os.path.join( xbmc.translatePath("special://xbmc"), "system", "library", pathEnd ) )[:-1] + ".xml"
+            customPath = path.replace(pathStart, os.path.join( xbmc.translatePath("special://profile"), "library", pathEnd)) + "index.xml"
+            customFile = path.replace(pathStart, os.path.join( xbmc.translatePath("special://profile"), "library", pathEnd))[:-1] + ".xml"
+            defaultPath = path.replace(pathStart, os.path.join( xbmc.translatePath("special://xbmc"), "system", "library", pathEnd)) + "index.xml"
+            defaultFile = path.replace(pathStart, os.path.join( xbmc.translatePath("special://xbmc"), "system", "library", pathEnd))[:-1] + ".xml"
         else:
             customPath = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", pathEnd ) ) + "index.xml"
             customFile = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", pathEnd ) )[:-1] + ".xml"
@@ -224,8 +224,13 @@ class NodeFunctions():
         if path.endswith( "/" ): path = path[ :-1 ]
         path = path.rsplit( "/", 1 )[ 0 ]
 
-        customPath = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", pathEnd ) ) + "/index.xml"
-        defaultPath = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://xbmc".decode('utf-8') ), "system", "library", pathEnd ) ) + "/index.xml"
+        if sys.version_info.major == 3:
+            customPath = path.replace(pathStart, os.path.join(xbmc.translatePath("special://profile"), "library", pathEnd)) + "/index.xml"
+            defaultPath = path.replace(pathStart, os.path.join(xbmc.translatePath("special://xbmc"), "system", "library", pathEnd)) + "/index.xml"
+        else:
+            customPath = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://profile".decode('utf-8') ), "library", pathEnd ) ) + "/index.xml"
+            defaultPath = path.replace( pathStart, os.path.join( xbmc.translatePath( "special://xbmc".decode('utf-8') ), "system", "library", pathEnd ) ) + "/index.xml"
+
         nodeParent = None
         if xbmcvfs.exists( customPath ):
             nodeParent = customPath
