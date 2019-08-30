@@ -67,7 +67,12 @@ class NodeFunctions():
             for dir in dirs:
                 self.parse_node( os.path.join( path, dir ), dir, nodes, prefix )
             for file in files:
-                self.parse_view( os.path.join( path, file.decode( "utf-8" ) ), nodes, origPath = "%s/%s" % ( prefix, file ), prefix = prefix )
+
+                if sys.version_info.major == 3:
+                    self.parse_view(os.path.join(path, file), nodes, origPath = "%s/%s" % (prefix, file), prefix = prefix)
+                else:
+                    self.parse_view( os.path.join( path, file.decode( "utf-8" ) ), nodes, origPath = "%s/%s" % ( prefix, file ), prefix = prefix )
+
         except:
             print_exc()
             return False
