@@ -707,7 +707,12 @@ class XMLFunctions():
             if extensionpoint.attrib.get( "point" ) == "xbmc.gui.skin":
                 resolutions = extensionpoint.findall( "res" )
                 for resolution in resolutions:
-                    path = xbmc.translatePath( os.path.join( try_decode( self.skinDir ) , try_decode( resolution.attrib.get( "folder" ) ), "script-skinshortcuts-includes.xml").encode("utf-8") ).decode('utf-8')
+
+                    if sys.version_info.major == 3:
+                        path = xbmc.translatePath(os.path.join(try_decode(self.skinDir), try_decode(resolution.attrib.get("folder")), "script-skinshortcuts-includes.xml"))
+                    else:
+                        path = xbmc.translatePath( os.path.join( try_decode( self.skinDir ) , try_decode( resolution.attrib.get( "folder" ) ), "script-skinshortcuts-includes.xml").encode("utf-8") ).decode('utf-8')
+
                     paths.append( path )
         skinVersion = addon.getroot().attrib.get( "version" )
 
