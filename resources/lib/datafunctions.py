@@ -143,7 +143,10 @@ class DataFunctions():
         log( "Loading shortcuts for group " + group )
 
         if profileDir is None:
-            profileDir = xbmc.translatePath( "special://profile/" ).decode( "utf-8" )
+            if sys.version_info.major == 3:
+                profileDir = xbmc.translatePath("special://profile/")
+            else:
+                profileDir = xbmc.translatePath( "special://profile/" ).decode( "utf-8" )
 
         userShortcuts = os.path.join( profileDir, "addon_data", ADDONID, self.slugify( group, True, isSubLevel = isSubLevel ) + ".DATA.xml" )
         skinShortcuts = os.path.join( SKINPATH , self.slugify( group ) + ".DATA.xml")
