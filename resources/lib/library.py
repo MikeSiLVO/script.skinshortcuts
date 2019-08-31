@@ -47,7 +47,7 @@ def kodiwalk(path, stringForce = False):
     if sys.version_info.major == 3:
         json_query = json_query
     else:
-        json_query = str(json_query, 'utf-8', errors='ignore')
+        json_query = unicode(json_query, 'utf-8', errors='ignore')
 
     json_response = simplejson.loads(json_query)
     files = []
