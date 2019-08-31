@@ -1180,6 +1180,8 @@ class DataFunctions():
         lasttranslation = None
 
         # Get just the integer of the string, for the input forms where this is valid
+        data = try_decode(data)
+
         if not data.find( "::SCRIPT::" ) == -1:
             data = data[10:]
         elif not data.find( "::LOCAL::" ) == -1:
