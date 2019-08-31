@@ -13,7 +13,7 @@ import json as simplejson
 
 if sys.version_info.major == 3:
     import urllib.request, urllib.parse, urllib.error
-    import _thread
+    import _thread as thread
 else:
     import urllib
     import thread
@@ -243,10 +243,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
                     log( "No widget button on GUI (id 401)" )
 
             # Load library shortcuts in thread
-            if sys.version_info.major == 3:
-                _thread.start_new_thread( LIBRARY.loadAllLibrary, () )
-            else:
-                thread.start_new_thread( LIBRARY.loadAllLibrary, () )
+            thread.start_new_thread( LIBRARY.loadAllLibrary, () )
 
             if has111:
                 try:
@@ -912,10 +909,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
         # Get backgrounds and thumbnails - we do this in a separate thread as the json used to load VFS paths
         # is very expensive
-        if sys.version_info.major == 3:
-            _thread.start_new_thread( self._load_backgrounds_thumbnails, () )
-        else:
-            thread.start_new_thread( self._load_backgrounds_thumbnails, () )
+        thread.start_new_thread( self._load_backgrounds_thumbnails, () )
 
         # Should we allow the user to browse for background images...
         elem = tree.find('backgroundBrowse')
