@@ -589,7 +589,7 @@ class LibraryFunctions():
         # Retrieve icon and thumbnail
         if item[3]:
             if "icon" in item[3].keys() and item[ 3 ][ "icon" ] is not None:
-                icon = item[3]["icon"]
+                icon = try_decode(item[3]["icon"])
             else:
                 icon = "DefaultShortcut.png"
             if "thumb" in item[3].keys():
@@ -615,7 +615,7 @@ class LibraryFunctions():
 
         usedDefaultThumbAsIcon = False
         if self.useDefaultThumbAsIcon == True and thumbnail is not None:
-            icon = thumbnail
+            icon = try_decode(thumbnail)
             thumbnail = None
             usedDefaultThumbAsIcon = True
 
@@ -757,9 +757,9 @@ class LibraryFunctions():
             # 4 = Order
             # 5 = Media type (not folders...?)
 
-            #make sure the path ends with a trailing slash te prevent weird kodi behaviour
-            if "/" in nodes[key][2] and not nodes[key][2].endswith("/"):
-                nodes[key][2] += "/"
+            #make sure the path ends with a trailing slash to prevent weird kodi behaviour
+            if b"/" in nodes[key][2] and not nodes[key][2].endswith(b"/"):
+                nodes[key][2] += b"/"
 
             if nodes[ key ][ 3 ] == "folder":
                 item = self._create( [ "%s%s" % ( action, nodes[ key ][ 2 ] ), nodes[ key ][ 0 ], nodes[ key ][ 3 ], { "icon": nodes[ key ][ 1 ] } ] )
@@ -1051,10 +1051,11 @@ class LibraryFunctions():
 
                         if sys.version_info.major == 3:
                             contents_data = contents.read()
+                            xmldata = xmltree.fromstring(contents_data)
                         else:
                             contents_data = contents.read().decode('utf-8')
+                            xmldata = xmltree.fromstring(contents_data.encode('utf-8'))
 
-                        xmldata = xmltree.fromstring(contents_data.encode('utf-8'))
                         mediaType = "unknown"
                         for line in xmldata.getiterator():
                             if line.tag == "smartplaylist":
@@ -1073,7 +1074,13 @@ class LibraryFunctions():
                                 # Create a list item
                                 listitem = self._create(["::PLAYLIST>%s::" %( mediaLibrary ), name, path[1], {"icon": "DefaultPlaylist.png"} ])
                                 listitem.setProperty( "action-play", "PlayMedia(" + playlist + ")" )
-                                listitem.setProperty( "action-show", "ActivateWindow(" + mediaLibrary + "," + playlist + ",return)".encode( 'utf-8' ) )
+
+                                if sys.version_info.major == 3:
+                                    print(mediaLibrary)
+                                    print(playlist)
+                                else:
+                                    listitem.setProperty( "action-show", "ActivateWindow(" + mediaLibrary + "," + playlist + ",return)".encode( 'utf-8' ) )
+
                                 listitem.setProperty( "action-party", "PlayerControl(PartyMode(%s))" %( playlist ) )
 
                                 # Add widget information
@@ -1230,7 +1237,12 @@ class LibraryFunctions():
             if 'result' in json_response and 'addons' in json_response['result'] and json_response['result']['addons'] is not None:
                 for item in json_response['result']['addons']:
                     if item['enabled'] == True:
-                        path = "RunAddOn(" + item['addonid'].encode('utf-8') + ")"
+
+                        if sys.version_info.major == 3:
+                            path = "RunAddOn(" + item['addonid'] + ")"
+                        else:
+                            path = "RunAddOn(" + item['addonid'].encode('utf-8') + ")"
+
                         action = None
                         thumb = "DefaultAddon.png"
                         if item['thumbnail'] != "":
@@ -1241,8 +1253,13 @@ class LibraryFunctions():
 
                         # If this is a plugin, mark that we can browse it
                         if item[ "type" ] == "xbmc.python.pluginsource":
-                            path = "||BROWSE||" + item['addonid'].encode('utf-8')
-                            action = "RunAddOn(" + item['addonid'].encode('utf-8') + ")"
+
+                            if sys.version_info.major == 3:
+                                path = "||BROWSE||" + item['addonid']
+                                action = "RunAddOn(" + item['addonid'] + ")"
+                            else:
+                                path = "||BROWSE||" + item['addonid'].encode('utf-8')
+                                action = "RunAddOn(" + item['addonid'].encode('utf-8') + ")"
 
                             listitem.setProperty( "path", path )
                             listitem.setProperty( "action", action )
