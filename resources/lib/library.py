@@ -1076,8 +1076,7 @@ class LibraryFunctions():
                                 listitem.setProperty( "action-play", "PlayMedia(" + playlist + ")" )
 
                                 if sys.version_info.major == 3:
-                                    print(mediaLibrary)
-                                    print(playlist)
+                                    listitem.setProperty("action-show", "ActivateWindow(" + mediaLibrary + "," + playlist + ",return)")
                                 else:
                                     listitem.setProperty( "action-show", "ActivateWindow(" + mediaLibrary + "," + playlist + ",return)".encode( 'utf-8' ) )
 

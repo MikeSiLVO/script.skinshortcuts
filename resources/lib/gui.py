@@ -366,7 +366,12 @@ class GUI( xbmcgui.WindowXMLDialog ):
         action = item.find( "action" ).text
         self._add_additionalproperty( listitem, "translatedPath", action )
         if "special://skin/" in action:
-            translate = xbmc.translatePath( "special://skin/" ).decode( "utf-8" )
+
+            if sys.version_info.major == 3:
+                translate = xbmc.translatePath("special://skin/")
+            else:
+                translate = xbmc.translatePath( "special://skin/" ).decode( "utf-8" )
+
             action = action.replace( "special://skin/", translate )
 
         listitem.setProperty( "path", action )
