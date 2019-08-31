@@ -31,13 +31,15 @@ else:
 
 def log(txt):
     if ADDON.getSetting( "enable_logging" ) == "true":
-        try:
-            if isinstance (txt,str):
-                txt = txt.decode('utf-8')
-            message = u'%s: %s' % (ADDONID, txt)
+        if not isinstance (txt,str):
+            txt = txt.decode('utf-8')
+
+        message = u'%s: %s' % (ADDONID, txt)
+
+        if sys.version_info.major == 3:
+            xbmc.log(msg=message, level=xbmc.LOGDEBUG)
+        else:
             xbmc.log(msg=message.encode('utf-8'), level=xbmc.LOGDEBUG)
-        except:
-            pass
 
 def kodiwalk(path, stringForce = False):
     json_query = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Files.GetDirectory","params":{"directory":"%s","media":"files"},"id":1}' % str(path))
@@ -756,8 +758,8 @@ class LibraryFunctions():
             # 5 = Media type (not folders...?)
 
             #make sure the path ends with a trailing slash to prevent weird kodi behaviour
-            if b"/" in nodes[key][2] and not nodes[key][2].endswith(b"/"):
-                nodes[key][2] += b"/"
+            if "/" in nodes[key][2] and not nodes[key][2].endswith("/"):
+                nodes[key][2] += "/"
 
             if nodes[ key ][ 3 ] == "folder":
                 item = self._create( [ "%s%s" % ( action, nodes[ key ][ 2 ] ), nodes[ key ][ 0 ], nodes[ key ][ 3 ], { "icon": nodes[ key ][ 1 ] } ] )

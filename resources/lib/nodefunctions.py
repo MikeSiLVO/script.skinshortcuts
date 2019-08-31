@@ -43,13 +43,15 @@ REMOVE_REXP = re.compile('-{2,}')
 
 def log(txt):
     if ADDON.getSetting( "enable_logging" ) == "true":
-        try:
-            if isinstance (txt,str):
-                txt = txt.decode('utf-8')
-            message = u'%s: %s' % (ADDONID, txt)
+        if not isinstance (txt,str):
+            txt = txt.decode('utf-8')
+
+        message = u'%s: %s' % (ADDONID, txt)
+
+        if sys.version_info.major == 3:
+            xbmc.log(msg=message, level=xbmc.LOGDEBUG)
+        else:
             xbmc.log(msg=message.encode('utf-8'), level=xbmc.LOGDEBUG)
-        except:
-            pass
 
 class NodeFunctions():
     def __init__(self):
@@ -121,11 +123,18 @@ class NodeFunctions():
                 mediaType = contentNode.text
 
             # Get label and icon
-            label = root.find( "label" ).text.encode( "utf-8" )
+            if sys.version_info.major == 3:
+                label = root.find("label").text
+            else:
+                label = root.find( "label" ).text.encode( "utf-8" )
 
             icon = root.find( "icon" )
             if icon is not None:
-                icon = icon.text.encode( "utf-8" )
+
+                if sys.version_info.major == 3:
+                    icon = icon.text
+                else:
+                    icon = icon.text.encode( "utf-8" )
             else:
                 icon = ""
 
@@ -136,8 +145,12 @@ class NodeFunctions():
                 # Check for a path
                 path = root.find( "path" )
                 if path is not None:
+
                     # Change the origPath (the url used as the shortcut address) to it
-                    origPath = path.text.encode( "utf-8" )
+                    if sys.version_info.major == 3:
+                        origPath = path.text
+                    else:
+                        origPath = path.text.encode( "utf-8" )
 
                 # Check for a grouping
                 group = root.find( "group" )

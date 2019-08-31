@@ -22,13 +22,15 @@ if int( xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0] ) >= 17:
 
 def log(txt):
     if ADDON.getSetting( "enable_logging" ) == "true":
-        try:
-            if isinstance (txt,str):
-                txt = txt.decode('utf-8')
-            message = u'%s: %s' % (ADDONID, txt)
+        if not isinstance (txt,str):
+            txt = txt.decode('utf-8')
+
+        message = u'%s: %s' % (ADDONID, txt)
+
+        if sys.version_info.major == 3:
+            xbmc.log(msg=message, level=xbmc.LOGDEBUG)
+        else:
             xbmc.log(msg=message.encode('utf-8'), level=xbmc.LOGDEBUG)
-        except:
-            pass
 
 class Template():
     def __init__( self ):
