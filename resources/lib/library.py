@@ -12,10 +12,8 @@ import json as simplejson
 
 if sys.version_info.major == 3:
     import urllib.request, urllib.parse, urllib.error
-    import _thread
 else:
     import urllib
-    import thread
 
 DATA = datafunctions.DataFunctions()
 NODE = nodefunctions.NodeFunctions()
