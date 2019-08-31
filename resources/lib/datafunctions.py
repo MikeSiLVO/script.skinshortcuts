@@ -571,7 +571,7 @@ class DataFunctions():
         if sys.version_info.major == 3:
             path = os.path.join(profileDir, "addon_data", ADDONID, xbmc.getSkinDir())
         else:
-            path = os.path.join(profileDir, "addon_data", ADDONID, xbmc.getSkinDir().decode('utf-8') + ".properties").encode("utf-8")
+            path = os.path.join( profileDir, "addon_data", ADDONID, xbmc.getSkinDir() + ".properties" ).encode( "utf-8" )
 
         #path = os.path.join( DATAPATH , xbmc.getSkinDir().decode('utf-8') + ".properties" )
         if xbmcvfs.exists( path ):
@@ -1257,7 +1257,8 @@ class DataFunctions():
 
         # text to unicode
         if sys.version_info.major == 3:
-            text = text
+            if type(text) != str:
+                text = str(text, 'utf-8', 'ignore')
         else:
             if type(text) != types.UnicodeType:
                 text = unicode(text, 'utf-8', 'ignore')
@@ -1267,7 +1268,8 @@ class DataFunctions():
 
         # text back to unicode
         if sys.version_info.major == 3:
-            text = text
+            if type(text) != str:
+                text = str(text, 'utf-8', 'ignore')
         else:
             if type(text) != types.UnicodeType:
                 text = unicode(text, 'utf-8', 'ignore')
