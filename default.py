@@ -106,7 +106,10 @@ class Main:
             # skin labels
 
             # Load library shortcuts in thread
-            thread.start_new_thread( LIBRARY.loadAllLibrary, () )
+            if sys.version_info.major == 3:
+                _thread.start_new_thread(LIBRARY.loadAllLibrary, ())
+            else:
+                thread.start_new_thread( LIBRARY.loadAllLibrary, () )
 
             if self.GROUPING is not None:
                 selectedShortcut = LIBRARY.selectShortcut( "", grouping = self.GROUPING, custom = self.CUSTOM, showNone = self.NONE )
@@ -154,7 +157,10 @@ class Main:
             # skin labels
 
             # Load library shortcuts in thread
-            thread.start_new_thread( LIBRARY.loadAllLibrary, () )
+            if sys.version_info.major == 3:
+                _thread.start_new_thread(LIBRARY.loadAllLibrary, ())
+            else:
+                thread.start_new_thread( LIBRARY.loadAllLibrary, () )
 
             # Check if we should show the custom option (if the relevant widgetPath skin string is provided and isn't empty)
             showCustom = False
@@ -176,7 +182,11 @@ class Main:
 
             elif selectedShortcut.getProperty( "Path" ) and selectedShortcut.getProperty( "custom" ) == "true":
                 # The user updated the path - so we just set that property
-                xbmc.executebuiltin( "Skin.SetString(%s,%s)" %( self.WIDGETPATH, urllib.unquote( selectedShortcut.getProperty( "Path" ) ) ) )
+
+                if sys.version_info.major == 3:
+                    xbmc.executebuiltin("Skin.SetString(%s,%s)" %(self.WIDGETPATH, urllib.parse.unquote(selectedShortcut.getProperty("Path"))))
+                else:
+                    xbmc.executebuiltin( "Skin.SetString(%s,%s)" %( self.WIDGETPATH, urllib.unquote( selectedShortcut.getProperty( "Path" ) ) ) )
 
             elif selectedShortcut.getProperty( "Path" ):
                 # The user selected the widget they wanted
@@ -201,7 +211,9 @@ class Main:
                     else:
                         xbmc.executebuiltin( "Skin.Reset(%s)" %( self.WIDGETTARGET ) )
                 if self.WIDGETPATH:
-                    if selectedShortcut.getProperty( "widgetPath" ):
+                    if selectedShortcut.getProperty("widgetPath") and sys.version_info.major == 3:
+                        xbmc.executebuiltin("Skin.SetString(%s,%s)" %(self.WIDGETPATH, urllib.parse.unquote(selectedShortcut.getProperty("widgetPath"))))
+                    elif selectedShortcut.getProperty( "widgetPath" ):
                         xbmc.executebuiltin( "Skin.SetString(%s,%s)" %( self.WIDGETPATH, urllib.unquote( selectedShortcut.getProperty( "widgetPath" ) ) ) )
                     else:
                         xbmc.executebuiltin( "Skin.Reset(%s)" %( self.WIDGETPATH ) )
@@ -318,7 +330,10 @@ class Main:
     # -----------------
 
     def _launch_shortcut( self, path ):
-        action = urllib.unquote( self.PATH )
+        if sys.version_info.major == 3:
+            action = urllib.parse.unquote(self.PATH)
+        else:
+            action = urllib.unquote( self.PATH )
 
         if action.find("::MULTIPLE::") == -1:
             # Single action, run it
@@ -414,7 +429,10 @@ class Main:
         if count != 0:
             xbmc.executebuiltin( "Control.Move(" + menuid + "," + str( count ) + " )" )
 
-        xbmc.executebuiltin( urllib.unquote( action ) )
+        if sys.version_info.major == 3:
+            xbmc.executebuiltin(urllib.parse.unquote(action))
+        else:
+            xbmc.executebuiltin( urllib.unquote( action ) )
 
 if ( __name__ == "__main__" ):
     log('script version %s started' % ADDONVERSION)

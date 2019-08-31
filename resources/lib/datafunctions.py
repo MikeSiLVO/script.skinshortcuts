@@ -1,6 +1,6 @@
 # coding=utf-8
 import os, sys, datetime, unicodedata, re, types
-import xbmc, xbmcaddon, xbmcgui, xbmcvfs, urllib
+import xbmc, xbmcaddon, xbmcgui, xbmcvfs
 import xml.etree.ElementTree as xmltree
 import hashlib, hashlist
 import ast
@@ -10,8 +10,10 @@ from unidecode import unidecode
 from unicodeutils import try_decode
 
 if sys.version_info.major == 3:
+    import urllib.request, urllib.parse, urllib.error
     from html.entities import name2codepoint
 else:
+    import urllib
     from htmlentitydefs import name2codepoint
 
 import nodefunctions

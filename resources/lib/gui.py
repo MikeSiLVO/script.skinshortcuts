@@ -1,6 +1,6 @@
 # coding=utf-8
 import os, sys, datetime, unicodedata
-import xbmc, xbmcgui, xbmcvfs, urllib
+import xbmc, xbmcgui, xbmcvfs
 import xml.etree.ElementTree as xmltree
 from xml.dom.minidom import parse
 from xml.sax.saxutils import escape as escapeXML
@@ -12,8 +12,10 @@ import random
 import json as simplejson
 
 if sys.version_info.major == 3:
+    import urllib.request, urllib.parse, urllib.error
     import _thread
 else:
+    import urllib
     import thread
 
 import datafunctions
@@ -831,7 +833,11 @@ class GUI( xbmcgui.WindowXMLDialog ):
         currentProperties = []
 
         # Get previously loaded properties
-        path = os.path.join( DATAPATH , xbmc.getSkinDir().decode('utf-8') + ".properties" )
+        if sys.version_info.major == 3:
+            path = os.path.join(DATAPATH, xbmc.getSkinDir() + ".properties")
+        else:
+            path = os.path.join( DATAPATH , xbmc.getSkinDir().decode('utf-8') + ".properties" )
+
         if xbmcvfs.exists( path ):
             # The properties file exists, load from it
             listProperties = eval( xbmcvfs.File( path ).read() )
@@ -875,7 +881,11 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
         # Try to save the file
         try:
-            f = xbmcvfs.File( os.path.join( DATAPATH , xbmc.getSkinDir().decode('utf-8') + ".properties" ), 'w' )
+            if sys.version_info.major == 3:
+                f = xbmcvfs.File(os.path.join(DATAPATH, xbmc.getSkinDir() + ".properties"), 'w')
+            else:
+                f = xbmcvfs.File( os.path.join( DATAPATH , xbmc.getSkinDir().decode('utf-8') + ".properties" ), 'w' )
+
             f.write( repr( saveData ).replace( "],", "],\n" ) )
             f.close()
         except:
