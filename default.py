@@ -14,7 +14,7 @@ import json as simplejson
 if sys.version_info.major == 3:
     import urllib.request, urllib.parse, urllib.error
     import pickle
-    import _thread
+    import _thread as thread
 else:
     import urllib
     import cPickle as pickle
@@ -106,10 +106,7 @@ class Main:
             # skin labels
 
             # Load library shortcuts in thread
-            if sys.version_info.major == 3:
-                _thread.start_new_thread(LIBRARY.loadAllLibrary, ())
-            else:
-                thread.start_new_thread( LIBRARY.loadAllLibrary, () )
+            thread.start_new_thread(LIBRARY.loadAllLibrary, ())
 
             if self.GROUPING is not None:
                 selectedShortcut = LIBRARY.selectShortcut( "", grouping = self.GROUPING, custom = self.CUSTOM, showNone = self.NONE )
@@ -157,10 +154,7 @@ class Main:
             # skin labels
 
             # Load library shortcuts in thread
-            if sys.version_info.major == 3:
-                _thread.start_new_thread(LIBRARY.loadAllLibrary, ())
-            else:
-                thread.start_new_thread( LIBRARY.loadAllLibrary, () )
+            thread.start_new_thread( LIBRARY.loadAllLibrary, () )
 
             # Check if we should show the custom option (if the relevant widgetPath skin string is provided and isn't empty)
             showCustom = False
