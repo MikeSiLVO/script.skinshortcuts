@@ -1140,7 +1140,11 @@ class LibraryFunctions():
             for file in kodiwalk( path ):
                 playlist = file['path']
                 label = file['label']
-                playlistfile = xbmc.translatePath( playlist ).decode('utf-8')
+
+                if sys.version_info.major == 3:
+                    playlistfile = xbmc.translatePath(playlist)
+                else:
+                    playlistfile = xbmc.translatePath( playlist ).decode('utf-8')
 
                 if playlist.endswith( '-randomversion.xsp' ):
                     contents = xbmcvfs.File(playlistfile, 'r')
