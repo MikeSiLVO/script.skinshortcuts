@@ -389,7 +389,12 @@ class Main:
 
                         #if file != "settings.xml" and ( not isShared or file.startswith( "%s-" %( xbmc.getSkinDir() ) ) ) or file == "%s.properties" %( xbmc.getSkinDir() ):
                         if deleteFile:
-                            file_path = os.path.join( DATAPATH, file.decode( 'utf-8' ) ).encode( 'utf-8' )
+
+                            if sys.version_info.major == 3:
+                                file_path = os.path.join(DATAPATH, file)
+                            else:
+                                file_path = os.path.join( DATAPATH, file.decode( 'utf-8' ) ).encode( 'utf-8' )
+
                             if xbmcvfs.exists( file_path ):
                                 try:
                                     xbmcvfs.delete( file_path )
