@@ -571,7 +571,7 @@ class DataFunctions():
         self.defaultProperties = []
 
         if sys.version_info.major == 3:
-            path = os.path.join(profileDir, "addon_data", ADDONID, xbmc.getSkinDir())
+            path = os.path.join(profileDir, "addon_data", ADDONID, xbmc.getSkinDir() + ".properties")
         else:
             path = os.path.join( profileDir, "addon_data", ADDONID, xbmc.getSkinDir() + ".properties" ).encode( "utf-8" )
 
