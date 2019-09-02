@@ -216,6 +216,7 @@ class XMLFunctions():
             if extensionpoint.attrib.get( "point" ) == "xbmc.gui.skin":
                 resolutions = extensionpoint.findall( "res" )
                 for resolution in resolutions:
+
                     if sys.version_info.major == 3:
                         path = xbmc.translatePath(os.path.join("special://skin/", resolution.attrib.get( "folder" ), "script-skinshortcuts-includes.xml"))
                     else:
