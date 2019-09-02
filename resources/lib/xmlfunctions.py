@@ -307,7 +307,7 @@ class XMLFunctions():
                 else:
                     try:
                         hasher = hashlib.md5()
-                        hasher.update(xbmcvfs.File(hash[0]).read())
+                        hasher.update(xbmcvfs.File(hash[0]).read().encode("utf-8"))
                         if hasher.hexdigest() != hash[1]:
                             log( "Hash does not match on file " + hash[0] )
                             log( "(" + hash[1] + " > " + hasher.hexdigest() + ")" )
