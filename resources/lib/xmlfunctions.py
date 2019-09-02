@@ -1033,8 +1033,14 @@ class XMLFunctions():
                     propertyPattern = regexpPattern.sub(replacement, propertyPattern)
 
                 additionalproperty = xmltree.SubElement(newelement, "property")
-                additionalproperty.set("name", propertyName.decode("utf-8"))
-                additionalproperty.text = propertyPattern.decode("utf-8")
+
+                if sys.version_info.major == 3:
+                    additionalproperty.set("name", propertyName)
+                    additionalproperty.text = propertyPattern
+                else:
+                    additionalproperty.set("name", propertyName.decode("utf-8"))
+                    additionalproperty.text = propertyPattern.decode("utf-8")
+
                 allProps[ propertyName ] = additionalproperty
 
         return( newelement, allProps )
