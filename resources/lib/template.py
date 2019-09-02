@@ -913,7 +913,7 @@ class Template():
         if file is not None:
             hasher = hashlib.md5()
             hasher.update(file.encode("utf8"))
-            hashlist.list.append( [filename, hasher.hexdigest()] )
+            hashlist.list.append([filename.encode("utf8"), hasher.hexdigest()])
         else:
             hashlist.list.append( [filename, None] )
 
