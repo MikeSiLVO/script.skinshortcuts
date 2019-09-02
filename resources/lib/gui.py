@@ -35,7 +35,7 @@ if sys.version_info.major == 3:
     SKINPATH     = xbmc.translatePath("special://skin/shortcuts/")
     DEFAULTPATH  = xbmc.translatePath(os.path.join(CWD, 'resources', 'shortcuts'))
 else:
-    DATAPATH     = os.path.join(xbmc.translatePath("special://profile/addon_data/"), ADDONID )
+    DATAPATH     = os.path.join(xbmc.translatePath("special://profile/addon_data/").decode('utf-8'), ADDONID)
     SKINPATH     = xbmc.translatePath("special://skin/shortcuts/").decode('utf-8')
     DEFAULTPATH  = xbmc.translatePath(os.path.join(CWD, 'resources', 'shortcuts').encode("utf-8")).decode("utf-8")
 
