@@ -574,7 +574,12 @@ class NodeFunctions():
 
         # Save the new properties
         try:
-            f = xbmcvfs.File( os.path.join( DATAPATH , xbmc.getSkinDir().decode('utf-8') + ".properties" ), 'w' )
+
+            if sys.version_info.major == 3:
+                f = xbmcvfs.File(os.path.join(DATAPATH, xbmc.getSkinDir() + ".properties"), 'w')
+            else:
+                f = xbmcvfs.File( os.path.join( DATAPATH , xbmc.getSkinDir().decode('utf-8') + ".properties" ), 'w' )
+
             f.write( repr( saveData ).replace( "],", "],\n" ) )
             f.close()
             log( "Properties file saved succesfully" )

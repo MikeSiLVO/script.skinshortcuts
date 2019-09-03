@@ -885,6 +885,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
 
         # Try to save the file
         try:
+
             if sys.version_info.major == 3:
                 f = xbmcvfs.File(os.path.join(DATAPATH, xbmc.getSkinDir() + ".properties"), 'w')
             else:
