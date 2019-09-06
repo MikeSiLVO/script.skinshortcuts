@@ -79,11 +79,7 @@ class XMLFunctions():
             for profile in profiles:
                 name = profile.find( "name" ).text.encode( "utf-8" )
                 dir = profile.find( "directory" ).text.encode( "utf-8" )
-                if sys.version_info.major == 3:
-                    # Placeholder code to get script to run
-                    log("Profile found:")
-                else:
-                    log("Profile found: " + name + " (" + dir + ")")
+                log("Profile found: " + name.decode("utf-8") + " (" + dir.decode("utf-8") + ")")
 
                 # Localise the directory
                 if b"://" in dir and sys.version_info.major == 3:
