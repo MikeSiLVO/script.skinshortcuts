@@ -915,7 +915,7 @@ class Template():
             hasher.update(file.encode("utf8"))
             hashlist.list.append([filename.encode("utf8"), hasher.hexdigest()])
         else:
-            hashlist.list.append( [filename, None] )
+            hashlist.list.append([filename.encode("utf8"), None])
 
     def copy_tree( self, elem ):
         if elem is None: return None

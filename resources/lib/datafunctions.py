@@ -1143,7 +1143,7 @@ class DataFunctions():
             hasher.update(file.encode("utf8"))
             hashlist.list.append([filename.encode("utf8"), hasher.hexdigest()])
         else:
-            hashlist.list.append( [filename, None] )
+            hashlist.list.append([filename.encode("utf8"), None])
 
 
     # in-place prettyprint formatter
