@@ -185,7 +185,7 @@ class XMLFunctions():
             property = xbmcgui.Window( 10000 ).getProperty( "skinshortcuts-reloadmainmenu" )
             xbmcgui.Window( 10000 ).clearProperty( "skinshortcuts-reloadmainmenu" )
             if property == "True":
-                log( "Menu has been edited")
+                log("Menu has been edited")
                 return True
         except:
             pass
@@ -305,13 +305,20 @@ class XMLFunctions():
                     try:
                         hasher = hashlib.md5()
                         hasher.update(xbmcvfs.File(hash[0]).read().encode("utf-8"))
+                        print("File to match hash is")
+                        print(hash[0])
+                        print("File hash is")
+                        print(hash[1])
+                        print("Hexdigest is")
+                        print(hasher.hexdigest())
                         if hasher.hexdigest() != hash[1]:
-                            log( "Hash does not match on file " + hash[0] )
+                            log("Hash does not match on file " + hash[0].decode("utf-8"))
                             log( "(" + hash[1] + " > " + hasher.hexdigest() + ")" )
                             return True
                     except:
                         log( "Unable to generate hash for %s" %( hash[ 0 ] ) )
                         log( "(%s > ?)" %( hash[ 1 ] ) )
+                        print_exc()
             else:
                 if xbmcvfs.exists( hash[0] ):
                     log( "File now exists " + hash[0] )
