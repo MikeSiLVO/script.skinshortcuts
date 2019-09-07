@@ -1140,10 +1140,10 @@ class DataFunctions():
     def _save_hash( self, filename, file ):
         if file is not None:
             hasher = hashlib.md5()
-            hasher.update(file.encode("utf8"))
-            hashlist.list.append([filename.encode("utf8"), hasher.hexdigest()])
+            hasher.update(xbmcvfs.File(filename).read().encode("utf-8"))
+            hashlist.list.append([filename, hasher.hexdigest()])
         else:
-            hashlist.list.append([filename.encode("utf8"), None])
+            hashlist.list.append([filename, None])
 
 
     # in-place prettyprint formatter

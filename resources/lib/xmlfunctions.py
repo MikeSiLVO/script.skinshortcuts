@@ -305,14 +305,8 @@ class XMLFunctions():
                     try:
                         hasher = hashlib.md5()
                         hasher.update(xbmcvfs.File(hash[0]).read().encode("utf-8"))
-                        print("File to match hash is")
-                        print(hash[0])
-                        print("File hash is")
-                        print(hash[1])
-                        print("Hexdigest is")
-                        print(hasher.hexdigest())
                         if hasher.hexdigest() != hash[1]:
-                            log("Hash does not match on file " + hash[0].decode("utf-8"))
+                            log("Hash does not match on file " + hash[0])
                             log( "(" + hash[1] + " > " + hasher.hexdigest() + ")" )
                             return True
                     except:
@@ -726,6 +720,9 @@ class XMLFunctions():
             tree.write( path, encoding="UTF-8" )
 
             # Save the hash of the file we've just written
+            hasher = hashlib.md5()
+            hasher.update(xbmcvfs.File(path).read().encode("utf-8"))
+
             with open(path, "r+") as f:
                 DATA._save_hash( path, f.read() )
                 f.close()
