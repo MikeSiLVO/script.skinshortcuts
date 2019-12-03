@@ -1,6 +1,7 @@
 # coding=utf-8
 import os, sys, datetime, unicodedata
 import xbmc, xbmcgui, xbmcvfs, urllib
+import xbmcaddon
 import xml.etree.ElementTree as xmltree
 import thread
 from xml.dom.minidom import parse
@@ -115,6 +116,8 @@ class LibraryFunctions():
         self.skinhelperWidgetInstall = True
 
         self.useDefaultThumbAsIcon = None
+
+        self.cache_addons_has_service = {}
 
     def loadLibrary( self, library ):
         # Common entry point for loading available shortcuts
@@ -634,7 +637,13 @@ class LibraryFunctions():
         else:
             listitem = xbmcgui.ListItem(label=displayLabel, label2=displayLabel2)
             listitem.setArt({'icon': thumbnail})
-        listitem.setProperty( "path", item[0] )
+
+        path = item[0]
+        if path.startswith("plugin://"):
+            # This should be a path of an plugin, then check if it uses services in the background
+            path = self._append_service_parameter(path)
+
+        listitem.setProperty("path", path)
         listitem.setProperty( "localizedString", localLabel )
         listitem.setProperty( "shortcutType", shortcutType )
         listitem.setProperty( "icon", displayIcon )
@@ -645,6 +654,63 @@ class LibraryFunctions():
             listitem.setProperty( "untranslatedIcon", icon )
 
         return( listitem )
+
+    def _append_service_parameter(self, path):
+        """
+        Check if an add-on uses services in the background
+        -- Only needed in case you use the Widgets --
+        So queues an additional parameter to the path, to let the add-on know that it was initiated by the skin service.
+        THIS IS TEMPORARY WORKAROUND! IS NOT A GOOD CODE PRACTICE, appropriate modifications must be made
+        to allow you to get a signal back from each add-ons to get the status of the service ready in order to invoke
+        an add-on (to get list data) in a safe way, without forcing the start of each add-on immediately when the
+        services are not yet ready.
+
+        In this case, each add-on frontend must implement a forced loop code that is activated only when it receives
+        this parameter, in order to wait for his service to be ready before completing the required operation
+        from the skin service.
+        """
+        service_parameter = 'skin_service=wait'
+        paths = [part for part in path.split('/') if part]
+        if not paths:
+            return path
+        if paths[0] != 'plugin:':
+            return path
+        if paths[1] not in self.cache_addons_has_service:
+            has_service = False
+            try:
+                addon = xbmcaddon.Addon(id=paths[1])
+                # Verify that in addon.xml, there is the service extension
+                file_path = os.path.join(addon.getAddonInfo('path'), 'addon.xml')
+                file_content = self.load_file(file_path)
+                from re import findall
+                has_service = bool(findall(r'<extension[^<>]*point="xbmc\.service"[^<>]*\/>', file_content))
+            except Exception:
+                import traceback
+                log('_append_service_parameter: Parsing add-on file addon.xml error')
+                log(traceback.format_exc())
+                pass
+            self.cache_addons_has_service[paths[1]] = has_service
+        if self.cache_addons_has_service[paths[1]]:
+            # xmbc.service extension exists so append service_parameter
+            if '/?' not in path:
+                if not path.endswith('/'):
+                    path += '/'
+                path += '?' + service_parameter
+            else:
+                path += '&' + service_parameter
+        return path
+
+    def load_file(self, file_path, mode='rb'):
+        """
+        Loads the content of a given filename
+        :param filename: The file to load
+        :return: The content of the file
+        """
+        file_handle = xbmcvfs.File(xbmc.translatePath(file_path), mode)
+        try:
+            return file_handle.readBytes().decode('utf-8')
+        finally:
+            file_handle.close()
 
     def _get_icon_overrides( self, tree, item, content, setToDefault = True ):
         if tree is None:
