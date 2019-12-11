@@ -1281,8 +1281,12 @@ class LibraryFunctions():
                                 if content in contentData:
                                     # Add it as a plugin in the relevant category
                                     otherItem = self._create([path, item['name'] + "  >", contentData[ content ][ 0 ], {"icon": "DefaultAddon.png", "thumb": thumb} ])
-                                    otherItem.setProperty( "path", "||BROWSE||" + item['addonid'].encode('utf-8') )
-                                    otherItem.setProperty( "action", "RunAddOn(" + item['addonid'].encode('utf-8') + ")" )
+                                    if sys.version_info.major == 3:
+                                        otherItem.setProperty("path", "||BROWSE||" + item['addonid'])
+                                        otherItem.setProperty("action", "RunAddOn(" + item['addonid'] + ")")
+                                    else:
+                                        otherItem.setProperty( "path", "||BROWSE||" + item['addonid'].encode('utf-8') )
+                                        otherItem.setProperty( "action", "RunAddOn(" + item['addonid'].encode('utf-8') + ")" )
                                     contentData[ content ][ 1 ][ item[ "name" ] ] = otherItem
                                     # If it's executable, add it to our seperate program plugins for widgets
                                     if content == "executable":
