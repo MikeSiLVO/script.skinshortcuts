@@ -2032,9 +2032,6 @@ class LibraryFunctions():
                 if not image and item.get("file",""):
                     image = item["file"]
                 if image:
-                    if sys.version_info.major == 3:
-                        image = urllib.parse.unquote(image).decode('utf8')
-                    else:
                         image = urllib.unquote(image).decode('utf8')
 
                     if "$INFO" in image:
