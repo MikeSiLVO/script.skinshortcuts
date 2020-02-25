@@ -10,7 +10,7 @@ There is a context menu add-on available in the official repo. This allows any n
 
 If you have the `[labelID]` of a given menu item, you can change any additional property of the main menu item from outside of the management dialog:-
 
-`<onclick>RunScript(script.skinshortcuts,type=setProperty&amp;property=[Property]&amp;value=[Value]&amp;labelID=[labelID]&amp;group=[GroupName])</onclick>`
+`<onclick>RunScript(script.skinshortcuts,type=setProperty&amp;property=[Property]&amp;value=[Value]&amp;labelID=[labelID]&amp;groupname=[GroupName])</onclick>`
 
 | Property | Optional | Description |
 | :------: | :------: | ----------- |
