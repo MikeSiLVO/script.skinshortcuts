@@ -1,0 +1,86 @@
+# Based on https://github.com/im85288/service.upnext/blob/master/.github/workflows/release.yml
+name: Make Release
+on:
+  push:
+    tags:
+      - 'v*'
+      - '*.alpha*'
+      - '*.beta*'
+
+jobs:
+  release:
+    name: Make Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Release Status
+        id: release
+        run: |
+          version=${GITHUB_REF/refs\/tags\//}
+          if [[ $version == *.alpha* || $version == *.beta* ]] ;
+          then
+            echo ::set-output name=pre-release::true
+          else
+            echo ::set-output name=pre-release::false
+          fi
+
+      - name: Checkout Add-on
+        uses: actions/checkout@v3
+        with:
+          path: ${{ github.event.repository.name }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libxml2-utils xmlstarlet zip
+
+      - name: Get Variables
+        id: variables
+        run: |
+          changes=$(xmlstarlet sel -t -v '//news' -n addon.xml)
+          changes="${changes//'%'/'%25'}"
+          changes="${changes//$'\n'/'%0A'}"
+          changes="${changes//$'\r'/'%0D'}"
+          version=$(xmlstarlet sel -t -v 'string(/addon/@version)' addon.xml)
+          echo ::set-output name=changes::$changes
+          echo ::set-output name=version::$version
+        working-directory: ${{ github.event.repository.name }}
+
+      - name: Create Zip
+        id: zip
+        run: |
+          git reset
+          git checkout .
+          git clean -fdx
+          mv .git ..
+          rm -rf .??*
+          rm LICENSE.txt
+          cd ..
+          filename=${{ github.event.repository.name }}-${{ steps.variables.outputs.version }}.zip
+          zip -r $filename ${{ github.event.repository.name }}
+          mv .git ${{ github.event.repository.name }}
+          echo ::set-output name=filename::$filename
+        working-directory: ${{ github.event.repository.name }}
+
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: ${{ steps.variables.outputs.changes }}
+          draft: false
+          prerelease: ${{ steps.release.outputs.pre-release }}
+
+      - name: Upload Zip (Matrix)
+        id: upload-matrix
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_name: ${{ steps.zip.outputs.filename }}
+          asset_path: ${{ steps.zip.outputs.filename }}
+          asset_content_type: application/zip

@@ -1,0 +1,53 @@
+name: Sync addon metadata translations
+
+on:
+  push:
+    branches: [ master, main ]
+    paths:
+      - '**addon.xml'
+      - '**resource.language.**strings.po'
+
+jobs:
+  default:
+    if: github.repository == 'mikesilvo164/script.skinshortcuts'
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Checkout the current repository into the 'project' directory
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          path: project
+
+      # Setup python version 3.9
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # Install all dependencies required by the following steps
+      # - git+https://github.com/xbmc/sync_addon_metadata_translations.git: main script for this action
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install git+https://github.com/xbmc/sync_addon_metadata_translations.git
+
+      # Run the sync-addon-metadata-translations against the 'project' directory
+      - name: Run sync-addon-metadata-translations
+        run: |
+          sync-addon-metadata-translations
+        working-directory: ./project
+
+      # Create a PR with any changes made by the sync-addon-metadata-translations script
+      # - title/commit message: Sync of addon metadata translations
+      # - body: Sync of addon metadata translations triggered by {github.sha}
+      - name: Create PR for sync-addon-metadata-translations changes
+        uses: peter-evans/create-pull-request@v3.10.0
+        with:
+          commit-message: Sync of addon metadata translations
+          title: Sync of addon metadata translations
+          body: Sync of addon metadata translations triggered by ${{ github.sha }}
+          branch: amt-sync
+          delete-branch: true
+          path: ./project

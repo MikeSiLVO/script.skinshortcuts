@@ -1,0 +1,290 @@
+"""Includes XML builder."""
+
+from __future__ import annotations
+
+import xml.etree.ElementTree as ET
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..models import Menu, MenuItem
+    from ..models.property import PropertySchema
+    from ..models.template import TemplateSchema
+
+
+class IncludesBuilder:
+    """Builds script-skinshortcuts-includes.xml from models."""
+
+    def __init__(
+        self,
+        menus: list[Menu],
+        templates: TemplateSchema | None = None,
+        property_schema: PropertySchema | None = None,
+    ):
+        self.menus = menus
+        self.templates = templates
+        self.property_schema = property_schema
+        self._menu_map: dict[str, Menu] = {m.name: m for m in menus}
+
+    def build(self) -> ET.Element:
+        """Build the includes XML tree."""
+        root = ET.Element("includes")
+
+        # Build includes only for root menus (not submenus)
+        # A menu is a root menu if:
+        # 1. It was defined with <menu> tag (is_submenu=False), AND
+        # 2. It's not referenced as a submenu by another menu item
+        #
+        # Submenus defined with <submenu> tag are never built as root includes,
+        # even if deleted from the parent menu (they become orphaned).
+
+        for menu in self.menus:
+            # Skip menus explicitly defined as submenus
+            if menu.is_submenu:
+                continue
+
+            # Main menu include
+            include = self._build_menu_include(menu)
+            root.append(include)
+
+            # Combined submenu include
+            submenu_include = self._build_submenu_include(menu)
+            if submenu_include is not None:
+                root.append(submenu_include)
+
+            # Custom widget includes (one per slot that has custom widgets)
+            custom_widget_includes = self._build_custom_widget_includes(menu)
+            for cw_include in custom_widget_includes:
+                root.append(cw_include)
+
+        # Build template includes into the same file
+        if self.templates and self.templates.templates:
+            from .template import TemplateBuilder
+
+            template_builder = TemplateBuilder(
+                schema=self.templates,
+                menus=self.menus,
+                property_schema=self.property_schema,
+            )
+            template_root = template_builder.build()
+            # Append all template includes to main root
+            for template_include in template_root:
+                root.append(template_include)
+
+        return root
+
+    def _build_menu_include(self, menu: Menu) -> ET.Element:
+        include = ET.Element("include")
+        include.set("name", f"skinshortcuts-{menu.name}")
+
+        for idx, item in enumerate(menu.items, start=1):
+            if item.disabled:
+                continue
+            item_elem = self._build_item(item, idx, menu)
+            include.append(item_elem)
+
+        return include
+
+    def _build_submenu_include(self, parent_menu: Menu) -> ET.Element | None:
+        """Build combined submenu include for a root menu."""
+        submenu_items: list[tuple[MenuItem, MenuItem, int, Menu]] = []
+
+        for parent_item in parent_menu.items:
+            if parent_item.disabled or not parent_item.submenu:
+                continue
+            submenu = self._menu_map.get(parent_item.submenu)
+            if not submenu:
+                continue
+            for idx, sub_item in enumerate(submenu.items, start=1):
+                if not sub_item.disabled:
+                    submenu_items.append((parent_item, sub_item, idx, submenu))
+
+        if not submenu_items:
+            return None
+
+        include = ET.Element("include")
+        include.set("name", f"skinshortcuts-{parent_menu.name}-submenu")
+
+        global_idx = 1
+        for parent_item, sub_item, _, submenu in submenu_items:
+            elem = self._build_submenu_item(
+                sub_item, global_idx, parent_item, submenu, parent_menu.container
+            )
+            include.append(elem)
+            global_idx += 1
+
+        return include
+
+    def _build_submenu_item(
+        self,
+        item: MenuItem,
+        idx: int,
+        parent_item: MenuItem,
+        menu: Menu,
+        container: str | None,
+    ) -> ET.Element:
+        """Build a submenu item element with parent linking and visibility."""
+        elem = self._build_item(item, idx, menu)
+        # Add parent reference
+        self._add_property(elem, "parent", parent_item.name)
+
+        # Add visibility condition if container is specified
+        if container:
+            visibility = (
+                f"String.IsEqual(Container({container}).ListItem.Property(name),"
+                f"{parent_item.name})"
+            )
+            # Combine with existing visibility if present
+            existing = elem.find("visible")
+            if existing is not None and existing.text:
+                existing.text = f"[{existing.text}] + [{visibility}]"
+            else:
+                if existing is None:
+                    existing = ET.SubElement(elem, "visible")
+                existing.text = visibility
+
+        return elem
+
+    def _build_custom_widget_includes(self, parent_menu: Menu) -> list[ET.Element]:
+        """Build custom widget includes for a root menu.
+
+        Custom widgets are menus named '{item.name}.customwidget' or
+        '{item.name}.customwidget.2', etc. Each item+slot combo gets its own include.
+
+        Returns:
+            List of include elements, one per custom widget menu found.
+        """
+        includes = []
+
+        for parent_item in parent_menu.items:
+            if parent_item.disabled:
+                continue
+
+            # Check for custom widget menus: {item.name}.customwidget, .customwidget.2, etc.
+            for suffix in ["", ".2", ".3", ".4", ".5", ".6", ".7", ".8", ".9", ".10"]:
+                cw_menu_name = f"{parent_item.name}.customwidget{suffix}"
+                cw_menu = self._menu_map.get(cw_menu_name)
+                if not cw_menu or not cw_menu.items:
+                    continue
+
+                # Include name: skinshortcuts-{item}-customwidget or -customwidget2
+                suffix_name = suffix.replace(".", "") if suffix else ""
+                include = ET.Element("include")
+                include.set("name", f"skinshortcuts-{parent_item.name}-customwidget{suffix_name}")
+
+                for idx, cw_item in enumerate(cw_menu.items, start=1):
+                    if cw_item.disabled:
+                        continue
+                    elem = self._build_item(cw_item, idx, cw_menu)
+                    include.append(elem)
+
+                includes.append(include)
+
+        return includes
+
+    def _build_item(self, item: MenuItem, idx: int, menu: Menu) -> ET.Element:
+        elem = ET.Element("item")
+        elem.set("id", str(idx))
+
+        ET.SubElement(elem, "label").text = item.label
+        if item.label2:
+            ET.SubElement(elem, "label2").text = item.label2
+        ET.SubElement(elem, "icon").text = item.icon
+        if item.thumb:
+            ET.SubElement(elem, "thumb").text = item.thumb
+
+        # Add onclick elements for actions
+        # Order: before defaults -> conditional items -> unconditional items -> after defaults
+        before_actions = [a for a in menu.defaults.actions if a.when == "before"]
+        after_actions = [a for a in menu.defaults.actions if a.when == "after"]
+
+        # Item actions: conditional first (they take precedence when true)
+        conditional = [a for a in item.actions if a.condition]
+        unconditional = [a for a in item.actions if not a.condition]
+
+        # Output before actions
+        for act in before_actions:
+            onclick = ET.SubElement(elem, "onclick")
+            onclick.text = act.action
+            if act.condition:
+                onclick.set("condition", act.condition)
+
+        # Output item actions (conditional first)
+        for act in conditional + unconditional:
+            onclick = ET.SubElement(elem, "onclick")
+            onclick.text = act.action
+            if act.condition:
+                onclick.set("condition", act.condition)
+
+        # Output after actions
+        for act in after_actions:
+            onclick = ET.SubElement(elem, "onclick")
+            onclick.text = act.action
+            if act.condition:
+                onclick.set("condition", act.condition)
+
+        if item.visible:
+            ET.SubElement(elem, "visible").text = item.visible
+
+        # Standard properties
+        self._add_property(elem, "id", str(idx))
+        self._add_property(elem, "name", item.name)
+        self._add_property(elem, "menu", menu.name)
+        self._add_property(elem, "path", item.action)  # Primary action for display
+
+        if item.submenu:
+            self._add_property(elem, "submenuVisibility", item.submenu)
+            self._add_property(elem, "hasSubmenu", "True")
+
+        # Apply default properties from menu, then item properties override
+        all_properties = {**menu.defaults.properties, **item.properties}
+
+        # Add all properties (skip template_only properties)
+        for key, value in all_properties.items():
+            if self._is_template_only(key):
+                continue
+            self._add_property(elem, key, value)
+
+        return elem
+
+    def _is_template_only(self, prop_name: str) -> bool:
+        """Check if a property is marked as template_only in the schema.
+
+        Template-only properties are used by TemplateBuilder but should not
+        be added to menu item output in includes.xml to keep output cleaner.
+        """
+        if not self.property_schema:
+            return False
+        prop = self.property_schema.get_property(prop_name)
+        return prop is not None and prop.template_only
+
+    @staticmethod
+    def _add_property(parent: ET.Element, name: str, value: str) -> None:
+        if value:
+            prop = ET.SubElement(parent, "property")
+            prop.set("name", name)
+            prop.text = value
+
+    def write(self, path: str | Path, indent: bool = True) -> None:
+        """Write includes XML to file."""
+        root = self.build()
+        if indent:
+            _indent_xml(root)
+        tree = ET.ElementTree(root)
+        tree.write(str(path), encoding="UTF-8", xml_declaration=True)
+
+
+def _indent_xml(elem: ET.Element, level: int = 0) -> None:
+    """Add indentation to XML tree."""
+    indent = "\n" + "\t" * level
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = indent + "\t"
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = indent
+        for child in elem:
+            _indent_xml(child, level + 1)
+        if not child.tail or not child.tail.strip():
+            child.tail = indent
+    elif level and (not elem.tail or not elem.tail.strip()):
+        elem.tail = indent
