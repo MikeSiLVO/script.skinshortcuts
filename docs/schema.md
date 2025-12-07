@@ -363,6 +363,7 @@ Defines templates for generating skin includes.
 | `$PROPERTY[name]` | Item property value |
 | `$SKINBOOL[name]` | Skin boolean setting |
 | `$LOCALIZE[id]` | Localized string |
+| `$INCLUDE[name]` | Converted to `<include>name</include>` in output |
 
 ---
 

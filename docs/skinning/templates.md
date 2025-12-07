@@ -635,6 +635,18 @@ When a user assigns this widget to a menu item, the `widgetPath` property contai
 
 This pattern is useful for templates that generate custom item lists - the template output becomes the widget content.
 
+### Output Conversion
+
+When `$INCLUDE[...]` appears as text content in an element (e.g., after `$PROPERTY[widgetPath]` substitution), it is automatically converted to a Kodi `<include>` element:
+
+```xml
+<!-- Input (after property substitution) -->
+<content>$INCLUDE[skinshortcuts-template-MovieWidgets]</content>
+
+<!-- Output -->
+<content><include>skinshortcuts-template-MovieWidgets</include></content>
+```
+
 ---
 
 ## Complete Example

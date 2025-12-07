@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 # Regex patterns for substitution
 _PROPERTY_PATTERN = re.compile(r"\$PROPERTY\[([^\]]+)\]")
 _EXP_PATTERN = re.compile(r"\$EXP\[([^\]]+)\]")
+_INCLUDE_PATTERN = re.compile(r"\$INCLUDE\[([^\]]+)\]")
 
 
 class TemplateBuilder:
@@ -711,6 +712,9 @@ class TemplateBuilder:
         for attr, value in list(elem.attrib.items()):
             elem.set(attr, self._substitute_text(value, context, item, menu))
 
+        # Convert $INCLUDE[...] in text to <include> elements
+        self._handle_include_substitution(elem)
+
         # Process children
         children_to_remove = []
         for child in elem:
@@ -725,6 +729,23 @@ class TemplateBuilder:
 
         for child in children_to_remove:
             elem.remove(child)
+
+    def _handle_include_substitution(self, elem: ET.Element) -> None:
+        """Convert $INCLUDE[...] in element text to <include> child elements.
+
+        When element text contains $INCLUDE[name], converts it to a Kodi
+        <include>name</include> child element.
+        """
+        if elem.text:
+            match = _INCLUDE_PATTERN.search(elem.text)
+            if match:
+                include_name = match.group(1)
+                # Create Kodi <include> element
+                include_elem = ET.Element("include")
+                include_elem.text = include_name
+                include_elem.tail = elem.text[match.end():]
+                elem.text = elem.text[:match.start()]
+                elem.insert(0, include_elem)
 
     def _handle_skinshortcuts_include(
         self,
