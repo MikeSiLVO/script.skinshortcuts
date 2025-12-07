@@ -70,7 +70,7 @@ Build template controls and variables for all matching menu items.
 
 ---
 
-### write(path, indent=True) (line 805)
+### write(path, indent=True) (line 826)
 Write template includes to file.
 
 ---
@@ -200,7 +200,7 @@ Returns deep copy with all substitutions applied.
 
 ---
 
-### _process_element(elem, context, item, menu) (line 658)
+### _process_element(elem, context, item, menu) (line 659)
 Recursively process an element.
 
 **Handles:**
@@ -209,10 +209,21 @@ Recursively process an element.
 - `<skinshortcuts include="name" wrap="true"/>` → Expanded as Kodi `<include>` element
 - `<skinshortcuts include="name" condition="propName"/>` → Conditional include (only expanded if property exists)
 - `$PROPERTY[...]` substitution in text/attributes
+- `$INCLUDE[...]` in text → Kodi `<include>` element
 
 ---
 
-### _handle_skinshortcuts_include(elem, context, item, menu) (line 729)
+### _handle_include_substitution(elem) (line 733)
+Convert `$INCLUDE[...]` in element text to Kodi `<include>` child elements.
+
+**Behavior:**
+- Searches element text for `$INCLUDE[name]` pattern
+- Creates a Kodi `<include>name</include>` child element
+- Used for template includes assigned via widget paths (e.g., `$INCLUDE[skinshortcuts-template-*]`)
+
+---
+
+### _handle_skinshortcuts_include(elem, context, item, menu) (line 750)
 Handle `<skinshortcuts include="..."/>` element replacements.
 
 **Behavior:**
@@ -223,7 +234,7 @@ Handle `<skinshortcuts include="..."/>` element replacements.
 
 ---
 
-### _substitute_text(text, context, item, menu) (line 783)
+### _substitute_text(text, context, item, menu) (line 804)
 Substitute `$PROPERTY[...]` in text.
 
 Checks context first, then item properties.
