@@ -346,13 +346,16 @@ Both conditions must pass for the background to appear.
 
 ## Output Properties
 
-When a background is assigned to a menu item:
+When a background is assigned to a menu item, these core properties are set:
 
 | Property | Description |
 |----------|-------------|
 | `background` | Background name |
-| `backgroundPath` | Resolved image path |
+| `backgroundPath` | Image path |
 | `backgroundLabel` | Display label |
+| `backgroundType` | Background type (static, property, browse, etc.) |
+
+Additional properties can be configured via [properties.xml](properties.md).
 
 Access via `ListItem.Property(name)`:
 
@@ -364,4 +367,14 @@ Access via `ListItem.Property(name)`:
 </control>
 ```
 
-For static/property types, `backgroundPath` contains the resolved path. For browse/multi types, it contains the user-selected path. For playlist types, your skin handles the slideshow logic.
+For static/property types, `backgroundPath` contains the defined path. For browse/multi types, it contains the user-selected path. For playlist types, your skin handles the slideshow logic using the path.
+
+---
+
+## Quick Navigation
+
+[Back to Top](#background-configuration)
+
+**Sections:** [File Structure](#file-structure) | [Background Types](#background-types) | [Groups](#groups) | [Static](#static) | [Property](#property) | [Browse](#browse) | [Multi](#multi) | [Playlist](#playlist) | [Live](#live) | [Live Playlist](#live-playlist) | [Sources](#sources) | [Conditions](#conditions) | [Output Properties](#output-properties)
+
+**Related Docs:** [Menus](menus.md) | [Widgets](widgets.md) | [Properties](properties.md) | [Templates](templates.md) | [Conditions](conditions.md)

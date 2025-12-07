@@ -1,7 +1,7 @@
 # models/widget.py
 
 **Path:** `resources/lib/skinshortcuts/models/widget.py`
-**Lines:** 81
+**Lines:** 84
 **Purpose:** Dataclass models for widgets and widget groupings.
 
 ---
@@ -24,7 +24,7 @@ Items that can appear in a WidgetGroup's items list.
 
 ## Classes
 
-### Widget (line 18)
+### Widget (line 17)
 A widget assignable to menu items.
 
 | Field | Type | Default | Description |
@@ -49,7 +49,7 @@ A widget assignable to menu items.
 **Methods:**
 - `to_properties(prefix="widget")` → dict[str,str] - Convert to skin property dict
 
-**Property output example:**
+**Property output:**
 ```python
 {
     "widget": "recentmovies",
@@ -73,14 +73,14 @@ A group/category in widget picker.
 | `label` | str | required | Display label |
 | `condition` | str | "" | Property condition (evaluated against item properties) |
 | `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
-| `icon` | str | "" | Icon for picker display (default: DefaultFolder.png) |
+| `icon` | str | "" | Icon for picker display |
 | `items` | list[WidgetGroupContent] | [] | Child items: Widget, WidgetGroup, or Content |
 
 **Used by:** WidgetConfig, dialog.py (_pick_widget_from_groups), loaders/widget.py
 
 ---
 
-### WidgetConfig (line 71)
+### WidgetConfig (line 73)
 Top-level widget configuration container.
 
 | Field | Type | Default | Description |

@@ -65,7 +65,8 @@ class Background:
     def to_properties(self) -> dict[str, str]:
         """Convert to property dictionary for skin access."""
         return {
-            "background": self.path,
+            "background": self.name,
+            "backgroundPath": self.path,
             "backgroundLabel": self.label,
             "backgroundType": self.type.name.lower(),
         }

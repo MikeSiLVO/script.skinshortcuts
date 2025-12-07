@@ -185,3 +185,13 @@ Or programmatically:
 6. Load `templates.xml` - for include generation
 
 Configuration files are in the skin's `shortcuts/` folder. Userdata is skin-specific and stored separately.
+
+---
+
+## Quick Navigation
+
+[Back to Top](#file-overview)
+
+**Sections:** [Configuration Files](#configuration-files) | [Generated Output](#generated-output) | [User Data](#user-data) | [File Loading Order](#file-loading-order)
+
+**Related Docs:** [Getting Started](getting-started.md) | [Menus](menus.md) | [Widgets](widgets.md) | [Properties](properties.md) | [Templates](templates.md)

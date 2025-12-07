@@ -13,6 +13,7 @@ The `templates.xml` file defines how the script generates include files. Templat
 - [Properties](#properties)
 - [Vars](#vars)
 - [Controls](#controls)
+- [Skinshortcuts Tag](#skinshortcuts-tag)
 - [Property Groups](#property-groups)
 - [Presets](#presets)
 - [Variables](#variables)
@@ -81,7 +82,7 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 ## Template Element
 
 ```xml
-<template include="MainMenu" idprefix="menu" templateonly="false">
+<template include="MainMenu" idprefix="menu">
   <condition>...</condition>
   <property name="style" from="widgetStyle"/>
   <var name="aspect">...</var>
@@ -96,7 +97,7 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 
 | Attribute | Required | Default | Description |
 |-----------|----------|---------|-------------|
-| `include` | Yes | - | Output include name (`skinshortcuts-{include}`) |
+| `include` | Yes | - | Output include name (`skinshortcuts-template-{include}`) |
 | `build` | No | `menu` | Build mode: `menu`, `list`, or `true` |
 | `idprefix` | No | - | Prefix for computed control IDs |
 | `templateonly` | No | - | Skip include generation: `true` (always) or `auto` (if unassigned) |
@@ -188,22 +189,33 @@ First matching condition wins. Empty condition is default.
 
 ### Built-in Sources
 
+These are special values available in `from` attributes and `$PROPERTY[]`:
+
 | Source | Description |
 |--------|-------------|
+| `index` | Current item index (1-based) |
+| `name` | Item name identifier |
+| `menu` | Parent menu name |
+| `idprefix` | The template's idprefix value |
+| `id` | Computed ID: `{idprefix}{index}` |
+
+Standard item properties are also available:
+
+| Property | Description |
+|----------|-------------|
 | `label` | Item label |
 | `label2` | Secondary label |
 | `icon` | Item icon |
 | `thumb` | Item thumbnail |
 | `path` | Primary action |
-| `name` | Item name identifier |
-| `index` | Current item index (0-based) |
-| `id` | Computed ID: `{idprefix}{index}` |
+
+These come from the menu item's properties, along with any custom properties set in menus.xml or by the user.
 
 ---
 
 ## Vars
 
-Multi-conditional properties for internal resolution:
+Multi-conditional values resolved during context building:
 
 ```xml
 <var name="aspectRatio">
@@ -213,7 +225,7 @@ Multi-conditional properties for internal resolution:
 </var>
 ```
 
-Use in controls as `$VAR[aspectRatio]` or reference in other properties.
+First matching condition wins. Once resolved, vars become properties accessible via `$PROPERTY[aspectRatio]`.
 
 ---
 
@@ -235,11 +247,89 @@ XML content output per item:
 
 | Placeholder | Description |
 |-------------|-------------|
-| `$PROPERTY[name]` | Property value |
-| `$VAR[name]` | Var value |
-| `$EXP[name]` | Expression value |
+| `$PROPERTY[name]` | Property or var value |
+| `$EXP[name]` | Expression value (expanded in conditions) |
 | `$PARAM[name]` | Parameter (raw mode only) |
-| `$INCLUDE[name]` | Include definition content |
+
+Note: Vars defined with `<var>` are resolved during context building and accessible via `$PROPERTY[name]`.
+
+---
+
+## Skinshortcuts Tag
+
+Special `<skinshortcuts>` elements provide dynamic functionality within controls.
+
+### Visibility Condition
+
+Generate a visibility condition that matches the current menu item:
+
+```xml
+<controls>
+  <control type="image">
+    <skinshortcuts>visibility</skinshortcuts>
+    <texture>$PROPERTY[backgroundPath]</texture>
+  </control>
+</controls>
+```
+
+Outputs:
+
+```xml
+<control type="image">
+  <visible>String.IsEqual(Container(9000).ListItem.Property(name),movies)</visible>
+  <texture>/path/to/background.jpg</texture>
+</control>
+```
+
+### Include Expansion
+
+Insert content from an include definition:
+
+```xml
+<controls>
+  <control type="button">
+    <!-- Unwrapped: inserts include contents directly -->
+    <skinshortcuts include="FocusAnimation"/>
+  </control>
+</controls>
+```
+
+The `<skinshortcuts>` element is replaced with the children of the `FocusAnimation` include definition.
+
+### Wrapped Include
+
+To output as a Kodi `<include>` element (preserving the wrapper):
+
+```xml
+<controls>
+  <control type="button">
+    <!-- Wrapped: outputs as <include name="FocusAnimation">...</include> -->
+    <skinshortcuts include="FocusAnimation" wrap="true"/>
+  </control>
+</controls>
+```
+
+### Conditional Include
+
+Include content only if a property exists on the menu item:
+
+```xml
+<controls>
+  <control type="group">
+    <skinshortcuts include="WidgetControls" condition="widgetPath"/>
+  </control>
+</controls>
+```
+
+If the item doesn't have the specified property, the entire element is removed.
+
+### Attributes
+
+| Attribute | Required | Description |
+|-----------|----------|-------------|
+| `include` | Yes | Name of include definition to expand |
+| `condition` | No | Property name that must exist on the item |
+| `wrap` | No | If `true`, output as Kodi `<include>` element instead of unwrapping |
 
 ---
 
@@ -266,6 +356,22 @@ Reference in template:
 <template include="MainMenu">
   <propertyGroup name="widgetProps"/>
 </template>
+```
+
+### Reference Attributes
+
+| Attribute | Required | Description |
+|-----------|----------|-------------|
+| `name` | Yes | Name of property group to apply |
+| `suffix` | No | Suffix for property transforms (e.g., `.2`) |
+| `condition` | No | Only apply if condition matches item |
+
+```xml
+<!-- Only apply widget props if item has a widget -->
+<propertyGroup name="widgetProps" condition="!String.IsEmpty(widgetPath)"/>
+
+<!-- Apply with suffix for Widget 2 -->
+<propertyGroup name="widgetProps" suffix=".2" condition="!String.IsEmpty(widgetPath.2)"/>
 ```
 
 ### Suffix Transform
@@ -308,6 +414,21 @@ Reference:
 ```
 
 All matched attributes become properties.
+
+### Preset Reference Attributes
+
+| Attribute | Required | Description |
+|-----------|----------|-------------|
+| `name` | Yes | Name of preset to apply |
+| `suffix` | No | Suffix for condition transforms (e.g., `.2`) |
+| `condition` | No | Only apply if condition matches item |
+
+```xml
+<!-- Apply layout preset for Widget 2 properties -->
+<preset name="widgetLayout" suffix=".2" condition="!String.IsEmpty(widgetPath.2)"/>
+```
+
+When `suffix` is specified, preset conditions like `widgetStyle=Panel` are transformed to `widgetStyle.2=Panel`.
 
 ---
 
@@ -359,6 +480,22 @@ Reference in template:
 </template>
 ```
 
+### Variable Group Reference Attributes
+
+| Attribute | Required | Description |
+|-----------|----------|-------------|
+| `name` | Yes | Name of variable group to apply |
+| `suffix` | No | Suffix for condition transforms (e.g., `.2`) |
+| `condition` | No | Only build if condition matches item |
+
+```xml
+<!-- Build widget variables only for items with widgets -->
+<variableGroup name="widgetVars" condition="!String.IsEmpty(widgetPath)"/>
+
+<!-- Build Widget 2 variables with suffix transform -->
+<variableGroup name="widgetVars" suffix=".2" condition="!String.IsEmpty(widgetPath.2)"/>
+```
+
 ### Variable Attributes
 
 | Attribute | Description |
@@ -400,15 +537,17 @@ Reusable control snippets:
 </includes>
 ```
 
-Use in controls:
+Use in controls via the `<skinshortcuts>` tag:
 
 ```xml
 <controls>
   <control type="button">
-    $INCLUDE[FocusAnimation]
+    <skinshortcuts include="FocusAnimation"/>
   </control>
 </controls>
 ```
+
+See [Skinshortcuts Tag](#skinshortcuts-tag) for details on `include`, `condition`, and `wrap` attributes.
 
 ---
 
@@ -481,6 +620,21 @@ Control include file generation:
 | `true` | Never generate include file |
 | `auto` | Skip if template is not assigned to any menu item |
 
+### Template Assignment
+
+The `auto` setting checks if any menu item has a property containing a reference to the template. Use the `$INCLUDE[skinshortcuts-template-{name}]` pattern in widget paths to assign templates:
+
+```xml
+<!-- In widgets.xml -->
+<widget name="custom-movies" label="Custom Movie Widget" type="custom">
+  <path>$INCLUDE[skinshortcuts-template-MovieWidgets]</path>
+</widget>
+```
+
+When a user assigns this widget to a menu item, the `widgetPath` property contains `$INCLUDE[skinshortcuts-template-MovieWidgets]`. The builder detects this and marks the `MovieWidgets` template as "assigned", so it won't be skipped when `templateonly="auto"` is set.
+
+This pattern is useful for templates that generate custom item lists - the template output becomes the widget content.
+
 ---
 
 ## Complete Example
@@ -535,3 +689,13 @@ Control include file generation:
   </submenu>
 </templates>
 ```
+
+---
+
+## Quick Navigation
+
+[Back to Top](#template-configuration)
+
+**Sections:** [Overview](#overview) | [File Structure](#file-structure) | [Template Element](#template-element) | [Build Modes](#build-modes) | [Properties](#properties) | [Vars](#vars) | [Controls](#controls) | [Skinshortcuts Tag](#skinshortcuts-tag) | [Property Groups](#property-groups) | [Presets](#presets) | [Variables](#variables) | [Expressions](#expressions) | [Includes](#includes) | [Submenus](#submenus) | [Conditions](#conditions) | [templateonly](#templateonly-attribute)
+
+**Related Docs:** [Conditions](conditions.md) | [Properties](properties.md) | [Menus](menus.md) | [Widgets](widgets.md)

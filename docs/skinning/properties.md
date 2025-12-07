@@ -361,3 +361,13 @@ Button mappings with `suffix="true"` automatically use the dialog's suffix.
   </fallbacks>
 </properties>
 ```
+
+---
+
+## Quick Navigation
+
+[Back to Top](#property-configuration)
+
+**Sections:** [Overview](#overview) | [File Structure](#file-structure) | [Property Element](#property-element) | [Options](#options) | [Button Mappings](#button-mappings) | [Fallbacks](#fallbacks) | [Includes](#includes) | [Suffix Transforms](#suffix-transforms)
+
+**Related Docs:** [Templates](templates.md) | [Conditions](conditions.md) | [Menus](menus.md) | [Builtin Properties](builtin-properties.md)

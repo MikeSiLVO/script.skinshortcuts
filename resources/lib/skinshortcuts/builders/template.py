@@ -30,7 +30,6 @@ if TYPE_CHECKING:
 
 # Regex patterns for substitution
 _PROPERTY_PATTERN = re.compile(r"\$PROPERTY\[([^\]]+)\]")
-_INCLUDE_PATTERN = re.compile(r"\$INCLUDE\[([^\]]+)\]")
 _EXP_PATTERN = re.compile(r"\$EXP\[([^\]]+)\]")
 
 
@@ -673,7 +672,7 @@ class TemplateBuilder:
                     f"String.IsEqual(Container({self.container})."
                     f"ListItem.Property(name),{item.name})"
                 )
-            # Handle include attribute: <skinshortcuts include="includeName" condition="propName"/>
+            # Handle include attribute: <skinshortcuts include="name" condition="prop" wrap="true"/>
             include_name = elem.get("include")
             if include_name:
                 # Check for condition attribute - only include if property exists
@@ -683,6 +682,7 @@ class TemplateBuilder:
                     elem.set("_skinshortcuts_remove", "true")
                     elem.attrib.pop("include", None)
                     elem.attrib.pop("condition", None)
+                    elem.attrib.pop("wrap", None)
                     return
 
                 include_def = self.schema.get_include(include_name)
@@ -690,8 +690,14 @@ class TemplateBuilder:
                     # Get parent and replace this element with include contents
                     # We'll mark this element for replacement
                     elem.set("_skinshortcuts_include", include_name)
+                    # Preserve wrap attribute for later processing
+                    wrap_attr = elem.get("wrap") or ""
+                    wrap = wrap_attr.lower() == "true"
+                    if wrap:
+                        elem.set("_skinshortcuts_wrap", "true")
                     elem.attrib.pop("include", None)
                     elem.attrib.pop("condition", None)
+                    elem.attrib.pop("wrap", None)
 
         # Process text content
         if elem.text:
@@ -708,81 +714,17 @@ class TemplateBuilder:
         # Process children
         children_to_remove = []
         for child in elem:
-            # Check for $INCLUDE[name] in text
-            if child.text and "$INCLUDE[" in child.text:
-                # This shouldn't happen in well-formed XML, but handle it
-                pass
-
             self._process_element(child, context, item, menu)
 
             # Check if child was marked for removal (condition not met)
             if child.get("_skinshortcuts_remove"):
                 children_to_remove.append(child)
 
-        # Handle $INCLUDE[...] replacements - check for text nodes
-        # This is tricky since $INCLUDE can appear as text between elements
-        # We need to handle it at the parent level
-        self._handle_include_substitution(elem, context, item, menu)
-
         # Handle <skinshortcuts include="..."/> replacements
         self._handle_skinshortcuts_include(elem, context, item, menu)
 
         for child in children_to_remove:
             elem.remove(child)
-
-    def _handle_include_substitution(
-        self,
-        elem: ET.Element,
-        context: dict[str, str],
-        item: MenuItem,
-        menu: Menu,
-    ) -> None:
-        """Handle $INCLUDE[...] substitutions in element text/tail.
-
-        If the include is defined in templates.xml, it's expanded inline.
-        Otherwise, a literal Kodi <include> element is output.
-        """
-        # Check text for $INCLUDE
-        if elem.text:
-            match = _INCLUDE_PATTERN.search(elem.text)
-            if match:
-                include_name = match.group(1)
-                include_def = self.schema.get_include(include_name)
-                if include_def and include_def.controls is not None:
-                    # Expand template include controls
-                    expanded = self._process_controls(
-                        include_def.controls, context, item, menu
-                    )
-                    if expanded is not None:
-                        elem.text = elem.text[: match.start()]
-                        elem.insert(0, expanded)
-                else:
-                    # Not a template include - output as literal Kodi <include> element
-                    include_elem = ET.Element("include")
-                    include_elem.text = include_name
-                    elem.text = elem.text[: match.start()]
-                    elem.insert(0, include_elem)
-
-        # Check children's tails for $INCLUDE
-        for i, child in enumerate(elem):
-            if child.tail:
-                match = _INCLUDE_PATTERN.search(child.tail)
-                if match:
-                    include_name = match.group(1)
-                    include_def = self.schema.get_include(include_name)
-                    if include_def and include_def.controls is not None:
-                        expanded = self._process_controls(
-                            include_def.controls, context, item, menu
-                        )
-                        if expanded is not None:
-                            child.tail = child.tail[: match.start()]
-                            elem.insert(i + 1, expanded)
-                    else:
-                        # Not a template include - output as literal Kodi <include> element
-                        include_elem = ET.Element("include")
-                        include_elem.text = include_name
-                        child.tail = child.tail[: match.start()]
-                        elem.insert(i + 1, include_elem)
 
     def _handle_skinshortcuts_include(
         self,
@@ -795,15 +737,19 @@ class TemplateBuilder:
 
         Finds children marked with _skinshortcuts_include attribute and replaces
         them with the expanded include contents.
+
+        If wrap="true" was specified, outputs as a Kodi <include> element.
+        Otherwise, unwraps and inserts the include's children directly.
         """
         children_to_replace = []
         for i, child in enumerate(elem):
             include_name = child.get("_skinshortcuts_include")
             if include_name:
-                children_to_replace.append((i, child, include_name))
+                wrap = child.get("_skinshortcuts_wrap") == "true"
+                children_to_replace.append((i, child, include_name, wrap))
 
         # Process in reverse order to maintain correct indices
-        for i, child, include_name in reversed(children_to_replace):
+        for i, child, include_name, wrap in reversed(children_to_replace):
             include_def = self.schema.get_include(include_name)
             if include_def and include_def.controls is not None:
                 # Expand include controls - process each child of the include element
@@ -811,16 +757,25 @@ class TemplateBuilder:
                     include_def.controls, context, item, menu
                 )
                 if expanded is not None:
-                    # Remove the skinshortcuts placeholder
                     tail = child.tail
                     elem.remove(child)
-                    # Insert all children from the include element
-                    for j, inc_child in enumerate(list(expanded)):
-                        elem.insert(i + j, inc_child)
-                    # Preserve tail on last inserted element
-                    if tail and len(expanded) > 0:
-                        last_child = elem[i + len(expanded) - 1]
-                        last_child.tail = (last_child.tail or "") + tail
+
+                    if wrap:
+                        # Output as Kodi <include> element with processed contents
+                        include_elem = ET.Element("include")
+                        include_elem.set("name", include_name)
+                        for inc_child in list(expanded):
+                            include_elem.append(inc_child)
+                        include_elem.tail = tail
+                        elem.insert(i, include_elem)
+                    else:
+                        # Unwrap - insert all children from the include element
+                        for j, inc_child in enumerate(list(expanded)):
+                            elem.insert(i + j, inc_child)
+                        # Preserve tail on last inserted element
+                        if tail and len(expanded) > 0:
+                            last_child = elem[i + len(expanded) - 1]
+                            last_child.tail = (last_child.tail or "") + tail
             else:
                 # Include not found - just remove the element
                 elem.remove(child)

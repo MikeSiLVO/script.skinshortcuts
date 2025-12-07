@@ -281,3 +281,13 @@ Properties flow from:
 4. **Fallback values** - From `properties.xml` fallbacks
 
 Fallbacks only apply when a property is empty and the fallback condition matches.
+
+---
+
+## Quick Navigation
+
+[Back to Top](#built-in-properties)
+
+**Sections:** [Overview](#overview) | [Core Properties](#core-properties) | [Widget Properties](#widget-properties) | [Background Properties](#background-properties) | [Submenu Properties](#submenu-properties) | [Custom Properties](#custom-properties) | [Template Properties](#template-properties) | [Accessing Properties](#accessing-properties) | [Property Inheritance](#property-inheritance)
+
+**Related Docs:** [Properties](properties.md) | [Templates](templates.md) | [Management Dialog](management-dialog.md) | [Widgets](widgets.md)

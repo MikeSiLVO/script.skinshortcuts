@@ -1,7 +1,7 @@
 # loaders/widget.py
 
 **Path:** `resources/lib/skinshortcuts/loaders/widget.py`
-**Lines:** ~120
+**Lines:** 122
 **Purpose:** Load widget configuration from widgets.xml.
 
 ---
@@ -42,10 +42,13 @@ Parse a widget element.
 - `label` attribute
 - `<path>` child (except for type="custom")
 
-**Optional:**
-- `type`, `target`, `icon`, `condition`, `visible` (attribute or child)
-- `<sortby>`, `<sortorder>`, `<limit>` children
-- `source`, `slot` attributes
+**Attributes:**
+- `name`, `label` - Required
+- `type`, `target`, `icon`, `condition`, `visible`, `source`, `slot` - Optional
+
+**Child Elements:**
+- `<path>` - Required (except type="custom")
+- `<sortby>`, `<sortorder>`, `<limit>` - Optional
 
 **Source inheritance:** If widget has no `source` attribute, inherits `default_source` from parent group.
 
@@ -80,7 +83,7 @@ Parse a widget group element.
 ```xml
 <widgets showGetMore="true">
   <!-- Flat widget at root level -->
-  <widget name="favourites" label="Favourites" type="videos">
+  <widget name="favourites" label="Favourites" type="videos" target="videos">
     <path>favourites://</path>
   </widget>
 
@@ -89,7 +92,7 @@ Parse a widget group element.
 
   <!-- Group with nested widgets -->
   <group name="movies" label="Movies" icon="DefaultMovies.png" source="library">
-    <widget name="recentmovies" label="Recent" type="movies">
+    <widget name="recentmovies" label="Recent" type="movies" icon="DefaultRecentlyAddedMovies.png">
       <path>videodb://recentlyaddedmovies/</path>
     </widget>
 

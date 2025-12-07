@@ -206,3 +206,13 @@ Button IDs are configured in `properties.xml`. See [Properties](properties.md) f
 - [Backgrounds](backgrounds.md) - Background options
 - [Properties](properties.md) - Custom property schemas
 - [Management Dialog](management-dialog.md) - Dialog control IDs and properties
+
+---
+
+## Quick Navigation
+
+[Back to Top](#getting-started)
+
+**Sections:** [Overview](#overview) | [File Setup](#file-setup) | [Basic Menu](#basic-menu) | [Opening the Dialog](#opening-the-dialog) | [Displaying the Menu](#displaying-the-menu) | [Building Includes](#building-includes) | [Adding Widgets](#adding-widgets) | [Next Steps](#next-steps)
+
+**Related Docs:** [Files](files.md) | [Menus](menus.md) | [Widgets](widgets.md) | [Properties](properties.md) | [Management Dialog](management-dialog.md)

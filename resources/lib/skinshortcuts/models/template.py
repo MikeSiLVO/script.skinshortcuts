@@ -109,7 +109,7 @@ class PresetReference:
 class IncludeDefinition:
     """Reusable include definition for controls (like Kodi includes).
 
-    Contains control XML that can be inserted via $INCLUDE[name].
+    Contains control XML that can be inserted via <skinshortcuts include="name"/>.
     """
 
     name: str

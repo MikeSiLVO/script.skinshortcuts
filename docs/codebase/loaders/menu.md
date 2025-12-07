@@ -1,7 +1,7 @@
 # loaders/menu.py
 
 **Path:** `resources/lib/skinshortcuts/loaders/menu.py`
-**Lines:** 476
+**Lines:** 484
 **Purpose:** Load menus, groupings, and related configuration from menus.xml.
 
 ---
@@ -32,7 +32,7 @@ Load complete menu configuration from menus.xml.
 
 ---
 
-### load_groupings(path) (line 367)
+### load_groupings(path) (line 371)
 Load shortcut groupings from menus.xml.
 
 **Parameters:**
@@ -122,24 +122,31 @@ Parse a menu item element.
 - `<protect type="..." heading="..." message="..."/>`
 - `widget`, `background`, `submenu`, `required` attributes
 
+**Note:** `widget` and `background` attributes are shorthand for properties.
+
 ---
 
-### _parse_defaults(elem) (line 317)
+### _parse_defaults(elem) (line 321)
 Parse `<defaults>` element for menu-wide defaults.
 
+**Supports:**
+- `<property>` children
+- `<action>` children with `when` and `condition` attributes
+- `widget` and `background` attributes (shorthand for properties)
+
 ---
 
-### _parse_allow(elem) (line 351)
+### _parse_allow(elem) (line 355)
 Parse `<allow>` element for feature toggles.
 
 ---
 
-### _parse_groupings(root, path) (line 400)
+### _parse_groupings(root, path) (line 404)
 Parse `<groupings>` element containing shortcut picker groups.
 
 ---
 
-### _parse_group(elem, path) (line 415)
+### _parse_group(elem, path) (line 419)
 Parse a group element with nested groups, shortcuts, and content refs.
 
 **Children parsed in document order:**
@@ -149,7 +156,7 @@ Parse a group element with nested groups, shortcuts, and content refs.
 
 ---
 
-### _parse_shortcut(elem, path) (line 444)
+### _parse_shortcut(elem, path) (line 451)
 Parse a shortcut element.
 
 **Two modes:**

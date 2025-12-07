@@ -130,6 +130,8 @@ Defines a menu item.
 | `submenu` | No | - | Submenu name to link |
 | `required` | No | `false` | If `true`, cannot be deleted |
 | `visible` | No | - | Kodi condition for dialog visibility filtering (hides item in management dialog) |
+| `widget` | No | - | Shorthand for `<property name="widget">` |
+| `background` | No | - | Shorthand for `<property name="background">` |
 
 ### Child Elements
 
@@ -141,7 +143,7 @@ Defines a menu item.
 | `<icon>` | No | `DefaultShortcut.png` | Icon path |
 | `<thumb>` | No | - | Thumbnail path |
 | `<visible>` | No | - | Visibility condition for generated output |
-| `<disabled>` | No | `false` | If `true`, item appears grayed out |
+| `<disabled>` | No | - | Set to `true` to gray out item |
 | `<property>` | No | - | Custom property (requires `name` attribute) |
 | `<protect>` | No | - | Protection rule |
 
@@ -214,6 +216,14 @@ Menu-level defaults apply to all items in the menu.
 |---------|-------------|
 | `<action>` | Default actions for all items |
 | `<property>` | Default property values |
+
+The `<defaults>` element also supports `widget` and `background` attributes as shorthand:
+
+```xml
+<defaults widget="default-widget" background="default-bg">
+  <property name="otherProp">value</property>
+</defaults>
+```
 
 ### Default Actions
 
@@ -483,3 +493,13 @@ Enable or disable context menu on items:
 ```
 
 Default: `true`. Set to `false`, `no`, or `0` to disable.
+
+---
+
+## Quick Navigation
+
+[Back to Top](#menu-configuration)
+
+**Sections:** [File Structure](#file-structure) | [Menu Element](#menu-element) | [Submenu Element](#submenu-element) | [Item Element](#item-element) | [Actions](#actions) | [Defaults](#defaults) | [Allow Settings](#allow-settings) | [Protection](#protection) | [Shortcut Groupings](#shortcut-groupings) | [Icon Sources](#icon-sources) | [Subdialogs](#subdialogs) | [Action Overrides](#action-overrides) | [Context Menu](#context-menu)
+
+**Related Docs:** [Widgets](widgets.md) | [Backgrounds](backgrounds.md) | [Properties](properties.md) | [Templates](templates.md) | [Conditions](conditions.md)

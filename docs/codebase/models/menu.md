@@ -1,7 +1,7 @@
 # models/menu.py
 
 **Path:** `resources/lib/skinshortcuts/models/menu.py`
-**Lines:** 359
+**Lines:** 362
 **Purpose:** Core dataclass models for menus, menu items, shortcuts, groups, and related structures.
 
 ---
@@ -28,7 +28,7 @@ Source for icon picker browsing.
 
 ---
 
-### Content (line 30)
+### Content (line 29)
 Dynamic content reference resolved at runtime (playlists, addons, sources, etc).
 
 | Field | Type | Default | Description |
@@ -45,7 +45,7 @@ Dynamic content reference resolved at runtime (playlists, addons, sources, etc).
 
 ---
 
-### Action (line 72)
+### Action (line 71)
 An action with optional condition.
 
 | Field | Type | Default | Description |
@@ -57,7 +57,7 @@ An action with optional condition.
 
 ---
 
-### Protection (line 83)
+### Protection (line 82)
 Protection rule for menu items preventing accidental changes.
 
 | Field | Type | Default | Description |
@@ -74,7 +74,7 @@ Protection rule for menu items preventing accidental changes.
 
 ---
 
-### Shortcut (line 112)
+### Shortcut (line 111)
 A shortcut option in picker groupings.
 
 | Field | Type | Default | Description |
@@ -112,7 +112,7 @@ A group/category of shortcuts in picker groupings.
 
 ---
 
-### MenuItem (line 168)
+### MenuItem (line 169)
 A single item in a menu (the core data structure).
 
 | Field | Type | Default | Description |
@@ -140,7 +140,7 @@ A single item in a menu (the core data structure).
 
 ---
 
-### DefaultAction (line 211)
+### DefaultAction (line 213)
 A default action applied to all items in a menu.
 
 | Field | Type | Default | Description |
@@ -153,7 +153,7 @@ A default action applied to all items in a menu.
 
 ---
 
-### MenuDefaults (line 226)
+### MenuDefaults (line 228)
 Default properties and actions for items in a menu.
 
 | Field | Type | Default | Description |
@@ -165,7 +165,7 @@ Default properties and actions for items in a menu.
 
 ---
 
-### MenuAllow (line 234)
+### MenuAllow (line 236)
 Configuration for what features are allowed in a menu.
 
 | Field | Type | Default | Description |
@@ -178,7 +178,7 @@ Configuration for what features are allowed in a menu.
 
 ---
 
-### Menu (line 243)
+### Menu (line 245)
 A menu containing menu items.
 
 | Field | Type | Default | Description |
@@ -200,7 +200,7 @@ A menu containing menu items.
 
 ---
 
-### OnCloseAction (line 289)
+### OnCloseAction (line 291)
 Action to execute when a subdialog closes.
 
 | Field | Type | Default | Description |
@@ -213,7 +213,7 @@ Action to execute when a subdialog closes.
 
 ---
 
-### SubDialog (line 308)
+### SubDialog (line 310)
 Subdialog definition for management dialog.
 
 | Field | Type | Default | Description |
@@ -228,7 +228,7 @@ Subdialog definition for management dialog.
 
 ---
 
-### ActionOverride (line 334)
+### ActionOverride (line 336)
 Replaces deprecated actions with updated versions.
 
 | Field | Type | Default | Description |
@@ -240,7 +240,7 @@ Replaces deprecated actions with updated versions.
 
 ---
 
-### MenuConfig (line 350)
+### MenuConfig (line 352)
 Top-level menu configuration container.
 
 | Field | Type | Default | Description |

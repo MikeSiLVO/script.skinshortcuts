@@ -302,3 +302,13 @@ Suffix transforms are applied automatically when using `suffix` attribute on inc
 3. Brackets are evaluated first (innermost to outermost)
 4. AND (`+`) binds tighter than OR (`|`)
 5. Negation (`!`) applies to immediately following term
+
+---
+
+## Quick Navigation
+
+[Back to Top](#condition-syntax)
+
+**Sections:** [Two Types](#two-types-of-conditions) | [Property Conditions](#property-conditions) | [Kodi Visibility](#kodi-visibility-conditions) | [Syntax](#property-condition-syntax) | [Operators](#operators) | [Combining](#combining-conditions) | [Compact OR](#compact-or-syntax) | [Negation](#negation) | [Grouping](#grouping) | [Examples](#examples)
+
+**Related Docs:** [Templates](templates.md) | [Properties](properties.md) | [Menus](menus.md) | [Widgets](widgets.md)

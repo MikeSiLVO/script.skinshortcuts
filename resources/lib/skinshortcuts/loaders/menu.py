@@ -277,8 +277,7 @@ def _parse_item(elem, menu_name: str, path: str) -> MenuItem:
         if prop_name and prop_elem.text:
             properties[prop_name] = prop_elem.text.strip()
 
-    # Support both <visible> (preferred) and <visibility> (legacy)
-    visible = get_text(elem, "visible") or get_text(elem, "visibility") or ""
+    visible = get_text(elem, "visible") or ""
 
     # Add widget and background as properties if specified (as attributes on the item)
     widget_attr = get_attr(elem, "widget")

@@ -322,3 +322,13 @@ Prompts for confirmation, then deletes userdata and rebuilds.
 6. Script saves changes and closes dialog
 7. Script rebuilds includes if changes were made
 8. Skin reloads to apply new includes
+
+---
+
+## Quick Navigation
+
+[Back to Top](#management-dialog)
+
+**Sections:** [Overview](#overview) | [Dialog XML](#dialog-xml) | [Control IDs](#control-ids) | [Window Properties](#window-properties) | [ListItem Properties](#listitem-properties) | [Subdialogs](#subdialogs) | [Script Commands](#script-commands) | [Dialog Flow](#dialog-flow)
+
+**Related Docs:** [Getting Started](getting-started.md) | [Menus](menus.md) | [Properties](properties.md) | [Builtin Properties](builtin-properties.md)

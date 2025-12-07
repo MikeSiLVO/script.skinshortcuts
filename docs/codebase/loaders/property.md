@@ -52,7 +52,7 @@ Parse a `<property>` element.
 **Parses:**
 - `name` attribute (required)
 - `templateonly` attribute
-- `type` attribute ("widget", "background", or "toggle")
+- `type` attribute ("widget", "background", "toggle", or "options")
 - `requires` attribute (property dependency)
 - `<options>` child
 
@@ -70,7 +70,7 @@ Parse a `<button>` element from the buttons section.
 - `title` attribute - dialog title
 - `showNone` attribute - show "None" option (default true)
 - `showIcons` attribute - show icons (default true)
-- `type` attribute - "widget", "background", "toggle" (overrides property type)
+- `type` attribute - "widget", "background", "toggle", "options" (overrides property type)
 - `requires` attribute - property that must be set first (overrides property requires)
 
 #### _parse_options(options_elem)

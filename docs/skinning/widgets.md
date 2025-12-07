@@ -44,10 +44,9 @@ Widgets and groups are defined directly at the root level:
 
 ```xml
 <widget name="recent-movies" label="$LOCALIZE[20386]" type="movies"
+        target="videos" icon="DefaultRecentlyAddedMovies.png"
         source="library" condition="..." visible="...">
   <path>videodb://recentlyaddedmovies/</path>
-  <target>videos</target>
-  <icon>DefaultRecentlyAddedMovies.png</icon>
   <limit>25</limit>
   <sortby>dateadded</sortby>
   <sortorder>descending</sortorder>
@@ -61,7 +60,9 @@ Widgets and groups are defined directly at the root level:
 | `name` | Yes | - | Unique identifier |
 | `label` | Yes | - | Display label |
 | `type` | No | - | Content type (e.g., `movies`, `episodes`, `albums`) |
-| `source` | No | - | Source type: `library`, `playlist`, `addon` |
+| `target` | No | `videos` | Target window: `videos`, `music`, `pictures`, `programs` |
+| `icon` | No | - | Icon for picker |
+| `source` | No | - | Source type: `library`, `playlist`, `addon`. Inherited from parent group if not set |
 | `condition` | No | - | Property condition (evaluated against item properties) |
 | `visible` | No | - | Kodi visibility condition (evaluated at runtime) |
 | `slot` | No | - | For `type="custom"`: widget property slot |
@@ -71,8 +72,6 @@ Widgets and groups are defined directly at the root level:
 | Element | Required | Default | Description |
 |---------|----------|---------|-------------|
 | `<path>` | Yes* | - | Content path. *Not required for `type="custom"` |
-| `<target>` | No | `videos` | Target window: `videos`, `music`, `pictures`, `programs` |
-| `<icon>` | No | - | Icon for picker |
 | `<limit>` | No | - | Maximum number of items |
 | `<sortby>` | No | - | Sort field |
 | `<sortorder>` | No | - | Sort direction: `ascending` or `descending` |
@@ -279,15 +278,16 @@ Both conditions must pass for the widget to appear.
 
 ## Output Properties
 
-When a widget is assigned to a menu item, these properties are available:
+When a widget is assigned to a menu item, these core properties are set:
 
 | Property | Description |
 |----------|-------------|
 | `widget` | Widget name |
 | `widgetLabel` | Display label |
 | `widgetPath` | Content path |
-| `widgetType` | Widget type |
 | `widgetTarget` | Target window |
+
+Additional properties (like `widgetType`, `widgetSource`, etc.) can be configured via [properties.xml](properties.md).
 
 Access via `ListItem.Property(name)`:
 
@@ -332,3 +332,13 @@ Display additional widgets:
   <visible>!String.IsEmpty(Container(9000).ListItem.Property(widgetPath.2))</visible>
 </control>
 ```
+
+---
+
+## Quick Navigation
+
+[Back to Top](#widget-configuration)
+
+**Sections:** [File Structure](#file-structure) | [Widget Element](#widget-element) | [Widget Types](#widget-types) | [Groups](#groups) | [Dynamic Content](#dynamic-content) | [Conditions](#conditions) | [Output Properties](#output-properties) | [Multiple Widgets](#multiple-widgets)
+
+**Related Docs:** [Menus](menus.md) | [Backgrounds](backgrounds.md) | [Properties](properties.md) | [Templates](templates.md) | [Conditions](conditions.md)
