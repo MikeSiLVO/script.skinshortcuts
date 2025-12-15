@@ -2,61 +2,54 @@ name: Close Translation Pull Requests
 
 on:
   pull_request:
-    branches: [ master, main, dev ]
+    branches: [ main ]
 
 jobs:
 
   close-translation-prs:
-    if: github.actor != 'weblate' && github.actor != 'anxdpanic' && github.repository == 'mikesilvo164/script.skinshortcuts'
+    if: github.actor != 'weblate' && github.repository == 'MikeSiLVO/script.skinshortcuts'
 
     name: Close Translation Pull Requests
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get changed files
-        id: modified_files
-        uses: trilom/file-changes-action@v1.2.4
+      - name: Check and close translation PRs
+        uses: actions/github-script@v7
         with:
-          output: ","
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
 
-      - name: Check the PR for translations
-        id: check
-        run: |
-          shopt -s nocasematch
-          if [[ "${{ steps.modified_files.outputs.files_modified }}" == *"en_gb/strings.po"* ]]; then
-            echo "Found modified en_gb, likely a valid PR"
-            unset CLOSE
-          elif [[ "${{ steps.modified_files.outputs.files_modified }}" == *"strings.po"* ]]; then
-            echo "Found modified strings.po, unwanted."
-            CLOSE="true"
-          elif [[ "${{ steps.modified_files.outputs.files_added }}" == *"strings.po"* ]]; then
-            echo "Found added strings.po, unwanted."
-            CLOSE="true"
-          elif [[ "${{ steps.modified_files.outputs.files_removed }}" == *"strings.po"* ]]; then
-            echo "Found removed strings.po, unwanted."
-            CLOSE="true"
-          else
-            echo "No strings.po were modified or added, not a translation."
-            unset CLOSE
-          fi
-          echo ::set-output name=close::${CLOSE}
+            const hasEnGb = files.some(f => f.filename.includes('en_gb/strings.po'));
+            const hasStrings = files.some(f => f.filename.includes('strings.po'));
 
-      - name: Comment on the PR
-        uses: mshick/add-pr-comment@v1
-        if: ${{ steps.check.outputs.close }}
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: 'github-actions[bot]'
-          allow-repeats: true
-          message: |
-            A modified strings.po file was detected.
+            // Allow if en_gb was modified (likely valid PR) or no strings.po at all
+            if (hasEnGb || !hasStrings) {
+              console.log('Not a translation-only PR, allowing through');
+              return;
+            }
+
+            // Close translation PRs from non-Weblate contributors
+            console.log('Translation PR detected, closing');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `A modified strings.po file was detected.
 
             Translations are not accepted through PRs, please use Weblate if you'd like to contribute to the translations.
-            For more information see Issue #58.
 
             If you feel this PR was closed in error, please reply below.
-            Thank you for your interest in improving this add-on.
+            Thank you for your interest in improving this add-on.`
+            });
 
-      - name: Close the PR
-        uses: peter-evans/close-pull@v1
-        if: ${{ steps.check.outputs.close }}
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              state: 'closed'
+            });

@@ -110,9 +110,9 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 | `<groupings>` | menus | — | — | Shortcut picker structure |
 | `<group>` | groupings | `name`, `label` | `condition`, `visible`, `icon` | Shortcut group |
 | `<shortcut>` | group | `name`, `label` | `icon`, `condition`, `visible`, `path`, `browse` | Shortcut option |
-| `<content>` | group | `source` | `target`, `path`, `condition`, `icon`, `label`, `folder` | Dynamic content |
+| `<content>` | group | `source` | `target`, `path`, `condition`, `visible`, `icon`, `label`, `folder` | Dynamic content |
 | `<icons>` | menus | — | — | Icon browser sources |
-| `<source>` | icons | — | `label`, `condition`, `icon` | Icon source path |
+| `<source>` | icons | — | `label`, `condition`, `visible`, `icon` | Icon source path |
 | `<overrides>` | menus | — | — | Action overrides |
 | `<action>` | overrides | `replace` | — | Replacement action |
 | `<dialogs>` | menus | — | — | Subdialog definitions |
@@ -164,7 +164,7 @@ Defines widgets and widget picker groupings.
 | `<sortby>` | widget | — | — | Sort field |
 | `<sortorder>` | widget | — | — | Sort direction |
 | `<group>` | widgets/group | `name`, `label` | `condition`, `visible`, `icon`, `source` | Widget group |
-| `<content>` | group | `source` | `target`, `path`, `condition`, `icon`, `label`, `folder` | Dynamic content |
+| `<content>` | group | `source` | `target`, `path`, `condition`, `visible`, `icon`, `label`, `folder` | Dynamic content |
 
 ### Widget Types
 
@@ -231,7 +231,7 @@ Defines background options and groupings.
 | `<background>` | backgrounds/group | `name`, `label` | `type`, `condition`, `visible` | Background definition |
 | `<path>` | background | — | — | Image path or info label |
 | `<icon>` | background | — | — | Icon for picker |
-| `<source>` | background | — | `label`, `condition`, `icon` | Browse/playlist source |
+| `<source>` | background | — | `label`, `condition`, `visible`, `icon` | Browse/playlist source |
 | `<group>` | backgrounds/group | `name`, `label` | `condition`, `visible`, `icon` | Background group |
 | `<content>` | group | `source` | `target`, etc. | Dynamic content |
 

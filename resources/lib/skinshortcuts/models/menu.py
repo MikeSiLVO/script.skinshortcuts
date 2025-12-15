@@ -18,11 +18,16 @@ class IconSource:
 
     Used by the icon picker to provide browse locations. Supports both
     simple (single path) and advanced (multiple conditional sources) modes.
+
+    Attributes:
+        condition: Property condition (evaluated against item properties)
+        visible: Kodi visibility condition (evaluated at runtime)
     """
 
     label: str
     path: str  # Path to browse, or "browse" for free file browser
     condition: str = ""
+    visible: str = ""
     icon: str = ""
 
 
@@ -51,7 +56,8 @@ class Content:
             - "tv": Live TV
             - "radio": Radio
         path: Optional custom path (e.g., "special://skin/playlists/")
-        condition: Optional visibility condition
+        condition: Property condition (evaluated against item properties)
+        visible: Kodi visibility condition (evaluated at runtime)
         icon: Optional icon override
         label: Optional label override for the group
         folder: Optional label for wrapping resolved items in a sub-folder.
@@ -63,6 +69,7 @@ class Content:
     target: str = ""
     path: str = ""
     condition: str = ""
+    visible: str = ""
     icon: str = ""
     label: str = ""
     folder: str = ""

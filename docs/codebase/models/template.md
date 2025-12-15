@@ -1,7 +1,7 @@
 # models/template.py
 
 **Path:** `resources/lib/skinshortcuts/models/template.py`
-**Lines:** 245
+**Lines:** 262
 **Purpose:** Dataclass models for the template system (templates.xml).
 
 ---
@@ -193,8 +193,32 @@ Reference to a variable definition.
 
 ---
 
-### VariableGroupReference (line 151)
-Reference to a variable group.
+### VariableGroupRef (line 155)
+Reference to another variableGroup (for nested groups).
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `name` | str | required | Name of the referenced variableGroup |
+
+**Used by:** VariableGroup.group_refs
+
+---
+
+### VariableGroup (line 162)
+Reusable group of variable references.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `name` | str | required | Group name |
+| `references` | list[VariableReference] | [] | Variable references |
+| `group_refs` | list[VariableGroupRef] | [] | Nested group references |
+
+**Used by:** TemplateSchema.variable_groups
+
+---
+
+### VariableGroupReference (line 176)
+Reference to a variable group from a template.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -202,24 +226,11 @@ Reference to a variable group.
 | `suffix` | str | "" | Suffix for transforms |
 | `condition` | str | "" | Condition for applying |
 
-**Used by:** Template.variable_groups, VariableGroup.groups
+**Used by:** Template.variable_groups
 
 ---
 
-### VariableGroup (line 160)
-Reusable group of variable references.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Group name |
-| `variables` | list[VariableReference] | [] | Variable references |
-| `groups` | list[VariableGroupReference] | [] | Nested group references |
-
-**Used by:** TemplateSchema.variable_groups
-
----
-
-### Template (line 173)
+### Template (line 189)
 Main template definition.
 
 | Field | Type | Default | Description |

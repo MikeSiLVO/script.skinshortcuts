@@ -1,12 +1,12 @@
 # constants.py
 
 **Path:** `resources/lib/skinshortcuts/constants.py`
-**Lines:** 87
+**Lines:** 86
 **Purpose:** Central location for all constant values used throughout the addon.
 
 ---
 
-## File Name Constants (lines 5-12)
+## File Name Constants (lines 5-11)
 
 | Constant | Value | Used By |
 |----------|-------|---------|
@@ -17,11 +17,10 @@
 | `PROPERTIES_FILE` | `"properties.xml"` | hashing.py, config.py |
 | `TEMPLATES_FILE` | `"templates.xml"` | hashing.py, config.py |
 | `INCLUDES_FILE` | `"script-skinshortcuts-includes.xml"` | hashing.py, entry.py |
-| `USER_DATA_FILE` | `"userdata.xml"` | **UNUSED** - userdata is JSON not XML |
 
 ---
 
-## Default Values (lines 14-15)
+## Default Values (lines 13-14)
 
 | Constant | Value | Used By |
 |----------|-------|---------|
@@ -30,23 +29,23 @@
 
 ---
 
-## Type Sets (lines 17-55)
+## Type Sets (lines 16-54)
 
-### WIDGET_TYPES (line 17)
+### WIDGET_TYPES (line 16)
 Valid widget content types. Frozen set for immutability and O(1) lookup.
 
 Values: `movies`, `tvshows`, `episodes`, `musicvideos`, `artists`, `albums`, `songs`, `pvr`, `pictures`, `programs`, `addons`, `files`, `custom`
 
 **Used by:** loaders/widget.py for validation
 
-### WIDGET_TARGETS (line 35)
+### WIDGET_TARGETS (line 34)
 Valid widget target windows.
 
 Values: `videos`, `music`, `pictures`, `programs`, `pvr`, `files`
 
 **Used by:** loaders/widget.py for validation
 
-### PROPERTY_TYPES (line 46)
+### PROPERTY_TYPES (line 45)
 Valid property editor types for custom properties.
 
 Values: `select`, `text`, `number`, `bool`, `image`, `path`
@@ -55,9 +54,9 @@ Values: `select`, `text`, `number`, `bool`, `image`, `path`
 
 ---
 
-## Mapping Dictionaries (lines 58-86)
+## Mapping Dictionaries (lines 57-85)
 
-### WINDOW_MAP (line 60)
+### WINDOW_MAP (line 59)
 Maps various content type aliases to canonical Kodi window names.
 
 | Input Aliases | Output |
@@ -71,7 +70,7 @@ Maps various content type aliases to canonical Kodi window names.
 
 **Used by:** providers/content.py
 
-### TARGET_MAP (line 77)
+### TARGET_MAP (line 76)
 Normalizes content target strings to lowercase canonical form.
 
 | Input Aliases | Output |
@@ -82,12 +81,6 @@ Normalizes content target strings to lowercase canonical form.
 | `programs`, `executable` | `programs` |
 
 **Used by:** loaders/widget.py, providers/content.py
-
----
-
-## Dead Code Analysis
-
-- `USER_DATA_FILE = "userdata.xml"` - **UNUSED** - The userdata system uses JSON (`userdata.json`), not XML. This constant is a remnant.
 
 ---
 

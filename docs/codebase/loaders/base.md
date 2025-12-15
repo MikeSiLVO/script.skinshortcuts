@@ -127,7 +127,7 @@ Get boolean from attribute value.
 - `attr` - Attribute name
 - `default` - Default if not found
 
-**Returns:** True if value is "true", "1", or "yes" (case-insensitive)
+**Returns:** True if value is "true" (case-insensitive)
 
 **Used by:** loaders/menu.py, loaders/widget.py
 
@@ -141,9 +141,9 @@ Parse a content reference element.
 
 **Returns:** Content model or None if no source attribute
 
-**Parses attributes:** source, target, path, condition, icon, label, folder
+**Parses attributes:** source, target, path, condition, visible, icon, label, folder
 
-**Used by:** loaders/menu.py, loaders/widget.py
+**Used by:** loaders/menu.py, loaders/widget.py, loaders/background.py
 
 ---
 

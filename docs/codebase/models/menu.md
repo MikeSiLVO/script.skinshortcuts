@@ -21,14 +21,15 @@ Source for icon picker browsing.
 |-------|------|---------|-------------|
 | `label` | str | required | Display label |
 | `path` | str | required | Browse path, or "browse" for file browser |
-| `condition` | str | "" | Visibility condition |
+| `condition` | str | "" | Property condition (evaluated against item properties) |
+| `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
 | `icon` | str | "" | Icon for this source |
 
-**Used by:** dialog.py (icon picker), loaders/menu.py
+**Used by:** dialog/items.py (icon picker), loaders/menu.py
 
 ---
 
-### Content (line 29)
+### Content (line 35)
 Dynamic content reference resolved at runtime (playlists, addons, sources, etc).
 
 | Field | Type | Default | Description |
@@ -36,12 +37,13 @@ Dynamic content reference resolved at runtime (playlists, addons, sources, etc).
 | `source` | str | required | Content type: playlists, addons, library, sources, favourites, pvr, commands, settings |
 | `target` | str | "" | Media context: video, music, pictures, programs, tv, radio |
 | `path` | str | "" | Custom path override |
-| `condition` | str | "" | Visibility condition |
+| `condition` | str | "" | Property condition (evaluated against item properties) |
+| `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
 | `icon` | str | "" | Icon override |
 | `label` | str | "" | Label override |
 | `folder` | str | "" | If set, wrap items in subfolder with this label |
 
-**Used by:** providers/content.py, dialog.py (shortcut picker)
+**Used by:** dialog/pickers.py (shortcut/widget picker)
 
 ---
 
@@ -123,14 +125,19 @@ A single item in a menu (the core data structure).
 | `label2` | str | "" | Secondary label |
 | `icon` | str | "DefaultShortcut.png" | Icon path |
 | `thumb` | str | "" | Thumbnail path |
-| `visible` | str | "" | Visibility condition (output to includes.xml) |
-| `dialog_visible` | str | "" | Kodi visibility condition (filters in management dialog) |
+| `visible` | str | "" | Kodi condition output to includes.xml `<visible>` element |
+| `dialog_visible` | str | "" | Kodi condition to filter item in management dialog |
 | `disabled` | bool | False | If True, item is grayed out |
 | `required` | bool | False | If True, cannot be deleted |
 | `protection` | Protection\|None | None | Protection configuration |
 | `properties` | dict[str,str] | {} | Custom properties (widget, background, etc) |
 | `submenu` | str\|None | None | Submenu reference by name |
 | `original_action` | str | "" | Original action for protection matching |
+
+**Dual Visibility Fields:**
+MenuItem has two visibility fields serving different purposes:
+- `visible` - From `<visible>` child element. Output to generated includes.xml for Kodi runtime evaluation.
+- `dialog_visible` - From `visible=` attribute on `<item>`. Evaluated in Python when loading the management dialog to hide items (e.g., hide "Play Disc" when no disc drive).
 
 **Properties:**
 - `action` (getter) → str - Returns first unconditional action
@@ -219,9 +226,9 @@ Subdialog definition for management dialog.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `button_id` | int | required | Button ID that triggers this subdialog |
-| `mode` | str | required | Mode name for Window.Property(skinshortcuts-dialog) |
+| `mode` | str | required | Mode name for Window(Home).Property(skinshortcuts-dialog) |
 | `setfocus` | int\|None | None | Control ID to focus on open |
-| `suffix` | str | "" | Property suffix for widget slots (e.g., ".2") |
+| `suffix` | str | "" | Property suffix for widget slots (e.g., ".2"). Set in Window(Home).Property(skinshortcuts-suffix) |
 | `onclose` | list[OnCloseAction] | [] | Actions to run on close |
 
 **Used by:** config.py, dialog.py (_spawn_subdialog, _open_subdialog)

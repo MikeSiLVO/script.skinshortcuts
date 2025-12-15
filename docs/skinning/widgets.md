@@ -192,7 +192,8 @@ Add dynamic content from system sources:
 | `target` | Media context: `video`, `music`, `pictures`, `programs`, `tv`, `radio` |
 | `folder` | Wrap items in a folder with this label |
 | `path` | Custom path override |
-| `condition` | Visibility condition |
+| `condition` | Property condition (evaluated against item properties) |
+| `visible` | Kodi visibility condition (evaluated at runtime) |
 | `icon` | Icon override |
 | `label` | Label override |
 

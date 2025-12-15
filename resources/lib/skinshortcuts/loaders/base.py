@@ -122,13 +122,13 @@ def get_bool(elem: ET.Element, attr: str, default: bool = False) -> bool:
     value = elem.get(attr)
     if value is None:
         return default
-    return value.lower() in ("true", "1", "yes")
+    return value.lower() == "true"
 
 
 def parse_content(elem: ET.Element):
     """Parse a content reference element.
 
-    Attributes: source, target, path, condition, icon, label, folder
+    Attributes: source, target, path, condition, visible, icon, label, folder
 
     Returns:
         Content object or None if source is missing
@@ -145,6 +145,7 @@ def parse_content(elem: ET.Element):
         target=get_attr(elem, "target") or "",
         path=get_attr(elem, "path") or "",
         condition=get_attr(elem, "condition") or "",
+        visible=get_attr(elem, "visible") or "",
         icon=get_attr(elem, "icon") or "",
         label=get_attr(elem, "label") or "",
         folder=get_attr(elem, "folder") or "",

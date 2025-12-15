@@ -1,6 +1,6 @@
 # Skin Shortcuts v3 - Codebase Overview
 
-Quick reference for AI assistants and developers. For detailed docs, see [INDEX.md](INDEX.md).
+For detailed docs, see [INDEX.md](INDEX.md).
 
 ---
 
@@ -76,7 +76,7 @@ RunScript(script.skinshortcuts,type=clear,menu=movies.customwidget)
 ```
 menus.xml ──► load_menu_config() ──► MenuConfig (menus, groupings, subdialogs)
 widgets.xml ──► load_widgets() ──► WidgetConfig (widgets, groups)
-backgrounds.xml ──► load_backgrounds() ──► list[Background]
+backgrounds.xml ──► load_backgrounds() ──► BackgroundConfig
 properties.xml ──► load_properties() ──► PropertySchema
 templates.xml ──► load_templates() ──► TemplateSchema
 userdata.json ──► load_userdata() ──► merge into menus

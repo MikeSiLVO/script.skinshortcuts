@@ -658,6 +658,12 @@ class PickersMixin:
 
         for item in items:
             if isinstance(item, Content):
+                # Check property condition
+                if item.condition and not evaluate_condition(item.condition, item_props):
+                    continue
+                # Check Kodi visibility condition
+                if item.visible and not _check_visible(item.visible):
+                    continue
                 if content_resolver:
                     resolved = content_resolver(item)
                     if item.folder and resolved and create_folder_group:

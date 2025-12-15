@@ -150,6 +150,7 @@ class ItemsMixin:
             title=xbmc.getLocalizedString(1030),  # "Choose icon"
             browse_type=2,  # Image file
             mask=".png|.jpg|.gif",
+            item_properties=item.properties,
         )
         if icon and isinstance(icon, str):
             self.manager.set_icon(self.menu_id, item.name, icon)
@@ -258,6 +259,7 @@ class ItemsMixin:
         title: str,
         browse_type: int,
         mask: str = "",
+        item_properties: dict[str, str] | None = None,
     ) -> str | None:
         """Browse for a file using configured sources.
 
@@ -266,15 +268,26 @@ class ItemsMixin:
             title: Dialog title
             browse_type: Kodi browse type (0=folder, 2=image file)
             mask: File mask for filtering (e.g., ".png|.jpg")
+            item_properties: Current item properties for condition evaluation
 
         Returns:
             Selected path, or None if cancelled
         """
-        # Filter sources by condition
+        from ..conditions import evaluate_condition
+
+        props = item_properties or {}
+
+        # Filter sources by condition and visible
         visible_sources = []
         for source in sources:
-            if not source.condition or xbmc.getCondVisibility(source.condition):
-                visible_sources.append(source)
+            # Check property condition
+            if source.condition and not evaluate_condition(source.condition, props):
+                continue
+            # Check Kodi visibility condition
+            visible = getattr(source, "visible", "")
+            if visible and not xbmc.getCondVisibility(visible):
+                continue
+            visible_sources.append(source)
 
         # No sources defined - use free browse
         if not visible_sources:

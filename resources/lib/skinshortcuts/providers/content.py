@@ -69,11 +69,11 @@ class ContentProvider:
 
         Returns:
             List of resolved shortcuts.
-        """
-        # Check visibility condition
-        if content.condition and not xbmc.getCondVisibility(content.condition):
-            return []
 
+        Note:
+            Condition (property) and visible (Kodi visibility) are checked
+            by the caller (picker) before calling this method.
+        """
         source = content.source.lower()
         target = content.target.lower() if content.target else ""
 

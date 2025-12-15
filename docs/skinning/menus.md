@@ -390,7 +390,8 @@ Add dynamic content from system sources:
 | `path` | Custom path override |
 | `label` | Custom label for the content group |
 | `icon` | Custom icon for the content group |
-| `condition` | Kodi visibility condition |
+| `condition` | Property condition (evaluated against item properties) |
+| `visible` | Kodi visibility condition (evaluated at runtime) |
 
 ---
 
@@ -412,10 +413,10 @@ Multiple conditional sources:
 
 ```xml
 <icons>
-  <source label="Colored Icons" condition="Skin.HasSetting(UseColoredIcons)">
+  <source label="Colored Icons" visible="Skin.HasSetting(UseColoredIcons)">
     special://skin/extras/icons/colored/
   </source>
-  <source label="Monochrome Icons" condition="!Skin.HasSetting(UseColoredIcons)">
+  <source label="Monochrome Icons" visible="!Skin.HasSetting(UseColoredIcons)">
     special://skin/extras/icons/mono/
   </source>
   <source label="Browse..." icon="DefaultFolder.png">browse</source>
@@ -425,7 +426,8 @@ Multiple conditional sources:
 | Attribute | Description |
 |-----------|-------------|
 | `label` | Display label in picker |
-| `condition` | Kodi visibility condition |
+| `condition` | Property condition (evaluated against item properties) |
+| `visible` | Kodi visibility condition (evaluated at runtime) |
 | `icon` | Icon for this source |
 
 Use `browse` as the path for free file browser.
@@ -452,9 +454,9 @@ Define subdialogs triggered by button clicks. Used for multi-widget support.
 | Attribute | Required | Description |
 |-----------|----------|-------------|
 | `buttonID` | Yes | Button ID that triggers this subdialog |
-| `mode` | Yes | Value set in `Window.Property(skinshortcuts-dialog)` |
+| `mode` | Yes | Value set in `Window(Home).Property(skinshortcuts-dialog)` |
 | `setfocus` | No | Control ID to focus when subdialog opens |
-| `suffix` | No | Property suffix for widget slots (e.g., `.2`) |
+| `suffix` | No | Property suffix for widget slots (e.g., `.2`). Set in `Window(Home).Property(skinshortcuts-suffix)` |
 
 ### `<onclose>` Attributes
 

@@ -74,6 +74,7 @@ class PropertiesMixin:
             title: str,
             browse_type: int,
             mask: str = "",
+            item_properties: dict[str, str] | None = None,
         ) -> str | None: ...
 
         # Methods from PickersMixin
@@ -328,6 +329,7 @@ class PropertiesMixin:
                     title=resolve_label(bg.label),
                     browse_type=2,  # Image file
                     mask=".jpg|.png|.gif",
+                    item_properties=item.properties,
                 )
                 if path:
                     self._set_background_properties_custom(item, prefix, bg, path)
@@ -341,6 +343,7 @@ class PropertiesMixin:
                     sources=bg.browse_sources,
                     title=resolve_label(bg.label),
                     browse_type=0,  # Folder
+                    item_properties=item.properties,
                 )
                 if path:
                     self._set_background_properties_custom(item, prefix, bg, path)

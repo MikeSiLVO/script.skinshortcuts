@@ -120,7 +120,9 @@ Properties set on the dialog window for conditional visibility:
 | `allowSubmenus` | `true` or `false` |
 | `skinshortcuts-hasdeleted` | `true` if deleted items exist |
 
-### Subdialog Mode
+### Subdialog Mode (Home Window)
+
+These properties are set on the **Home window** (not the dialog) so they remain accessible when native dialogs (like DialogSelect) are open:
 
 | Property | Description |
 |----------|-------------|
@@ -130,9 +132,13 @@ Properties set on the dialog window for conditional visibility:
 ### Usage
 
 ```xml
+<!-- Menu context properties (on dialog window) -->
 <visible>String.IsEqual(Window.Property(allowWidgets),true)</visible>
-<visible>String.IsEmpty(Window.Property(skinshortcuts-dialog))</visible>
-<visible>String.IsEqual(Window.Property(skinshortcuts-dialog),widget1)</visible>
+
+<!-- Subdialog properties (on Home window) -->
+<visible>String.IsEmpty(Window(Home).Property(skinshortcuts-dialog))</visible>
+<visible>String.IsEqual(Window(Home).Property(skinshortcuts-dialog),widget1)</visible>
+<visible>String.IsEqual(Window(Home).Property(skinshortcuts-suffix),.2)</visible>
 ```
 
 ---
@@ -216,35 +222,35 @@ In `menus.xml`:
 ### Dialog Behavior
 
 When button 800 is clicked:
-1. `Window.Property(skinshortcuts-dialog)` = `widget1`
+1. `Window(Home).Property(skinshortcuts-dialog)` = `widget1`
 2. Focus moves to control 309
 3. UI updates to show widget 1 controls
 
 When button 801 is clicked:
-1. `Window.Property(skinshortcuts-dialog)` = `widget2`
-2. `Window.Property(skinshortcuts-suffix)` = `.2`
+1. `Window(Home).Property(skinshortcuts-dialog)` = `widget2`
+2. `Window(Home).Property(skinshortcuts-suffix)` = `.2`
 3. Property reads/writes use `.2` suffix (e.g., `widgetPath.2`)
 
 ### Skin Layout
 
-Use visibility conditions to show different controls:
+Use visibility conditions to show different controls. Note that subdialog properties are on the Home window:
 
 ```xml
 <!-- Main dialog controls -->
 <control type="group">
-  <visible>String.IsEmpty(Window.Property(skinshortcuts-dialog))</visible>
+  <visible>String.IsEmpty(Window(Home).Property(skinshortcuts-dialog))</visible>
   <!-- Main menu editing controls -->
 </control>
 
 <!-- Widget 1 subdialog controls -->
 <control type="group">
-  <visible>String.IsEqual(Window.Property(skinshortcuts-dialog),widget1)</visible>
+  <visible>String.IsEqual(Window(Home).Property(skinshortcuts-dialog),widget1)</visible>
   <!-- Widget editing controls -->
 </control>
 
 <!-- Widget 2 subdialog controls -->
 <control type="group">
-  <visible>String.IsEqual(Window.Property(skinshortcuts-dialog),widget2)</visible>
+  <visible>String.IsEqual(Window(Home).Property(skinshortcuts-dialog),widget2)</visible>
   <!-- Widget editing controls (same layout, different suffix) -->
 </control>
 ```

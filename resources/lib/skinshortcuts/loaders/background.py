@@ -102,6 +102,7 @@ def _parse_background(elem, path: str) -> Background:
                 label=source_label,
                 path=source_path,
                 condition=get_attr(source_elem, "condition") or "",
+                visible=get_attr(source_elem, "visible") or "",
                 icon=get_attr(source_elem, "icon") or "",
             ))
         else:

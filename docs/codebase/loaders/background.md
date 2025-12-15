@@ -76,7 +76,7 @@ Parse a background element.
 - `<source>` - Optional (multiple allowed)
 
 **Source parsing depends on type:**
-- BROWSE, MULTI → BrowseSource (with condition, icon)
+- BROWSE, MULTI → BrowseSource (with condition, visible, icon)
 - PLAYLIST, LIVE_PLAYLIST → PlaylistSource (with icon)
 
 **Raises:** BackgroundConfigError if missing required fields
@@ -114,7 +114,7 @@ Parse a background group element.
 
   <!-- Browse for single image -->
   <background name="custom" label="Custom Image" type="browse">
-    <source label="Pictures" condition="...">special://pictures/</source>
+    <source label="Pictures" condition="..." visible="...">special://pictures/</source>
     <source label="Browse...">browse</source>
   </background>
 

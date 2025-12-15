@@ -64,9 +64,10 @@ A source path for browse dialogs.
 | `label` | str | required | Display label |
 | `path` | str | required | Browse starting path, or "browse" for free browser |
 | `condition` | str | "" | Property condition (evaluated against item properties) |
+| `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
 | `icon` | str | "" | Icon for this source |
 
-**Used by:** Background.browse_sources, dialog.py
+**Used by:** Background.browse_sources, dialog/items.py, dialog/properties.py
 
 ---
 

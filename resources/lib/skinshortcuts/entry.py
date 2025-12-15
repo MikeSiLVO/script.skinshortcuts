@@ -298,7 +298,7 @@ def main() -> None:
     if action == "buildxml":
         shortcuts_path = args.get("path")
         output_path = args.get("output")
-        force = args.get("force", "").lower() in ("true", "1", "yes")
+        force = args.get("force", "").lower() == "true"
         build_includes(shortcuts_path, output_path, force)
     elif action == "manage":
         menu_id = args.get("menu", "mainmenu")

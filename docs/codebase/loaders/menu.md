@@ -56,7 +56,13 @@ Parse icon sources from `<icons>` element.
 
 **Supports two formats:**
 1. Simple: `<icons>path/to/icons/</icons>`
-2. Advanced: `<icons><source label="..." condition="...">path</source></icons>`
+2. Advanced: `<icons><source label="..." condition="..." visible="...">path</source></icons>`
+
+**Attributes parsed:**
+- `label` - Display label in picker
+- `condition` - Property condition (evaluated against item properties)
+- `visible` - Kodi visibility condition (evaluated at runtime)
+- `icon` - Icon for this source
 
 ---
 

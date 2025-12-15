@@ -96,6 +96,7 @@ def _parse_icons(root) -> list[IconSource]:
                     label=label,
                     path=path,
                     condition=get_attr(source_elem, "condition") or "",
+                    visible=get_attr(source_elem, "visible") or "",
                     icon=get_attr(source_elem, "icon") or "",
                 ))
     else:
@@ -358,7 +359,7 @@ def _parse_allow(elem) -> MenuAllow:
     def parse_bool(value: str | None, default: bool = True) -> bool:
         if value is None:
             return default
-        return value.lower() in ("true", "1", "yes")
+        return value.lower() == "true"
 
     return MenuAllow(
         widgets=parse_bool(get_attr(elem, "widgets")),

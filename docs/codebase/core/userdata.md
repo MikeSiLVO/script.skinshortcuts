@@ -1,7 +1,7 @@
 # userdata.py
 
 **Path:** `resources/lib/skinshortcuts/userdata.py`
-**Lines:** 256
+**Lines:** 290
 **Purpose:** User customization storage and merging with skin defaults.
 
 ---
@@ -23,7 +23,7 @@ Get path to userdata file for current skin.
 
 ---
 
-### load_userdata(path=None) → UserData (line 94)
+### load_userdata(path=None) → UserData (line 123)
 Load user data from JSON file.
 
 **Parameters:**
@@ -33,7 +33,7 @@ Load user data from JSON file.
 
 ---
 
-### save_userdata(userdata, path=None) → bool (line 143)
+### save_userdata(userdata, path=None) → bool (line 144)
 Save user data to JSON file.
 
 Creates parent directories if needed.
@@ -56,7 +56,16 @@ Only includes fields that have values set (non-None, non-empty).
 
 ---
 
-### merge_menu(default_menu, override) → Menu (line 161)
+## Merge Functions
+
+### _check_dialog_visible(condition) → bool (line 164)
+Check if a Kodi visibility condition is true.
+
+**Used for:** Filtering items in management dialog based on `dialog_visible` attribute.
+
+---
+
+### merge_menu(default_menu, override) → Menu (line 176)
 Merge default menu with user overrides.
 
 **Merge logic:**
@@ -71,7 +80,7 @@ Merge default menu with user overrides.
 
 ---
 
-### _apply_override(item, override) → MenuItem (line 229)
+### _apply_override(item, override) → MenuItem (line 263)
 Apply user override to a menu item.
 
 **Applied fields (if not None):**
@@ -88,7 +97,7 @@ Apply user override to a menu item.
 
 ---
 
-### _create_item_from_override(override) → MenuItem (line 248)
+### _create_item_from_override(override) → MenuItem (line 282)
 Create a new menu item from user override.
 
 **Used for:** is_new=True items (user-added)
@@ -127,7 +136,7 @@ User overrides for a menu.
 
 ---
 
-### UserData (line 53)
+### UserData (line 85)
 All user customizations for a skin.
 
 | Field | Type | Default | Description |

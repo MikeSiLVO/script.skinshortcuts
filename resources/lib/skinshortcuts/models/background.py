@@ -40,11 +40,16 @@ class BrowseSource:
 
     Used by browse/multi background types to provide multiple
     conditional starting paths for file browsing.
+
+    Attributes:
+        condition: Property condition (evaluated against item properties)
+        visible: Kodi visibility condition (evaluated at runtime)
     """
 
     label: str
     path: str  # Path to browse from, or "browse" for free file browser
     condition: str = ""
+    visible: str = ""
     icon: str = ""
 
 

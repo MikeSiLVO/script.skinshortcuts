@@ -259,6 +259,12 @@ class SubdialogsMixin:
         child.doModal()
         del child
 
-        # Show parent again and refresh in case item changed
+        self._clear_subdialog_list()
+
+        # Clear all visibility properties together
         self.clearProperty("additionalDialog")
+        home = xbmcgui.Window(10000)
+        home.clearProperty("skinshortcuts-suffix")
+        home.clearProperty("skinshortcuts-dialog")
+
         self._refresh_selected_item()

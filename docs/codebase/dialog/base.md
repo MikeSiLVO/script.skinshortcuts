@@ -62,8 +62,8 @@ Get path to current skin's shortcuts folder.
 | `icon_sources` | list[IconSource] | None | Shared icon sources |
 | `show_context_menu` | bool | None | Context menu visibility |
 | `subdialogs` | list[SubDialog] | None | Subdialog definitions |
-| `dialog_mode` | str | "" | Mode for Window.Property |
-| `property_suffix` | str | "" | Suffix for widget slots |
+| `dialog_mode` | str | "" | Mode for Home window property |
+| `property_suffix` | str | "" | Suffix for widget slots (set on Home) |
 | `setfocus` | int | None | Control to focus on open |
 | `selected_index` | int | None | Item index to select |
 | `deleted_items` | dict | None | Shared deleted items tracker |
@@ -80,14 +80,15 @@ Called when dialog is initialized (and on regain focus).
 1. Create or reuse MenuManager
 2. Load or reuse PropertySchema
 3. Load icon sources, context menu toggle, subdialogs
-4. Set dialog mode properties
+4. Set dialog mode properties on Home window (clears stale props if root dialog)
 5. Load and display menu items
 6. Set focus if specified
 
-### close() (line 555)
+### close() (line 563)
 
 Save changes and close dialog.
 
+Clears Home window properties (`skinshortcuts-dialog`, `skinshortcuts-suffix`) if set.
 Only root dialog saves - child dialogs share the manager.
 
 ---

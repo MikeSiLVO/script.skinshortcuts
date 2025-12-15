@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 
 # Control IDs (matching v2 for compatibility)
 CONTROL_LIST = 211  # Menu items list
+CONTROL_SUBDIALOG_LIST = 212  # Subdialog context list
 CONTROL_ADD = 301  # Add item
 CONTROL_DELETE = 302  # Delete item
 CONTROL_MOVE_UP = 303  # Move up
@@ -223,13 +224,16 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 # Build subdialogs lookup
                 self._subdialogs = {sd.button_id: sd for sd in menu_config.subdialogs}
 
-        # Set dialog mode and suffix properties if this is a sub-dialog
-        if self.dialog_mode:
-            self.setProperty("skinshortcuts-dialog", self.dialog_mode)
-            self._log(f"Set dialog mode property: skinshortcuts-dialog={self.dialog_mode}")
+        # Set dialog mode and suffix properties on Home window
+        home = xbmcgui.Window(10000)
+        if not self.is_child:
+            # Clear stale properties from previous session/crash
+            home.clearProperty("skinshortcuts-dialog")
+            home.clearProperty("skinshortcuts-suffix")
         if self.property_suffix:
-            self.setProperty("skinshortcuts-suffix", self.property_suffix)
-            self._log(f"Set suffix property: skinshortcuts-suffix={self.property_suffix}")
+            home.setProperty("skinshortcuts-suffix", self.property_suffix)
+        if self.dialog_mode:
+            home.setProperty("skinshortcuts-dialog", self.dialog_mode)
 
         self._load_items()
         self._log(f"Loaded {len(self.items)} items for menu '{self.menu_id}'")
@@ -268,6 +272,39 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def _display_items(self) -> None:
         """Display items in the list control. Called once during onInit."""
         self._rebuild_list(focus_index=self._selected_index)
+        # Populate subdialog list (212) if in subdialog mode
+        if self.dialog_mode:
+            self._populate_subdialog_list()
+
+    def _populate_subdialog_list(self) -> None:
+        """Populate Container 212 with current item for subdialog variable access.
+
+        Container 212 is a single-item list used by widget settings controls
+        to read properties without conflicting with the parent dialog's Container 211.
+        """
+        try:
+            subdialog_list = self.getControl(CONTROL_SUBDIALOG_LIST)
+        except RuntimeError:
+            self._log("Container 212 not found in skin - subdialog list not populated")
+            return
+
+        subdialog_list.reset()
+
+        # Get current selected item
+        item = self._get_selected_item()
+        if item:
+            listitem = self._create_listitem(item)
+            subdialog_list.addItem(listitem)
+            subdialog_list.selectItem(0)
+            self._log(f"Populated subdialog list (212) with item: {item.name}")
+
+    def _clear_subdialog_list(self) -> None:
+        """Clear Container 212 after subdialog closes."""
+        try:
+            subdialog_list = self.getControl(CONTROL_SUBDIALOG_LIST)
+            subdialog_list.reset()
+        except RuntimeError:
+            pass
 
     def _rebuild_list(self, focus_index: int | None = None) -> None:
         """Rebuild the list control from self.items.
@@ -354,12 +391,20 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 "label",
             ):
                 continue
-            # Skip widget-related properties if no widget is set
+            # Skip widget-related properties if no widget is set for that slot
             # (don't show fallback values for widgetStyle/widgetArt when widget is cleared)
-            if not widget_name and prop_name.startswith("widget"):
-                listitem.setProperty(prop_name, "")
-                listitem.setProperty(f"{prop_name}Label", "")
-                continue
+            # Check suffix to determine which widget slot this property belongs to
+            if prop_name.startswith("widget"):
+                # Extract suffix (e.g., ".2" from "widgetStyle.2")
+                if "." in prop_name:
+                    suffix = "." + prop_name.split(".", 1)[-1]
+                    slot_widget = item.properties.get(f"widget{suffix}", "")
+                else:
+                    slot_widget = widget_name
+                if not slot_widget:
+                    listitem.setProperty(prop_name, "")
+                    listitem.setProperty(f"{prop_name}Label", "")
+                    continue
             listitem.setProperty(prop_name, prop_value)
             # Look up the resolved label for this value from schema
             resolved_label = self._get_property_label(prop_name, prop_value)
@@ -401,6 +446,10 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         listitem = self._get_selected_listitem()
         if listitem:
             self._populate_listitem(listitem, self.items[index])
+
+        # Also refresh subdialog list (212) if in subdialog mode
+        if self.dialog_mode:
+            self._populate_subdialog_list()
 
     def _get_selected_index(self) -> int:
         """Get the currently selected list index."""
@@ -554,28 +603,14 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             self._show_context_menu()
 
     def close(self) -> None:
-        """Save changes and close dialog."""
-        has_mgr = self.manager is not None
-        self._log(f"close() called: is_child={self.is_child}, has_manager={has_mgr}")
+        """Save changes and close dialog.
 
-        # Clear dialog mode and suffix properties if this was a sub-dialog
-        if self.dialog_mode:
-            self.clearProperty("skinshortcuts-dialog")
-            self._log("Cleared dialog mode property: skinshortcuts-dialog")
-        if self.property_suffix:
-            self.clearProperty("skinshortcuts-suffix")
-            self._log("Cleared suffix property: skinshortcuts-suffix")
-
-        # Only root dialog saves (child dialogs share the manager)
+        Note: Home properties (skinshortcuts-dialog/suffix) are cleared by
+        the parent after doModal() returns, not here.
+        """
         if not self.is_child and self.manager and self.manager.has_changes():
-            self._log("Saving changes...")
             self.manager.save()
             self.changes_saved = True
-            self._log("Changes saved, changes_saved=True")
-        else:
-            has_changes = self.manager.has_changes() if self.manager else "no manager"
-            self._log(f"Not saving: is_child={self.is_child}, has_changes={has_changes}")
-        # Call parent close() - xbmcgui.WindowXMLDialog.close()
         xbmcgui.WindowXMLDialog.close(self)
 
     # Abstract methods that must be implemented by other mixins

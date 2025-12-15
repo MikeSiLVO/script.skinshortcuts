@@ -4,7 +4,7 @@
 **Total Files:** 35 Python source files
 **Total Lines:** ~8,200
 
-**Quick Start:** See [OVERVIEW.md](OVERVIEW.md) for AI-friendly quick reference.
+**Quick Start:** See [OVERVIEW.md](OVERVIEW.md)
 
 ---
 
@@ -40,7 +40,7 @@
 | Overview | [README.md](models/README.md) | - | Package overview |
 | menu.py | [menu.md](models/menu.md) | ~360 | Menu/item models |
 | widget.py | [widget.md](models/widget.md) | ~80 | Widget models |
-| background.py | [background.md](models/background.md) | ~60 | Background models |
+| background.py | [background.md](models/background.md) | ~96 | Background models |
 | property.py | [property.md](models/property.md) | ~100 | Property schema models |
 | template.py | [template.md](models/template.md) | ~260 | Template models |
 
@@ -50,8 +50,8 @@
 | Overview | [README.md](loaders/README.md) | - | Package overview |
 | base.py | [base.md](loaders/base.md) | ~150 | Base XML utilities |
 | menu.py | [menu.md](loaders/menu.md) | ~480 | Menu config loader |
-| widget.py | [widget.md](loaders/widget.md) | ~150 | Widget config loader |
-| background.py | [background.md](loaders/background.md) | ~100 | Background loader |
+| widget.py | [widget.md](loaders/widget.md) | ~122 | Widget config loader |
+| background.py | [background.md](loaders/background.md) | ~162 | Background loader |
 | property.py | [property.md](loaders/property.md) | ~280 | Property schema loader |
 | template.py | [template.md](loaders/template.md) | ~480 | Template schema loader |
 
@@ -60,7 +60,7 @@
 |------|-----|-------|---------|
 | Overview | [README.md](builders/README.md) | - | Package overview |
 | includes.py | [includes.md](builders/includes.md) | ~290 | Includes.xml builder |
-| template.py | [template.md](builders/template.md) | ~830 | Template processor |
+| template.py | [template.md](builders/template.md) | ~850 | Template processor |
 
 ### Providers Package (`providers/`)
 | File | Doc | Lines | Purpose |
@@ -87,7 +87,7 @@ RunScript(script.skinshortcuts,...)
 SkinConfig.load()
     ├── load_menu_config() → MenuConfig
     ├── load_widgets() → WidgetConfig
-    ├── load_backgrounds() → list[Background]
+    ├── load_backgrounds() → BackgroundConfig
     ├── load_templates() → TemplateSchema
     ├── load_properties() → PropertySchema
     └── load_userdata() → UserData

@@ -284,10 +284,17 @@ Both `<source>` elements are used differently based on background type:
 Sources provide starting locations for the file browser. Can include conditions:
 
 ```xml
-<source label="HD Backgrounds" condition="Skin.HasSetting(UseHD)">
+<source label="HD Backgrounds" visible="Skin.HasSetting(UseHD)">
   special://skin/backgrounds/hd/
 </source>
 ```
+
+| Attribute | Description |
+|-----------|-------------|
+| `label` | Display label in picker |
+| `condition` | Property condition (evaluated against item properties) |
+| `visible` | Kodi visibility condition (evaluated at runtime) |
+| `icon` | Icon for this source |
 
 ### For playlist/live-playlist types
 
