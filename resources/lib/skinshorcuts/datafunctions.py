@@ -563,21 +563,22 @@ class DataFunctions:
 
     def _get_overrides_user(self, profile_dir="special://profile"):
         # Get overrides.xml provided by user
-        if "user" in self.overrides:
-            return self.overrides["user"]
+        cache_key = "user-%s" % profile_dir
+        if cache_key in self.overrides:
+            return self.overrides[cache_key]
 
         override_path = os.path.join(profile_dir, "overrides.xml")
         self.hashable.add(override_path)
         try:
             tree = ETree.parse(xbmcvfs.translatePath(override_path))
-            self.overrides["user"] = tree
+            self.overrides[cache_key] = tree
             return tree
         except:
             if xbmcvfs.exists(override_path):
                 log("Unable to parse user overrides.xml. Invalid xml?")
 
             tree = ETree.ElementTree(ETree.Element("overrides"))
-            self.overrides["user"] = tree
+            self.overrides[cache_key] = tree
             return tree
 
     def get_additionalproperties(self):
