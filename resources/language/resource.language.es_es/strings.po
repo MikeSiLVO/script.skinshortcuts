@@ -3,18 +3,18 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: translations@kodi.tv\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2021-11-11 02:30+0000\n"
-"Last-Translator: bsoriano <bsoriano@gmail.com>\n"
+"PO-Revision-Date: 2024-07-30 06:26+0000\n"
+"Last-Translator: roliverosc <roliverosc@hotmail.com>\n"
 "Language-Team: Spanish (Spain) <https://kodi.weblate.cloud/projects/kodi-add-ons-scripts/script-skinshortcuts/es_es/>\n"
 "Language: es_es\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.8.1\n"
+"X-Generator: Weblate 5.6.2\n"
 
 msgctxt "Addon Description"
 msgid "Add-on for skins to provide simple managing and listing of user shortcuts (requires skin support)"
-msgstr "Complemento para las pieles para proporcionar una gestión sencilla y lista de atajos de usuario (requiere que la piel lo soporte)"
+msgstr "Complemento para skins para proporcionar una gestión y listado sencillo de accesos directos de usuario (requiere que el skin lo soporte)"
 
 msgctxt "#32000"
 msgid "Add"
@@ -26,19 +26,19 @@ msgstr "Eliminar"
 
 msgctxt "#32002"
 msgid "Move Up"
-msgstr "Mover Arriba"
+msgstr "Mover arriba"
 
 msgctxt "#32003"
 msgid "Move Down"
-msgstr "Mover Abajo"
+msgstr "Mover abajo"
 
 msgctxt "#32004"
 msgid "Video Playlist"
-msgstr "Lista de reproducción de Vídeo"
+msgstr "Lista de reproducción de vídeo"
 
 msgctxt "#32005"
 msgid "Music Playlist"
-msgstr "Lista de reproducción de Música"
+msgstr "Lista de reproducción de música"
 
 msgctxt "#32006"
 msgid "Favourite"
@@ -50,7 +50,7 @@ msgstr "Add-On"
 
 msgctxt "#32008"
 msgid "Mixed Playlist"
-msgstr "Lista de reproducción Mixta"
+msgstr "Lista de reproducción mixta"
 
 msgctxt "#32009"
 msgid "Program"
@@ -58,15 +58,15 @@ msgstr "Programa"
 
 msgctxt "#32010"
 msgid "Video Add-On"
-msgstr "Add-on de Vídeo"
+msgstr "Add-on de vídeo"
 
 msgctxt "#32011"
 msgid "Music Add-On"
-msgstr "Add-on de Música"
+msgstr "Add-on de música"
 
 msgctxt "#32012"
 msgid "Picture Add-On"
-msgstr "Add-On de Imágenes"
+msgstr "Add-on de imágenes"
 
 msgctxt "#32013"
 msgid "<None>"
@@ -82,15 +82,15 @@ msgstr "Películas"
 
 msgctxt "#32016"
 msgid "TV Shows"
-msgstr "Series TV"
+msgstr "Series de TV"
 
 msgctxt "#32017"
 msgid "Live TV"
-msgstr "TV en Directo"
+msgstr "TV en directo"
 
 msgctxt "#32018"
 msgid "Music Videos"
-msgstr "Videoclips"
+msgstr "Vídeo musical"
 
 msgctxt "#32019"
 msgid "Music"
@@ -114,11 +114,11 @@ msgstr "Temporizadores"
 
 msgctxt "#32024"
 msgid "Custom item"
-msgstr "Elemento Personalizado"
+msgstr "Elemento personalizado"
 
 msgctxt "#32025"
 msgid "Set label"
-msgstr "Establecer Etiqueta"
+msgstr "Establecer etiqueta"
 
 msgctxt "#32026"
 msgid "Set thumbnail"
@@ -138,11 +138,11 @@ msgstr "Común"
 
 msgctxt "#32030"
 msgid "Video Library"
-msgstr "Biblioteca de Vídeo"
+msgstr "Biblioteca de vídeo"
 
 msgctxt "#32031"
 msgid "Music Library"
-msgstr "Biblioteca de Música"
+msgstr "Biblioteca de música"
 
 msgctxt "#32032"
 msgid "Play DVD"
@@ -158,7 +158,7 @@ msgstr "Elemento de menú común"
 
 msgctxt "#32035"
 msgid "Choose which items to display on the Main Menu"
-msgstr "Seleccione que elementos mostrar en el Menú Principal"
+msgstr "Seleccione que elementos mostrar en el menú principal"
 
 msgctxt "#32036"
 msgid "Choose shortcuts for %s"
@@ -170,7 +170,7 @@ msgstr "Restablecer todos los elementos de menú"
 
 msgctxt "#32038"
 msgid "Are you sure you want to reset all menu items back to default?"
-msgstr "¿Está seguro(a) que quiere restablecer todos los elementos de menú a sus valores predeterminados?"
+msgstr "¿Está seguro que quiere restablecer todos los elementos de menú a sus valores predeterminados?"
 
 msgctxt "#32039"
 msgid "Pick widget for %s"
@@ -202,11 +202,11 @@ msgstr "Seleccionar fondo"
 
 msgctxt "#32046"
 msgid "Update video library"
-msgstr "Actualizar biblioteca de Vídeo"
+msgstr "Actualizar biblioteca de vídeo"
 
 msgctxt "#32047"
 msgid "Update audio library"
-msgstr "Actualizar biblioteca de Música"
+msgstr "Actualizar biblioteca de música"
 
 msgctxt "#32048"
 msgid "Choose item for menu"
@@ -214,7 +214,7 @@ msgstr "Seleccione elemento para menú"
 
 msgctxt "#32049"
 msgid "Building menu..."
-msgstr "Construyendo menú ..."
+msgstr "Construyendo menú..."
 
 msgctxt "#32050"
 msgid "Default"
@@ -242,7 +242,7 @@ msgstr "Limpiar la biblioteca de vídeo"
 
 msgctxt "#32056"
 msgid "Clean audio library"
-msgstr "Limpiar la biblioteca de música"
+msgstr "Limpiar biblioteca de audio"
 
 msgctxt "#32057"
 msgid "Kodi Commands"
@@ -254,7 +254,7 @@ msgstr "Crear elemento de menú aquí"
 
 msgctxt "#32059"
 msgid "Skin Playlist"
-msgstr "Lista de reproducción de Skin"
+msgstr "Lista de reproducción de skin"
 
 msgctxt "#32060"
 msgid "What do you want to do with the playlist?"
@@ -278,7 +278,7 @@ msgstr "No hay elementos disponibles"
 
 msgctxt "#32065"
 msgid "There are no available items to choose from for the category that you choose."
-msgstr "No hay elementos disponibles para seleccionar de la categoría que usted eligió."
+msgstr "No hay elementos disponibles para seleccionar de la categoría que elegiste."
 
 msgctxt "#32066"
 msgid "Last TV channel"
@@ -302,19 +302,19 @@ msgstr "UPnP"
 
 msgctxt "#32071"
 msgid "Customize Main Menu"
-msgstr "Personalizar Menú Principal"
+msgstr "Personalizar menú principal"
 
 msgctxt "#32072"
 msgid "Customize Submenu"
-msgstr "Personalizar Submenú"
+msgstr "Personalizar submenú"
 
 msgctxt "#32073"
 msgid "Music Source"
-msgstr "Fuente de Música"
+msgstr "Fuente de música"
 
 msgctxt "#32074"
 msgid "Library Sources"
-msgstr "Fuentes de Biblioteca"
+msgstr "Fuentes de biblioteca"
 
 msgctxt "#32075"
 msgid "Sources"
@@ -334,11 +334,11 @@ msgstr "Pantalla..."
 
 msgctxt "#32079"
 msgid "Files view"
-msgstr "Vista de Archivos"
+msgstr "Vista de archivos"
 
 msgctxt "#32080"
 msgid "Edit %s Submenu"
-msgstr "Editar Submenú %s"
+msgstr "Editar submenú %s"
 
 msgctxt "#32081"
 msgid "Movies not in this source"
@@ -350,7 +350,7 @@ msgstr "No hay series en esta fuente"
 
 msgctxt "#32083"
 msgid "Music Videos not in this source"
-msgstr "No hay videoclips en esta fuente"
+msgstr "No hay vídeos musicales en esta fuente"
 
 msgctxt "#32084"
 msgid "Songs not in this source"
@@ -426,7 +426,7 @@ msgstr "Seleccionar propiedad"
 
 msgctxt "#32102"
 msgid "Restore or reset?"
-msgstr "¿Restaurar o Restablecer?"
+msgstr "¿Restaurar o restablecer?"
 
 msgctxt "#32103"
 msgid "Restore an original menu item"
@@ -450,7 +450,7 @@ msgstr "Activar widgets predeterminados"
 
 msgctxt "#32108"
 msgid "Party mode (music videos)"
-msgstr "Modo Fiesta (videoclips)"
+msgstr "Modo fiesta (vídeo musical)"
 
 msgctxt "#32109"
 msgid "No menus from compatible skins found to import"
@@ -482,15 +482,15 @@ msgstr "No pudo optenerse listado de directorio[CR][CR]Mire la bitácora para de
 
 msgctxt "#32116"
 msgid "The skin you are using does not support adding items directly to the main menu"
-msgstr "La skin que está utilizando no soporta adicionar ítems directamente al menú principal"
+msgstr "El skin que estás usando no admite añadir elementos directamente al menú principal"
 
 msgctxt "#32117"
 msgid "Disable shortcut"
-msgstr "Desactivar atajo"
+msgstr "Desactivar acceso directo"
 
 msgctxt "#32118"
 msgid "Smart shortcuts"
-msgstr "Atajos Inteligentes"
+msgstr "Accesos directos inteligentes"
 
 msgctxt "#32119"
 msgid "Default widgets"
@@ -498,7 +498,7 @@ msgstr "Widgets por defecto"
 
 msgctxt "#32120"
 msgid "Never hide PVR shortcuts"
-msgstr "Nunca ocultar atajos de PVR"
+msgstr "Nunca ocultar acceso directo de PVR"
 
 msgctxt "#32121"
 msgid "Share menu between compatible skins"
@@ -506,7 +506,7 @@ msgstr "Compartir menú entre skins compatibles"
 
 msgctxt "#32122"
 msgid "Enable debug logging"
-msgstr "Activar bitácora de depuración"
+msgstr "Activar registro de depuración"
 
 msgctxt "#32123"
 msgid "Games"
@@ -514,7 +514,7 @@ msgstr "Juegos"
 
 msgctxt "#32124"
 msgid "This addon is for skin developers, and requires skin support"
-msgstr "Este complemento es para desarrolladores de skins, y requiere soporte de skin"
+msgstr "Este complemento es para desarrolladores de skins, y requiere el soporte del skin"
 
 #~ msgctxt "#32024"
 #~ msgid "Custom shortcut"
