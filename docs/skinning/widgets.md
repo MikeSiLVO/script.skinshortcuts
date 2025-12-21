@@ -2,20 +2,20 @@
 
 The `widgets.xml` file defines widgets that users can assign to menu items.
 
----
+***
 
 ## Table of Contents
 
-- [File Structure](#file-structure)
-- [Widget Element](#widget-element)
-- [Widget Types](#widget-types)
-- [Groups](#groups)
-- [Dynamic Content](#dynamic-content)
-- [Conditions](#conditions)
-- [Output Properties](#output-properties)
-- [Multiple Widgets](#multiple-widgets)
+* [File Structure](#file-structure)
+* [Widget Element](#widget-element)
+* [Widget Types](#widget-types)
+* [Groups](#groups)
+* [Dynamic Content](#dynamic-content)
+* [Conditions](#conditions)
+* [Output Properties](#output-properties)
+* [Multiple Widgets](#multiple-widgets)
 
----
+***
 
 ## File Structure
 
@@ -38,7 +38,7 @@ Widgets and groups are defined directly at the root level:
 </widgets>
 ```
 
----
+***
 
 ## Widget Element
 
@@ -71,7 +71,7 @@ Widgets and groups are defined directly at the root level:
 
 | Element | Required | Default | Description |
 |---------|----------|---------|-------------|
-| `<path>` | Yes* | - | Content path. *Not required for `type="custom"` |
+| `<path>` | Yes\* | - | Content path. \*Not required for `type="custom"` |
 | `<limit>` | No | - | Maximum number of items |
 | `<sortby>` | No | - | Sort field |
 | `<sortorder>` | No | - | Sort direction: `ascending` or `descending` |
@@ -92,7 +92,7 @@ Widgets and groups are defined directly at the root level:
 <path>plugin://plugin.video.example/?action=list</path>
 ```
 
----
+***
 
 ## Widget Types
 
@@ -126,7 +126,7 @@ Custom widgets let users define their own item list:
 
 When selected, the dialog opens an item editor for the custom menu.
 
----
+***
 
 ## Groups
 
@@ -171,11 +171,12 @@ Organize widgets into categories for the picker dialog:
 | `visible` | No | Kodi visibility condition (evaluated at runtime) |
 
 Groups can contain:
-- `<widget>` - Widget definitions
-- `<group>` - Nested groups
-- `<content>` - Dynamic content
 
----
+* `<widget>` - Widget definitions
+* `<group>` - Nested groups
+* `<content>` - Dynamic content
+
+***
 
 ## Dynamic Content
 
@@ -188,7 +189,7 @@ Add dynamic content from system sources:
 
 | Attribute | Description |
 |-----------|-------------|
-| `source` | Content type: `playlists`, `addons`, `sources`, `favourites`, `pvr`, `commands`, `settings`, `library` |
+| `source` | Content type: `playlists`, `addons`, `sources`, `favourites`, `pvr`, `commands`, `settings`, `library`, `nodes` |
 | `target` | Media context: `video`, `music`, `pictures`, `programs`, `tv`, `radio` |
 | `folder` | Wrap items in a folder with this label |
 | `path` | Custom path override |
@@ -197,9 +198,27 @@ Add dynamic content from system sources:
 | `icon` | Icon override |
 | `label` | Label override |
 
+### Nodes Source
+
+The `nodes` source provides access to library navigation nodes (the top-level library categories like Movies, TV Shows, Music Videos, etc.):
+
+```xml
+<content source="nodes" target="video"/>
+<content source="nodes" target="music"/>
+```
+
+#### Nodes Target Values
+
+| Target | Description |
+|--------|-------------|
+| `video` | Video library nodes (Movies, TV Shows, Music Videos, etc.) |
+| `music` | Music library nodes (Artists, Albums, Songs, etc.) |
+
+***
+
 ### Library Source
 
-The `library` source provides access to library nodes (genres, years, actors, etc.):
+The `library` source provides access to library database content (genres, years, actors, etc.):
 
 ```xml
 <content source="library" target="moviegenres"/>
@@ -233,7 +252,7 @@ The `library` source provides access to library nodes (genres, years, actors, et
 | `artists` | Music artists |
 | `albums` | Music albums |
 
----
+***
 
 ## Conditions
 
@@ -275,7 +294,7 @@ Evaluated at runtime using `xbmc.getCondVisibility()`:
 
 Both conditions must pass for the widget to appear.
 
----
+***
 
 ## Output Properties
 
@@ -287,8 +306,10 @@ When a widget is assigned to a menu item, these core properties are set:
 | `widgetLabel` | Display label |
 | `widgetPath` | Content path |
 | `widgetTarget` | Target window |
+| `widgetType` | Content type (e.g., `movies`, `episodes`, `albums`) |
+| `widgetSource` | Source type (e.g., `library`, `playlist`, `addon`) |
 
-Additional properties (like `widgetType`, `widgetSource`, etc.) can be configured via [properties.xml](properties.md).
+Additional skin-specific properties can be configured via [properties.xml](properties.md).
 
 Access via `ListItem.Property(name)`:
 
@@ -301,7 +322,7 @@ Access via `ListItem.Property(name)`:
 </control>
 ```
 
----
+***
 
 ## Multiple Widgets
 
@@ -309,8 +330,8 @@ For multiple widget slots per menu item, use property suffixes:
 
 | Slot | Properties |
 |------|------------|
-| Widget 1 | `widget`, `widgetPath`, `widgetType`, `widgetTarget`, `widgetLabel` |
-| Widget 2 | `widget.2`, `widgetPath.2`, `widgetType.2`, `widgetTarget.2`, `widgetLabel.2` |
+| Widget 1 | `widget`, `widgetPath`, `widgetType`, `widgetTarget`, `widgetLabel`, `widgetSource` |
+| Widget 2 | `widget.2`, `widgetPath.2`, `widgetType.2`, `widgetTarget.2`, `widgetLabel.2`, `widgetSource.2` |
 | Widget 3 | `widget.3`, `widgetPath.3`, ... |
 
 Configure via [subdialogs](menus.md#subdialogs) in `menus.xml`:
@@ -334,7 +355,7 @@ Display additional widgets:
 </control>
 ```
 
----
+***
 
 ## Quick Navigation
 

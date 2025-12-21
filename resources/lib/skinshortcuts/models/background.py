@@ -11,7 +11,6 @@ if TYPE_CHECKING:
 
     from .menu import Content
 
-    # Background group items can be: Background, nested BackgroundGroup, or Content reference
     BackgroundGroupContent = Union["Background", "BackgroundGroup", "Content"]
 
 

@@ -8,13 +8,22 @@ Evaluates property conditions using a simple expression language:
 - NOT: !condition or ![grouped condition]
 - Grouping: [condition1 | condition2]
 - Compact OR: propertyName=value1 | value2 | value3
+
+Compact OR Notes:
+    The property name cascades from the most recent full condition:
+        prop=a | other=b | c  ->  prop=a | other=b | other=c
+
+Negation Precedence:
+    Negation applies to the adjacent condition only:
+        !prop=a | b  ->  (!prop=a) | (prop=b)
+    For group negation, use brackets:
+        ![prop=a | b]  ->  !(prop=a | prop=b)
 """
 
 from __future__ import annotations
 
 import re
 
-# Pre-compiled regex patterns for condition evaluation
 _OR_SPLIT_PATTERN = re.compile(r"\s*\|\s*")
 _CONDITION_MATCH_PATTERN = re.compile(r"^(!?)([a-zA-Z_][a-zA-Z0-9_\.]*)(=|~)(.*)$")
 
@@ -130,8 +139,24 @@ def evaluate_condition(condition: str, properties: dict[str, str]) -> bool:
     if not condition:
         return True
 
-    expanded = expand_compact_or(condition)
-    return _evaluate_expanded(expanded, properties)
+    if "|" in condition:
+        condition = expand_compact_or(condition)
+    return _evaluate_expanded(condition, properties)
+
+
+def _is_wrapped_in_brackets(text: str) -> bool:
+    """Check if text is wrapped in matching brackets (not just starts/ends with them)."""
+    if not text.startswith("[") or not text.endswith("]"):
+        return False
+    depth = 0
+    for i, char in enumerate(text):
+        if char == "[":
+            depth += 1
+        elif char == "]":
+            depth -= 1
+            if depth == 0 and i < len(text) - 1:
+                return False
+    return depth == 0
 
 
 def _evaluate_expanded(condition: str, properties: dict[str, str]) -> bool:
@@ -140,15 +165,10 @@ def _evaluate_expanded(condition: str, properties: dict[str, str]) -> bool:
     if not condition:
         return True
 
-    if condition.startswith("!"):
-        inner = condition[1:].strip()
-        if inner.startswith("[") and inner.endswith("]"):
-            return not _evaluate_expanded(inner[1:-1], properties)
-        return not _evaluate_single(inner, properties)
-
-    if condition.startswith("[") and condition.endswith("]"):
+    if _is_wrapped_in_brackets(condition):
         return _evaluate_expanded(condition[1:-1], properties)
 
+    # Split AND/OR before negation: !a + b = (!a) + b, not !(a + b)
     and_parts = _split_preserving_brackets(condition, "+")
     if len(and_parts) > 1:
         return all(_evaluate_expanded(part.strip(), properties) for part in and_parts)
@@ -156,6 +176,12 @@ def _evaluate_expanded(condition: str, properties: dict[str, str]) -> bool:
     or_parts = _split_preserving_brackets(condition, "|")
     if len(or_parts) > 1:
         return any(_evaluate_expanded(part.strip(), properties) for part in or_parts)
+
+    if condition.startswith("!"):
+        inner = condition[1:].strip()
+        if _is_wrapped_in_brackets(inner):
+            return not _evaluate_expanded(inner[1:-1], properties)
+        return not _evaluate_single(inner, properties)
 
     return _evaluate_single(condition, properties)
 
@@ -169,7 +195,7 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
         negated = True
         condition = condition[1:].strip()
 
-    if condition.startswith("[") and condition.endswith("]"):
+    if _is_wrapped_in_brackets(condition):
         result = _evaluate_expanded(condition[1:-1], properties)
         return not result if negated else result
 
@@ -189,4 +215,6 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
         result = value in actual
         return not result if negated else result
 
-    return not negated
+    # Property name only: truthy if non-empty
+    result = bool(properties.get(condition, ""))
+    return not result if negated else result

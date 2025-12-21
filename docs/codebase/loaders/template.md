@@ -4,31 +4,35 @@
 **Lines:** 484
 **Purpose:** Load template schema from templates.xml with expression, preset, and variable support.
 
----
+***
 
 ## Overview
 
 Parses the `templates.xml` file which defines how menu items are transformed into Kodi includes. This is the most complex loader, supporting expressions, property groups, presets, variables, and template definitions.
 
----
+***
 
 ## TemplateLoader Class (line 36)
 
-### __init__(path) (line 39)
+### `__init__`(path) (line 39)
+
 Initialize with path to templates.xml.
 
 **Instance attributes:**
-- `_expressions` - Named expression strings
-- `_presets` - Parsed Preset definitions
-- `_property_groups` - Parsed PropertyGroup definitions
-- `_variable_definitions` - VariableDefinition objects
-- `_variable_groups` - VariableGroup objects
-- `_includes` - Parsed IncludeDefinition objects
+
+* `_expressions` - Named expression strings
+* `_presets` - Parsed Preset definitions
+* `_property_groups` - Parsed PropertyGroup definitions
+* `_variable_definitions` - VariableDefinition objects
+* `_variable_groups` - VariableGroup objects
+* `_includes` - Parsed IncludeDefinition objects
 
 ### load() → TemplateSchema (line 47)
+
 Load and parse the template schema.
 
 **Parse order (sectioned structure):**
+
 1. `<expressions>` section
 2. `<presets>` section
 3. `<propertyGroups>` section
@@ -41,151 +45,174 @@ Load and parse the template schema.
 
 **Raises:** TemplateConfigError on parse errors
 
----
+***
 
 ## Section Parsing Methods
 
-### _parse_expressions_section(root)
+### `_parse_expressions_section`(root)
+
 Parse `<expressions>` section containing `<expression>` elements.
 
----
+***
 
-### _parse_presets_section(root)
+### `_parse_presets_section`(root)
+
 Parse `<presets>` section containing `<preset>` elements.
 
----
+***
 
-### _parse_property_groups_section(root)
+### `_parse_property_groups_section`(root)
+
 Parse `<propertyGroups>` section containing `<propertyGroup>` elements.
 
 **Children:** `<property>`, `<var>`
 
----
+***
 
-### _parse_variables_section(root)
+### `_parse_variables_section`(root)
+
 Parse `<variables>` section containing:
-- `<variable name="...">` definitions (global)
-- `<variableGroup name="...">` groups
 
----
+* `<variable name="...">` definitions (global)
+* `<variableGroup name="...">` groups
 
-### _parse_variable_group(elem)
+***
+
+### `_parse_variable_group`(elem)
+
 Parse a variableGroup element.
 
 **Contains:**
-- `<variable name="..." condition="..."/>` references
-- `<variableGroup name="..."/>` nested group refs
 
----
+* `<variable name="..." condition="..."/>` references
+* `<variableGroup name="..."/>` nested group refs
 
-### _parse_variable_reference(elem)
+***
+
+### `_parse_variable_reference`(elem)
+
 Parse variable reference inside variableGroup.
 
 **Attributes:** name, condition
 
----
+***
 
-### _parse_includes_section(root)
+### `_parse_includes_section`(root)
+
 Parse `<includes>` section containing `<include>` definitions for control XML reuse.
 
----
+***
 
-### _parse_param(elem) (line 228)
+### `_parse_param`(elem) (line 228)
+
 Parse `<param name="..." default="..."/>` for raw templates.
 
----
+***
 
-### _parse_property(elem, suffix="") (line 236)
+### `_parse_property`(elem, suffix="") (line 236)
+
 Parse `<property name="..." from="..." condition="...">value</property>`.
 
 Applies suffix transforms to `from` and `condition` if suffix provided.
 
----
+***
 
-### _parse_var(elem, suffix="") (line 262)
+### `_parse_var`(elem, suffix="") (line 262)
+
 Parse `<var name="..."><value condition="...">value</value></var>`.
 
 Applies suffix transforms to conditions if suffix provided.
 
----
+***
 
-### _parse_preset(elem) (line 282)
+### `_parse_preset`(elem) (line 282)
+
 Parse `<preset name="..."><values condition="..." attr="val"/></preset>`.
 
----
+***
 
-### _parse_template(elem) (line 298)
+### `_parse_template`(elem) (line 298)
+
 Parse main template element.
 
 **Attributes:**
-- `include` (required) - Output include name
-- `build` - "list", "true" (raw), or default (menu)
-- `idprefix` - For computed control IDs
+
+* `include` (required) - Output include name
+* `build` - "list", "true" (raw), or default (menu)
+* `idprefix` - For computed control IDs
 
 **Children:**
-- `<condition>` - Build conditions (ANDed)
-- `<param>` - Parameters for raw templates
-- `<property>` - Property assignments
-- `<var>` - Internal variables
-- `<propertyGroup>` - Group references
-- `<preset>` - Preset references
-- `<variableGroup>` - Variable group references
-- `<list><item .../></list>` - For build="list"
-- `<controls>` - Raw XML controls
 
----
+* `<condition>` - Build conditions (ANDed)
+* `<param>` - Parameters for raw templates
+* `<property>` - Property assignments
+* `<var>` - Internal variables
+* `<propertyGroup>` - Group references
+* `<preset>` - Preset references
+* `<variableGroup>` - Variable group references
+* `<list><item .../></list>` - For build="list"
+* `<controls>` - Raw XML controls
 
-### _parse_submenu(elem) (line 379)
+***
+
+### `_parse_submenu`(elem) (line 379)
+
 Parse submenu template element.
 
 **Attributes:** include, level, name
 
 **Children:** `<property>`, `<var>`, `<propertyGroup>`, `<controls>`
 
----
+***
 
-### _parse_property_group_ref(elem) (line 419)
+### `_parse_property_group_ref`(elem) (line 419)
+
 Parse property group reference.
 
 **Attributes:** name, suffix, condition
 
----
+***
 
-### _parse_preset_ref(elem) (line 433)
+### `_parse_preset_ref`(elem) (line 433)
+
 Parse preset reference for direct property resolution.
 
 **Attributes:** name, suffix, condition
 
----
+***
 
-### _parse_variable_group_ref(elem) (line 448)
+### `_parse_variable_group_ref`(elem) (line 448)
+
 Parse variableGroup reference in a template.
 
 **Attributes:** name, suffix, condition
 
----
+***
 
-### _parse_variable_definition(elem) (line 463)
+### `_parse_variable_definition`(elem) (line 463)
+
 Parse a variable definition (global or inline).
 
 **Attributes:** name, condition, output
 **Content:** Full `<variable>` XML with `<value>` children
 
----
+***
 
 ## Module Function
 
 ### load_templates(path) (line 480)
+
 Convenience function to load template schema.
 
 **Parameters:**
-- `path` - Path to templates.xml
+
+* `path` - Path to templates.xml
 
 **Returns:** TemplateSchema
 
 **Used by:** config.py (SkinConfig.load)
 
----
+***
 
 ## XML Schema Example
 
@@ -253,13 +280,13 @@ Convenience function to load template schema.
 </templates>
 ```
 
----
+***
 
 ## Dead Code Analysis
 
 All code appears to be in active use.
 
----
+***
 
 ## Test Candidates
 

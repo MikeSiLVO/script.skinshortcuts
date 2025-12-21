@@ -11,7 +11,6 @@ from ..exceptions import ConfigError
 
 T = TypeVar("T")
 
-# Properties that should never have suffix transforms applied
 NO_SUFFIX_PROPERTIES = frozenset({
     "name",
     "default",
@@ -21,7 +20,6 @@ NO_SUFFIX_PROPERTIES = frozenset({
     "idprefix",
 })
 
-# Pre-compiled regex for property matching in conditions
 _PROPERTY_PATTERN = re.compile(r"([a-zA-Z_][a-zA-Z0-9_\.]*)([=~])")
 
 
@@ -48,23 +46,10 @@ def apply_suffix_to_from(from_value: str, suffix: str) -> str:
     """Apply suffix to a from attribute value.
 
     E.g., "widgetPath" -> "widgetPath.2"
-    E.g., "panelLayoutDimensions[top]" -> "panelLayoutDimensions.2[top]"
+
     Skips built-ins like index, name, menu, id.
     """
     if not suffix or not from_value:
-        return from_value
-
-    # Handle bracket syntax for preset lookups: preset[attr]
-    if "[" in from_value and from_value.endswith("]"):
-        bracket_pos = from_value.index("[")
-        preset_name = from_value[:bracket_pos]
-        attr_part = from_value[bracket_pos:]  # includes [attr]
-        if preset_name not in NO_SUFFIX_PROPERTIES:
-            return f"{preset_name}{suffix}{attr_part}"
-        return from_value
-
-    # Don't transform old dot-style preset lookups (preset.attribute format)
-    if "." in from_value:
         return from_value
 
     if from_value in NO_SUFFIX_PROPERTIES:

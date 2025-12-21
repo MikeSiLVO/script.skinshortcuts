@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Union
 
-    # Group items can be: Shortcut, nested Group, or Content reference
     GroupContent = Union["Shortcut", "Group", "Content"]
 
 
@@ -189,14 +188,9 @@ class MenuItem:
     required: bool = False  # If True, item cannot be deleted
     protection: Protection | None = None  # Optional protection against delete/modify
 
-    # All custom properties including widget/background data
     properties: dict[str, str] = field(default_factory=dict)
-
-    # Submenu reference (by name)
     submenu: str | None = None
-
-    # Original action for protection matching (set from defaults, not saved to userdata)
-    original_action: str = ""
+    original_action: str = ""  # Set from defaults, not saved to userdata
 
     @property
     def action(self) -> str:
@@ -213,7 +207,6 @@ class MenuItem:
             if not act.condition:
                 act.action = value
                 return
-        # No unconditional action, add one
         self.actions.insert(0, Action(action=value))
 
 

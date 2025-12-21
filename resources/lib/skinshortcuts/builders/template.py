@@ -19,16 +19,17 @@ if TYPE_CHECKING:
     from ..models.property import PropertySchema
     from ..models.template import (
         Preset,
+        PresetGroupReference,
         PresetReference,
         PropertyGroup,
         Template,
+        TemplateOutput,
         TemplateSchema,
         TemplateVar,
         VariableDefinition,
         VariableGroupReference,
     )
 
-# Regex patterns for substitution
 _PROPERTY_PATTERN = re.compile(r"\$PROPERTY\[([^\]]+)\]")
 _EXP_PATTERN = re.compile(r"\$EXP\[([^\]]+)\]")
 _INCLUDE_PATTERN = re.compile(r"\$INCLUDE\[([^\]]+)\]")
@@ -62,7 +63,6 @@ class TemplateBuilder:
 
         for menu in self.menus:
             for item in menu.items:
-                # Check all properties that might contain template references
                 for _prop_name, prop_value in item.properties.items():
                     if not prop_value:
                         continue
@@ -79,45 +79,38 @@ class TemplateBuilder:
         """
         root = ET.Element("includes")
 
-        # Group templates by include name and merge their outputs
         include_map: dict[str, ET.Element] = {}
-        # Collect variables (output at root level, not inside includes)
         variables_list: list[ET.Element] = []
 
-        # Track templateonly settings per include name
-        # "true" = never generate, "auto" = skip if unassigned
+        # templateonly: "true" = never generate, "auto" = skip if unassigned
         template_only_settings: dict[str, str] = {}
 
         for template in self.schema.templates:
-            include_name = f"skinshortcuts-template-{template.include}"
+            for output in template.get_outputs():
+                include_name = f"skinshortcuts-template-{output.include}"
 
-            if template.template_only:
-                template_only_settings[include_name] = template.template_only
+                if template.template_only:
+                    template_only_settings[include_name] = template.template_only
 
-            # Get or create the include element
-            if include_name not in include_map:
-                include_elem = ET.Element("include")
-                include_elem.set("name", include_name)
-                include_map[include_name] = include_elem
+                if include_name not in include_map:
+                    include_elem = ET.Element("include")
+                    include_elem.set("name", include_name)
+                    include_map[include_name] = include_elem
 
-            # Build controls and variables for this template variant
-            self._build_template_into(template, include_map[include_name], variables_list)
+                self._build_template_into(
+                    template, output, include_map[include_name], variables_list
+                )
 
-        # Add variables first (they may be referenced by includes)
         for var_elem in variables_list:
             root.append(var_elem)
 
-        # Add all includes to root (even empty ones to avoid Kodi log warnings)
         for include_name, include_elem in include_map.items():
             setting = template_only_settings.get(include_name, "")
-            # "true" = never generate include
             if setting == "true":
                 continue
-            # "auto" = skip if template is not assigned to any menu item
             if setting == "auto" and include_name not in self._assigned_templates:
                 continue
             if len(include_elem) == 0:
-                # Add description for empty includes
                 desc = ET.SubElement(include_elem, "description")
                 desc.text = "Automatically generated - no menu items matched this template"
             root.append(include_elem)
@@ -127,97 +120,128 @@ class TemplateBuilder:
     def _build_template_into(
         self,
         template: Template,
+        output: TemplateOutput,
         include: ET.Element,
         variables_list: list[ET.Element],
     ) -> None:
-        """Build template controls and variables.
+        """Build template controls and variables for a specific output.
 
         Controls go into the include element.
         Variables go into the variables_list (output at root level).
+
+        The output's suffix is applied to all conditions and references,
+        allowing one template to generate multiple includes.
         """
         for menu in self.menus:
             for idx, item in enumerate(menu.items, start=1):
                 if item.disabled:
                     continue
 
-                # Check if template conditions match this item
-                if not self._check_conditions(template.conditions, item):
+                if not self._check_conditions(template.conditions, item, output.suffix):
                     continue
 
-                # Build context for this item (idx is 1-based to match menu item IDs)
-                context = self._build_context(template, item, idx, menu)
+                context = self._build_context(template, output, item, idx, menu)
 
-                # Build controls for this item
                 if template.controls is not None:
-                    controls = self._process_controls(
-                        template.controls, context, item, menu
-                    )
+                    controls = self._process_controls(template.controls, context, item, menu)
                     if controls is not None:
-                        # Append children of <controls>, not the wrapper itself
                         for child in controls:
                             include.append(child)
 
-                # Build inline variables defined in template
                 for var_def in template.variables:
                     var_elem = self._build_variable(var_def, context, item)
                     if var_elem is not None:
                         variables_list.append(var_elem)
 
-                # Build variables from variableGroup references
                 for group_ref in template.variable_groups:
-                    self._build_variable_group(
-                        group_ref, context, item, variables_list
+                    effective_suffix = self._combine_suffixes(
+                        output.suffix, group_ref.suffix
                     )
+                    self._build_variable_group(
+                        group_ref, context, item, variables_list, effective_suffix
+                    )
+
+    def _combine_suffixes(self, base_suffix: str, ref_suffix: str) -> str:
+        """Combine output suffix with reference suffix.
+
+        If ref already has a suffix, use it (explicit overrides output default).
+        Otherwise, use the base output suffix.
+        """
+        return ref_suffix if ref_suffix else base_suffix
 
     def _build_context(
         self,
         template: Template,
+        output: TemplateOutput,
         item: MenuItem,
         idx: int,
         menu: Menu,
     ) -> dict[str, str]:
-        """Build property context for a menu item."""
-        # Start with menu defaults, then item properties override them
-        # This matches IncludesBuilder behavior: {**menu.defaults.properties, **item.properties}
+        """Build property context for a menu item.
+
+        The output's suffix is applied to all property/preset/variableGroup
+        references, allowing one template to serve multiple widget slots.
+        """
         context: dict[str, str] = {**menu.defaults.properties, **item.properties}
 
-        # Built-in properties (override any conflicts)
         context["index"] = str(idx)
         context["name"] = item.name
         context["menu"] = menu.name
-        context["idprefix"] = template.id_prefix
-        context["id"] = f"{template.id_prefix}{idx}" if template.id_prefix else str(idx)
+        context["idprefix"] = output.id_prefix
+        context["id"] = f"{output.id_prefix}{idx}" if output.id_prefix else str(idx)
+        context["suffix"] = output.suffix or ""
 
-        # Apply property fallbacks early so template conditions can use them
         self._apply_fallbacks(item, context)
 
-        # Process template properties
+        # First match wins for same-named properties
+        resolved_props: set[str] = set()
         for prop in template.properties:
-            value = self._resolve_property(prop, item, context)
+            if prop.name in resolved_props:
+                continue  # Already set by earlier match in this template
+            value = self._resolve_property(prop, item, context, output.suffix)
             if value is not None:
                 context[prop.name] = value
+                resolved_props.add(prop.name)
 
-        # Process template vars (internal resolution)
         for var in template.vars:
-            value = self._resolve_var(var, item, context)
+            value = self._resolve_var(var, item, context, output.suffix)
             if value is not None:
                 context[var.name] = value
 
-        # Process preset references first (they set raw values from lookup tables)
         for ref in template.preset_refs:
-            # Check condition if specified
-            if ref.condition and not self._eval_condition(ref.condition, item, context):
-                continue
-            self._apply_preset(ref, item, context)
+            effective_suffix = self._combine_suffixes(output.suffix, ref.suffix)
+            condition = ref.condition
+            if condition:
+                condition = self._expand_expressions(condition)
+                if effective_suffix:
+                    condition = self._apply_suffix_to_condition(condition, effective_suffix)
+                if not self._eval_condition(condition, item, context):
+                    continue
+            self._apply_preset(ref, item, context, effective_suffix)
 
-        # Process property group references (may transform/derive from preset values)
+        for ref in template.preset_group_refs:
+            effective_suffix = self._combine_suffixes(output.suffix, ref.suffix)
+            condition = ref.condition
+            if condition:
+                condition = self._expand_expressions(condition)
+                if effective_suffix:
+                    condition = self._apply_suffix_to_condition(condition, effective_suffix)
+                if not self._eval_condition(condition, item, context):
+                    continue
+            self._apply_preset_group(ref, item, context, effective_suffix)
+
         for ref in template.property_groups:
-            # Check condition if specified
-            if ref.condition and not self._eval_condition(ref.condition, item, context):
-                continue
+            effective_suffix = self._combine_suffixes(output.suffix, ref.suffix)
+            condition = ref.condition
+            if condition:
+                condition = self._expand_expressions(condition)
+                if effective_suffix:
+                    condition = self._apply_suffix_to_condition(condition, effective_suffix)
+                if not self._eval_condition(condition, item, context):
+                    continue
             prop_group = self.schema.get_property_group(ref.name)
             if prop_group:
-                self._apply_property_group(prop_group, item, context, ref.suffix)
+                self._apply_property_group(prop_group, item, context, effective_suffix)
 
         return context
 
@@ -231,29 +255,22 @@ class TemplateBuilder:
 
         Checks the variable's condition, substitutes $PROPERTY[...] placeholders.
         """
-        # Check per-variable condition
         if var_def.condition:
             condition = self._expand_expressions(var_def.condition)
             if not self._eval_condition(condition, item, context):
                 return None
 
-        # Deep copy the variable content
         if var_def.content is None:
             return None
         var_elem = copy.deepcopy(var_def.content)
 
-        # Determine output name from output attribute or use original name
         if var_def.output:
             output_name = self._substitute_property_refs(var_def.output, item, context)
         else:
-            # Use the variable's name attribute, substituting any $PROPERTY refs
             original_name = var_elem.get("name") or var_def.name
             output_name = self._substitute_property_refs(original_name, item, context)
 
-        # Set the variable name attribute
         var_elem.set("name", output_name)
-
-        # Process all text content in the variable element
         self._substitute_variable_content(var_elem, context, item)
 
         return var_elem
@@ -264,53 +281,47 @@ class TemplateBuilder:
         context: dict[str, str],
         item: MenuItem,
         variables_list: list[ET.Element],
+        override_suffix: str = "",
     ) -> None:
         """Build variables from a variableGroup reference.
 
         Looks up the group, iterates its variable references, applies suffix
         transforms, and builds each matching variable from global definitions.
         Handles nested group references recursively.
+
+        override_suffix: If provided, overrides the group_ref's suffix.
         """
-        # Check group-level condition
         if group_ref.condition:
             condition = self._expand_expressions(group_ref.condition)
             if not self._eval_condition(condition, item, context):
                 return
 
-        # Look up the variable group
         var_group = self.schema.get_variable_group(group_ref.name)
         if not var_group:
             return
 
-        suffix = group_ref.suffix
+        suffix = override_suffix if override_suffix else group_ref.suffix
 
-        # Process nested variableGroup references first
         for nested_ref in var_group.group_refs:
-            # Create a VariableGroupReference with inherited suffix
             from ..models.template import VariableGroupReference as VGRef
 
             nested_group_ref = VGRef(name=nested_ref.name, suffix=suffix, condition="")
             self._build_variable_group(nested_group_ref, context, item, variables_list)
 
-        # Process each variable reference in the group
         for var_ref in var_group.references:
-            # Apply suffix transform to condition if needed
             condition = var_ref.condition
             if suffix and condition:
                 condition = apply_suffix_transform(condition, suffix)
 
-            # Check variable-level condition
             if condition:
                 condition = self._expand_expressions(condition)
                 if not self._eval_condition(condition, item, context):
                     continue
 
-            # Look up the global variable definition
             var_def = self.schema.get_variable_definition(var_ref.name)
             if not var_def:
                 continue
 
-            # Build the variable
             var_elem = self._build_variable(var_def, context, item)
             if var_elem is not None:
                 variables_list.append(var_elem)
@@ -322,19 +333,12 @@ class TemplateBuilder:
         item: MenuItem,
     ) -> None:
         """Substitute $PROPERTY[...] in variable content recursively."""
-        # Process text
         if elem.text:
             elem.text = self._substitute_property_refs(elem.text, item, context)
-
-        # Process tail
         if elem.tail:
             elem.tail = self._substitute_property_refs(elem.tail, item, context)
-
-        # Process attributes
         for attr, value in list(elem.attrib.items()):
             elem.set(attr, self._substitute_property_refs(value, item, context))
-
-        # Process children recursively
         for child in elem:
             self._substitute_variable_content(child, context, item)
 
@@ -343,17 +347,25 @@ class TemplateBuilder:
         prop: TemplateProperty,
         item: MenuItem,
         context: dict[str, str],
+        suffix: str = "",
     ) -> str | None:
-        """Resolve a property value."""
-        # Check condition
-        if prop.condition and not self._eval_condition(prop.condition, item, context):
-            return None
+        """Resolve a property value.
 
-        # From source
+        When suffix is provided, it's applied to condition property names.
+        """
+        if prop.condition:
+            condition = self._expand_expressions(prop.condition)
+            if suffix:
+                condition = self._apply_suffix_to_condition(condition, suffix)
+            if not self._eval_condition(condition, item, context):
+                return None
+
         if prop.from_source:
-            return self._get_from_source(prop.from_source, item, context)
+            source = prop.from_source
+            if suffix:
+                source = apply_suffix_to_from(source, suffix)
+            return self._get_from_source(source, item, context, suffix)
 
-        # Literal value - substitute $PROPERTY[...] references
         value = prop.value
         if "$PROPERTY[" in value:
             value = self._substitute_property_refs(value, item, context)
@@ -382,14 +394,20 @@ class TemplateBuilder:
         var: TemplateVar,
         item: MenuItem,
         context: dict[str, str],
+        suffix: str = "",
     ) -> str | None:
-        """Resolve a var (first matching value wins)."""
+        """Resolve a var (first matching value wins).
+
+        When suffix is provided, it's applied to condition property names.
+        """
         for val in var.values:
             if val.condition:
-                if self._eval_condition(val.condition, item, context):
+                condition = self._expand_expressions(val.condition)
+                if suffix:
+                    condition = self._apply_suffix_to_condition(condition, suffix)
+                if self._eval_condition(condition, item, context):
                     return val.value
             else:
-                # Default/fallback
                 return val.value
         return None
 
@@ -398,51 +416,14 @@ class TemplateBuilder:
         source: str,
         item: MenuItem,
         context: dict[str, str],
+        suffix: str = "",
     ) -> str:
-        """Get value from a source (built-in, item property, or preset)."""
-        # Check bracket syntax for preset lookup: preset[attr]
-        if "[" in source and source.endswith("]"):
-            bracket_pos = source.index("[")
-            preset_name = source[:bracket_pos]
-            attr = source[bracket_pos + 1 : -1]  # extract attr from [attr]
-            preset = self.schema.get_preset(preset_name)
-            if preset:
-                return self._lookup_preset(preset, attr, item, context)
-
-        # Check old dot-style preset lookup (preset.attribute format)
-        if "." in source:
-            preset_name, attr = source.split(".", 1)
-            preset = self.schema.get_preset(preset_name)
-            if preset:
-                return self._lookup_preset(preset, attr, item, context)
-
-        # Built-ins
+        """Get value from a source (built-in or item property)."""
         if source in ("index", "name", "menu", "id", "idprefix"):
             return context.get(source, "")
-
-        # Check context first (for values set by presets/property groups)
         if source in context:
             return context[source]
-
-        # Item property
         return item.properties.get(source, "")
-
-    def _lookup_preset(
-        self,
-        preset: Preset,
-        attr: str,
-        item: MenuItem,
-        context: dict[str, str],
-    ) -> str:
-        """Look up a value from a preset."""
-        for row in preset.rows:
-            if row.condition:
-                if self._eval_condition(row.condition, item, context):
-                    return row.values.get(attr, "")
-            else:
-                # Default row
-                return row.values.get(attr, "")
-        return ""
 
     def _apply_property_group(
         self,
@@ -453,20 +434,16 @@ class TemplateBuilder:
     ) -> None:
         """Apply properties from a property group to context."""
         for prop in prop_group.properties:
-            # Apply suffix transforms to from_source and condition
             from_source = prop.from_source
             condition = prop.condition
 
             if suffix:
-                # Apply suffix transform to from_source
                 if from_source:
                     from_source = apply_suffix_to_from(from_source, suffix)
                 if condition:
-                    # Expand expressions first, then apply suffix
                     condition = self._expand_expressions(condition)
                     condition = self._apply_suffix_to_condition(condition, suffix)
 
-            # Create modified property
             modified_prop = TemplateProperty(
                 name=prop.name,
                 value=prop.value,
@@ -475,11 +452,10 @@ class TemplateBuilder:
             )
             value = self._resolve_property(modified_prop, item, context)
             if value is not None and prop.name not in context:
-                # Only set if not already in context (first match wins)
                 context[prop.name] = value
 
         for var in prop_group.vars:
-            value = self._resolve_var(var, item, context)
+            value = self._resolve_var(var, item, context, suffix)
             if value is not None:
                 context[var.name] = value
 
@@ -488,6 +464,7 @@ class TemplateBuilder:
         ref: PresetReference,
         item: MenuItem,
         context: dict[str, str],
+        override_suffix: str = "",
     ) -> None:
         """Apply preset values directly as properties.
 
@@ -497,31 +474,92 @@ class TemplateBuilder:
         The suffix is applied to CONDITIONS during evaluation, not to the preset name.
         This allows a single preset definition to be reused for Widget 1 and Widget 2
         by transforming conditions like 'widgetArt=Poster' to 'widgetArt.2=Poster'.
+
+        override_suffix: If provided, overrides the ref's suffix.
         """
-        # Use base preset name (suffix is applied to conditions, not name)
         preset = self.schema.get_preset(ref.name)
         if not preset:
             return
 
-        # Find matching row in preset
+        suffix = override_suffix if override_suffix else ref.suffix
+
         for row in preset.rows:
             if row.condition:
-                # Expand expressions first, then apply suffix to condition
                 condition = self._expand_expressions(row.condition)
-                if ref.suffix:
-                    condition = self._apply_suffix_to_condition(condition, ref.suffix)
+                if suffix:
+                    condition = self._apply_suffix_to_condition(condition, suffix)
                 if self._eval_condition(condition, item, context):
-                    # Set all values from this row as properties
                     for attr_name, attr_value in row.values.items():
                         if attr_name not in context:
                             context[attr_name] = attr_value
                     return
             else:
-                # Default row (no condition) - set all values
                 for attr_name, attr_value in row.values.items():
                     if attr_name not in context:
                         context[attr_name] = attr_value
                 return
+
+    def _apply_preset_group(
+        self,
+        ref: PresetGroupReference,
+        item: MenuItem,
+        context: dict[str, str],
+        override_suffix: str = "",
+    ) -> None:
+        """Apply presetGroup - conditional preset selection.
+
+        Evaluates children in document order, first matching condition wins.
+        Children can be preset references or inline values.
+
+        override_suffix: If provided, overrides the ref's suffix.
+        """
+        group = self.schema.get_preset_group(ref.name)
+        if not group:
+            return
+
+        suffix = override_suffix if override_suffix else ref.suffix
+
+        for child in group.children:
+            if child.condition:
+                condition = self._expand_expressions(child.condition)
+                if suffix:
+                    condition = self._apply_suffix_to_condition(condition, suffix)
+                if not self._eval_condition(condition, item, context):
+                    continue
+
+            if child.preset_name:
+                preset = self.schema.get_preset(child.preset_name)
+                if preset:
+                    values = self._get_preset_values(preset, item, context, suffix)
+                    if values:
+                        for attr_name, attr_value in values.items():
+                            if attr_name not in context:
+                                context[attr_name] = attr_value
+                        return
+            elif child.values:
+                for attr_name, attr_value in child.values.items():
+                    if attr_name not in context:
+                        context[attr_name] = attr_value
+                return
+
+    def _get_preset_values(
+        self,
+        preset: Preset,
+        item: MenuItem,
+        context: dict[str, str],
+        suffix: str = "",
+    ) -> dict[str, str] | None:
+        """Get matching values from a preset (first matching row)."""
+        for row in preset.rows:
+            if row.condition:
+                condition = self._expand_expressions(row.condition)
+                if suffix:
+                    condition = self._apply_suffix_to_condition(condition, suffix)
+                if self._eval_condition(condition, item, context):
+                    return row.values
+            else:
+                return row.values
+        return None
 
     def _apply_fallbacks(
         self,
@@ -539,28 +577,22 @@ class TemplateBuilder:
         if not self.property_schema:
             return
 
-        # Collect suffixes in use by checking for suffixed widget properties
-        suffixes_in_use = {""}  # Always include base (no suffix)
+        suffixes_in_use = {""}
         for prop_name in item.properties:
             if "." in prop_name:
-                # Extract suffix like ".2" from "widgetPath.2"
                 parts = prop_name.rsplit(".", 1)
                 if parts[1].isdigit():
                     suffixes_in_use.add(f".{parts[1]}")
 
         for prop_name, fallback in self.property_schema.fallbacks.items():
-            # Apply fallback for each suffix variant
             for suffix in suffixes_in_use:
                 suffixed_prop = f"{prop_name}{suffix}" if suffix else prop_name
 
-                # Skip if property already has a value
                 if suffixed_prop in context or suffixed_prop in item.properties:
                     continue
 
-                # Evaluate fallback rules in order
                 for rule in fallback.rules:
                     if rule.condition:
-                        # Transform condition to use suffixed property names
                         condition = rule.condition
                         if suffix:
                             condition = apply_suffix_transform(condition, suffix)
@@ -568,34 +600,65 @@ class TemplateBuilder:
                             context[suffixed_prop] = rule.value
                             break
                     else:
-                        # Default rule (no condition)
                         context[suffixed_prop] = rule.value
                         break
 
     def _apply_suffix_to_condition(self, condition: str, suffix: str) -> str:
-        """Apply suffix to property names in a condition."""
-        # Simple implementation - apply suffix to property names before operators
-        # This is a basic version; may need refinement
+        """Apply suffix to property names in a condition.
+
+        Preserves content within {NOSUFFIX:...} markers (from nosuffix expressions)
+        without applying suffix transformation.
+        """
+        nosuffix_pattern = re.compile(r"\{NOSUFFIX:([^}]+)\}")
+        preserved: list[str] = []
+
+        def extract_nosuffix(match: re.Match) -> str:
+            preserved.append(match.group(1))
+            return f"__NOSUFFIX_{len(preserved) - 1}__"
+
+        condition = nosuffix_pattern.sub(extract_nosuffix, condition)
+
         result = []
         parts = re.split(r"([=~|+\[\]!])", condition)
         for i, part in enumerate(parts):
             part = part.strip()
             if not part:
                 continue
-            # Check if this is a property name (before = or ~)
-            # Don't suffix built-ins
             if (
                 i + 1 < len(parts)
                 and parts[i + 1] in ("=", "~")
-                and part not in ("index", "name", "menu", "id", "idprefix")
+                and part not in ("index", "name", "menu", "id", "idprefix", "suffix")
+                and not part.startswith("__NOSUFFIX_")
             ):
                 part = f"{part}{suffix}"
             result.append(part)
-        return "".join(result)
 
-    def _check_conditions(self, conditions: list[str], item: MenuItem) -> bool:
-        """Check if all template conditions match."""
-        return all(self._eval_condition(cond, item, {}) for cond in conditions)
+        transformed = "".join(result)
+
+        for i, content in enumerate(preserved):
+            transformed = transformed.replace(f"__NOSUFFIX_{i}__", content)
+
+        return transformed
+
+    def _strip_nosuffix_markers(self, condition: str) -> str:
+        """Strip {NOSUFFIX:...} markers, keeping only the content."""
+        return re.sub(r"\{NOSUFFIX:([^}]+)\}", r"\1", condition)
+
+    def _check_conditions(
+        self, conditions: list[str], item: MenuItem, suffix: str = ""
+    ) -> bool:
+        """Check if all template conditions match.
+
+        When suffix is provided, it's applied to property names in conditions
+        (e.g., 'widgetPath' becomes 'widgetPath.2' with suffix='.2').
+        """
+        for cond in conditions:
+            expanded = self._expand_expressions(cond)
+            if suffix:
+                expanded = self._apply_suffix_to_condition(expanded, suffix)
+            if not self._eval_condition(expanded, item, {}):
+                return False
+        return True
 
     def _get_property_value(
         self,
@@ -619,23 +682,28 @@ class TemplateBuilder:
         Uses the shared evaluate_condition from loaders/property.py.
         Adds expression expansion ($EXP[name]) before evaluation.
         """
-        # Expand expressions first
         condition = self._expand_expressions(condition)
+        condition = self._strip_nosuffix_markers(condition)
 
-        # Merge context with item properties (context takes precedence)
         properties = {**item.properties, **context}
 
         return evaluate_condition(condition, properties)
 
     def _expand_expressions(self, condition: str) -> str:
-        """Expand $EXP[name] references in a condition."""
+        """Expand $EXP[name] references in a condition.
+
+        For nosuffix=True expressions, wraps the value in {NOSUFFIX:...} markers
+        which _apply_suffix_to_condition will preserve unchanged.
+        """
 
         def replace_exp(match: re.Match) -> str:
             name = match.group(1)
             expr = self.schema.get_expression(name)
             if expr:
-                # Recursively expand nested expressions
-                return self._expand_expressions(expr)
+                expanded = self._expand_expressions(expr.value)
+                if expr.nosuffix:
+                    return f"{{NOSUFFIX:{expanded}}}"
+                return expanded
             return match.group(0)
 
         return _EXP_PATTERN.sub(replace_exp, condition)
@@ -648,10 +716,7 @@ class TemplateBuilder:
         menu: Menu,
     ) -> ET.Element | None:
         """Process controls XML, applying substitutions."""
-        # Deep copy to avoid modifying original
         result = copy.deepcopy(controls)
-
-        # Process the element tree
         self._process_element(result, context, item, menu)
 
         return result
@@ -664,22 +729,17 @@ class TemplateBuilder:
         menu: Menu,
     ) -> None:
         """Recursively process an element, applying substitutions."""
-        # Handle <skinshortcuts> tag
         if elem.tag == "skinshortcuts":
-            # Handle visibility: <skinshortcuts>visibility</skinshortcuts>
             if elem.text and elem.text.strip() == "visibility":
                 elem.tag = "visible"
                 elem.text = (
                     f"String.IsEqual(Container({self.container})."
                     f"ListItem.Property(name),{item.name})"
                 )
-            # Handle include attribute: <skinshortcuts include="name" condition="prop" wrap="true"/>
             include_name = elem.get("include")
             if include_name:
-                # Check for condition attribute - only include if property exists
                 condition = elem.get("condition")
-                if condition and condition not in item.properties:
-                    # Condition not met - mark for removal
+                if condition and not self._eval_condition(condition, item, context):
                     elem.set("_skinshortcuts_remove", "true")
                     elem.attrib.pop("include", None)
                     elem.attrib.pop("condition", None)
@@ -688,10 +748,7 @@ class TemplateBuilder:
 
                 include_def = self.schema.get_include(include_name)
                 if include_def and include_def.controls is not None:
-                    # Get parent and replace this element with include contents
-                    # We'll mark this element for replacement
                     elem.set("_skinshortcuts_include", include_name)
-                    # Preserve wrap attribute for later processing
                     wrap_attr = elem.get("wrap") or ""
                     wrap = wrap_attr.lower() == "true"
                     if wrap:
@@ -700,31 +757,21 @@ class TemplateBuilder:
                     elem.attrib.pop("condition", None)
                     elem.attrib.pop("wrap", None)
 
-        # Process text content
         if elem.text:
             elem.text = self._substitute_text(elem.text, context, item, menu)
-
-        # Process tail
         if elem.tail:
             elem.tail = self._substitute_text(elem.tail, context, item, menu)
-
-        # Process attributes
         for attr, value in list(elem.attrib.items()):
             elem.set(attr, self._substitute_text(value, context, item, menu))
 
-        # Convert $INCLUDE[...] in text to <include> elements
         self._handle_include_substitution(elem)
 
-        # Process children
         children_to_remove = []
         for child in elem:
             self._process_element(child, context, item, menu)
-
-            # Check if child was marked for removal (condition not met)
             if child.get("_skinshortcuts_remove"):
                 children_to_remove.append(child)
 
-        # Handle <skinshortcuts include="..."/> replacements
         self._handle_skinshortcuts_include(elem, context, item, menu)
 
         for child in children_to_remove:
@@ -740,7 +787,6 @@ class TemplateBuilder:
             match = _INCLUDE_PATTERN.search(elem.text)
             if match:
                 include_name = match.group(1)
-                # Create Kodi <include> element
                 include_elem = ET.Element("include")
                 include_elem.text = include_name
                 include_elem.tail = elem.text[match.end():]
@@ -769,11 +815,9 @@ class TemplateBuilder:
                 wrap = child.get("_skinshortcuts_wrap") == "true"
                 children_to_replace.append((i, child, include_name, wrap))
 
-        # Process in reverse order to maintain correct indices
         for i, child, include_name, wrap in reversed(children_to_replace):
             include_def = self.schema.get_include(include_name)
             if include_def and include_def.controls is not None:
-                # Expand include controls - process each child of the include element
                 expanded = self._process_controls(
                     include_def.controls, context, item, menu
                 )
@@ -782,7 +826,6 @@ class TemplateBuilder:
                     elem.remove(child)
 
                     if wrap:
-                        # Output as Kodi <include> element with processed contents
                         include_elem = ET.Element("include")
                         include_elem.set("name", include_name)
                         for inc_child in list(expanded):
@@ -790,15 +833,12 @@ class TemplateBuilder:
                         include_elem.tail = tail
                         elem.insert(i, include_elem)
                     else:
-                        # Unwrap - insert all children from the include element
                         for j, inc_child in enumerate(list(expanded)):
                             elem.insert(i + j, inc_child)
-                        # Preserve tail on last inserted element
                         if tail and len(expanded) > 0:
                             last_child = elem[i + len(expanded) - 1]
                             last_child.tail = (last_child.tail or "") + tail
             else:
-                # Include not found - just remove the element
                 elem.remove(child)
 
     def _substitute_text(
@@ -812,13 +852,10 @@ class TemplateBuilder:
 
         def replace_property(match: re.Match) -> str:
             name = match.group(1)
-            # Check context first
             if name in context:
                 return context[name]
-            # Check item properties
             if name in item.properties:
                 return item.properties[name]
-            # Return empty for unknown
             return ""
 
         return _PROPERTY_PATTERN.sub(replace_property, text)

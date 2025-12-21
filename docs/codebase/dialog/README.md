@@ -4,13 +4,13 @@
 **Total Lines:** 2485
 **Purpose:** Management dialog for skin shortcuts - the main UI for editing menus.
 
----
+***
 
 ## Overview
 
 The dialog package implements the WindowXMLDialog that allows users to edit menus, items, widgets, backgrounds, and custom properties. It uses a mixin pattern to separate concerns into focused modules.
 
----
+***
 
 ## Modules
 
@@ -23,7 +23,7 @@ The dialog package implements the WindowXMLDialog that allows users to edit menu
 | `properties.py` | [dialog-properties.md](dialog-properties.md) | 534 | Property management (widget, background) |
 | `subdialogs.py` | [dialog-subdialogs.md](dialog-subdialogs.md) | 267 | Subdialog and submenu handling |
 
----
+***
 
 ## Architecture
 
@@ -42,11 +42,12 @@ ManagementDialog
 ```
 
 Each mixin provides specific functionality:
-- **DialogBaseMixin** - Core initialization, list management, event routing
-- **ItemsMixin** - Item operations (add, delete, move, label, icon, action)
-- **PickersMixin** - Shortcut and widget picker dialogs
-- **PropertiesMixin** - Property management (widget, background, toggle, options)
-- **SubdialogsMixin** - Subdialog management (submenu editing, onclose handling)
+
+* **DialogBaseMixin** - Core initialization, list management, event routing
+* **ItemsMixin** - Item operations (add, delete, move, label, icon, action)
+* **PickersMixin** - Shortcut and widget picker dialogs
+* **PropertiesMixin** - Property management (widget, background, toggle, options)
+* **SubdialogsMixin** - Subdialog management (submenu editing, onclose handling)
 
 ### Mixin Type Stubs Pattern
 
@@ -73,20 +74,22 @@ due to Python MRO, causing silent failures.
 ### Parent/Child Dialog Architecture
 
 The dialog supports spawning child dialogs for:
+
 1. **Submenu editing** - Edit a different menu
 2. **Widget slots** - Edit widget properties with different suffix
 3. **Custom widget menus** - Edit custom widget items
 
 Child dialogs share state with parent:
-- `manager` - Same MenuManager instance
-- `property_schema` - Same PropertySchema
-- `icon_sources` - Same icon sources
-- `subdialogs` - Same subdialog definitions
-- `deleted_items` - Same deleted items tracker
+
+* `manager` - Same MenuManager instance
+* `property_schema` - Same PropertySchema
+* `icon_sources` - Same icon sources
+* `subdialogs` - Same subdialog definitions
+* `deleted_items` - Same deleted items tracker
 
 Only the root dialog saves changes on close.
 
----
+***
 
 ## Public API
 
@@ -100,7 +103,7 @@ changes_saved = show_management_dialog(menu_id="mainmenu")
 path = get_shortcuts_path()
 ```
 
----
+***
 
 ## Control IDs
 
@@ -122,7 +125,7 @@ For skin XML integration, these control IDs are used:
 | `CONTROL_CHOOSE_SHORTCUT` | 401 | Choose from groupings |
 | `CONTROL_EDIT_SUBMENU` | 405 | Edit submenu |
 
----
+***
 
 ## ListItem Properties
 
@@ -139,6 +142,7 @@ Properties set on each item in the list (control 211):
 | `widgetPath` | Widget content path |
 | `widgetType` | Widget type |
 | `widgetTarget` | Widget target window |
+| `widgetSource` | Widget source (library, playlist, addon) |
 | `background` | Background name |
 | `backgroundLabel` | Background display label |
 | `backgroundPath` | Background image path |

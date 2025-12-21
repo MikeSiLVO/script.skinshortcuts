@@ -97,7 +97,5 @@ class PropertySchema:
         if not button:
             return None, None
 
-        # Always look up the base property name
-        # Suffix is applied at runtime when setting/getting values
         prop = self.properties.get(button.property_name)
         return prop, button

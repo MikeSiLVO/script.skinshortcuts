@@ -2,20 +2,20 @@
 
 Properties available on menu items in the generated includes.
 
----
+***
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Core Properties](#core-properties)
-- [Widget Properties](#widget-properties)
-- [Background Properties](#background-properties)
-- [Submenu Properties](#submenu-properties)
-- [Custom Properties](#custom-properties)
-- [Template Properties](#template-properties)
-- [Accessing Properties](#accessing-properties)
+* [Overview](#overview)
+* [Core Properties](#core-properties)
+* [Widget Properties](#widget-properties)
+* [Background Properties](#background-properties)
+* [Submenu Properties](#submenu-properties)
+* [Custom Properties](#custom-properties)
+* [Template Properties](#template-properties)
+* [Accessing Properties](#accessing-properties)
 
----
+***
 
 ## Overview
 
@@ -26,7 +26,7 @@ Menu items in the generated includes have properties accessible via `ListItem.Pr
 3. Custom properties defined in `properties.xml`
 4. Template-generated properties
 
----
+***
 
 ## Core Properties
 
@@ -51,7 +51,7 @@ Menu items in the generated includes have properties accessible via `ListItem.Pr
 </control>
 ```
 
----
+***
 
 ## Widget Properties
 
@@ -72,7 +72,7 @@ For additional widget slots, use suffixed properties:
 
 | Slot | Properties |
 |------|------------|
-| Widget 2 | `widget.2`, `widgetPath.2`, `widgetType.2`, `widgetTarget.2`, `widgetLabel.2` |
+| Widget 2 | `widget.2`, `widgetPath.2`, `widgetType.2`, `widgetTarget.2`, `widgetLabel.2`, `widgetSource.2` |
 | Widget 3 | `widget.3`, `widgetPath.3`, ... |
 
 ### Usage
@@ -95,7 +95,7 @@ For additional widget slots, use suffixed properties:
 </control>
 ```
 
----
+***
 
 ## Background Properties
 
@@ -118,7 +118,7 @@ Set when a background is assigned to a menu item.
 </control>
 ```
 
----
+***
 
 ## Submenu Properties
 
@@ -139,7 +139,7 @@ Available when items have linked submenus.
 </control>
 ```
 
----
+***
 
 ## Custom Properties
 
@@ -176,7 +176,7 @@ Properties defined in `properties.xml` are stored on items.
 </control>
 ```
 
----
+***
 
 ## Template Properties
 
@@ -223,7 +223,7 @@ Templates can define additional properties for output.
 <property name="layout">default</property>
 ```
 
----
+***
 
 ## Accessing Properties
 
@@ -269,7 +269,7 @@ Using `$PROPERTY[]` placeholders:
 <visible>String.IsEqual(Container(9000).ListItem.Property(hasSubmenu),true)</visible>
 ```
 
----
+***
 
 ## Property Inheritance
 
@@ -282,7 +282,7 @@ Properties flow from:
 
 Fallbacks only apply when a property is empty and the fallback condition matches.
 
----
+***
 
 ## Quick Navigation
 

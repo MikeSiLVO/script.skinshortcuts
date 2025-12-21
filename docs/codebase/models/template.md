@@ -4,17 +4,18 @@
 **Lines:** 262
 **Purpose:** Dataclass models for the template system (templates.xml).
 
----
+***
 
 ## Overview
 
 The template system is the most complex part of Skin Shortcuts. It allows skins to define how menu items are transformed into Kodi includes with properties, variables, and controls.
 
----
+***
 
 ## Enums
 
 ### BuildMode (line 10)
+
 Template build mode determining iteration behavior.
 
 | Value | Description |
@@ -25,11 +26,12 @@ Template build mode determining iteration behavior.
 
 **Used by:** Template.build, builders/template.py
 
----
+***
 
 ## Classes
 
 ### TemplateParam (line 19)
+
 Parameter for parameterized includes (build="true" templates).
 
 | Field | Type | Default | Description |
@@ -39,9 +41,10 @@ Parameter for parameterized includes (build="true" templates).
 
 **Used by:** Template.params
 
----
+***
 
 ### TemplateProperty (line 27)
+
 Property assignment in a template.
 
 | Field | Type | Default | Description |
@@ -52,15 +55,17 @@ Property assignment in a template.
 | `condition` | str | "" | Condition for this assignment |
 
 **Modes:**
-- Literal: `name="left", value="245"`
-- From source: `name="content", from_source="widgetPath"`
-- Conditional: `name="aspect", condition="...", value="stretch"`
+
+* Literal: `name="left", value="245"`
+* From source: `name="content", from_source="widgetPath"`
+* Conditional: `name="aspect", condition="...", value="stretch"`
 
 **Used by:** Template, SubmenuTemplate, PropertyGroup, TemplateVar
 
----
+***
 
 ### TemplateVar (line 43)
+
 Multi-conditional property for internal resolution.
 
 | Field | Type | Default | Description |
@@ -69,6 +74,7 @@ Multi-conditional property for internal resolution.
 | `values` | list[TemplateProperty] | [] | Conditional values |
 
 **Example XML:**
+
 ```xml
 <var name="aspect">
     <value condition="widgetArt=Poster">stretch</value>
@@ -78,9 +84,10 @@ Multi-conditional property for internal resolution.
 
 **Used by:** Template.vars, SubmenuTemplate.vars, PropertyGroup.vars
 
----
+***
 
 ### PresetValues (line 58)
+
 A single row in a preset lookup table.
 
 | Field | Type | Default | Description |
@@ -90,9 +97,10 @@ A single row in a preset lookup table.
 
 **Used by:** Preset.rows
 
----
+***
 
 ### Preset (line 66)
+
 Lookup table returning multiple values based on conditions.
 
 | Field | Type | Default | Description |
@@ -102,9 +110,10 @@ Lookup table returning multiple values based on conditions.
 
 **Used by:** TemplateSchema.presets, builders/template.py
 
----
+***
 
 ### PropertyGroup (line 74)
+
 Reusable property group definition.
 
 | Field | Type | Default | Description |
@@ -115,9 +124,10 @@ Reusable property group definition.
 
 **Used by:** TemplateSchema.property_groups
 
----
+***
 
 ### PropertyGroupReference (line 87)
+
 Reference to a property group.
 
 | Field | Type | Default | Description |
@@ -128,9 +138,10 @@ Reference to a property group.
 
 **Used by:** Template.property_groups, SubmenuTemplate.property_groups
 
----
+***
 
 ### PresetReference (line 96)
+
 Reference to a preset for direct property resolution.
 
 | Field | Type | Default | Description |
@@ -141,21 +152,23 @@ Reference to a preset for direct property resolution.
 
 **Used by:** Template.preset_refs
 
----
+***
 
 ### IncludeDefinition (line 109)
+
 Reusable include definition for controls (like Kodi includes).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `name` | str | required | Include name |
-| `controls` | ET.Element\|None | None | Raw XML content |
+| `controls` | ET.Element|None | None | Raw XML content |
 
 **Used by:** TemplateSchema.includes, builders/template.py
 
----
+***
 
 ### ListItem (line 120)
+
 Item in a \<list\> for build="list" templates.
 
 | Field | Type | Default | Description |
@@ -164,23 +177,25 @@ Item in a \<list\> for build="list" templates.
 
 **Used by:** Template.list_items
 
----
+***
 
 ### VariableDefinition (line 127)
+
 Kodi variable definition.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `name` | str | required | Variable name (e.g., "PosterVar") |
-| `content` | ET.Element\|None | None | Variable XML content |
+| `content` | ET.Element|None | None | Variable XML content |
 
 Output name format: `HomeWidget{id}{name}` (e.g., `HomeWidget80111PosterVar`)
 
 **Used by:** TemplateSchema.variable_definitions
 
----
+***
 
 ### VariableReference (line 139)
+
 Reference to a variable definition.
 
 | Field | Type | Default | Description |
@@ -191,9 +206,10 @@ Reference to a variable definition.
 
 **Used by:** VariableGroup.variables
 
----
+***
 
 ### VariableGroupRef (line 155)
+
 Reference to another variableGroup (for nested groups).
 
 | Field | Type | Default | Description |
@@ -202,9 +218,10 @@ Reference to another variableGroup (for nested groups).
 
 **Used by:** VariableGroup.group_refs
 
----
+***
 
 ### VariableGroup (line 162)
+
 Reusable group of variable references.
 
 | Field | Type | Default | Description |
@@ -215,9 +232,10 @@ Reusable group of variable references.
 
 **Used by:** TemplateSchema.variable_groups
 
----
+***
 
 ### VariableGroupReference (line 176)
+
 Reference to a variable group from a template.
 
 | Field | Type | Default | Description |
@@ -228,9 +246,10 @@ Reference to a variable group from a template.
 
 **Used by:** Template.variable_groups
 
----
+***
 
 ### Template (line 189)
+
 Main template definition.
 
 | Field | Type | Default | Description |
@@ -246,14 +265,15 @@ Main template definition.
 | `property_groups` | list[PropertyGroupReference] | [] | Group references |
 | `preset_refs` | list[PresetReference] | [] | Preset references |
 | `list_items` | list[ListItem] | [] | For build="list" |
-| `controls` | ET.Element\|None | None | Raw XML controls |
+| `controls` | ET.Element|None | None | Raw XML controls |
 | `variable_groups` | list[VariableGroupReference] | [] | Variable groups |
 
 **Used by:** TemplateSchema.templates, builders/template.py
 
----
+***
 
 ### SubmenuTemplate (line 196)
+
 Submenu template definition.
 
 | Field | Type | Default | Description |
@@ -264,13 +284,14 @@ Submenu template definition.
 | `properties` | list[TemplateProperty] | [] | Properties to set |
 | `vars` | list[TemplateVar] | [] | Variables to resolve |
 | `property_groups` | list[PropertyGroupReference] | [] | Group references |
-| `controls` | ET.Element\|None | None | Raw XML controls |
+| `controls` | ET.Element|None | None | Raw XML controls |
 
 **Used by:** TemplateSchema.submenus, builders/template.py
 
----
+***
 
 ### TemplateSchema (line 210)
+
 Complete template schema container.
 
 | Field | Type | Default | Description |
@@ -285,22 +306,23 @@ Complete template schema container.
 | `submenus` | list[SubmenuTemplate] | [] | Submenu templates |
 
 **Methods:**
-- `get_expression(name)` → str\|None
-- `get_property_group(name)` → PropertyGroup\|None
-- `get_include(name)` → IncludeDefinition\|None
-- `get_preset(name)` → Preset\|None
-- `get_variable_definition(name)` → VariableDefinition\|None
-- `get_variable_group(name)` → VariableGroup\|None
+
+* `get_expression(name)` → str|None
+* `get_property_group(name)` → PropertyGroup|None
+* `get_include(name)` → IncludeDefinition|None
+* `get_preset(name)` → Preset|None
+* `get_variable_definition(name)` → VariableDefinition|None
+* `get_variable_group(name)` → VariableGroup|None
 
 **Used by:** config.py, loaders/template.py, builders/template.py, builders/includes.py
 
----
+***
 
 ## Dead Code Analysis
 
 All classes appear to be in active use.
 
----
+***
 
 ## Test Candidates
 

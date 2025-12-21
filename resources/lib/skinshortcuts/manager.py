@@ -36,11 +36,9 @@ class MenuManager:
         self.shortcuts_path = Path(shortcuts_path)
         self.userdata_path = userdata_path
 
-        # Load config with user customizations
         self.config = SkinConfig.load(shortcuts_path, load_user=True, userdata_path=userdata_path)
 
-        # Working copy: deep copy of merged menus (defaults + userdata)
-        # All edits happen here, diffed against defaults on save
+        # Working copy of merged menus - all edits happen here, diffed against defaults on save
         self.working: dict[str, Menu] = {
             menu.name: copy.deepcopy(menu) for menu in self.config.menus
         }
@@ -98,17 +96,14 @@ class MenuManager:
         Returns:
             The newly created MenuItem
         """
-        # Generate unique name for user-added items
         item_name = f"user-{uuid.uuid4().hex[:8]}"
 
-        # Create new item
         new_item = MenuItem(
             name=item_name,
             label=label or "New Item",
             actions=[Action(action="noop")],
         )
 
-        # Add to working copy
         menu = self._ensure_working_menu(menu_id)
         if after_index is not None and 0 <= after_index < len(menu.items):
             menu.items.insert(after_index + 1, new_item)
@@ -152,7 +147,6 @@ class MenuManager:
         """
         menu = self._ensure_working_menu(menu_id)
 
-        # Deep copy to avoid sharing references
         restored = copy.deepcopy(item)
         menu.items.append(restored)
         self._changed = True
@@ -168,7 +162,6 @@ class MenuManager:
         Returns:
             True if item was reset
         """
-        # Get the default item
         default_menu = self.config.get_default_menu(menu_id)
         if not default_menu:
             return False
@@ -182,7 +175,6 @@ class MenuManager:
         if not default_item:
             return False
 
-        # Find and replace in working copy
         if menu_id not in self.working:
             return False
 
@@ -210,7 +202,6 @@ class MenuManager:
 
         default_menu = self.config.get_default_menu(menu_id)
         if not default_menu:
-            # No defaults means it's a user-created item
             return False
 
         default_item = None
@@ -220,10 +211,8 @@ class MenuManager:
                 break
 
         if not default_item:
-            # Item doesn't exist in defaults (user-added)
             return False
 
-        # Compare key properties
         if working_item.label != default_item.label:
             return True
         if working_item.actions != default_item.actions:
@@ -277,7 +266,6 @@ class MenuManager:
         if not items:
             return False
 
-        # Find current index
         current_index = None
         for i, item in enumerate(items):
             if item.name == item_id:
@@ -291,7 +279,6 @@ class MenuManager:
         if new_index < 0 or new_index >= len(items):
             return False
 
-        # Swap items in working copy
         items[current_index], items[new_index] = items[new_index], items[current_index]
 
         self._changed = True
@@ -362,7 +349,6 @@ class MenuManager:
             return False
 
         if prop == "actions" and isinstance(value, list):
-            # Convert action strings to Action objects
             item.actions = [Action(action=a) for a in value]
         else:
             setattr(item, prop, value)
@@ -399,7 +385,6 @@ class MenuManager:
         """Generate userdata by diffing working copy against defaults."""
         userdata = UserData()
 
-        # Build default menu lookup
         default_menus = {m.name: m for m in self.config.default_menus}
 
         for menu_id, working_menu in self.working.items():
@@ -415,7 +400,6 @@ class MenuManager:
         override = MenuOverride()
 
         if default is None:
-            # Entirely user-created menu - all items are new
             for item in working.items:
                 override.items.append(self._item_to_override(item, is_new=True))
             return override if override.items else None
@@ -423,27 +407,23 @@ class MenuManager:
         default_items = {item.name: item for item in default.items}
         working_items = {item.name: item for item in working.items}
 
-        # Find removed items (skip items filtered by dialog_visible)
         for name, default_item in default_items.items():
             if name not in working_items:
-                # Don't mark as removed if it was filtered by dialog_visible
+                # Skip items filtered by dialog_visible - they weren't user-removed
                 if default_item.dialog_visible and not _check_dialog_visible(
                     default_item.dialog_visible
                 ):
                     continue
                 override.removed.append(name)
 
-        # Find modified or new items (preserving working order for position tracking)
         for idx, working_item in enumerate(working.items):
             default_item = default_items.get(working_item.name)
 
             if default_item is None:
-                # New item
                 item_override = self._item_to_override(working_item, is_new=True)
                 item_override.position = idx
                 override.items.append(item_override)
             else:
-                # Check for modifications or position change
                 default_idx = next(
                     (i for i, d in enumerate(default.items) if d.name == working_item.name),
                     None
@@ -454,11 +434,9 @@ class MenuManager:
                 if item_diff or position_changed:
                     if item_diff is None:
                         item_diff = MenuItemOverride(name=working_item.name)
-                    # Always include position if item is in userdata
                     item_diff.position = idx
                     override.items.append(item_diff)
 
-        # Only return if there are actual changes
         if not override.items and not override.removed:
             return None
         return override
@@ -484,7 +462,6 @@ class MenuManager:
             diff.disabled = working.disabled
             has_changes = True
 
-        # Check properties - only save those that differ
         if working.properties != default.properties:
             diff_props = {
                 k: v for k, v in working.properties.items()

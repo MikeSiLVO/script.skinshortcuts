@@ -32,7 +32,6 @@ class SubdialogsMixin:
     Requires DialogBaseMixin to be mixed in first.
     """
 
-    # Type hints for mixin - actual values come from base/subclass
     menu_id: str
     shortcuts_path: str
     manager: MenuManager | None
@@ -44,14 +43,13 @@ class SubdialogsMixin:
     _skin_path: str
 
     if TYPE_CHECKING:
-        # Methods from DialogBaseMixin - only for type checking
         def _get_selected_index(self) -> int: ...
         def _get_selected_item(self) -> MenuItem | None: ...
         def _get_item_properties(self, item: MenuItem) -> dict[str, str]: ...
         def _refresh_selected_item(self) -> None: ...
+        def _clear_subdialog_list(self) -> None: ...
         def _log(self, msg: str) -> None: ...
 
-        # Methods from WindowXMLDialog (must be available through inheritance)
         def setProperty(self, key: str, value: str) -> None: ...
         def clearProperty(self, key: str) -> None: ...
 
@@ -64,29 +62,22 @@ class SubdialogsMixin:
         if not self.manager:
             return
 
-        # Check if submenus are allowed for this menu
         menu = self.manager.config.get_menu(self.menu_id)
         if menu and not menu.allow.submenus:
             xbmcgui.Dialog().notification("Not Allowed", "Submenus not enabled for this menu")
             return
 
-        # Check if item has a submenu (submenu or fall back to item name)
         submenu_name = item.submenu or item.name
         submenu = self.manager.config.get_menu(submenu_name)
         if not submenu:
             xbmcgui.Dialog().notification("No Submenu", f"No submenu defined for '{item.label}'")
             return
 
-        # Hide parent while child is open
         self.setProperty("additionalDialog", "true")
-
-        # Build subdialogs list from dict for sharing
         subdialogs_list = list(self._subdialogs.values())
 
-        # Import here to avoid circular imports
         from . import ManagementDialog
 
-        # Spawn child dialog with shared manager, schema, and icon sources
         child = ManagementDialog(
             self._dialog_xml,
             self._skin_path,
@@ -102,7 +93,6 @@ class SubdialogsMixin:
         child.doModal()
         del child
 
-        # Show parent again (child edits different menu, no refresh needed)
         self.clearProperty("additionalDialog")
 
     def _spawn_subdialog(self, subdialog: SubDialog) -> None:
@@ -120,10 +110,8 @@ class SubdialogsMixin:
         if not item:
             return
 
-        # Open the subdialog
         self._open_subdialog(subdialog)
 
-        # After subdialog closes, check onclose actions
         if subdialog.onclose:
             self._handle_onclose(subdialog, item)
 
@@ -140,32 +128,24 @@ class SubdialogsMixin:
         if not self.manager:
             return
 
-        # Re-fetch item to get updated properties after subdialog edits
         current_item = self._get_selected_item()
         if not current_item:
             return
 
-        # Get item properties for condition evaluation
         item_props = self._get_item_properties(current_item)
 
         for action in subdialog.onclose:
-            # Check condition - skip if condition doesn't match
             if action.condition and not evaluate_condition(action.condition, item_props):
                 continue
 
-            # Execute the action
             if action.action == "menu" and action.menu:
-                # Substitute {item} placeholder with current item name
                 menu_name = action.menu.replace("{item}", current_item.name)
                 self._log(f"Onclose: opening menu {menu_name}")
                 self._open_onclose_menu(menu_name, subdialog)
-                return  # Only execute first matching action
+                return
 
     def _open_onclose_menu(self, menu_name: str, subdialog: SubDialog) -> None:
         """Open a menu from an onclose action.
-
-        Used for custom widget editing where we open the custom menu
-        after the widget picker closes with widgetType=custom.
 
         Args:
             menu_name: Name of the menu to open
@@ -176,30 +156,20 @@ class SubdialogsMixin:
 
         self._log(f"Opening onclose menu: {menu_name}")
 
-        # Ensure menu exists (create if needed for custom widget menus)
         menu = self.manager.config.get_menu(menu_name)
         if not menu:
             menu = Menu(name=menu_name, is_submenu=True)
             self.manager.config.menus.append(menu)
             self._log(f"Created new menu from onclose: {menu_name}")
 
-        # Get current selected index to pass to child
         selected_index = self._get_selected_index()
 
-        # Hide parent while child is open
         self.setProperty("additionalDialog", "true")
-
-        # Build subdialogs list from dict for sharing
         subdialogs_list = list(self._subdialogs.values())
-
-        # Determine dialog mode for custom menu
-        # Use the subdialog mode but indicate it's a custom menu
         dialog_mode = f"custom-{subdialog.mode}" if subdialog.mode else "customwidget"
 
-        # Import here to avoid circular imports
         from . import ManagementDialog
 
-        # Spawn child dialog to edit the menu
         child = ManagementDialog(
             self._dialog_xml,
             self._skin_path,
@@ -217,7 +187,6 @@ class SubdialogsMixin:
         child.doModal()
         del child
 
-        # Show parent again
         self.clearProperty("additionalDialog")
         self._refresh_selected_item()
 
@@ -227,19 +196,13 @@ class SubdialogsMixin:
         Args:
             subdialog: The subdialog definition
         """
-        # Get current selected index to pass to child
         selected_index = self._get_selected_index()
 
-        # Hide parent while child is open
         self.setProperty("additionalDialog", "true")
-
-        # Build subdialogs list from dict for sharing
         subdialogs_list = list(self._subdialogs.values())
 
-        # Import here to avoid circular imports
         from . import ManagementDialog
 
-        # Spawn child dialog with same menu but different dialog_mode and suffix
         child = ManagementDialog(
             self._dialog_xml,
             self._skin_path,
@@ -261,7 +224,6 @@ class SubdialogsMixin:
 
         self._clear_subdialog_list()
 
-        # Clear all visibility properties together
         self.clearProperty("additionalDialog")
         home = xbmcgui.Window(10000)
         home.clearProperty("skinshortcuts-suffix")

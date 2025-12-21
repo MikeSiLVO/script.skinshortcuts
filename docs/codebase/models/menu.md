@@ -1,20 +1,21 @@
 # models/menu.py
 
 **Path:** `resources/lib/skinshortcuts/models/menu.py`
-**Lines:** 362
+**Lines:** 368
 **Purpose:** Core dataclass models for menus, menu items, shortcuts, groups, and related structures.
 
----
+***
 
 ## Overview
 
 This is the largest model file, containing all menu-related data structures. These are pure data classes (no business logic except simple accessors).
 
----
+***
 
 ## Classes
 
 ### IconSource (line 16)
+
 Source for icon picker browsing.
 
 | Field | Type | Default | Description |
@@ -27,9 +28,10 @@ Source for icon picker browsing.
 
 **Used by:** dialog/items.py (icon picker), loaders/menu.py
 
----
+***
 
 ### Content (line 35)
+
 Dynamic content reference resolved at runtime (playlists, addons, sources, etc).
 
 | Field | Type | Default | Description |
@@ -45,9 +47,10 @@ Dynamic content reference resolved at runtime (playlists, addons, sources, etc).
 
 **Used by:** dialog/pickers.py (shortcut/widget picker)
 
----
+***
 
 ### Action (line 71)
+
 An action with optional condition.
 
 | Field | Type | Default | Description |
@@ -57,9 +60,10 @@ An action with optional condition.
 
 **Used by:** MenuItem, userdata.py, manager.py, dialog.py
 
----
+***
 
 ### Protection (line 82)
+
 Protection rule for menu items preventing accidental changes.
 
 | Field | Type | Default | Description |
@@ -69,14 +73,16 @@ Protection rule for menu items preventing accidental changes.
 | `message` | str | "" | Confirmation dialog message |
 
 **Methods:**
-- `protects_delete()` → bool - Returns True if deletion is protected
-- `protects_action()` → bool - Returns True if action changes are protected
+
+* `protects_delete()` → bool - Returns True if deletion is protected
+* `protects_action()` → bool - Returns True if action changes are protected
 
 **Used by:** dialog.py (delete/action confirmation)
 
----
+***
 
 ### Shortcut (line 111)
+
 A shortcut option in picker groupings.
 
 | Field | Type | Default | Description |
@@ -92,13 +98,15 @@ A shortcut option in picker groupings.
 | `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
 
 **Methods:**
-- `get_action()` → str - Returns action, or constructs ActivateWindow from browse+path
+
+* `get_action()` → str - Returns action, or constructs ActivateWindow from browse+path
 
 **Used by:** dialog.py (shortcut picker), loaders/menu.py
 
----
+***
 
 ### Group (line 151)
+
 A group/category of shortcuts in picker groupings.
 
 | Field | Type | Default | Description |
@@ -112,9 +120,10 @@ A group/category of shortcuts in picker groupings.
 
 **Used by:** dialog.py (shortcut picker), loaders/menu.py
 
----
+***
 
 ### MenuItem (line 169)
+
 A single item in a menu (the core data structure).
 
 | Field | Type | Default | Description |
@@ -129,25 +138,28 @@ A single item in a menu (the core data structure).
 | `dialog_visible` | str | "" | Kodi condition to filter item in management dialog |
 | `disabled` | bool | False | If True, item is grayed out |
 | `required` | bool | False | If True, cannot be deleted |
-| `protection` | Protection\|None | None | Protection configuration |
+| `protection` | Protection|None | None | Protection configuration |
 | `properties` | dict[str,str] | {} | Custom properties (widget, background, etc) |
-| `submenu` | str\|None | None | Submenu reference by name |
+| `submenu` | str|None | None | Submenu reference by name |
 | `original_action` | str | "" | Original action for protection matching |
 
 **Dual Visibility Fields:**
 MenuItem has two visibility fields serving different purposes:
-- `visible` - From `<visible>` child element. Output to generated includes.xml for Kodi runtime evaluation.
-- `dialog_visible` - From `visible=` attribute on `<item>`. Evaluated in Python when loading the management dialog to hide items (e.g., hide "Play Disc" when no disc drive).
+
+* `visible` - From `<visible>` child element. Output to generated includes.xml for Kodi runtime evaluation.
+* `dialog_visible` - From `visible=` attribute on `<item>`. Evaluated in Python when loading the management dialog to hide items (e.g., hide "Play Disc" when no disc drive).
 
 **Properties:**
-- `action` (getter) → str - Returns first unconditional action
-- `action` (setter) - Sets first unconditional action
+
+* `action` (getter) → str - Returns first unconditional action
+* `action` (setter) - Sets first unconditional action
 
 **Used by:** Menu, manager.py, userdata.py, dialog.py, builders/includes.py
 
----
+***
 
 ### DefaultAction (line 213)
+
 A default action applied to all items in a menu.
 
 | Field | Type | Default | Description |
@@ -158,9 +170,10 @@ A default action applied to all items in a menu.
 
 **Used by:** MenuDefaults, builders/includes.py
 
----
+***
 
 ### MenuDefaults (line 228)
+
 Default properties and actions for items in a menu.
 
 | Field | Type | Default | Description |
@@ -170,9 +183,10 @@ Default properties and actions for items in a menu.
 
 **Used by:** Menu, loaders/menu.py
 
----
+***
 
 ### MenuAllow (line 236)
+
 Configuration for what features are allowed in a menu.
 
 | Field | Type | Default | Description |
@@ -183,9 +197,10 @@ Configuration for what features are allowed in a menu.
 
 **Used by:** Menu, dialog.py (button visibility)
 
----
+***
 
 ### Menu (line 245)
+
 A menu containing menu items.
 
 | Field | Type | Default | Description |
@@ -194,20 +209,22 @@ A menu containing menu items.
 | `items` | list[MenuItem] | [] | Menu items |
 | `defaults` | MenuDefaults | MenuDefaults() | Default properties/actions |
 | `allow` | MenuAllow | MenuAllow() | Feature toggles |
-| `container` | str\|None | None | Container ID for submenu visibility |
+| `container` | str|None | None | Container ID for submenu visibility |
 | `is_submenu` | bool | False | True if defined with \<submenu\> tag |
 
 **Methods:**
-- `get_item(item_name)` → MenuItem\|None - Find item by name
-- `add_item(item, position=None)` - Add item at position or end
-- `remove_item(item_name)` → bool - Remove item, return True if found
-- `move_item(item_name, direction)` → bool - Move item up (-1) or down (+1)
+
+* `get_item(item_name)` → MenuItem|None - Find item by name
+* `add_item(item, position=None)` - Add item at position or end
+* `remove_item(item_name)` → bool - Remove item, return True if found
+* `move_item(item_name, direction)` → bool - Move item up (-1) or down (+1)
 
 **Used by:** config.py, manager.py, userdata.py, builders/includes.py
 
----
+***
 
 ### OnCloseAction (line 291)
+
 Action to execute when a subdialog closes.
 
 | Field | Type | Default | Description |
@@ -218,24 +235,26 @@ Action to execute when a subdialog closes.
 
 **Used by:** SubDialog, dialog.py (_handle_onclose)
 
----
+***
 
 ### SubDialog (line 310)
+
 Subdialog definition for management dialog.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `button_id` | int | required | Button ID that triggers this subdialog |
 | `mode` | str | required | Mode name for Window(Home).Property(skinshortcuts-dialog) |
-| `setfocus` | int\|None | None | Control ID to focus on open |
+| `setfocus` | int|None | None | Control ID to focus on open |
 | `suffix` | str | "" | Property suffix for widget slots (e.g., ".2"). Set in Window(Home).Property(skinshortcuts-suffix) |
 | `onclose` | list[OnCloseAction] | [] | Actions to run on close |
 
 **Used by:** config.py, dialog.py (_spawn_subdialog, _open_subdialog)
 
----
+***
 
 ### ActionOverride (line 336)
+
 Replaces deprecated actions with updated versions.
 
 | Field | Type | Default | Description |
@@ -245,9 +264,10 @@ Replaces deprecated actions with updated versions.
 
 **Used by:** config.py (_apply_action_overrides)
 
----
+***
 
 ### MenuConfig (line 352)
+
 Top-level menu configuration container.
 
 | Field | Type | Default | Description |
@@ -261,7 +281,7 @@ Top-level menu configuration container.
 
 **Used by:** loaders/menu.py, config.py
 
----
+***
 
 ## Type Alias
 
@@ -271,13 +291,13 @@ GroupContent = Union[Shortcut, Group, Content]  # line 12
 
 Items that can appear in a Group's items list.
 
----
+***
 
 ## Dead Code Analysis
 
 All classes appear to be in active use.
 
----
+***
 
 ## Test Candidates
 

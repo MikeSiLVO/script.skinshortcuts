@@ -2,40 +2,41 @@
 
 The `templates.xml` file defines how the script generates include files. Templates transform menu items into Kodi-compatible XML.
 
----
+***
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [File Structure](#file-structure)
-- [Template Element](#template-element)
-- [Build Modes](#build-modes)
-- [Properties](#properties)
-- [Vars](#vars)
-- [Controls](#controls)
-- [Skinshortcuts Tag](#skinshortcuts-tag)
-- [Property Groups](#property-groups)
-- [Presets](#presets)
-- [Variables](#variables)
-- [Expressions](#expressions)
-- [Includes](#includes)
-- [Submenus](#submenus)
-- [Conditions](#conditions)
-- [templateonly Attribute](#templateonly-attribute)
-- [Complete Example](#complete-example)
+* [Overview](#overview)
+* [File Structure](#file-structure)
+* [Template Element](#template-element)
+* [Multi-Output Templates](#multi-output-templates)
+* [Build Modes](#build-modes)
+* [Properties](#properties)
+* [Vars](#vars)
+* [Controls](#controls)
+* [Skinshortcuts Tag](#skinshortcuts-tag)
+* [Property Groups](#property-groups)
+* [Presets](#presets)
+* [Variables](#variables)
+* [Expressions](#expressions)
+* [Includes](#includes)
+* [Submenus](#submenus)
+* [Conditions](#conditions)
+* [templateonly Attribute](#templateonly-attribute)
+* [Complete Example](#complete-example)
 
----
+***
 
 ## Overview
 
 Without `templates.xml`, the script generates basic includes with menu items as `<item>` elements. Templates let you:
 
-- Define custom control structures
-- Create property-based visibility conditions
-- Generate Kodi variables
-- Build conditional includes
+* Define custom control structures
+* Create property-based visibility conditions
+* Generate Kodi variables
+* Build conditional includes
 
----
+***
 
 ## File Structure
 
@@ -77,7 +78,7 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 </templates>
 ```
 
----
+***
 
 ## Template Element
 
@@ -102,7 +103,107 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 | `idprefix` | No | - | Prefix for computed control IDs |
 | `templateonly` | No | - | Skip include generation: `true` (always) or `auto` (if unassigned) |
 
----
+***
+
+## Multi-Output Templates
+
+A single template can generate multiple outputs with different ID prefixes and suffixes. This is useful for multi-widget skins where each menu item has multiple widget slots.
+
+### Basic Multi-Output
+
+```xml
+<template>
+  <output include="widget1" idprefix="8011"/>
+  <output include="widget2" idprefix="8021" suffix=".2"/>
+  <condition>widgetPath</condition>
+
+  <propertyGroup content="widgetProps"/>
+  <preset content="layoutDimensions"/>
+
+  <controls>
+    <control type="panel" id="$PROPERTY[id]">
+      <top>$PROPERTY[top]</top>
+      ...
+    </control>
+  </controls>
+</template>
+```
+
+### Output Attributes
+
+| Attribute | Required | Description |
+|-----------|----------|-------------|
+| `include` | Yes | Output include name (`skinshortcuts-template-{include}`) |
+| `idprefix` | No | ID prefix for this output |
+| `suffix` | No | Suffix for property transforms (e.g., `.2`) |
+
+### Suffix Transform
+
+When `suffix=".2"` is specified on an output:
+
+1. **Property reads** are transformed: `from="widgetPath"` → `from="widgetPath.2"`
+2. **Conditions** are transformed: `condition="widgetType=movies"` → `condition="widgetType.2=movies"`
+3. **The `suffix` built-in property** is set and available in conditions
+
+### The `suffix` Built-in Property
+
+Within template controls, you can check the current output's suffix:
+
+```xml
+<!-- Include different navigation based on widget slot -->
+<skinshortcuts include="HorizontalNavigation1" condition="!suffix"/>
+<skinshortcuts include="HorizontalNavigation2" condition="suffix=.2"/>
+```
+
+### Suffix-Based Preset Values
+
+Presets can provide different values per widget slot:
+
+```xml
+<presets>
+  <preset name="layoutDimensions">
+    <!-- Widget 2 (suffix=.2) - positioned higher -->
+    <values condition="suffix=.2 + widgetArt=Poster" top="70"/>
+    <values condition="suffix=.2" top="112"/>
+    <!-- Widget 1 (default) - positioned lower -->
+    <values condition="widgetArt=Poster" top="424"/>
+    <values top="471"/>
+  </preset>
+</presets>
+```
+
+### Code Deduplication
+
+Multi-output eliminates the need for separate templates per widget slot. Instead of:
+
+```xml
+<!-- OLD: Duplicate templates -->
+<template include="widget1" idprefix="8011">
+  <condition>widgetPath</condition>
+  <!-- 200 lines of controls -->
+</template>
+
+<template include="widget2" idprefix="8021">
+  <condition>widgetPath.2</condition>
+  <!-- Same 200 lines duplicated -->
+</template>
+```
+
+Use a single template with multiple outputs:
+
+```xml
+<!-- NEW: Single template, multiple outputs -->
+<template>
+  <output include="widget1" idprefix="8011"/>
+  <output include="widget2" idprefix="8021" suffix=".2"/>
+  <condition>widgetPath</condition>
+  <!-- 200 lines, only once -->
+</template>
+```
+
+Differences between slots are handled via `suffix=.2` conditions in presets and conditional includes.
+
+***
 
 ## Build Modes
 
@@ -158,7 +259,7 @@ No iteration, outputs controls once with parameter substitution:
 
 Use as `<include content="skinshortcuts-UtilityInclude"><param name="id">9001</param></include>`.
 
----
+***
 
 ## Properties
 
@@ -198,6 +299,7 @@ These are special values available in `from` attributes and `$PROPERTY[]`:
 | `menu` | Parent menu name |
 | `idprefix` | The template's idprefix value |
 | `id` | Computed ID: `{idprefix}{index}` |
+| `suffix` | Output suffix (e.g., `.2`) or empty string if none |
 
 Standard item properties are also available:
 
@@ -211,7 +313,7 @@ Standard item properties are also available:
 
 These come from the menu item's properties, along with any custom properties set in menus.xml or by the user.
 
----
+***
 
 ## Vars
 
@@ -227,7 +329,7 @@ Multi-conditional values resolved during context building:
 
 First matching condition wins. Once resolved, vars become properties accessible via `$PROPERTY[aspectRatio]`.
 
----
+***
 
 ## Controls
 
@@ -253,7 +355,7 @@ XML content output per item:
 
 Note: Vars defined with `<var>` are resolved during context building and accessible via `$PROPERTY[name]`.
 
----
+***
 
 ## Skinshortcuts Tag
 
@@ -311,27 +413,43 @@ To output as a Kodi `<include>` element (preserving the wrapper):
 
 ### Conditional Include
 
-Include content only if a property exists on the menu item:
+Include content only when a condition is met:
 
 ```xml
 <controls>
   <control type="group">
+    <!-- Include if property has a value -->
     <skinshortcuts include="WidgetControls" condition="widgetPath"/>
+
+    <!-- Include based on suffix (multi-output) -->
+    <skinshortcuts include="Navigation1" condition="!suffix"/>
+    <skinshortcuts include="Navigation2" condition="suffix=.2"/>
+
+    <!-- Include with complex condition -->
+    <skinshortcuts include="PanelLayout" condition="widgetStyle=Panel + widgetPath"/>
   </control>
 </controls>
 ```
 
-If the item doesn't have the specified property, the entire element is removed.
+Supports full condition syntax including:
+
+* `property` - truthy check (has value)
+* `!property` - falsy check (empty/not set)
+* `property=value` - equality
+* `condition1 + condition2` - AND
+* `condition1 | condition2` - OR
+
+If the condition evaluates to false, the entire element is removed.
 
 ### Attributes
 
 | Attribute | Required | Description |
 |-----------|----------|-------------|
 | `include` | Yes | Name of include definition to expand |
-| `condition` | No | Property name that must exist on the item |
+| `condition` | No | Condition expression (see [Conditions](conditions.md)) |
 | `wrap` | No | If `true`, output as Kodi `<include>` element instead of unwrapping |
 
----
+***
 
 ## Property Groups
 
@@ -383,10 +501,11 @@ Apply suffix for widget slots:
 ```
 
 Transforms:
-- `from="widgetPath"` → `from="widgetPath.2"`
-- `condition="widgetType=movies"` → `condition="widgetType.2=movies"`
 
----
+* `from="widgetPath"` → `from="widgetPath.2"`
+* `condition="widgetType=movies"` → `condition="widgetType.2=movies"`
+
+***
 
 ## Presets
 
@@ -430,7 +549,7 @@ All matched attributes become properties.
 
 When `suffix` is specified, preset conditions like `widgetStyle=Panel` are transformed to `widgetStyle.2=Panel`.
 
----
+***
 
 ## Variables
 
@@ -451,6 +570,7 @@ Generate Kodi `<variable>` elements:
 ```
 
 Generates per menu item:
+
 ```xml
 <variable name="Background-movies">...</variable>
 <variable name="Background-tvshows">...</variable>
@@ -504,7 +624,7 @@ Reference in template:
 | `condition` | Build only when condition matches item |
 | `output` | Output name pattern (supports `$PROPERTY[]`) |
 
----
+***
 
 ## Expressions
 
@@ -523,7 +643,7 @@ Use in controls:
 <visible>$EXP[HasWidget]</visible>
 ```
 
----
+***
 
 ## Includes
 
@@ -549,7 +669,7 @@ Use in controls via the `<skinshortcuts>` tag:
 
 See [Skinshortcuts Tag](#skinshortcuts-tag) for details on `include`, `condition`, and `wrap` attributes.
 
----
+***
 
 ## Submenus
 
@@ -576,7 +696,7 @@ Template for submenu generation:
 | `level` | Submenu depth (1 = direct child, 2 = grandchild, etc.) |
 | `name` | Match specific submenu name (empty = all) |
 
----
+***
 
 ## Conditions
 
@@ -596,7 +716,7 @@ Multiple `<condition>` elements are ANDed together. The template only builds for
 
 See [Conditions](conditions.md) for full syntax reference.
 
----
+***
 
 ## templateonly Attribute
 
@@ -647,7 +767,7 @@ When `$INCLUDE[...]` appears as text content in an element (e.g., after `$PROPER
 <content><include>skinshortcuts-template-MovieWidgets</include></content>
 ```
 
----
+***
 
 ## Complete Example
 
@@ -702,12 +822,12 @@ When `$INCLUDE[...]` appears as text content in an element (e.g., after `$PROPER
 </templates>
 ```
 
----
+***
 
 ## Quick Navigation
 
 [Back to Top](#template-configuration)
 
-**Sections:** [Overview](#overview) | [File Structure](#file-structure) | [Template Element](#template-element) | [Build Modes](#build-modes) | [Properties](#properties) | [Vars](#vars) | [Controls](#controls) | [Skinshortcuts Tag](#skinshortcuts-tag) | [Property Groups](#property-groups) | [Presets](#presets) | [Variables](#variables) | [Expressions](#expressions) | [Includes](#includes) | [Submenus](#submenus) | [Conditions](#conditions) | [templateonly](#templateonly-attribute)
+**Sections:** [Overview](#overview) | [File Structure](#file-structure) | [Template Element](#template-element) | [Multi-Output](#multi-output-templates) | [Build Modes](#build-modes) | [Properties](#properties) | [Vars](#vars) | [Controls](#controls) | [Skinshortcuts Tag](#skinshortcuts-tag) | [Property Groups](#property-groups) | [Presets](#presets) | [Variables](#variables) | [Expressions](#expressions) | [Includes](#includes) | [Submenus](#submenus) | [Conditions](#conditions) | [templateonly](#templateonly-attribute)
 
 **Related Docs:** [Conditions](conditions.md) | [Properties](properties.md) | [Menus](menus.md) | [Widgets](widgets.md)

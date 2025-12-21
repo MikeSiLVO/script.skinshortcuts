@@ -15,7 +15,10 @@ try:
 except ImportError:
     IN_KODI = False
 
+from .log import get_logger
 from .models import Action, Menu, MenuItem
+
+log = get_logger("UserData")
 
 
 def get_userdata_path() -> str:
@@ -103,7 +106,6 @@ class UserData:
         for menu_id, menu_data in data.get("menus", {}).items():
             items = []
             for item_data in menu_data.get("items", []):
-                # Convert actions list to Action objects
                 actions_data = item_data.pop("actions", None)
                 actions = None
                 if actions_data is not None:
@@ -124,19 +126,25 @@ def load_userdata(path: str | None = None) -> UserData:
     """Load user data from JSON file."""
     if path is None:
         path = get_userdata_path()
+        log.debug(f"Userdata path: {path}")
 
     if not path:
+        log.warning("No userdata path available")
         return UserData()
 
     try:
         file_path = Path(path)
         if file_path.exists():
+            log.debug(f"Loading userdata from: {file_path}")
             with open(file_path, encoding="utf-8") as f:
                 data = json.load(f)
-                return UserData.from_dict(data)
+                userdata = UserData.from_dict(data)
+                log.debug(f"Loaded {len(userdata.menus)} menu overrides")
+                return userdata
+        else:
+            log.debug(f"Userdata file not found: {file_path}")
     except (OSError, json.JSONDecodeError) as e:
-        if IN_KODI:
-            xbmc.log(f"[skinshortcuts] Failed to load userdata from {path}: {e}", xbmc.LOGERROR)
+        log.error(f"Failed to load userdata from {path}: {e}")
 
     return UserData()
 
@@ -156,8 +164,7 @@ def save_userdata(userdata: UserData, path: str | None = None) -> bool:
             json.dump(userdata.to_dict(), f, indent=2)
         return True
     except OSError as e:
-        if IN_KODI:
-            xbmc.log(f"[skinshortcuts] Failed to save userdata to {path}: {e}", xbmc.LOGERROR)
+        log.error(f"Failed to save userdata to {path}: {e}")
         return False
 
 
@@ -190,7 +197,6 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
             is_submenu=default_menu.is_submenu,
         )
 
-    # Start with default items, excluding removed ones and those failing dialog_visible
     items: list[MenuItem] = []
     for item in default_menu.items:
         if item.name in override.removed:
@@ -202,26 +208,19 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
             continue
         items.append(item)
 
-    # Create lookup for overrides
     override_map = {o.name: o for o in override.items}
 
-    # Apply overrides to existing items
     for i, item in enumerate(items):
         if item.name in override_map:
             ovr = override_map[item.name]
             items[i] = _apply_override(item, ovr)
 
-    # Add new user items at their specified positions (or at the end)
     new_items = [o for o in override.items if o.is_new]
     for new_item in new_items:
         items.append(_create_item_from_override(new_item))
 
-    # Reorder items based on positions
-    # Positions represent the desired index in the final list
-    # Items with positions are placed at their exact index
-    # Items without positions keep their relative order, filling gaps
-
-    # Collect items with explicit positions
+    # Reorder: items with explicit positions go to exact index,
+    # others fill remaining slots in original order
     positioned_items: dict[int, MenuItem] = {}
     unpositioned_items: list[MenuItem] = []
 
@@ -232,7 +231,6 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
         else:
             unpositioned_items.append(item)
 
-    # Build final list by placing items at their positions
     final_items: list[MenuItem] = []
     unpos_iter = iter(unpositioned_items)
 
@@ -240,13 +238,11 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
         if i in positioned_items:
             final_items.append(positioned_items[i])
         else:
-            # Fill with next unpositioned item
             try:
                 final_items.append(next(unpos_iter))
             except StopIteration:
                 break
 
-    # Append any remaining unpositioned items
     for item in unpos_iter:
         final_items.append(item)
 

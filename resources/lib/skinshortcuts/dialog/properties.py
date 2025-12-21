@@ -2,17 +2,71 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
 try:
+    import xbmc
     import xbmcgui
 
     IN_KODI = True
 except ImportError:
     IN_KODI = False
 
+
+def _get_playlists_base_path() -> str:
+    """Get the playlist base path from Kodi settings.
+
+    Returns the user-configured playlist path, or the default
+    special://profile/playlists/ if not set.
+    """
+    if not IN_KODI:
+        return "special://profile/playlists/"
+
+    try:
+        request = {
+            "jsonrpc": "2.0",
+            "method": "Settings.GetSettingValue",
+            "params": {"setting": "system.playlistspath"},
+            "id": 1,
+        }
+        response = json.loads(xbmc.executeJSONRPC(json.dumps(request)))
+        if "result" in response and response["result"].get("value"):
+            base = response["result"]["value"]
+            if not base.endswith("/"):
+                base += "/"
+            return base
+    except Exception:
+        pass
+    return "special://profile/playlists/"
+
+
+def _get_smart_playlist_name(filepath: str) -> str:
+    """Get the name from a smart playlist (.xsp file).
+
+    Returns the <name> element text, or empty string on error.
+    """
+    if not IN_KODI:
+        return ""
+
+    try:
+        import xml.etree.ElementTree as ET
+
+        import xbmcvfs
+
+        f = xbmcvfs.File(filepath)
+        content = f.read()
+        f.close()
+
+        root = ET.fromstring(content)
+        name_elem = root.find("name")
+        return name_elem.text if name_elem is not None and name_elem.text else ""
+    except Exception:
+        return ""
+
 from ..loaders import evaluate_condition, load_widgets
+from ..loaders.base import apply_suffix_transform
 from ..localize import resolve_label
 from ..models import (
     Background,
@@ -43,7 +97,6 @@ class PropertiesMixin:
     Requires DialogBaseMixin and PickersMixin to be mixed in first.
     """
 
-    # Type hints for mixin - actual values come from base/subclass
     menu_id: str
     shortcuts_path: str
     manager: MenuManager | None
@@ -51,14 +104,12 @@ class PropertiesMixin:
     property_suffix: str
 
     if TYPE_CHECKING:
-        # Methods from DialogBaseMixin - only for type checking
         def _get_selected_item(self) -> MenuItem | None: ...
         def _get_item_properties(self, item: MenuItem) -> dict[str, str]: ...
         def _get_item_property(self, item: MenuItem, name: str) -> str: ...
         def _refresh_selected_item(self) -> None: ...
         def _log(self, msg: str) -> None: ...
 
-        # Methods from ItemsMixin
         def _set_item_property(
             self,
             item: MenuItem,
@@ -77,7 +128,6 @@ class PropertiesMixin:
             item_properties: dict[str, str] | None = None,
         ) -> str | None: ...
 
-        # Methods from PickersMixin
         def _pick_widget_from_groups(
             self,
             items: list[WidgetGroup | Widget],
@@ -115,8 +165,6 @@ class PropertiesMixin:
         if not self.property_schema or not self.manager:
             return False
 
-        # Look up property and button mapping
-        # Always gets base property - suffix is applied at runtime
         prop, button = self.property_schema.get_property_for_button(button_id)
         if not button:
             return False
@@ -125,14 +173,11 @@ class PropertiesMixin:
         if not item:
             return False
 
-        # Check if requires property is set (button.requires takes precedence)
-        # Apply suffix to requires if button is suffix-aware
         requires = button.requires or (prop.requires if prop else "")
         if requires:
             requires_name = requires
             if button.suffix and self.property_suffix:
                 requires_name = f"{requires}{self.property_suffix}"
-            # Access directly since requires_name already has suffix applied
             required_value = item.properties.get(requires_name, "")
             if not required_value:
                 xbmcgui.Dialog().notification(
@@ -141,30 +186,22 @@ class PropertiesMixin:
                 )
                 return True
 
-        # Determine effective property name (apply suffix if button is suffix-aware)
         prop_name = prop.name if prop else button.property_name
         if button.suffix and self.property_suffix:
             prop_name = f"{prop_name}{self.property_suffix}"
 
-        # Get type from button first, fall back to property
         prop_type = button.type or (prop.type if prop else "")
 
-        # Handle type="widget" - show widget picker and auto-populate
         if prop_type == "widget":
             self._handle_widget_property(prop, item, prop_name)
             return True
-
-        # Handle type="background" - show background picker and auto-populate
         if prop_type == "background":
             self._handle_background_property(prop, item, prop_name)
             return True
-
-        # Handle type="toggle" - toggle between True and empty
         if prop_type == "toggle":
             self._handle_toggle_property(prop, item, button, prop_name)
             return True
 
-        # Regular property - show options list
         return self._handle_options_property(prop, item, button, prop_name)
 
     def _handle_widget_property(self, prop, item: MenuItem, prop_name: str) -> None:
@@ -184,17 +221,13 @@ class PropertiesMixin:
         """
         if self.manager is None:
             return
-        # Check if widgets are allowed
         menu = self.manager.config.get_menu(self.menu_id)
         if menu and not menu.allow.widgets:
             xbmcgui.Dialog().notification("Not Allowed", "Widgets not enabled for this menu")
             return
 
-        # Use prop_name as prefix (includes suffix if applicable)
         prefix = prop_name
-        slot = prefix  # Slot is the same as prefix for filtering custom widgets
-
-        # Load widget configuration
+        slot = prefix
         widgets_path = Path(self.shortcuts_path) / "widgets.xml"
         widget_config = load_widgets(widgets_path)
 
@@ -206,7 +239,6 @@ class PropertiesMixin:
                 widget_config.groupings, item_props, slot, widget_config.show_get_more
             )
         else:
-            # Fall back to flat widget list
             widgets = self.manager.get_widgets()
             if not widgets:
                 xbmcgui.Dialog().notification("No Widgets", "No widgets defined in skin")
@@ -214,13 +246,11 @@ class PropertiesMixin:
             result = self._pick_widget_flat(widgets, item_props, slot)
 
         if result is None:
-            return  # Cancelled
+            return
 
         if result is False:
-            # User explicitly chose "None" - clear all widget properties
             self._clear_widget_properties(item, prefix)
         else:
-            # Widget selected - set all related properties
             self._log(f"Widget selected: {result.name}")
             self._set_widget_properties(item, prefix, result)
 
@@ -236,7 +266,6 @@ class PropertiesMixin:
         """
         self._log(f"Setting widget properties for {prefix}: {widget.name}")
 
-        # Parse prefix: "widget" -> ("widget", ""), "widget.2" -> ("widget", ".2")
         if "." in prefix:
             base, suffix = prefix.rsplit(".", 1)
             suffix = f".{suffix}"
@@ -244,25 +273,21 @@ class PropertiesMixin:
             base = prefix
             suffix = ""
 
-        # Substitute {menuitem} placeholder in widget path with item name
         widget_path = widget.path.replace("{menuitem}", item.name)
-
-        # Build related properties dict
         related: dict[str, str | None] = {
             f"{base}Label{suffix}": resolve_label(widget.label),
             f"{base}Path{suffix}": widget_path,
             f"{base}Type{suffix}": widget.type or "",
             f"{base}Target{suffix}": widget.target or "",
+            f"{base}Source{suffix}": widget.source or "",
         }
 
-        # apply_suffix=False because suffix is already included in prefix and related names
         self._set_item_property(item, prefix, widget.name, related, apply_suffix=False)
 
     def _clear_widget_properties(self, item: MenuItem, prefix: str) -> None:
         """Clear all widget properties for a prefix."""
         self._log(f"Clearing widget properties for {prefix}")
 
-        # Parse prefix: "widget" -> ("widget", ""), "widget.2" -> ("widget", ".2")
         if "." in prefix:
             base, suffix = prefix.rsplit(".", 1)
             suffix = f".{suffix}"
@@ -270,15 +295,14 @@ class PropertiesMixin:
             base = prefix
             suffix = ""
 
-        # Build related properties dict with None to clear
         related: dict[str, str | None] = {
             f"{base}Label{suffix}": None,
             f"{base}Path{suffix}": None,
             f"{base}Type{suffix}": None,
             f"{base}Target{suffix}": None,
+            f"{base}Source{suffix}": None,
         }
 
-        # apply_suffix=False because suffix is already included in prefix and related names
         self._set_item_property(item, prefix, "", related, apply_suffix=False)
 
     def _handle_background_property(self, prop, item: MenuItem, prop_name: str) -> None:
@@ -297,32 +321,25 @@ class PropertiesMixin:
         """
         if self.manager is None:
             return
-        # Check if backgrounds are allowed
         menu = self.manager.config.get_menu(self.menu_id)
         if menu and not menu.allow.backgrounds:
             xbmcgui.Dialog().notification("Not Allowed", "Backgrounds not enabled for this menu")
             return
 
-        # Use prop_name as prefix (includes suffix if applicable)
         prefix = prop_name
-
-        # Get current background and item properties for picker
         current_bg = self._get_item_property(item, prefix)
         item_props = self._get_item_properties(item)
 
-        # Use hierarchical picker with back navigation
         while True:
             bg = self._pick_background(item_props, current_value=current_bg)
 
             if bg is None:
-                return  # Cancelled completely
+                return
             if bg is False:
-                # User chose "None"
                 self._clear_background_properties(item, prefix)
                 self._refresh_selected_item()
                 return
 
-            # Handle types that need sub-dialog
             if bg.type == BackgroundType.BROWSE:
                 path = self._browse_with_sources(
                     sources=bg.browse_sources,
@@ -335,7 +352,6 @@ class PropertiesMixin:
                     self._set_background_properties_custom(item, prefix, bg, path)
                     self._refresh_selected_item()
                     return
-                # Cancelled browse - loop back to picker
                 continue
 
             if bg.type == BackgroundType.MULTI:
@@ -349,7 +365,6 @@ class PropertiesMixin:
                     self._set_background_properties_custom(item, prefix, bg, path)
                     self._refresh_selected_item()
                     return
-                # Cancelled browse - loop back to picker
                 continue
 
             if bg.type in (BackgroundType.PLAYLIST, BackgroundType.LIVE_PLAYLIST) and not bg.path:
@@ -362,10 +377,8 @@ class PropertiesMixin:
                     self._set_background_properties_custom(item, prefix, bg, path, display_label)
                     self._refresh_selected_item()
                     return
-                # Cancelled playlist picker - loop back to picker
                 continue
 
-            # Regular background with predefined path
             self._set_background_properties(item, prefix, bg)
             self._refresh_selected_item()
             return
@@ -379,7 +392,6 @@ class PropertiesMixin:
             f"{prefix}Path": bg.path,
         }
 
-        # apply_suffix=False because suffix is already included in prefix
         self._set_item_property(item, prefix, bg.name, related, apply_suffix=False)
 
     def _set_background_properties_custom(
@@ -399,7 +411,6 @@ class PropertiesMixin:
         """
         self._log(f"Setting custom background for {prefix}: {bg.name} -> {custom_path}")
 
-        # Use custom label if provided (e.g., prefixed playlist name), otherwise bg.label
         label = custom_label if custom_label else resolve_label(bg.label)
 
         related: dict[str, str | None] = {
@@ -407,7 +418,6 @@ class PropertiesMixin:
             f"{prefix}Path": custom_path,
         }
 
-        # apply_suffix=False because suffix is already included in prefix
         self._set_item_property(item, prefix, bg.name, related, apply_suffix=False)
 
     def _clear_background_properties(self, item: MenuItem, prefix: str) -> None:
@@ -419,7 +429,6 @@ class PropertiesMixin:
             f"{prefix}Path": None,
         }
 
-        # apply_suffix=False because suffix is already included in prefix
         self._set_item_property(item, prefix, "", related, apply_suffix=False)
 
     def _pick_playlist(
@@ -440,37 +449,39 @@ class PropertiesMixin:
             Tuple of (path, display_label) or None if cancelled.
             display_label includes the prefix if provided.
         """
-        # Default sources if none provided
         if not sources:
+            base = _get_playlists_base_path()
             sources = [
                 PlaylistSource(
                     label="Video Playlists",
-                    path="special://videoplaylists/",
+                    path=f"{base}video/",
                     icon="DefaultVideoPlaylists.png",
                 ),
                 PlaylistSource(
                     label="Music Playlists",
-                    path="special://musicplaylists/",
+                    path=f"{base}music/",
                     icon="DefaultMusicPlaylists.png",
+                ),
+                PlaylistSource(
+                    label="Mixed Playlists",
+                    path=f"{base}mixed/",
+                    icon="DefaultPlaylist.png",
                 ),
             ]
 
-        # Resolve prefix
         prefix = resolve_label(label_prefix) if label_prefix else ""
-
-        # Scan each source for playlists
-        # playlists: list of (display_label, path, icon)
         playlists = []
         preselect = -1
         for source in sources:
             source_playlists = scan_playlist_files(source.path)
             for raw_label, path in source_playlists:
-                # Apply prefix to label
-                if prefix:
-                    display_label = f"{prefix}: {raw_label}"
-                else:
-                    display_label = raw_label
-                # Check for preselect
+                label = raw_label
+                if path.endswith(".xsp"):
+                    xsp_name = _get_smart_playlist_name(path)
+                    if xsp_name:
+                        label = xsp_name
+
+                display_label = f"{prefix}: {label}" if prefix else label
                 if preselect == -1 and path == current_path:
                     preselect = len(playlists)
                 playlists.append((display_label, path, source.icon))
@@ -479,7 +490,6 @@ class PropertiesMixin:
             xbmcgui.Dialog().notification("No Playlists", "No playlists found")
             return None
 
-        # Build selection list
         listitems = []
         for label, _path, icon in playlists:
             listitem = xbmcgui.ListItem(label)
@@ -509,14 +519,11 @@ class PropertiesMixin:
             button: The button mapping
             prop_name: Effective property name (may include suffix)
         """
-        # Access directly since prop_name already has suffix applied
         current_value = item.properties.get(prop_name, "")
         if current_value:
-            # Currently set, clear it
             self._log(f"Toggling {prop_name} OFF for item {item.name}")
             self._set_item_property(item, prop_name, None, apply_suffix=False)
         else:
-            # Currently empty, set to True
             self._log(f"Toggling {prop_name} ON for item {item.name}")
             self._set_item_property(item, prop_name, "True", apply_suffix=False)
 
@@ -533,20 +540,21 @@ class PropertiesMixin:
             button: The button mapping
             prop_name: Effective property name (may include suffix)
         """
-        # Get item properties for condition evaluation
         item_props = self._get_item_properties(item)
+        use_suffix = button.suffix and self.property_suffix
 
-        # Filter options by conditions
         visible_options = []
         for opt in prop.options:
-            if not opt.condition or evaluate_condition(opt.condition, item_props):
+            condition = opt.condition
+            if condition and use_suffix:
+                condition = apply_suffix_transform(condition, self.property_suffix)
+            if not condition or evaluate_condition(condition, item_props):
                 visible_options.append(opt)
 
         if not visible_options:
             xbmcgui.Dialog().notification("No Options", "No options available")
             return True
 
-        # Build selection list with icons
         listitems = []
         if button.show_none:
             none_item = xbmcgui.ListItem("None")
@@ -555,23 +563,19 @@ class PropertiesMixin:
 
         for opt in visible_options:
             listitem = xbmcgui.ListItem(resolve_label(opt.label))
-            # Try to get contextual icon from option
             icon = "DefaultAddonNone.png"
             if opt.icons:
-                # Find matching icon based on current properties
                 for icon_variant in opt.icons:
-                    cond = icon_variant.condition
-                    if not cond or evaluate_condition(cond, item_props):
+                    icon_cond = icon_variant.condition
+                    if icon_cond and use_suffix:
+                        icon_cond = apply_suffix_transform(icon_cond, self.property_suffix)
+                    if not icon_cond or evaluate_condition(icon_cond, item_props):
                         icon = icon_variant.path
                         break
             listitem.setArt({"icon": icon})
             listitems.append(listitem)
 
-        # Get title from button or fall back to property name
         title = resolve_label(button.title) if button.title else prop_name
-
-        # Find current selection for preselect
-        # prop_name already has suffix, access item.properties directly
         current_value = item.properties.get(prop_name, "")
         preselect = -1
         offset = 1 if button.show_none else 0
@@ -587,9 +591,7 @@ class PropertiesMixin:
         if selected == -1:
             return True
 
-        # Handle selection - apply_suffix=False since prop_name already has suffix
         if button.show_none and selected == 0:
-            # Clear the property
             self._log(f"Clearing property {prop_name} on item {item.name}")
             self._set_item_property(item, prop_name, None, apply_suffix=False)
         else:

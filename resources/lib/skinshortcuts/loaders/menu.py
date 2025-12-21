@@ -59,12 +59,10 @@ def _parse_menus(root, path: str) -> list[Menu]:
     """Parse menu and submenu elements from root."""
     menus = []
 
-    # Parse top-level menus
     for elem in root.findall("menu"):
         menu = _parse_menu(elem, path, is_submenu=False)
         menus.append(menu)
 
-    # Parse submenus (same structure, different tag for clarity)
     for elem in root.findall("submenu"):
         menu = _parse_menu(elem, path, is_submenu=True)
         menus.append(menu)
@@ -85,7 +83,6 @@ def _parse_icons(root) -> list[IconSource]:
 
     sources = []
 
-    # Check for <source> children first (advanced mode)
     source_elems = icons_elem.findall("source")
     if source_elems:
         for source_elem in source_elems:
@@ -100,7 +97,6 @@ def _parse_icons(root) -> list[IconSource]:
                     icon=get_attr(source_elem, "icon") or "",
                 ))
     else:
-        # Simple mode: text content is the single path
         path = (icons_elem.text or "").strip()
         if path:
             sources.append(IconSource(label="", path=path))
@@ -155,16 +151,12 @@ def _parse_dialogs(root) -> list[SubDialog]:
         except ValueError:
             continue
 
-        # Parse optional setfocus
         setfocus = None
         setfocus_str = get_attr(elem, "setfocus")
         if setfocus_str and setfocus_str.isdigit():
             setfocus = int(setfocus_str)
 
-        # Parse optional suffix for property namespacing (e.g., ".2" for widget 2)
         suffix = get_attr(elem, "suffix") or ""
-
-        # Parse optional onclose actions
         onclose_actions = _parse_onclose(elem)
 
         subdialogs.append(
@@ -259,7 +251,6 @@ def _parse_item(elem, menu_name: str, path: str) -> MenuItem:
     if not label:
         raise MenuConfigError(path, f"Item '{item_name}' missing <label>")
 
-    # Parse all action elements (supports conditional actions)
     actions = []
     for action_elem in elem.findall("action"):
         if action_elem.text:
@@ -271,7 +262,6 @@ def _parse_item(elem, menu_name: str, path: str) -> MenuItem:
     if not actions:
         raise MenuConfigError(path, f"Item '{item_name}' missing <action>")
 
-    # Parse custom properties
     properties = {}
     for prop_elem in elem.findall("property"):
         prop_name = get_attr(prop_elem, "name")
@@ -280,7 +270,6 @@ def _parse_item(elem, menu_name: str, path: str) -> MenuItem:
 
     visible = get_text(elem, "visible") or ""
 
-    # Add widget and background as properties if specified (as attributes on the item)
     widget_attr = get_attr(elem, "widget")
     if widget_attr:
         properties["widget"] = widget_attr
@@ -288,7 +277,6 @@ def _parse_item(elem, menu_name: str, path: str) -> MenuItem:
     if background_attr:
         properties["background"] = background_attr
 
-    # Parse protection element if present
     protection = None
     protect_elem = elem.find("protect")
     if protect_elem is not None:
@@ -298,7 +286,6 @@ def _parse_item(elem, menu_name: str, path: str) -> MenuItem:
             message=get_attr(protect_elem, "message", ""),
         )
 
-    # visible= attribute filters in management dialog (Kodi visibility condition)
     dialog_visible = get_attr(elem, "visible") or ""
 
     return MenuItem(
@@ -328,7 +315,6 @@ def _parse_defaults(elem) -> MenuDefaults:
         if name and prop_elem.text:
             properties[name] = prop_elem.text.strip()
 
-    # Add widget and background as properties if specified (as attributes on defaults)
     widget_attr = get_attr(elem, "widget")
     if widget_attr:
         properties["widget"] = widget_attr
@@ -336,7 +322,6 @@ def _parse_defaults(elem) -> MenuDefaults:
     if background_attr:
         properties["background"] = background_attr
 
-    # Parse default actions (with when="before|after" and optional condition)
     actions = []
     for action_elem in elem.findall("action"):
         if action_elem.text:
@@ -427,7 +412,6 @@ def _parse_group(elem, path: str) -> Group | None:
     icon = get_attr(elem, "icon") or ""
     items: list[Shortcut | Group | Content] = []
 
-    # Parse children in document order to preserve sequence
     for child in elem:
         if child.tag == "shortcut":
             shortcut = _parse_shortcut(child, path)

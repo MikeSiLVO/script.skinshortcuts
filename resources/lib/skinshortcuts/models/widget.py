@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
     from .menu import Content
 
-    # Widget group items can be: Widget, nested WidgetGroup, or Content reference
     WidgetGroupContent = Union["Widget", "WidgetGroup", "Content"]
 
 

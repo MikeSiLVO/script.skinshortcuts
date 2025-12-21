@@ -2,15 +2,15 @@
 
 Configuration files and their purposes.
 
----
+***
 
 ## Table of Contents
 
-- [Configuration Files](#configuration-files)
-- [Generated Output](#generated-output)
-- [User Data](#user-data)
+* [Configuration Files](#configuration-files)
+* [Generated Output](#generated-output)
+* [User Data](#user-data)
 
----
+***
 
 ## Configuration Files
 
@@ -92,7 +92,7 @@ See [Properties](properties.md) for full reference.
 
 See [Templates](templates.md) for full reference.
 
----
+***
 
 ## Generated Output
 
@@ -124,7 +124,7 @@ skin.name/
 </control>
 ```
 
----
+***
 
 ## User Data
 
@@ -173,7 +173,7 @@ Or programmatically:
 # Then: RunScript(script.skinshortcuts,type=buildxml&force=true)
 ```
 
----
+***
 
 ## File Loading Order
 
@@ -186,7 +186,7 @@ Or programmatically:
 
 Configuration files are in the skin's `shortcuts/` folder. Userdata is skin-specific and stored separately.
 
----
+***
 
 ## Quick Navigation
 

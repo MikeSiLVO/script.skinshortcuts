@@ -4,13 +4,13 @@
 **Lines:** 96
 **Purpose:** Dataclass models for backgrounds and background groupings.
 
----
+***
 
 ## Overview
 
 Defines the Background model and related grouping structures for the background picker system.
 
----
+***
 
 ## Type Alias
 
@@ -20,11 +20,12 @@ BackgroundGroupContent = Union[Background, BackgroundGroup, Content]  # line 15
 
 Items that can appear in a BackgroundGroup's items list.
 
----
+***
 
 ## Enums
 
 ### BackgroundType (line 18)
+
 Enum defining available background types.
 
 | Value | Description |
@@ -39,11 +40,12 @@ Enum defining available background types.
 
 **Used by:** Background.type, loaders/background.py, dialog.py
 
----
+***
 
 ## Classes
 
 ### PlaylistSource (line 28)
+
 A source path for playlist scanning.
 
 | Field | Type | Default | Description |
@@ -54,9 +56,10 @@ A source path for playlist scanning.
 
 **Used by:** Background.sources, dialog.py (_pick_playlist)
 
----
+***
 
 ### BrowseSource (line 37)
+
 A source path for browse dialogs.
 
 | Field | Type | Default | Description |
@@ -69,9 +72,10 @@ A source path for browse dialogs.
 
 **Used by:** Background.browse_sources, dialog/items.py, dialog/properties.py
 
----
+***
 
 ### Background (line 51)
+
 A background assignable to menu items.
 
 | Field | Type | Default | Description |
@@ -87,9 +91,11 @@ A background assignable to menu items.
 | `browse_sources` | list[BrowseSource] | [] | Sources for browse/multi types |
 
 **Methods:**
-- `to_properties()` → dict[str,str] - Convert to skin property dict
+
+* `to_properties()` → dict[str,str] - Convert to skin property dict
 
 **Property output:**
+
 ```python
 {
     "background": "my-background",
@@ -101,9 +107,10 @@ A background assignable to menu items.
 
 **Used by:** config.py, dialog.py (background picker), builders/includes.py
 
----
+***
 
 ### BackgroundGroup (line 74)
+
 A group/category in background picker.
 
 | Field | Type | Default | Description |
@@ -117,25 +124,26 @@ A group/category in background picker.
 
 **Used by:** BackgroundConfig, dialog.py (_pick_background_from_groups), loaders/background.py
 
----
+***
 
 ### BackgroundConfig (line 86)
+
 Top-level background configuration container.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `backgrounds` | list[Background] | [] | All defined backgrounds (flat list) |
-| `groupings` | list[BackgroundGroup\|Background] | [] | Picker structure (can include standalone backgrounds) |
+| `groupings` | list[BackgroundGroup|Background] | [] | Picker structure (can include standalone backgrounds) |
 
 **Used by:** config.py (SkinConfig._background_config), loaders/background.py
 
----
+***
 
 ## Dead Code Analysis
 
 All classes appear to be in active use.
 
----
+***
 
 ## Test Candidates
 

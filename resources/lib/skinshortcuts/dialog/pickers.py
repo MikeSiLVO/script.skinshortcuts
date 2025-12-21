@@ -26,7 +26,6 @@ def _check_visible(visible: str) -> bool:
     return xbmc.getCondVisibility(visible)
 
 
-# Protocols for generic picker support
 @runtime_checkable
 class PickerItem(Protocol):
     """Protocol for leaf items in picker hierarchy (Shortcut, Widget, Background)."""
@@ -81,14 +80,12 @@ class PickersMixin:
     Requires DialogBaseMixin to be mixed in first.
     """
 
-    # Type hints for mixin - actual values come from base/subclass
     menu_id: str
     shortcuts_path: str
     manager: MenuManager | None
     items: list[MenuItem]
 
     if TYPE_CHECKING:
-        # Methods from DialogBaseMixin - only for type checking
         def _get_selected_item(self) -> MenuItem | None: ...
         def _get_item_properties(self, item: MenuItem) -> dict[str, str]: ...
         def _refresh_selected_item(self) -> None: ...
@@ -103,7 +100,6 @@ class PickersMixin:
         if not item:
             return
 
-        # Load groupings from menus.xml
         menus_path = Path(self.shortcuts_path) / "menus.xml"
         groups = load_groupings(menus_path)
 
@@ -114,13 +110,10 @@ class PickersMixin:
             )
             return
 
-        # Get current item properties for condition evaluation
         item_props = self._get_item_properties(item)
 
-        # Show shortcut picker using generic hierarchy picker
         shortcut = self._pick_shortcut(groups, item_props)
         if shortcut:
-            # Apply shortcut to current item - update both manager and local item
             self.manager.set_label(self.menu_id, item.name, shortcut.label)
             item.label = shortcut.label
 
@@ -155,7 +148,6 @@ class PickersMixin:
                 items=items,
             ),
         )
-        # show_none=False so result is never False
         return result if isinstance(result, Shortcut) else None
 
     def _pick_widget_from_groups(
@@ -180,7 +172,6 @@ class PickersMixin:
         """
         current_widget = item_props.get(slot, "")
 
-        # Set up "Get More..." action if enabled
         custom_action = None
         if show_get_more:
             custom_action = (
@@ -189,7 +180,6 @@ class PickersMixin:
                 self._browse_widget_addons,
             )
 
-        # Widget picker uses the generic hierarchy with content resolver
         result = self._pick_from_hierarchy(
             items,
             item_props,
@@ -224,7 +214,6 @@ class PickersMixin:
         Returns:
             Widget if selected, None if cancelled, False if "None" chosen.
         """
-        # Find current widget for preselect
         current_widget = item_props.get(slot, "") if item_props else ""
         preselect = -1
 
@@ -238,7 +227,6 @@ class PickersMixin:
             icon = w[2] if len(w) > 2 and w[2] else "DefaultAddonNone.png"
             listitem.setArt({"icon": icon})
             listitems.append(listitem)
-            # Check if this is the current widget
             if preselect == -1 and w[0] == current_widget:
                 preselect = i + 1  # +1 for "None" option
 
@@ -251,7 +239,6 @@ class PickersMixin:
         if selected == 0:
             return False
 
-        # Get Widget object from manager
         widget_name = widgets[selected - 1][0]
         if self.manager is None:
             return None
@@ -264,8 +251,6 @@ class PickersMixin:
 
         widgets = []
         for item in resolved:
-            # Convert ResolvedShortcut to Widget for widget picker
-            # The action becomes the widget path
             widget = Widget(
                 name=f"dynamic-{content.source}-{len(widgets)}",
                 label=item.label,
@@ -298,17 +283,13 @@ class PickersMixin:
 
     def _extract_path_from_action(self, action: str) -> str:
         """Extract the path from an action string for widget use."""
-        # Handle ActivateWindow(Window,path,return) format
         if action.lower().startswith("activatewindow("):
-            # Extract the path part
-            inner = action[15:-1]  # Remove "ActivateWindow(" and ")"
+            inner = action[15:-1]
             parts = inner.split(",")
             if len(parts) >= 2:
                 return parts[1].strip()
-        # Handle PlayMedia(path) format
         elif action.lower().startswith("playmedia("):
             return action[10:-1]
-        # Handle RunAddon(addonid) format - convert to plugin:// path
         elif action.lower().startswith("runaddon("):
             addon_id = action[9:-1]
             return f"plugin://{addon_id}/"
@@ -329,7 +310,6 @@ class PickersMixin:
         Returns:
             Widget if addon selected, None if cancelled.
         """
-        # Show addon type selection
         addon_types = [
             ("video", "Video Addons", "DefaultAddonVideo.png"),
             ("audio", "Music Addons", "DefaultAddonMusic.png"),
@@ -351,7 +331,6 @@ class PickersMixin:
 
         addon_type = addon_types[selected][0]
 
-        # Map addon type to content type for browse dialog
         if addon_type == "video":
             content_type = "video"
         elif addon_type == "audio":
@@ -359,7 +338,6 @@ class PickersMixin:
         else:
             content_type = "files"
 
-        # Let user browse to pick an addon directory/path
         result = xbmcgui.Dialog().browse(
             0,  # Folder/file selection
             "Select Widget Source",
@@ -373,10 +351,7 @@ class PickersMixin:
         if not result:
             return None
 
-        # Handle case where result might be a list (shouldn't happen with type 0)
         path = result[0] if isinstance(result, list) else result
-
-        # Get addon info for the label
         addon_name = path.split("/")[2] if path.count("/") >= 2 else "Widget"
 
         return Widget(
@@ -410,7 +385,6 @@ class PickersMixin:
         Returns:
             Result from on_select, or False if cancelled completely
         """
-        # Find preselect index based on current value
         preselect = -1
         offset = 1 if show_none else 0
         for i, (item_id, _label, _icon) in enumerate(items):
@@ -419,7 +393,6 @@ class PickersMixin:
                 break
 
         while True:
-            # Build selection list
             listitems = []
             if show_none:
                 none_item = xbmcgui.ListItem("None")
@@ -441,13 +414,11 @@ class PickersMixin:
             if show_none and selected == 0:
                 return "none"  # User chose "None"
 
-            preselect = selected  # Remember for back navigation
+            preselect = selected
 
-            # Get selected item
             offset = 1 if show_none else 0
             item_id = items[selected - offset][0]
 
-            # Call handler - if it returns None, loop back to picker
             result = on_select(item_id)
             if result is not None:
                 return result
@@ -492,7 +463,6 @@ class PickersMixin:
         Returns:
             Selected leaf item, None if cancelled, False if "None" chosen.
         """
-        # Filter items by condition and visibility
         visible_items = self._filter_picker_items(
             items, item_props, leaf_types, group_types, content_resolver, create_folder_group
         )
@@ -501,7 +471,6 @@ class PickersMixin:
             xbmcgui.Dialog().notification("No Items", "No items available")
             return None
 
-        # Find current value for preselect
         preselect = -1
         offset = 1 if show_none else 0
 
@@ -528,7 +497,6 @@ class PickersMixin:
                 listitem.setArt({"icon": icon})
                 listitems.append(listitem)
 
-            # Add custom action at the end if provided
             if custom_action:
                 action_label, action_icon, _callback = custom_action
                 action_item = xbmcgui.ListItem(action_label)
@@ -543,15 +511,13 @@ class PickersMixin:
                 return None  # Cancelled
 
             if show_none and selected == 0:
-                return False  # User chose "None"
+                return False
 
-            # Check if custom action was selected
             if custom_action and selected == len(listitems) - 1:
                 _label, _icon, callback = custom_action
                 result = callback()
                 if result is not None:
                     return result
-                # None means back to picker, continue loop
                 continue
 
             preselect = selected
@@ -560,7 +526,6 @@ class PickersMixin:
             if isinstance(selected_item, leaf_types):
                 return selected_item
 
-            # It's a group - recurse into it
             result = self._pick_from_hierarchy_group(
                 selected_item,
                 item_props,
@@ -574,7 +539,6 @@ class PickersMixin:
 
             if result is not None:
                 return result
-            # None means backed out, loop continues
 
     def _pick_from_hierarchy_group(
         self,
@@ -597,7 +561,6 @@ class PickersMixin:
             xbmcgui.Dialog().notification("No Items", "No items available in this group")
             return None
 
-        # Auto-select if only one leaf item
         if len(visible_items) == 1 and isinstance(visible_items[0], leaf_types):
             return visible_items[0]
 
@@ -629,7 +592,6 @@ class PickersMixin:
             if isinstance(selected_item, leaf_types):
                 return selected_item
 
-            # Nested group - recurse
             result = self._pick_from_hierarchy_group(
                 selected_item,
                 item_props,
@@ -658,10 +620,8 @@ class PickersMixin:
 
         for item in items:
             if isinstance(item, Content):
-                # Check property condition
                 if item.condition and not evaluate_condition(item.condition, item_props):
                     continue
-                # Check Kodi visibility condition
                 if item.visible and not _check_visible(item.visible):
                     continue
                 if content_resolver:

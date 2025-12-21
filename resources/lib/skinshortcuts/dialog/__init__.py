@@ -88,7 +88,6 @@ def show_management_dialog(
     if shortcuts_path is None:
         shortcuts_path = get_shortcuts_path()
 
-    # Use skin's custom dialog XML if available, otherwise default
     skin_path = xbmcvfs.translatePath("special://skin/")
     dialog_xml = "script-skinshortcuts.xml"
 
@@ -106,12 +105,9 @@ def show_management_dialog(
 
 
 __all__ = [
-    # Main class
     "ManagementDialog",
-    # Public functions
     "show_management_dialog",
     "get_shortcuts_path",
-    # Control IDs (for skin developers)
     "CONTROL_LIST",
     "CONTROL_ADD",
     "CONTROL_DELETE",
@@ -125,7 +121,6 @@ __all__ = [
     "CONTROL_TOGGLE_DISABLED",
     "CONTROL_CHOOSE_SHORTCUT",
     "CONTROL_EDIT_SUBMENU",
-    # Action IDs
     "ACTION_CANCEL",
     "ACTION_CONTEXT",
 ]

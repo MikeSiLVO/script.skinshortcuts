@@ -16,6 +16,19 @@ class BuildMode(Enum):
 
 
 @dataclass
+class Expression:
+    """Reusable condition expression.
+
+    When nosuffix=False (default), property names in the expression are
+    automatically transformed when a suffix is active (e.g., widgetArt -> widgetArt.2).
+    When nosuffix=True, the expression is fixed and won't be transformed.
+    """
+
+    value: str
+    nosuffix: bool = False
+
+
+@dataclass
 class TemplateParam:
     """Parameter for parameterized includes or raw templates."""
 
@@ -106,6 +119,39 @@ class PresetReference:
 
 
 @dataclass
+class PresetGroupChild:
+    """Child element in a presetGroup - either a preset reference or inline values.
+
+    Used for conditional preset selection where first match wins (document order).
+    """
+
+    preset_name: str = ""  # Reference to named preset (mutually exclusive with values)
+    values: dict[str, str] = field(default_factory=dict)  # Inline values
+    condition: str = ""
+
+
+@dataclass
+class PresetGroup:
+    """Conditional preset selection group.
+
+    Evaluates children in order, first matching condition wins.
+    Children can be preset references or inline values.
+    """
+
+    name: str
+    children: list[PresetGroupChild] = field(default_factory=list)
+
+
+@dataclass
+class PresetGroupReference:
+    """Reference to a presetGroup from a template."""
+
+    name: str  # Name of presetGroup to apply
+    suffix: str = ""  # Suffix for condition transforms (e.g., ".2")
+    condition: str = ""  # Optional condition for applying this group
+
+
+@dataclass
 class IncludeDefinition:
     """Reusable include definition for controls (like Kodi includes).
 
@@ -186,28 +232,58 @@ class VariableGroupReference:
 
 
 @dataclass
+class TemplateOutput:
+    """Output configuration for a template.
+
+    Allows a single template to generate multiple includes with different
+    suffixes applied (e.g., widget1 and widget2 from one definition).
+    """
+
+    include: str  # Output include name
+    id_prefix: str = ""  # For computed control IDs
+    suffix: str = ""  # Suffix to apply to all conditions/references
+
+
+@dataclass
 class Template:
     """Main template definition.
 
     Iterates menu items (default), list items (build="list"),
     or outputs raw (build="true").
+
+    Supports multiple outputs via the `outputs` list. When outputs is empty,
+    falls back to single output using `include` and `id_prefix` attributes.
     """
 
-    include: str  # Output include name
+    include: str = ""  # Output include name (legacy, use outputs instead)
     build: BuildMode = BuildMode.MENU
-    id_prefix: str = ""  # For computed control IDs
+    id_prefix: str = ""  # For computed control IDs (legacy, use outputs instead)
     template_only: str = ""  # "true"=never generate, "auto"=skip if unassigned
 
+    outputs: list[TemplateOutput] = field(default_factory=list)  # Multi-output support
     conditions: list[str] = field(default_factory=list)  # ANDed together
     params: list[TemplateParam] = field(default_factory=list)  # For build="true"
     properties: list[TemplateProperty] = field(default_factory=list)
     vars: list[TemplateVar] = field(default_factory=list)  # Internal context resolution
     property_groups: list[PropertyGroupReference] = field(default_factory=list)
     preset_refs: list[PresetReference] = field(default_factory=list)  # Direct preset lookups
+    preset_group_refs: list[PresetGroupReference] = field(default_factory=list)
     list_items: list[ListItem] = field(default_factory=list)  # For build="list"
     controls: ET.Element | None = None  # Raw XML for controls output
     variables: list[VariableDefinition] = field(default_factory=list)  # Inline variables
     variable_groups: list[VariableGroupReference] = field(default_factory=list)  # Group refs
+
+    def get_outputs(self) -> list[TemplateOutput]:
+        """Get output configurations.
+
+        Returns outputs list if defined, otherwise creates single output
+        from legacy include/id_prefix attributes.
+        """
+        if self.outputs:
+            return self.outputs
+        if self.include:
+            return [TemplateOutput(include=self.include, id_prefix=self.id_prefix)]
+        return []
 
 
 @dataclass
@@ -228,16 +304,17 @@ class SubmenuTemplate:
 class TemplateSchema:
     """Complete template schema from templates.xml."""
 
-    expressions: dict[str, str] = field(default_factory=dict)  # name -> condition
+    expressions: dict[str, Expression] = field(default_factory=dict)
     property_groups: dict[str, PropertyGroup] = field(default_factory=dict)
     includes: dict[str, IncludeDefinition] = field(default_factory=dict)  # For controls
     presets: dict[str, Preset] = field(default_factory=dict)
+    preset_groups: dict[str, PresetGroup] = field(default_factory=dict)
     variable_definitions: dict[str, VariableDefinition] = field(default_factory=dict)
     variable_groups: dict[str, VariableGroup] = field(default_factory=dict)
     templates: list[Template] = field(default_factory=list)
     submenus: list[SubmenuTemplate] = field(default_factory=list)
 
-    def get_expression(self, name: str) -> str | None:
+    def get_expression(self, name: str) -> Expression | None:
         """Get expression by name."""
         return self.expressions.get(name)
 
@@ -252,6 +329,10 @@ class TemplateSchema:
     def get_preset(self, name: str) -> Preset | None:
         """Get preset by name."""
         return self.presets.get(name)
+
+    def get_preset_group(self, name: str) -> PresetGroup | None:
+        """Get preset group by name."""
+        return self.preset_groups.get(name)
 
     def get_variable_definition(self, name: str) -> VariableDefinition | None:
         """Get variable definition by name."""

@@ -2,20 +2,20 @@
 
 This guide walks through integrating Skin Shortcuts into your skin.
 
----
+***
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [File Setup](#file-setup)
-- [Basic Menu](#basic-menu)
-- [Opening the Dialog](#opening-the-dialog)
-- [Displaying the Menu](#displaying-the-menu)
-- [Building Includes](#building-includes)
-- [Adding Widgets](#adding-widgets)
-- [Next Steps](#next-steps)
+* [Overview](#overview)
+* [File Setup](#file-setup)
+* [Basic Menu](#basic-menu)
+* [Opening the Dialog](#opening-the-dialog)
+* [Displaying the Menu](#displaying-the-menu)
+* [Building Includes](#building-includes)
+* [Adding Widgets](#adding-widgets)
+* [Next Steps](#next-steps)
 
----
+***
 
 ## Overview
 
@@ -26,7 +26,7 @@ Skin Shortcuts generates menu includes from XML configuration files. The workflo
 3. Script generates `script-skinshortcuts-includes.xml`
 4. Skin displays menus using `<include>` elements
 
----
+***
 
 ## File Setup
 
@@ -44,7 +44,7 @@ skin.name/
 
 All files except `menus.xml` are optional. Start with just `menus.xml` and add others as needed.
 
----
+***
 
 ## Basic Menu
 
@@ -75,7 +75,7 @@ Create `shortcuts/menus.xml`:
 
 This defines a menu named `mainmenu` with three items.
 
----
+***
 
 ## Opening the Dialog
 
@@ -96,7 +96,7 @@ Add a button to open the management dialog:
 | `menu` | Yes | Menu name to edit (e.g., `mainmenu`) |
 | `path` | No | Custom shortcuts path (defaults to `special://skin/shortcuts/`) |
 
----
+***
 
 ## Displaying the Menu
 
@@ -125,7 +125,7 @@ Use the generated include in your skin:
 
 Each include generates `<item>` elements with properties accessible via `ListItem.Property(name)`.
 
----
+***
 
 ## Building Includes
 
@@ -146,7 +146,7 @@ The script automatically builds includes when the management dialog closes with 
 
 **Output location:** `script-skinshortcuts-includes.xml` is written to each resolution folder defined in your skin's `addon.xml` (e.g., `16x9/`, `21x9/`).
 
----
+***
 
 ## Adding Widgets
 
@@ -197,17 +197,17 @@ Button IDs are configured in `properties.xml`. See [Properties](properties.md) f
 </control>
 ```
 
----
+***
 
 ## Next Steps
 
-- [Menus](menus.md) - Full menu configuration reference
-- [Widgets](widgets.md) - Widget definitions and picker groupings
-- [Backgrounds](backgrounds.md) - Background options
-- [Properties](properties.md) - Custom property schemas
-- [Management Dialog](management-dialog.md) - Dialog control IDs and properties
+* [Menus](menus.md) - Full menu configuration reference
+* [Widgets](widgets.md) - Widget definitions and picker groupings
+* [Backgrounds](backgrounds.md) - Background options
+* [Properties](properties.md) - Custom property schemas
+* [Management Dialog](management-dialog.md) - Dialog control IDs and properties
 
----
+***
 
 ## Quick Navigation
 

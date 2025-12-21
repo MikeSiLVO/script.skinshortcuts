@@ -4,7 +4,7 @@
 **Lines:** 290
 **Purpose:** User customization storage and merging with skin defaults.
 
----
+***
 
 ## Overview
 
@@ -12,63 +12,72 @@ Stores user modifications to menus in JSON format. Provides merging logic to com
 
 **Storage format:** JSON file at `special://profile/addon_data/script.skinshortcuts/{skin_dir}.userdata.json`
 
----
+***
 
 ## Functions
 
 ### get_userdata_path() → str (line 21)
+
 Get path to userdata file for current skin.
 
 **Returns:** Empty string if not in Kodi
 
----
+***
 
 ### load_userdata(path=None) → UserData (line 123)
+
 Load user data from JSON file.
 
 **Parameters:**
-- `path` - Optional custom path (for testing)
+
+* `path` - Optional custom path (for testing)
 
 **Returns:** UserData object (empty if file doesn't exist)
 
----
+***
 
 ### save_userdata(userdata, path=None) → bool (line 144)
+
 Save user data to JSON file.
 
 Creates parent directories if needed.
 
 **Returns:** True on success
 
----
+***
 
 ## Serialization Helpers
 
-### _menu_override_to_dict(override) → dict (line 52)
+### `_menu_override_to_dict`(override) → dict (line 52)
+
 Convert MenuOverride to dict, omitting empty values.
 
 Only includes `items` and `removed` if non-empty.
 
-### _item_override_to_dict(item) → dict (line 62)
+### `_item_override_to_dict`(item) → dict (line 62)
+
 Convert MenuItemOverride to dict, omitting None/empty values.
 
 Only includes fields that have values set (non-None, non-empty).
 
----
+***
 
 ## Merge Functions
 
-### _check_dialog_visible(condition) → bool (line 164)
+### `_check_dialog_visible`(condition) → bool (line 164)
+
 Check if a Kodi visibility condition is true.
 
 **Used for:** Filtering items in management dialog based on `dialog_visible` attribute.
 
----
+***
 
 ### merge_menu(default_menu, override) → Menu (line 176)
+
 Merge default menu with user overrides.
 
 **Merge logic:**
+
 1. Start with default items, excluding removed ones
 2. Apply overrides to existing items
 3. Add new user items
@@ -78,55 +87,62 @@ Merge default menu with user overrides.
 
 **Used by:** config.py (SkinConfig.load), manager.py
 
----
+***
 
-### _apply_override(item, override) → MenuItem (line 263)
+### `_apply_override`(item, override) → MenuItem (line 263)
+
 Apply user override to a menu item.
 
 **Applied fields (if not None):**
-- label
-- actions
-- icon
-- disabled
-- properties (merged, override wins)
+
+* label
+* actions
+* icon
+* disabled
+* properties (merged, override wins)
 
 **Preserved fields:**
-- name, label2, thumb, visible, required, protection, submenu
+
+* name, label2, thumb, visible, required, protection, submenu
 
 **Special:** Stores `original_action` for protection matching.
 
----
+***
 
-### _create_item_from_override(override) → MenuItem (line 282)
+### `_create_item_from_override`(override) → MenuItem (line 282)
+
 Create a new menu item from user override.
 
 **Used for:** is_new=True items (user-added)
 
 **Defaults:**
-- actions = [Action(action="noop")] if not specified
-- icon = "DefaultShortcut.png" if not specified
 
----
+* actions = [Action(action="noop")] if not specified
+* icon = "DefaultShortcut.png" if not specified
+
+***
 
 ## Dataclasses
 
 ### MenuItemOverride (line 31)
+
 User override for a single menu item.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `name` | str | required | Item identifier |
-| `label` | str\|None | None | Override label |
-| `actions` | list[Action]\|None | None | Override actions |
-| `icon` | str\|None | None | Override icon |
-| `disabled` | bool\|None | None | Override disabled state |
+| `label` | str|None | None | Override label |
+| `actions` | list[Action]|None | None | Override actions |
+| `icon` | str|None | None | Override icon |
+| `disabled` | bool|None | None | Override disabled state |
 | `properties` | dict[str,str] | {} | Override properties |
-| `position` | int\|None | None | Desired position in menu |
+| `position` | int|None | None | Desired position in menu |
 | `is_new` | bool | False | True if user-added item |
 
----
+***
 
 ### MenuOverride (line 45)
+
 User overrides for a menu.
 
 | Field | Type | Default | Description |
@@ -134,9 +150,10 @@ User overrides for a menu.
 | `items` | list[MenuItemOverride] | [] | Item overrides |
 | `removed` | list[str] | [] | Names of removed items |
 
----
+***
 
 ### UserData (line 85)
+
 All user customizations for a skin.
 
 | Field | Type | Default | Description |
@@ -144,10 +161,11 @@ All user customizations for a skin.
 | `menus` | dict[str, MenuOverride] | {} | Overrides by menu name |
 
 **Methods:**
-- `to_dict()` → dict - Convert to JSON-serializable dict
-- `from_dict(data)` → UserData - Create from dict (classmethod)
 
----
+* `to_dict()` → dict - Convert to JSON-serializable dict
+* `from_dict(data)` → UserData - Create from dict (classmethod)
+
+***
 
 ## JSON Format Example
 
@@ -177,13 +195,13 @@ All user customizations for a skin.
 }
 ```
 
----
+***
 
 ## Dead Code Analysis
 
 All code appears to be in active use.
 
----
+***
 
 ## Test Candidates
 

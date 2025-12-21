@@ -4,17 +4,18 @@
 **Lines:** 162
 **Purpose:** Load background configuration from backgrounds.xml.
 
----
+***
 
 ## Overview
 
 Parses the `backgrounds.xml` file which contains background definitions and groups for the background picker dialog. Backgrounds and groups are defined directly at the root level.
 
----
+***
 
 ## Constants
 
 ### TYPE_MAP (line 18)
+
 Maps string type names to BackgroundType enum values.
 
 | String | Enum |
@@ -27,80 +28,93 @@ Maps string type names to BackgroundType enum values.
 | `"live"` | LIVE |
 | `"live-playlist"` | LIVE_PLAYLIST |
 
----
+***
 
 ### OPTIONAL_PATH_TYPES (line 29)
+
 Background types where `<path>` is optional (user selects at runtime).
 
 Values: `BROWSE`, `MULTI`, `PLAYLIST`, `LIVE_PLAYLIST`
 
----
+***
 
 ## Public Functions
 
 ### load_backgrounds(path) (line 37)
+
 Load complete background configuration from XML file.
 
 Parses `<background>` and `<group>` elements directly from root `<backgrounds>` element.
 Backgrounds at root level appear flat in picker, groups create nested navigation.
 
 **Parameters:**
-- `path` - Path to backgrounds.xml
+
+* `path` - Path to backgrounds.xml
 
 **Returns:** BackgroundConfig containing:
-- `backgrounds` - Flat list of all Background objects (root-level only)
-- `groupings` - List of backgrounds and groups for picker (includes both)
+
+* `backgrounds` - Flat list of all Background objects (root-level only)
+* `groupings` - List of backgrounds and groups for picker (includes both)
 
 **Used by:** config.py (SkinConfig.load), dialog/properties.py
 
----
+***
 
 ## Internal Functions
 
-### _parse_background(elem, path) (line 72)
+### `_parse_background`(elem, path) (line 72)
+
 Parse a background element.
 
 **Required:**
-- `name` attribute
-- `label` attribute
-- `<path>` child (unless type is in OPTIONAL_PATH_TYPES)
+
+* `name` attribute
+* `label` attribute
+* `<path>` child (unless type is in OPTIONAL_PATH_TYPES)
 
 **Attributes:**
-- `name`, `label` - Required
-- `type` - Optional (default: "static")
-- `condition`, `visible` - Optional
+
+* `name`, `label` - Required
+* `type` - Optional (default: "static")
+* `condition`, `visible` - Optional
 
 **Child Elements:**
-- `<path>` - Required (except for OPTIONAL_PATH_TYPES)
-- `<icon>` - Optional
-- `<source>` - Optional (multiple allowed)
+
+* `<path>` - Required (except for OPTIONAL_PATH_TYPES)
+* `<icon>` - Optional
+* `<source>` - Optional (multiple allowed)
 
 **Source parsing depends on type:**
-- BROWSE, MULTI → BrowseSource (with condition, visible, icon)
-- PLAYLIST, LIVE_PLAYLIST → PlaylistSource (with icon)
+
+* BROWSE, MULTI → BrowseSource (with condition, visible, icon)
+* PLAYLIST, LIVE_PLAYLIST → PlaylistSource (with icon)
 
 **Raises:** BackgroundConfigError if missing required fields
 
----
+***
 
-### _parse_background_group(elem, path) (line 128)
+### `_parse_background_group`(elem, path) (line 128)
+
 Parse a background group element.
 
 **Required:**
-- `name` attribute
-- `label` attribute
+
+* `name` attribute
+* `label` attribute
 
 **Optional:**
-- `condition` attribute - Property condition
-- `visible` attribute - Kodi visibility condition
-- `icon` attribute - Icon for picker display
+
+* `condition` attribute - Property condition
+* `visible` attribute - Kodi visibility condition
+* `icon` attribute - Icon for picker display
 
 **Children parsed in document order:**
-- `<background>` → Background
-- `<group>` → BackgroundGroup (recursive)
-- `<content>` → Content
 
----
+* `<background>` → Background
+* `<group>` → BackgroundGroup (recursive)
+* `<content>` → Content
+
+***
 
 ## XML Schema
 
@@ -140,13 +154,13 @@ Parse a background group element.
 </backgrounds>
 ```
 
----
+***
 
 ## Dead Code Analysis
 
 All code appears to be in active use.
 
----
+***
 
 ## Test Candidates
 

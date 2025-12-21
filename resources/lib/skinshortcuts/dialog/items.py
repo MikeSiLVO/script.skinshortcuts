@@ -36,7 +36,6 @@ class ItemsMixin:
     Requires DialogBaseMixin to be mixed in first.
     """
 
-    # Type hints for mixin - actual values come from base/subclass
     menu_id: str
     manager: MenuManager | None
     items: list[MenuItem]
@@ -45,7 +44,6 @@ class ItemsMixin:
     shortcuts_path: str
 
     if TYPE_CHECKING:
-        # Methods from DialogBaseMixin - only for type checking
         def _get_selected_index(self) -> int: ...
         def _get_selected_item(self) -> MenuItem | None: ...
         def _get_selected_listitem(self) -> xbmcgui.ListItem | None: ...
@@ -65,10 +63,8 @@ class ItemsMixin:
         index = self._get_selected_index()
         new_item = self.manager.add_item(self.menu_id, after_index=index)
         if new_item:
-            # Insert into our items list
             insert_pos = index + 1 if index >= 0 else 0
             self.items.insert(insert_pos, new_item)
-            # Rebuild list (Kodi doesn't support insertItem at position)
             self._rebuild_list(focus_index=insert_pos)
 
     def _delete_item(self) -> None:
@@ -80,12 +76,10 @@ class ItemsMixin:
         if not item:
             return
 
-        # Check if item is required (cannot be deleted)
         if item.required:
             xbmcgui.Dialog().ok("Cannot Delete", f"'{item.label}' is required.")
             return
 
-        # Check if protection requires confirmation for delete
         if item.protection and item.protection.protects_delete():
             heading = resolve_label(item.protection.heading) or "Delete Item"
             label = resolve_label(item.label)
@@ -94,12 +88,8 @@ class ItemsMixin:
                 return
 
         index = self._get_selected_index()
-
-        # Remove from working copy via manager
-        # Note: self.items IS the manager's working list, so this updates both
         self.manager.remove_item(self.menu_id, item.name)
 
-        # Rebuild list and update deleted property
         self._rebuild_list(focus_index=min(index, len(self.items) - 1))
         self._update_deleted_property()
 
@@ -115,7 +105,6 @@ class ItemsMixin:
         index = self._get_selected_index()
         new_index = index + direction
         if self.manager.move_item(self.menu_id, item.name, direction):
-            # manager.move_item already swapped in working list (which IS self.items)
             self._rebuild_list(focus_index=new_index)
 
     def _set_label(self) -> None:
@@ -166,7 +155,6 @@ class ItemsMixin:
         if not item:
             return
 
-        # Check if protection requires confirmation for action changes
         if item.protection and item.protection.protects_action():
             heading = resolve_label(item.protection.heading) or "Modify Action"
             label = resolve_label(item.label)
@@ -191,7 +179,6 @@ class ItemsMixin:
         if not item:
             return
 
-        # Toggle the disabled state
         new_state = not item.disabled
         self.manager.set_disabled(self.menu_id, item.name, new_state)
         self._refresh_selected_item()
@@ -206,28 +193,22 @@ class ItemsMixin:
             xbmcgui.Dialog().notification("No Deleted Items", "No items to restore")
             return
 
-        # Build list of removed item labels
         labels = [resolve_label(item.label) for item in removed]
         selected = xbmcgui.Dialog().select("Restore Deleted Item", labels)
 
         if selected < 0:
             return
 
-        # Restore item via manager (adds deep copy to working)
         item = removed[selected]
         self.manager.restore_item(self.menu_id, item)
-
-        # Reload items from working copy
         self._load_items()
 
-        # Find the restored item's index
         restored_index = len(self.items) - 1
         for i, it in enumerate(self.items):
             if it.name == item.name:
                 restored_index = i
                 break
 
-        # Rebuild list with restored item selected
         self._rebuild_list(focus_index=restored_index)
         self._update_deleted_property()
 
@@ -244,11 +225,9 @@ class ItemsMixin:
         if not xbmcgui.Dialog().yesno("Reset Item", f"Reset '{display_label}' to defaults?"):
             return
 
-        # Use manager's reset_item method (works on working copy)
         if not self.manager.reset_item(self.menu_id, item.name):
             return
 
-        # Refresh display
         index = self._get_selected_index()
         self._rebuild_list(focus_index=index)
         self._update_window_properties()
@@ -277,24 +256,19 @@ class ItemsMixin:
 
         props = item_properties or {}
 
-        # Filter sources by condition and visible
         visible_sources = []
         for source in sources:
-            # Check property condition
             if source.condition and not evaluate_condition(source.condition, props):
                 continue
-            # Check Kodi visibility condition
             visible = getattr(source, "visible", "")
             if visible and not xbmc.getCondVisibility(visible):
                 continue
             visible_sources.append(source)
 
-        # No sources defined - use free browse
         if not visible_sources:
             result = xbmcgui.Dialog().browse(browse_type, title, "files", mask)
             return result if isinstance(result, str) else None
 
-        # Single source without label - browse directly from that path
         if len(visible_sources) == 1 and not visible_sources[0].label:
             path = visible_sources[0].path
             if path.lower() == "browse":
@@ -305,7 +279,6 @@ class ItemsMixin:
                 )
             return result if isinstance(result, str) else None
 
-        # Multiple sources - show picker first
         while True:
             listitems = []
             for source in visible_sources:
@@ -323,18 +296,15 @@ class ItemsMixin:
             source = visible_sources[selected]
             path = source.path
 
-            # "browse" means free file browser
             if path.lower() == "browse":
                 result = xbmcgui.Dialog().browse(browse_type, title, "files", mask)
             else:
-                # Browse starting from this path
                 result = xbmcgui.Dialog().browse(
                     browse_type, title, "files", mask, False, False, path
                 )
 
             if result and isinstance(result, str):
                 return result
-            # If browse was cancelled, loop back to source picker
 
     def _show_context_menu(self) -> None:
         """Show context menu for selected item."""
@@ -381,24 +351,19 @@ class ItemsMixin:
         if not self.manager:
             return
 
-        # Apply suffix to property name if enabled and suffix is set
         prop_name = self._suffixed_name(name) if apply_suffix else name
 
-        # All properties go through the same path now
         self.manager.set_custom_property(self.menu_id, item.name, prop_name, value)
-        # Update local item properties dict
         if value:
             item.properties[prop_name] = value
         else:
             if prop_name in item.properties:
                 del item.properties[prop_name]
-            # Explicitly clear on ListItem since _populate_listitem won't see deleted props
             listitem = self._get_selected_listitem()
             if listitem:
                 listitem.setProperty(prop_name, "")
                 listitem.setProperty(f"{prop_name}Label", "")
 
-        # Set related auto-populated properties (also apply suffix if enabled)
         if related:
             for rel_name, rel_value in related.items():
                 rel_prop_name = self._suffixed_name(rel_name) if apply_suffix else rel_name
@@ -410,12 +375,10 @@ class ItemsMixin:
                 else:
                     if rel_prop_name in item.properties:
                         del item.properties[rel_prop_name]
-                    # Explicitly clear on ListItem
                     listitem = self._get_selected_listitem()
                     if listitem:
                         listitem.setProperty(rel_prop_name, "")
 
-    # Abstract methods implemented by other mixins
     def _edit_submenu(self) -> None:
         """Edit submenu - implemented by SubdialogsMixin."""
         raise NotImplementedError

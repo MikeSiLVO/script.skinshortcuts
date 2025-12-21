@@ -2,31 +2,31 @@
 
 The `properties.xml` file defines custom properties, button mappings, and fallback values.
 
----
+***
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [File Structure](#file-structure)
-- [Property Element](#property-element)
-- [Options](#options)
-- [Button Mappings](#button-mappings)
-- [Fallbacks](#fallbacks)
-- [Includes](#includes)
-- [Suffix Transforms](#suffix-transforms)
+* [Overview](#overview)
+* [File Structure](#file-structure)
+* [Property Element](#property-element)
+* [Options](#options)
+* [Button Mappings](#button-mappings)
+* [Fallbacks](#fallbacks)
+* [Includes](#includes)
+* [Suffix Transforms](#suffix-transforms)
 
----
+***
 
 ## Overview
 
 Properties extend menu items beyond built-in fields (label, icon, action). Common uses:
 
-- Widget style selection (Panel, Wide, Poster)
-- Art type selection (Poster, Fanart, Landscape)
-- Custom toggle settings
-- Any skin-specific metadata
+* Widget style selection (Panel, Wide, Poster)
+* Art type selection (Poster, Fanart, Landscape)
+* Custom toggle settings
+* Any skin-specific metadata
 
----
+***
 
 ## File Structure
 
@@ -67,7 +67,7 @@ Properties extend menu items beyond built-in fields (label, icon, action). Commo
 </properties>
 ```
 
----
+***
 
 ## Property Element
 
@@ -100,7 +100,7 @@ Properties extend menu items beyond built-in fields (label, icon, action). Commo
 | `widget` | Opens widget picker |
 | `background` | Opens background picker |
 
----
+***
 
 ## Options
 
@@ -139,7 +139,7 @@ Multiple icons with conditions for dynamic display:
 
 First matching condition wins. Empty condition is default.
 
----
+***
 
 ## Button Mappings
 
@@ -186,7 +186,7 @@ Group buttons with shared settings:
 </group>
 ```
 
----
+***
 
 ## Fallbacks
 
@@ -212,12 +212,12 @@ Default values when property is not set:
 </fallback>
 ```
 
-- `<when condition="...">` - Use this value if condition matches
-- `<default>` - Use if no conditions match
+* `<when condition="...">` - Use this value if condition matches
+* `<default>` - Use if no conditions match
 
 Rules are evaluated in order. First match wins.
 
----
+***
 
 ## Includes
 
@@ -259,7 +259,7 @@ Reuse option sets across properties:
 | `content` | Name of include to expand |
 | `suffix` | Apply suffix transform to conditions |
 
----
+***
 
 ## Suffix Transforms
 
@@ -302,7 +302,7 @@ Subdialogs set suffix via the `suffix` attribute:
 
 Button mappings with `suffix="true"` automatically use the dialog's suffix.
 
----
+***
 
 ## Complete Example
 
@@ -362,7 +362,7 @@ Button mappings with `suffix="true"` automatically use the dialog's suffix.
 </properties>
 ```
 
----
+***
 
 ## Quick Navigation
 

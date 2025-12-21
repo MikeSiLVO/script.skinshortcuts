@@ -2,25 +2,25 @@
 
 The `menus.xml` file defines menu structure, items, shortcut picker groupings, and dialog settings.
 
----
+***
 
 ## Table of Contents
 
-- [File Structure](#file-structure)
-- [Menu Element](#menu-element)
-- [Submenu Element](#submenu-element)
-- [Item Element](#item-element)
-- [Actions](#actions)
-- [Defaults](#defaults)
-- [Allow Settings](#allow-settings)
-- [Protection](#protection)
-- [Shortcut Groupings](#shortcut-groupings)
-- [Icon Sources](#icon-sources)
-- [Subdialogs](#subdialogs)
-- [Action Overrides](#action-overrides)
-- [Context Menu](#context-menu)
+* [File Structure](#file-structure)
+* [Menu Element](#menu-element)
+* [Submenu Element](#submenu-element)
+* [Item Element](#item-element)
+* [Actions](#actions)
+* [Defaults](#defaults)
+* [Allow Settings](#allow-settings)
+* [Protection](#protection)
+* [Shortcut Groupings](#shortcut-groupings)
+* [Icon Sources](#icon-sources)
+* [Subdialogs](#subdialogs)
+* [Action Overrides](#action-overrides)
+* [Context Menu](#context-menu)
 
----
+***
 
 ## File Structure
 
@@ -51,7 +51,7 @@ The `menus.xml` file defines menu structure, items, shortcut picker groupings, a
 </menus>
 ```
 
----
+***
 
 ## Menu Element
 
@@ -74,7 +74,7 @@ Defines a standalone menu that generates an include.
 
 **Container binding:** When `container` is set, visibility conditions are generated for submenus and widgets based on focused item position.
 
----
+***
 
 ## Submenu Element
 
@@ -92,8 +92,8 @@ Defines a menu that is only built when referenced by a parent item.
 
 Submenus use the same structure as `<menu>`. The only difference is:
 
-- `<menu>`: Always generates an include
-- `<submenu>`: Only generates when an item has `submenu="{name}"`
+* `<menu>`: Always generates an include
+* `<submenu>`: Only generates when an item has `submenu="{name}"`
 
 Link a submenu to an item:
 
@@ -104,7 +104,7 @@ Link a submenu to an item:
 </item>
 ```
 
----
+***
 
 ## Item Element
 
@@ -154,7 +154,7 @@ Defines a menu item.
 | `visible="..."` (attribute on `<item>`) | Management dialog | Hides item from dialog when condition fails (e.g., hide playdisc when no disc drive) |
 | `<visible>` (child element) | Generated include | Output as `<visible>` in the include file |
 
----
+***
 
 ## Actions
 
@@ -193,7 +193,7 @@ Use the `condition` attribute for fallback behavior:
 
 The first matching action executes. Unconditional actions always match.
 
----
+***
 
 ## Defaults
 
@@ -239,7 +239,7 @@ The `<defaults>` element also supports `widget` and `background` attributes as s
 | `when` | `before`, `after` | When to run relative to item action |
 | `condition` | Kodi condition | Only run when condition is true |
 
----
+***
 
 ## Allow Settings
 
@@ -260,11 +260,11 @@ Controls which features are available in the management dialog. This is a direct
 
 These set window properties that your dialog skin can use for button visibility:
 
-- `Window.Property(allowWidgets)` = `true` or `false`
-- `Window.Property(allowBackgrounds)` = `true` or `false`
-- `Window.Property(allowSubmenus)` = `true` or `false`
+* `Window.Property(allowWidgets)` = `true` or `false`
+* `Window.Property(allowBackgrounds)` = `true` or `false`
+* `Window.Property(allowSubmenus)` = `true` or `false`
 
----
+***
 
 ## Protection
 
@@ -297,7 +297,7 @@ Protect items from accidental changes.
 | `heading` | - | String | Dialog heading |
 | `message` | - | String | Dialog message |
 
----
+***
 
 ## Shortcut Groupings
 
@@ -312,7 +312,7 @@ Define shortcuts available in the picker dialog.
 
     <shortcut name="playlists" label="Browse Playlists" icon="DefaultPlaylist.png"
               browse="videos" visible="Library.HasContent(movies)">
-      <path>special://videoplaylists/</path>
+      <path>special://profile/playlists/video/</path>
     </shortcut>
 
     <group name="addons" label="Add-ons" condition="...">
@@ -367,7 +367,7 @@ Define shortcuts available in the picker dialog.
 
 ```xml
 <shortcut name="browse-videos" label="Browse Videos" browse="videos">
-  <path>special://videoplaylists/</path>
+  <path>special://profile/playlists/video/</path>
 </shortcut>
 ```
 
@@ -384,8 +384,8 @@ Add dynamic content from system sources:
 
 | Attribute | Description |
 |-----------|-------------|
-| `source` | Content type: `playlists`, `addons`, `sources`, `favourites`, `pvr`, `commands`, `settings`, `library` |
-| `target` | Media context: `video`, `music`, `pictures`, `programs`, `tv`, `radio`. For `library` source, see [Library Target Values](widgets.md#library-target-values) |
+| `source` | Content type: `playlists`, `addons`, `sources`, `favourites`, `pvr`, `commands`, `settings`, `library`, `nodes` |
+| `target` | Media context: `video`, `music`, `pictures`, `programs`, `tv`, `radio`. For `library` source, see [Library Target Values](widgets.md#library-target-values). For `nodes` source, see [Nodes Target Values](widgets.md#nodes-target-values) |
 | `folder` | Wrap items in a folder with this label |
 | `path` | Custom path override |
 | `label` | Custom label for the content group |
@@ -393,7 +393,7 @@ Add dynamic content from system sources:
 | `condition` | Property condition (evaluated against item properties) |
 | `visible` | Kodi visibility condition (evaluated at runtime) |
 
----
+***
 
 ## Icon Sources
 
@@ -432,7 +432,7 @@ Multiple conditional sources:
 
 Use `browse` as the path for free file browser.
 
----
+***
 
 ## Subdialogs
 
@@ -466,7 +466,7 @@ Define subdialogs triggered by button clicks. Used for multi-widget support.
 | `menu` | Menu name for `action="menu"`. Supports `{item}` placeholder |
 | `condition` | Condition evaluated against item properties |
 
----
+***
 
 ## Action Overrides
 
@@ -484,7 +484,7 @@ Replace deprecated or changed actions:
 
 The element text is the replacement action.
 
----
+***
 
 ## Context Menu
 
@@ -496,7 +496,7 @@ Enable or disable context menu on items:
 
 Default: `true`. Set to `false`, `no`, or `0` to disable.
 
----
+***
 
 ## Quick Navigation
 

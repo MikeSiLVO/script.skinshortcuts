@@ -2,22 +2,22 @@
 
 Conditions filter items and control behavior based on property values.
 
----
+***
 
 ## Table of Contents
 
-- [Two Types of Conditions](#two-types-of-conditions)
-- [Property Conditions](#property-conditions)
-- [Kodi Visibility Conditions](#kodi-visibility-conditions)
-- [Property Condition Syntax](#property-condition-syntax)
-- [Operators](#operators)
-- [Combining Conditions](#combining-conditions)
-- [Compact OR Syntax](#compact-or-syntax)
-- [Negation](#negation)
-- [Grouping](#grouping)
-- [Examples](#examples)
+* [Two Types of Conditions](#two-types-of-conditions)
+* [Property Conditions](#property-conditions)
+* [Kodi Visibility Conditions](#kodi-visibility-conditions)
+* [Property Condition Syntax](#property-condition-syntax)
+* [Operators](#operators)
+* [Combining Conditions](#combining-conditions)
+* [Compact OR Syntax](#compact-or-syntax)
+* [Negation](#negation)
+* [Grouping](#grouping)
+* [Examples](#examples)
 
----
+***
 
 ## Two Types of Conditions
 
@@ -44,7 +44,7 @@ Checked against Kodi runtime state:
 <shortcut name="tmdb-widget" visible="System.AddonIsEnabled(plugin.video.themoviedb.helper)">
 ```
 
----
+***
 
 ## Property Conditions
 
@@ -52,16 +52,16 @@ Property conditions use a simple expression language to compare against the curr
 
 ### Where Used
 
-- `<shortcut condition="...">` - Filter in shortcut picker
-- `<group condition="...">` - Filter group in picker
-- `<widget condition="...">` - Filter widget in picker
-- `<option condition="...">` - Filter property option
-- Template `<condition>` - Control template building
-- Template `<property condition="...">` - Conditional property
-- Template `<value condition="...">` - Conditional var value
-- Fallback `<when condition="...">` - Conditional fallback
+* `<shortcut condition="...">` - Filter in shortcut picker
+* `<group condition="...">` - Filter group in picker
+* `<widget condition="...">` - Filter widget in picker
+* `<option condition="...">` - Filter property option
+* Template `<condition>` - Control template building
+* Template `<property condition="...">` - Conditional property
+* Template `<value condition="...">` - Conditional var value
+* Fallback `<when condition="...">` - Conditional fallback
 
----
+***
 
 ## Kodi Visibility Conditions
 
@@ -69,12 +69,12 @@ Evaluated at runtime using Kodi's condition system.
 
 ### Where Used
 
-- `<shortcut visible="...">` - Filter in shortcut picker
-- `<group visible="...">` - Filter group in picker
-- `<widget visible="...">` - Filter widget in picker
-- `<item visible="...">` - Filter in management dialog
-- Background `<condition>` - Filter background option
-- Icon `<source condition="...">` - Filter icon source
+* `<shortcut visible="...">` - Filter in shortcut picker
+* `<group visible="...">` - Filter group in picker
+* `<widget visible="...">` - Filter widget in picker
+* `<item visible="...">` - Filter in management dialog
+* Background `<condition>` - Filter background option
+* Icon `<source condition="...">` - Filter icon source
 
 ### Common Kodi Conditions
 
@@ -86,27 +86,62 @@ visible="System.HasAddon(resource.images.moviegenreicons.transparent)"
 visible="!String.IsEmpty(Window(Home).Property(SomeProperty))"
 ```
 
----
+***
 
 ## Property Condition Syntax
+
+### Property Exists (Truthy)
+
+Check if property has any non-empty value:
+
+```text
+propertyName
+```
+
+```xml
+<!-- True if widgetPath has any value -->
+<shortcut condition="widgetPath">
+
+<!-- True if suffix has any value (widget2 in multi-output) -->
+<skinshortcuts include="HorizontalNavigation2" condition="suffix"/>
+```
+
+### Property Empty (Falsy)
+
+Check if property is empty or not set:
+
+```text
+!propertyName
+```
+
+```xml
+<!-- True if widgetPath is empty or not set -->
+<shortcut condition="!widgetPath">
+
+<!-- True if no suffix (widget1 in multi-output) -->
+<skinshortcuts include="HorizontalNavigation1" condition="!suffix"/>
+```
 
 ### Equality
 
 Check if property equals a value:
 
-```
+```text
 propertyName=value
 ```
 
 ```xml
 <shortcut condition="widgetType=movies">
+
+<!-- Check for empty value explicitly -->
+<option condition="suffix=">
 ```
 
 ### Contains
 
 Check if property contains a substring:
 
-```
+```text
 propertyName~value
 ```
 
@@ -114,19 +149,20 @@ propertyName~value
 <shortcut condition="widgetPath~videodb://">
 ```
 
----
+***
 
 ## Operators
 
 | Operator | Meaning | Example |
 |----------|---------|---------|
+| *(none)* | Has value (truthy) | `widgetPath` |
 | `=` | Equals | `widgetType=movies` |
 | `~` | Contains | `widgetPath~videodb://` |
 | `+` | AND | `widgetType=movies + widgetStyle=Panel` |
 | `\|` | OR | `widgetType=movies \| widgetType=tvshows` |
-| `!` | NOT | `!widgetType=movies` |
+| `!` | NOT (negate) | `!widgetPath` or `!widgetType=movies` |
 
----
+***
 
 ## Combining Conditions
 
@@ -134,7 +170,7 @@ propertyName~value
 
 Both conditions must be true:
 
-```
+```text
 condition1 + condition2
 ```
 
@@ -146,7 +182,7 @@ condition1 + condition2
 
 Either condition must be true:
 
-```
+```text
 condition1 | condition2
 ```
 
@@ -158,23 +194,23 @@ condition1 | condition2
 
 AND has higher precedence than OR. Use grouping for complex logic:
 
-```
+```text
 [condition1 | condition2] + condition3
 ```
 
----
+***
 
 ## Compact OR Syntax
 
 Compare one property against multiple values:
 
-```
+```text
 propertyName=value1 | value2 | value3
 ```
 
 Expands to:
 
-```
+```text
 propertyName=value1 | propertyName=value2 | propertyName=value3
 ```
 
@@ -184,15 +220,31 @@ propertyName=value1 | propertyName=value2 | propertyName=value3
 <option condition="widgetType=movies | widgetType=episodes | widgetType=tvshows">
 ```
 
----
+***
 
 ## Negation
 
-### Simple Negation
+### Property Empty Check
 
-Negate a single condition:
+Check if property is empty or not set:
 
+```text
+!propertyName
 ```
+
+```xml
+<!-- True when suffix is empty (widget1 in multi-output) -->
+<skinshortcuts include="Navigation1" condition="!suffix"/>
+
+<!-- True when widgetPath is not set -->
+<option condition="!widgetPath">
+```
+
+### Negated Equality
+
+Check if property does NOT equal a value:
+
+```text
 !propertyName=value
 ```
 
@@ -200,11 +252,24 @@ Negate a single condition:
 <option condition="!widgetType=movies">
 ```
 
+### Negation in Compound Conditions
+
+Negation applies to the immediately following term:
+
+```text
+!prop + other = (!prop) AND (other)
+```
+
+```xml
+<!-- suffix empty AND widgetArt equals Poster -->
+<option condition="!suffix + widgetArt=Poster">
+```
+
 ### Grouped Negation
 
 Negate an entire group:
 
-```
+```text
 ![condition1 | condition2]
 ```
 
@@ -213,13 +278,13 @@ Negate an entire group:
 <option condition="![widgetType=movies | widgetType=tvshows]">
 ```
 
----
+***
 
 ## Grouping
 
 Use brackets to control evaluation order:
 
-```
+```text
 [condition1 | condition2] + [condition3 | condition4]
 ```
 
@@ -234,7 +299,7 @@ Nested grouping:
 <option condition="![widgetType=movies | [widgetType=tvshows + widgetStyle=Panel]]">
 ```
 
----
+***
 
 ## Examples
 
@@ -282,28 +347,55 @@ Multiple `<condition>` elements are ANDed together.
 </groupings>
 ```
 
-### Suffix in Conditions
+### Multi-Output Templates and Suffix
 
-For multi-widget support, conditions on suffixed properties:
+For multi-widget support, templates can define multiple outputs with different suffixes:
+
+```xml
+<template name="Widgets">
+  <output include="widget1" idprefix="8011"/>
+  <output include="widget2" idprefix="8021" suffix=".2"/>
+  ...
+</template>
+```
+
+The `suffix` built-in property is available in conditions:
+
+```xml
+<!-- Widget 1 (no suffix) -->
+<skinshortcuts include="HorizontalNavigation1" condition="!suffix"/>
+<values condition="!suffix" top="424"/>
+
+<!-- Widget 2 (suffix=.2) -->
+<skinshortcuts include="HorizontalNavigation2" condition="suffix=.2"/>
+<values condition="suffix=.2" top="70"/>
+
+<!-- Any widget with a suffix -->
+<option condition="suffix">
+```
+
+Suffixed properties can also be checked directly:
 
 ```xml
 <option condition="widgetType.2=movies">
 <when condition="widgetStyle.2=Panel">
 ```
 
-Suffix transforms are applied automatically when using `suffix` attribute on includes or button mappings.
+Suffix transforms are applied automatically when using `suffix` attribute on outputs.
 
----
+***
 
 ## Evaluation Order
 
 1. Empty conditions return `true`
 2. Compact OR syntax is expanded
 3. Brackets are evaluated first (innermost to outermost)
-4. AND (`+`) binds tighter than OR (`|`)
-5. Negation (`!`) applies to immediately following term
+4. AND (`+`) and OR (`|`) are split (AND binds tighter)
+5. Negation (`!`) applies to the immediately following term
+6. Property-only terms (`prop` or `!prop`) check for truthy/falsy value
+7. Equality (`=`) and contains (`~`) compare against the value
 
----
+***
 
 ## Quick Navigation
 

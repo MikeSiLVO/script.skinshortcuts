@@ -4,17 +4,18 @@
 **Lines:** 104
 **Purpose:** Dataclass models for the property schema system (custom properties defined in properties.xml).
 
----
+***
 
 ## Overview
 
 Defines the property schema system which allows skins to declare custom properties that can be set on menu items. This enables skin-specific configuration beyond the built-in widget/background properties.
 
----
+***
 
 ## Classes
 
 ### IconVariant (line 8)
+
 Icon with optional visibility condition.
 
 | Field | Type | Default | Description |
@@ -24,9 +25,10 @@ Icon with optional visibility condition.
 
 **Used by:** SchemaOption.icons
 
----
+***
 
 ### SchemaOption (line 16)
+
 An option for select-type properties.
 
 | Field | Type | Default | Description |
@@ -38,9 +40,10 @@ An option for select-type properties.
 
 **Used by:** SchemaProperty.options, dialog/properties.py (property picker)
 
----
+***
 
 ### ButtonMapping (line 26)
+
 Button to property mapping from the `<buttons>` section.
 
 | Field | Type | Default | Description |
@@ -58,9 +61,10 @@ Button to property mapping from the `<buttons>` section.
 
 **Note:** `type` and `requires` on buttons take precedence over the property definition. This allows buttons to work without a matching property definition (e.g., toggle buttons).
 
----
+***
 
 ### SchemaProperty (line 40)
+
 A property definition from the schema.
 
 | Field | Type | Default | Description |
@@ -73,9 +77,10 @@ A property definition from the schema.
 
 **Used by:** PropertySchema, dialog/properties.py, builders/template.py
 
----
+***
 
 ### FallbackRule (line 51)
+
 A single fallback rule with condition.
 
 | Field | Type | Default | Description |
@@ -85,9 +90,10 @@ A single fallback rule with condition.
 
 **Used by:** PropertyFallback.rules
 
----
+***
 
 ### PropertyFallback (line 59)
+
 Fallback configuration for a property.
 
 | Field | Type | Default | Description |
@@ -97,9 +103,10 @@ Fallback configuration for a property.
 
 **Used by:** PropertySchema.fallbacks, builders/includes.py
 
----
+***
 
 ### PropertySchema (line 67)
+
 Complete property schema container.
 
 | Field | Type | Default | Description |
@@ -109,13 +116,14 @@ Complete property schema container.
 | `buttons` | dict[int, ButtonMapping] | {} | Button mappings by button ID |
 
 **Methods:**
-- `get_property(name)` → SchemaProperty\|None - Get property by name (line 75)
-- `get_button(button_id)` → ButtonMapping\|None - Get button mapping by ID (line 79)
-- `get_property_for_button(button_id)` → tuple[SchemaProperty\|None, ButtonMapping\|None] - Get property and button mapping for a button ID (line 83)
+
+* `get_property(name)` → SchemaProperty|None - Get property by name (line 75)
+* `get_button(button_id)` → ButtonMapping|None - Get button mapping by ID (line 79)
+* `get_property_for_button(button_id)` → tuple[SchemaProperty|None, ButtonMapping|None] - Get property and button mapping for a button ID (line 83)
 
 **Used by:** config.py, dialog/properties.py, loaders/property.py, builders/includes.py
 
----
+***
 
 ## Test Candidates
 

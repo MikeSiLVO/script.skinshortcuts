@@ -39,25 +39,20 @@ class IncludesBuilder:
         # even if deleted from the parent menu (they become orphaned).
 
         for menu in self.menus:
-            # Skip menus explicitly defined as submenus
             if menu.is_submenu:
                 continue
 
-            # Main menu include
             include = self._build_menu_include(menu)
             root.append(include)
 
-            # Combined submenu include
             submenu_include = self._build_submenu_include(menu)
             if submenu_include is not None:
                 root.append(submenu_include)
 
-            # Custom widget includes (one per slot that has custom widgets)
             custom_widget_includes = self._build_custom_widget_includes(menu)
             for cw_include in custom_widget_includes:
                 root.append(cw_include)
 
-        # Build template includes into the same file
         if self.templates and self.templates.templates:
             from .template import TemplateBuilder
 
@@ -67,7 +62,6 @@ class IncludesBuilder:
                 property_schema=self.property_schema,
             )
             template_root = template_builder.build()
-            # Append all template includes to main root
             for template_include in template_root:
                 root.append(template_include)
 
@@ -125,16 +119,13 @@ class IncludesBuilder:
     ) -> ET.Element:
         """Build a submenu item element with parent linking and visibility."""
         elem = self._build_item(item, idx, menu)
-        # Add parent reference
         self._add_property(elem, "parent", parent_item.name)
 
-        # Add visibility condition if container is specified
         if container:
             visibility = (
                 f"String.IsEqual(Container({container}).ListItem.Property(name),"
                 f"{parent_item.name})"
             )
-            # Combine with existing visibility if present
             existing = elem.find("visible")
             if existing is not None and existing.text:
                 existing.text = f"[{existing.text}] + [{visibility}]"
@@ -160,14 +151,12 @@ class IncludesBuilder:
             if parent_item.disabled:
                 continue
 
-            # Check for custom widget menus: {item.name}.customwidget, .customwidget.2, etc.
             for suffix in ["", ".2", ".3", ".4", ".5", ".6", ".7", ".8", ".9", ".10"]:
                 cw_menu_name = f"{parent_item.name}.customwidget{suffix}"
                 cw_menu = self._menu_map.get(cw_menu_name)
                 if not cw_menu or not cw_menu.items:
                     continue
 
-                # Include name: skinshortcuts-{item}-customwidget or -customwidget2
                 suffix_name = suffix.replace(".", "") if suffix else ""
                 include = ET.Element("include")
                 include.set("name", f"skinshortcuts-{parent_item.name}-customwidget{suffix_name}")
@@ -193,30 +182,24 @@ class IncludesBuilder:
         if item.thumb:
             ET.SubElement(elem, "thumb").text = item.thumb
 
-        # Add onclick elements for actions
-        # Order: before defaults -> conditional items -> unconditional items -> after defaults
+        # Order: before defaults -> conditional -> unconditional -> after defaults
         before_actions = [a for a in menu.defaults.actions if a.when == "before"]
         after_actions = [a for a in menu.defaults.actions if a.when == "after"]
-
-        # Item actions: conditional first (they take precedence when true)
         conditional = [a for a in item.actions if a.condition]
         unconditional = [a for a in item.actions if not a.condition]
 
-        # Output before actions
         for act in before_actions:
             onclick = ET.SubElement(elem, "onclick")
             onclick.text = act.action
             if act.condition:
                 onclick.set("condition", act.condition)
 
-        # Output item actions (conditional first)
         for act in conditional + unconditional:
             onclick = ET.SubElement(elem, "onclick")
             onclick.text = act.action
             if act.condition:
                 onclick.set("condition", act.condition)
 
-        # Output after actions
         for act in after_actions:
             onclick = ET.SubElement(elem, "onclick")
             onclick.text = act.action
@@ -226,7 +209,6 @@ class IncludesBuilder:
         if item.visible:
             ET.SubElement(elem, "visible").text = item.visible
 
-        # Standard properties
         self._add_property(elem, "id", str(idx))
         self._add_property(elem, "name", item.name)
         self._add_property(elem, "menu", menu.name)
@@ -236,10 +218,7 @@ class IncludesBuilder:
             self._add_property(elem, "submenuVisibility", item.submenu)
             self._add_property(elem, "hasSubmenu", "True")
 
-        # Apply default properties from menu, then item properties override
         all_properties = {**menu.defaults.properties, **item.properties}
-
-        # Add all properties (skip template_only properties)
         for key, value in all_properties.items():
             if self._is_template_only(key):
                 continue

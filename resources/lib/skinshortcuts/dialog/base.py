@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 try:
-    import xbmc
     import xbmcgui
     import xbmcvfs
 
@@ -15,33 +14,34 @@ except ImportError:
     IN_KODI = False
 
 from ..loaders import evaluate_condition, load_menu_config, load_properties
+from ..loaders.base import apply_suffix_transform
 from ..localize import resolve_label
+from ..log import get_logger
 from ..manager import MenuManager
 from ..models import MenuItem, PropertySchema
 from ..providers.content import clear_content_cache
+
+_log = get_logger("Dialog")
 
 if TYPE_CHECKING:
     from ..models import IconSource
     from ..models.menu import SubDialog
 
-# Control IDs (matching v2 for compatibility)
-CONTROL_LIST = 211  # Menu items list
-CONTROL_SUBDIALOG_LIST = 212  # Subdialog context list
-CONTROL_ADD = 301  # Add item
-CONTROL_DELETE = 302  # Delete item
-CONTROL_MOVE_UP = 303  # Move up
-CONTROL_MOVE_DOWN = 304  # Move down
-CONTROL_SET_LABEL = 305  # Change label
-CONTROL_SET_ICON = 306  # Change icon
-CONTROL_SET_ACTION = 307  # Change action
-CONTROL_RESTORE_DELETED = 311  # Restore a deleted item
-CONTROL_RESET_ITEM = 312  # Reset current item to defaults
-# Widget/background buttons are now schema-driven via properties.xml
-CONTROL_TOGGLE_DISABLED = 313  # Enable/disable item
-CONTROL_CHOOSE_SHORTCUT = 401  # Choose shortcut/action from groupings
-CONTROL_EDIT_SUBMENU = 405  # Edit submenu
+CONTROL_LIST = 211
+CONTROL_SUBDIALOG_LIST = 212
+CONTROL_ADD = 301
+CONTROL_DELETE = 302
+CONTROL_MOVE_UP = 303
+CONTROL_MOVE_DOWN = 304
+CONTROL_SET_LABEL = 305
+CONTROL_SET_ICON = 306
+CONTROL_SET_ACTION = 307
+CONTROL_RESTORE_DELETED = 311
+CONTROL_RESET_ITEM = 312
+CONTROL_TOGGLE_DISABLED = 313
+CONTROL_CHOOSE_SHORTCUT = 401
+CONTROL_EDIT_SUBMENU = 405
 
-# Actions
 ACTION_CANCEL = (9, 10, 92, 216, 247, 257, 275, 61467, 61448)
 ACTION_CONTEXT = (117,)
 
@@ -70,7 +70,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     """
 
 
-    # Type hints for mixin - actual values come from subclass or WindowXMLDialog
     menu_id: str
     shortcuts_path: str
     manager: MenuManager | None
@@ -98,49 +97,35 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         self.menu_id = kwargs.get("menu_id", "mainmenu")
         self.shortcuts_path = kwargs.get("shortcuts_path", get_shortcuts_path())
 
-        # Accept shared manager from parent dialog, or create in onInit
         self._shared_manager = kwargs.get("manager")
         self.manager = None
         self.items = []
 
-        # Property schema (shared with child dialogs)
         self._shared_schema = kwargs.get("property_schema")
         self.property_schema = None
 
-        # Icon sources (loaded from menus.xml)
         self._shared_icon_sources = kwargs.get("icon_sources")
         self.icon_sources = []
 
-        # Context menu toggle (loaded from menus.xml)
         self._shared_show_context_menu = kwargs.get("show_context_menu")
         self.show_context_menu = True
 
-        # Sub-dialog definitions (loaded from menus.xml)
         self._shared_subdialogs = kwargs.get("subdialogs")
         self._subdialogs = {}
 
-        # Dialog mode for sub-dialogs (e.g., "widget1", "widget2")
-        # When set, Window.Property(skinshortcuts-dialog) is set to this value
+        # Dialog mode sets Window.Property(skinshortcuts-dialog) for skin conditionals
         self.dialog_mode = kwargs.get("dialog_mode", "")
 
-        # Property suffix for widget slots (e.g., ".2" for widget 2)
-        # When set, all property reads/writes are automatically suffixed
+        # Suffix applied to widget properties for multi-slot support (e.g., ".2")
         self.property_suffix = kwargs.get("property_suffix", "")
 
-        # Control ID to focus when dialog opens (for sub-dialogs)
         self._setfocus = kwargs.get("setfocus")
-
-        # Selected item index to restore in child dialog
         self._selected_index = kwargs.get("selected_index")
-
-        # Track if we're a child dialog (spawned from parent)
         self.is_child = self._shared_manager is not None
 
-        # Store dialog XML path for spawning children
         self._dialog_xml = args[0] if args else "script-skinshortcuts.xml"
         self._skin_path = args[1] if len(args) > 1 else ""
 
-        # Track if changes were saved (for return value)
         self.changes_saved = False
 
     def _suffixed_name(self, name: str) -> str:
@@ -182,21 +167,16 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         """
         self._log(f"onInit: shortcuts_path={self.shortcuts_path}, menu_id={self.menu_id}")
 
-        # Use shared manager or create new one (only if we don't have one yet)
         if self.manager is None:
             if self._shared_manager:
                 self.manager = self._shared_manager
             else:
                 self.manager = MenuManager(self.shortcuts_path)
-                # Clear content cache for root dialog to ensure fresh data
-                # (e.g., newly added favourites are visible in the picker)
                 clear_content_cache()
 
-            # Log what was loaded (only on first init)
             menu_ids = self.manager.get_menu_ids()
             self._log(f"Loaded menus: {menu_ids}")
 
-        # Use shared property schema or load from skin (only if we don't have one yet)
         if self.property_schema is None:
             if self._shared_schema:
                 self.property_schema = self._shared_schema
@@ -204,7 +184,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 schema_path = Path(self.shortcuts_path) / "properties.xml"
                 self.property_schema = load_properties(schema_path)
 
-        # Use shared icon sources/context menu/subdialogs setting or load from menus.xml
         if not self.icon_sources:
             if self._shared_icon_sources is not None:
                 self.icon_sources = self._shared_icon_sources
@@ -213,7 +192,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                     if self._shared_show_context_menu is not None
                     else True
                 )
-                # Build subdialogs lookup from shared list
                 if self._shared_subdialogs:
                     self._subdialogs = {sd.button_id: sd for sd in self._shared_subdialogs}
             else:
@@ -221,13 +199,10 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 menu_config = load_menu_config(menus_path)
                 self.icon_sources = menu_config.icon_sources
                 self.show_context_menu = menu_config.show_context_menu
-                # Build subdialogs lookup
                 self._subdialogs = {sd.button_id: sd for sd in menu_config.subdialogs}
 
-        # Set dialog mode and suffix properties on Home window
         home = xbmcgui.Window(10000)
         if not self.is_child:
-            # Clear stale properties from previous session/crash
             home.clearProperty("skinshortcuts-dialog")
             home.clearProperty("skinshortcuts-suffix")
         if self.property_suffix:
@@ -240,7 +215,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         self._display_items()
         self._update_window_properties()
 
-        # Set focus to specified control (for sub-dialogs)
         if self._setfocus:
             try:
                 self.setFocusId(self._setfocus)
@@ -250,16 +224,13 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
 
     def _log(self, msg: str) -> None:
         """Log debug message."""
-        if IN_KODI:
-            xbmc.log(f"[skinshortcuts.dialog] {msg}", xbmc.LOGINFO)
+        _log.debug(msg)
 
     def _load_items(self) -> None:
         """Load menu items from manager."""
         if self.manager:
             self.items = self.manager.get_menu_items(self.menu_id)
 
-            # For custom widget menus, add a default item if empty
-            # This allows editing without pre-persisting to userdata
             if not self.items and self.dialog_mode.startswith("custom-"):
                 default_item = MenuItem(
                     name=f"user-{self.menu_id[:8]}",
@@ -272,7 +243,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def _display_items(self) -> None:
         """Display items in the list control. Called once during onInit."""
         self._rebuild_list(focus_index=self._selected_index)
-        # Populate subdialog list (212) if in subdialog mode
         if self.dialog_mode:
             self._populate_subdialog_list()
 
@@ -290,7 +260,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
 
         subdialog_list.reset()
 
-        # Get current selected item
         item = self._get_selected_item()
         if item:
             listitem = self._create_listitem(item)
@@ -345,7 +314,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         if item.icon:
             listitem.setArt({"thumb": item.icon, "icon": item.icon})
 
-        # Widget properties are stored directly in item.properties
         widget_name = item.properties.get("widget", "")
         if widget_name:
             listitem.setProperty("widget", widget_name)
@@ -354,30 +322,24 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             listitem.setProperty("widgetType", item.properties.get("widgetType", ""))
             listitem.setProperty("widgetTarget", item.properties.get("widgetTarget", ""))
         else:
-            # Clear widget properties if no widget
             listitem.setProperty("widget", "")
             listitem.setProperty("widgetLabel", "")
             listitem.setProperty("widgetPath", "")
             listitem.setProperty("widgetType", "")
             listitem.setProperty("widgetTarget", "")
 
-        # Background properties are stored directly in item.properties
         background_name = item.properties.get("background", "")
         if background_name:
             listitem.setProperty("background", background_name)
             listitem.setProperty("backgroundLabel", item.properties.get("backgroundLabel", ""))
             listitem.setProperty("backgroundPath", item.properties.get("backgroundPath", ""))
         else:
-            # Clear background properties if no background
             listitem.setProperty("background", "")
             listitem.setProperty("backgroundLabel", "")
             listitem.setProperty("backgroundPath", "")
 
-        # Add custom properties from schema with resolved names
-        # Use effective properties (includes fallbacks) for display
         effective_props = self._get_effective_properties(item)
         for prop_name, prop_value in effective_props.items():
-            # Skip built-in properties we already handle
             if prop_name in (
                 "widget",
                 "widgetPath",
@@ -391,11 +353,8 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 "label",
             ):
                 continue
-            # Skip widget-related properties if no widget is set for that slot
-            # (don't show fallback values for widgetStyle/widgetArt when widget is cleared)
-            # Check suffix to determine which widget slot this property belongs to
+            # Skip widget properties for empty widget slots (no fallback display)
             if prop_name.startswith("widget"):
-                # Extract suffix (e.g., ".2" from "widgetStyle.2")
                 if "." in prop_name:
                     suffix = "." + prop_name.split(".", 1)[-1]
                     slot_widget = item.properties.get(f"widget{suffix}", "")
@@ -406,12 +365,10 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                     listitem.setProperty(f"{prop_name}Label", "")
                     continue
             listitem.setProperty(prop_name, prop_value)
-            # Look up the resolved label for this value from schema
             resolved_label = self._get_property_label(prop_name, prop_value)
             if resolved_label:
                 listitem.setProperty(f"{prop_name}Label", resolved_label)
 
-        # Check if item has a submenu with actual items
         if self.manager:
             submenu_name = item.submenu or item.name
             submenu = self.manager.config.get_menu(submenu_name)
@@ -419,7 +376,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 listitem.setProperty("hasSubmenu", "true")
                 listitem.setProperty("submenu", submenu_name)
 
-            # Check if item can be reset (exists in defaults and has been modified)
             is_modified = False
             if self.manager:
                 is_modified = self.manager.is_item_modified(self.menu_id, item.name)
@@ -442,12 +398,10 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         if index < 0 or index >= len(self.items):
             return
 
-        # Get the existing ListItem and update its properties in place
         listitem = self._get_selected_listitem()
         if listitem:
             self._populate_listitem(listitem, self.items[index])
 
-        # Also refresh subdialog list (212) if in subdialog mode
         if self.dialog_mode:
             self._populate_subdialog_list()
 
@@ -471,9 +425,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
 
         All properties including widget and background are stored in item.properties.
         """
-        props = dict(item.properties)  # All properties are in item.properties
-
-        # Add item identifiers
+        props = dict(item.properties)
         props["name"] = item.name
         props["label"] = item.label
 
@@ -485,22 +437,25 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         Returns a dict of property name -> effective value, including
         fallback values for properties that aren't explicitly set.
         """
-        # Start with base properties
         props = self._get_item_properties(item)
 
-        # Apply fallbacks from property schema
         if not self.property_schema:
             return props
 
         for prop_name, fallback in self.property_schema.fallbacks.items():
-            # Skip if property is already set
-            if prop_name in props and props[prop_name]:
+            effective_prop_name = prop_name
+            if self.property_suffix:
+                effective_prop_name = f"{prop_name}{self.property_suffix}"
+
+            if effective_prop_name in props and props[effective_prop_name]:
                 continue
 
-            # Evaluate fallback rules in order
             for rule in fallback.rules:
-                if not rule.condition or evaluate_condition(rule.condition, props):
-                    props[prop_name] = rule.value
+                condition = rule.condition
+                if condition and self.property_suffix:
+                    condition = apply_suffix_transform(condition, self.property_suffix)
+                if not condition or evaluate_condition(condition, props):
+                    props[effective_prop_name] = rule.value
                     break
 
         return props
@@ -525,7 +480,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         if not prop:
             return None
 
-        # Find option with matching value
         for opt in prop.options:
             if opt.value == prop_value:
                 return resolve_label(opt.label)
@@ -540,10 +494,8 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def _update_window_properties(self) -> None:
         """Update window properties for skin to show current context."""
         try:
-            # V2 compatibility: groupname is the menu ID
             self.setProperty("groupname", self.menu_id)
 
-            # Get menu's allow config
             if self.manager:
                 menu = self.manager.config.get_menu(self.menu_id)
                 if menu:
@@ -552,7 +504,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                     self.setProperty("allowBackgrounds", "true" if allow.backgrounds else "false")
                     self.setProperty("allowSubmenus", "true" if allow.submenus else "false")
 
-            # Update deleted items property
             self._update_deleted_property()
 
         except RuntimeError:
@@ -588,10 +539,8 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         elif control_id == CONTROL_EDIT_SUBMENU:
             self._edit_submenu()
         elif control_id in self._subdialogs:
-            # Spawn sub-dialog for this button
             self._spawn_subdialog(self._subdialogs[control_id])
         else:
-            # Try to handle as a property button from schema
             self._handle_property_button(control_id)
 
     def onAction(self, action):  # noqa: N802
@@ -613,7 +562,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             self.changes_saved = True
         xbmcgui.WindowXMLDialog.close(self)
 
-    # Abstract methods that must be implemented by other mixins
     def _add_item(self) -> None:
         """Add a new item - implemented by ItemsMixin."""
         raise NotImplementedError

@@ -22,15 +22,18 @@ from .constants import (
     TEMPLATES_FILE,
     WIDGETS_FILE,
 )
+from .log import get_logger
 from .userdata import get_userdata_path
+
+log = get_logger("Hashing")
 
 
 def get_hash_file_path() -> str:
-    """Get path to hash file for current skin."""
+    """Get path to hashes file for current skin."""
     if IN_KODI:
         skin_dir = xbmc.getSkinDir()
         data_path = xbmcvfs.translatePath("special://profile/addon_data/script.skinshortcuts/")
-        return str(Path(data_path) / f"{skin_dir}.hash")
+        return str(Path(data_path) / f"{skin_dir}.hashes")
     return ""
 
 
@@ -72,12 +75,10 @@ def generate_config_hashes(shortcuts_path: str | Path) -> dict[str, str | None]:
         file_path = path / filename
         hashes[filename] = hash_file(file_path)
 
-    # Hash userdata file (in addon_data, not shortcuts folder)
     userdata_path = get_userdata_path()
     if userdata_path:
         hashes["userdata"] = hash_file(userdata_path)
 
-    # Add version info
     if IN_KODI:
         import xbmcaddon
 
@@ -100,7 +101,6 @@ def read_stored_hashes() -> dict[str, str | None]:
         if path.exists():
             with open(path, encoding="utf-8") as f:
                 data = json.load(f)
-                # Ensure we have a dict (old files might have different format)
                 if isinstance(data, dict):
                     return data
     except (OSError, json.JSONDecodeError):
@@ -135,17 +135,30 @@ def needs_rebuild(shortcuts_path: str | Path, output_paths: list[str] | None = N
     Returns:
         True if rebuild is needed
     """
-    # Check if output files exist - if any are missing, rebuild
+    stored = read_stored_hashes()
+
+    if not stored:
+        log.debug("Rebuild needed: no stored hashes")
+        return True
+
     if output_paths:
         for out_path in output_paths:
             includes_file = Path(out_path) / "script-skinshortcuts-includes.xml"
             if not includes_file.exists():
+                log.debug(f"Rebuild needed: missing {includes_file}")
+                return True
+            current_hash = hash_file(includes_file)
+            stored_hash = stored.get(f"includes:{out_path}")
+            if current_hash != stored_hash:
+                log.debug(f"Rebuild needed: includes.xml at {out_path} doesn't match stored hash")
                 return True
 
     current = generate_config_hashes(shortcuts_path)
-    stored = read_stored_hashes()
 
-    if not stored:
-        return True
+    for key, value in current.items():
+        if stored.get(key) != value:
+            log.debug(f"Rebuild needed: {key} changed")
+            return True
 
-    return any(stored.get(key) != value for key, value in current.items())
+    log.debug("No rebuild needed")
+    return False

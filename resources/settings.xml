@@ -3,19 +3,9 @@
     <section id="script.skinshortcuts">
         <category id="general" label="16000" help="">
             <group id="1">
-                <setting id="donthidepvr" type="boolean" label="32120" help="">
-                    <level>0</level>
-                    <default>false</default>
-                    <control type="toggle"/>
-                </setting>
-                <setting id="shared_menu" type="boolean" label="32121" help="">
+                <setting id="debug" type="boolean" label="32122" help="">
                     <level>0</level>
                     <default>true</default>
-                    <control type="toggle"/>
-                </setting>
-                <setting id="enable_logging" type="boolean" label="32122" help="">
-                    <level>0</level>
-                    <default>false</default>
                     <control type="toggle"/>
                 </setting>
             </group>

@@ -3,13 +3,13 @@
 **Path:** `resources/lib/skinshortcuts/loaders/`
 **Purpose:** XML configuration file parsers.
 
----
+***
 
 ## Overview
 
 The loaders package parses skin XML configuration files (menus.xml, widgets.xml, backgrounds.xml, properties.xml, templates.xml) into model objects. Each loader handles a specific file type.
 
----
+***
 
 ## Modules
 
@@ -23,33 +23,39 @@ The loaders package parses skin XML configuration files (menus.xml, widgets.xml,
 | `property.py` | [loaders-property.md](loaders-property.md) | 284 | properties.xml parser |
 | `template.py` | [loaders-template.md](loaders-template.md) | 454 | templates.xml parser |
 
----
+***
 
 ## Public Functions
 
 ### Menu Loading (`menu.py`)
-- `load_menu_config(path)` - Load complete menu config from menus.xml
-- `load_groupings(path)` - Load shortcut groupings only
+
+* `load_menu_config(path)` - Load complete menu config from menus.xml
+* `load_groupings(path)` - Load shortcut groupings only
 
 ### Widget Loading (`widget.py`)
-- `load_widgets(path)` - Load widget config from widgets.xml
-- `load_widget_groupings(path)` - Load widget groupings only
+
+* `load_widgets(path)` - Load widget config from widgets.xml
+* `load_widget_groupings(path)` - Load widget groupings only
 
 ### Background Loading (`background.py`)
-- `load_backgrounds(path)` - Load backgrounds from backgrounds.xml
+
+* `load_backgrounds(path)` - Load backgrounds from backgrounds.xml
 
 ### Property Loading (`property.py`)
-- `load_properties(path)` - Load property schema from properties.xml
-- `evaluate_condition(condition, props)` - Re-exported from `conditions.py` for convenience
+
+* `load_properties(path)` - Load property schema from properties.xml
+* `evaluate_condition(condition, props)` - Re-exported from `conditions.py` for convenience
 
 ### Template Loading (`template.py`)
-- `load_templates(path)` - Load template schema from templates.xml
+
+* `load_templates(path)` - Load template schema from templates.xml
 
 ### Base Utilities (`base.py`)
-- `apply_suffix_transform(text, suffix)` - Apply suffix to property references
-- `apply_suffix_to_from(text, suffix)` - Apply suffix in template from attributes
 
----
+* `apply_suffix_transform(text, suffix)` - Apply suffix to property references
+* `apply_suffix_to_from(text, suffix)` - Apply suffix in template from attributes
+
+***
 
 ## Usage Pattern
 
@@ -66,13 +72,14 @@ groupings = menu_config.groupings
 widgets = widget_config.widgets
 ```
 
----
+***
 
 ## File Format Reference
 
 Each loader expects specific XML structure. See individual module docs for schema details:
-- [menus.xml schema](loaders-menu.md)
-- [widgets.xml schema](loaders-widget.md)
-- [backgrounds.xml schema](loaders-background.md)
-- [properties.xml schema](loaders-property.md)
-- [templates.xml schema](loaders-template.md)
+
+* [menus.xml schema](loaders-menu.md)
+* [widgets.xml schema](loaders-widget.md)
+* [backgrounds.xml schema](loaders-background.md)
+* [properties.xml schema](loaders-property.md)
+* [templates.xml schema](loaders-template.md)

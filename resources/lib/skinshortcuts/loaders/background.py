@@ -25,7 +25,6 @@ TYPE_MAP = {
     "live-playlist": BackgroundType.LIVE_PLAYLIST,
 }
 
-# Types where path is optional (user selects at runtime)
 OPTIONAL_PATH_TYPES = {
     BackgroundType.BROWSE,
     BackgroundType.MULTI,
@@ -49,7 +48,6 @@ def load_backgrounds(path: str | Path) -> BackgroundConfig:
 
     root = parse_xml(path, "backgrounds", BackgroundConfigError)
 
-    # Parse backgrounds and groups from root level
     backgrounds: list[Background] = []
     groupings: list[BackgroundGroup | Background] = []
 
@@ -82,13 +80,11 @@ def _parse_background(elem, path: str) -> Background:
     type_str = get_attr(elem, "type", "static")
     bg_type = TYPE_MAP.get(type_str.lower(), BackgroundType.STATIC)
 
-    # For certain types, path is optional (user will select at runtime)
     if not bg_path and bg_type not in OPTIONAL_PATH_TYPES:
         raise BackgroundConfigError(path, f"Background '{bg_name}' missing <path>")
 
-    # Parse sources - usage depends on background type
-    sources = []  # PlaylistSource for playlist types
-    browse_sources = []  # BrowseSource for browse/multi types
+    sources = []
+    browse_sources = []
 
     for source_elem in elem.findall("source"):
         source_label = get_attr(source_elem, "label", "")
@@ -97,7 +93,6 @@ def _parse_background(elem, path: str) -> Background:
             continue
 
         if bg_type in (BackgroundType.BROWSE, BackgroundType.MULTI):
-            # Browse sources have conditions
             browse_sources.append(BrowseSource(
                 label=source_label,
                 path=source_path,
@@ -106,7 +101,6 @@ def _parse_background(elem, path: str) -> Background:
                 icon=get_attr(source_elem, "icon") or "",
             ))
         else:
-            # Playlist sources (for playlist/live-playlist types)
             sources.append(PlaylistSource(
                 label=source_label,
                 path=source_path,
@@ -138,7 +132,6 @@ def _parse_background_group(elem, path: str) -> BackgroundGroup | None:
     icon = get_attr(elem, "icon") or ""
     items: list = []
 
-    # Parse children in document order to preserve sequence
     for child in elem:
         if child.tag == "background":
             bg = _parse_background(child, path)

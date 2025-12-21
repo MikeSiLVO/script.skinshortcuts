@@ -2,25 +2,25 @@
 
 The management dialog (`script-skinshortcuts.xml`) provides the UI for editing menus.
 
----
+***
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Dialog XML](#dialog-xml)
-- [Control IDs](#control-ids)
-- [Window Properties](#window-properties)
-- [ListItem Properties](#listitem-properties)
-- [Subdialogs](#subdialogs)
-- [Script Commands](#script-commands)
+* [Overview](#overview)
+* [Dialog XML](#dialog-xml)
+* [Control IDs](#control-ids)
+* [Window Properties](#window-properties)
+* [ListItem Properties](#listitem-properties)
+* [Subdialogs](#subdialogs)
+* [Script Commands](#script-commands)
 
----
+***
 
 ## Overview
 
 The script opens a WindowXMLDialog from your skin's `script-skinshortcuts.xml`. You design the layout and controls; the script handles the logic.
 
----
+***
 
 ## Dialog XML
 
@@ -64,7 +64,7 @@ Create `script-skinshortcuts.xml` in your skin's XML folder:
 </window>
 ```
 
----
+***
 
 ## Control IDs
 
@@ -73,6 +73,14 @@ Create `script-skinshortcuts.xml` in your skin's XML folder:
 | ID | Function |
 |----|----------|
 | `211` | Menu items list (required) |
+| `212` | Subdialog context list (optional) |
+
+Control 212 is a single-item list that mirrors the currently selected item from 211. Use it in subdialogs to read item properties without conflicting with the main list:
+
+```xml
+<!-- In subdialog mode, read from 212 instead of 211 -->
+<label>$INFO[Container(212).ListItem.Property(widgetLabel)]</label>
+```
 
 ### Built-in Buttons
 
@@ -104,7 +112,7 @@ All property buttons (widget, background, custom options) are configured in `pro
 
 These are not built-in - you must define button mappings in your `properties.xml`.
 
----
+***
 
 ## Window Properties
 
@@ -141,7 +149,7 @@ These properties are set on the **Home window** (not the dialog) so they remain 
 <visible>String.IsEqual(Window(Home).Property(skinshortcuts-suffix),.2)</visible>
 ```
 
----
+***
 
 ## ListItem Properties
 
@@ -200,7 +208,7 @@ Any property defined in `properties.xml`:
 
 Properties with options also get a `{name}Label` property with the resolved label.
 
----
+***
 
 ## Subdialogs
 
@@ -222,11 +230,13 @@ In `menus.xml`:
 ### Dialog Behavior
 
 When button 800 is clicked:
+
 1. `Window(Home).Property(skinshortcuts-dialog)` = `widget1`
 2. Focus moves to control 309
 3. UI updates to show widget 1 controls
 
 When button 801 is clicked:
+
 1. `Window(Home).Property(skinshortcuts-dialog)` = `widget2`
 2. `Window(Home).Property(skinshortcuts-suffix)` = `.2`
 3. Property reads/writes use `.2` suffix (e.g., `widgetPath.2`)
@@ -263,10 +273,10 @@ Execute actions when subdialog closes:
 <onclose condition="widgetType.2=custom" action="menu" menu="{item}.customwidget.2"/>
 ```
 
-- `{item}` is replaced with current item name
-- Opens item editor for custom widget menu
+* `{item}` is replaced with current item name
+* Opens item editor for custom widget menu
 
----
+***
 
 ## Script Commands
 
@@ -316,7 +326,7 @@ Prompts for confirmation, then deletes userdata and rebuilds.
 | `menu` | Custom menu name to clear |
 | `property` | Property to clear on parent item |
 
----
+***
 
 ## Dialog Flow
 
@@ -329,7 +339,7 @@ Prompts for confirmation, then deletes userdata and rebuilds.
 7. Script rebuilds includes if changes were made
 8. Skin reloads to apply new includes
 
----
+***
 
 ## Quick Navigation
 

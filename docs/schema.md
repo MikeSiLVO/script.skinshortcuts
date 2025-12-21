@@ -2,7 +2,7 @@
 
 Quick reference for all XML configuration files. For detailed documentation, see the [skinning docs](skinning/).
 
----
+***
 
 ## File Overview
 
@@ -30,7 +30,7 @@ Located in the skin's `shortcuts/` folder:
 |------|----------|---------|
 | `{skin_id}.userdata.json` | `userdata/addon_data/script.skinshortcuts/` | User customizations merged with skin defaults at build time |
 
----
+***
 
 ## menus.xml
 
@@ -66,7 +66,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
         <action>ActivateWindow(Videos,videodb://movies/)</action>
       </shortcut>
       <shortcut name="playlists" label="Playlists" icon="DefaultPlaylist.png"
-                path="special://videoplaylists/" browse="video"/>
+                path="special://profile/playlists/video/" browse="video"/>
       <content source="playlists" target="video" folder="Video Playlists"/>
     </group>
   </groupings>
@@ -119,7 +119,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 | `<subdialog>` | dialogs | `buttonID`, `mode` | `setfocus`, `suffix` | Subdialog mapping |
 | `<contextmenu>` | menus | — | — | Enable/disable context menu |
 
----
+***
 
 ## widgets.xml
 
@@ -170,7 +170,7 @@ Defines widgets and widget picker groupings.
 
 `movies`, `tvshows`, `episodes`, `musicvideos`, `sets`, `albums`, `artists`, `songs`, `pictures`, `pvr`, `games`, `addons`, `custom`
 
----
+***
 
 ## backgrounds.xml
 
@@ -204,7 +204,7 @@ Defines background options and groupings.
 
   <!-- Playlist-based -->
   <background name="playlist" label="Playlist Images" type="playlist">
-    <source label="Video Playlists">special://videoplaylists/</source>
+    <source label="Video Playlists">special://profile/playlists/video/</source>
   </background>
 
   <!-- Live background -->
@@ -247,7 +247,7 @@ Defines background options and groupings.
 | `live` | Dynamic content from library | Yes |
 | `live-playlist` | Dynamic content from playlist | No |
 
----
+***
 
 ## properties.xml
 
@@ -317,7 +317,7 @@ Defines property schemas, button mappings, and fallback values.
 | `widget` | Opens widget picker |
 | `background` | Opens background picker |
 
----
+***
 
 ## templates.xml
 
@@ -365,7 +365,7 @@ Defines templates for generating skin includes.
 | `$LOCALIZE[id]` | Localized string |
 | `$INCLUDE[name]` | Converted to `<include>name</include>` in output |
 
----
+***
 
 ## Condition Syntax
 
@@ -387,12 +387,14 @@ Property conditions used in `condition` attributes (evaluated against item prope
 ```
 widgetType=movies | episodes | tvshows
 ```
+
 Expands to:
+
 ```
 widgetType=movies | widgetType=episodes | widgetType=tvshows
 ```
 
----
+***
 
 ## Dynamic Content Sources
 
@@ -407,13 +409,18 @@ For `<content source="...">` elements:
 | `pvr` | PVR channels/recordings |
 | `commands` | System commands |
 | `settings` | Settings shortcuts |
-| `library` | Library nodes (genres, years, etc.) |
+| `library` | Library database content (genres, years, actors, etc.) |
+| `nodes` | Library navigation nodes (Movies, TV Shows, etc.) |
 
 ### Library Targets
 
 `moviegenres`, `tvgenres`, `musicgenres`, `years`, `movieyears`, `tvyears`, `studios`, `moviestudios`, `tvstudios`, `tags`, `movietags`, `tvtags`, `actors`, `movieactors`, `tvactors`, `directors`, `moviedirectors`, `tvdirectors`, `artists`, `albums`
 
----
+### Nodes Targets
+
+`video`, `music`
+
+***
 
 ## Output Properties
 

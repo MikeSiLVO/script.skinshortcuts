@@ -2,25 +2,25 @@
 
 The `backgrounds.xml` file defines background options that users can assign to menu items.
 
----
+***
 
 ## Table of Contents
 
-- [File Structure](#file-structure)
-- [Background Types](#background-types)
-- [Groups](#groups)
-- [Static](#static)
-- [Property](#property)
-- [Browse](#browse)
-- [Multi](#multi)
-- [Playlist](#playlist)
-- [Live](#live)
-- [Live Playlist](#live-playlist)
-- [Sources](#sources)
-- [Conditions](#conditions)
-- [Output Properties](#output-properties)
+* [File Structure](#file-structure)
+* [Background Types](#background-types)
+* [Groups](#groups)
+* [Static](#static)
+* [Property](#property)
+* [Browse](#browse)
+* [Multi](#multi)
+* [Playlist](#playlist)
+* [Live](#live)
+* [Live Playlist](#live-playlist)
+* [Sources](#sources)
+* [Conditions](#conditions)
+* [Output Properties](#output-properties)
 
----
+***
 
 ## File Structure
 
@@ -44,7 +44,7 @@ Backgrounds and groups are defined directly at the root level:
 </backgrounds>
 ```
 
----
+***
 
 ## Background Types
 
@@ -58,7 +58,7 @@ Backgrounds and groups are defined directly at the root level:
 | `live` | Dynamic content from library |
 | `live-playlist` | Dynamic content from user-selected playlist |
 
----
+***
 
 ## Groups
 
@@ -103,11 +103,12 @@ Organize backgrounds into categories for the picker dialog:
 | `visible` | No | Kodi visibility condition (evaluated at runtime) |
 
 Groups can contain:
-- `<background>` - Background definitions
-- `<group>` - Nested groups
-- `<content>` - Dynamic content (same as widgets/menus)
 
----
+* `<background>` - Background definitions
+* `<group>` - Nested groups
+* `<content>` - Dynamic content (same as widgets/menus)
+
+***
 
 ## Static
 
@@ -137,7 +138,7 @@ A single image file:
 | `<path>` | Yes | Image file path |
 | `<icon>` | No | Icon for picker |
 
----
+***
 
 ## Property
 
@@ -163,7 +164,7 @@ Uses a Kodi info label that resolves to an image path:
 | `<path>` | Yes | Kodi info label |
 | `<icon>` | No | Icon for picker |
 
----
+***
 
 ## Browse
 
@@ -197,7 +198,7 @@ Provide starting locations for the file browser:
 
 Use `browse` as the path for free file browser access.
 
----
+***
 
 ## Multi
 
@@ -213,7 +214,7 @@ User browses for a folder (for slideshows):
 
 Works the same as `browse` type, but selects a folder instead of a single file.
 
----
+***
 
 ## Playlist
 
@@ -222,8 +223,8 @@ User selects a playlist to extract images from:
 ```xml
 <background name="from-playlist" label="Playlist Images" type="playlist">
   <icon>DefaultPlaylist.png</icon>
-  <source label="Video Playlists">special://videoplaylists/</source>
-  <source label="Music Playlists">special://musicplaylists/</source>
+  <source label="Video Playlists">special://profile/playlists/video/</source>
+  <source label="Music Playlists">special://profile/playlists/music/</source>
   <source label="Skin Playlists">special://skin/playlists/</source>
 </background>
 ```
@@ -235,7 +236,7 @@ User selects a playlist to extract images from:
 | `label` | Yes | Display label |
 | `icon` | No | Icon (default: `DefaultPlaylist.png`) |
 
----
+***
 
 ## Live
 
@@ -257,7 +258,7 @@ Dynamic background from library content:
 | `random tvshows` | Random TV show fanart |
 | `random music` | Random album art |
 
----
+***
 
 ## Live Playlist
 
@@ -266,14 +267,14 @@ Dynamic content from a user-selected playlist:
 ```xml
 <background name="live-playlist" label="Live Playlist" type="live-playlist">
   <icon>DefaultPlaylist.png</icon>
-  <source label="Video Playlists">special://videoplaylists/</source>
-  <source label="Music Playlists">special://musicplaylists/</source>
+  <source label="Video Playlists">special://profile/playlists/video/</source>
+  <source label="Music Playlists">special://profile/playlists/music/</source>
 </background>
 ```
 
 Combines playlist selection with dynamic content extraction.
 
----
+***
 
 ## Sources
 
@@ -302,11 +303,11 @@ Sources define playlist locations to browse:
 
 ```xml
 <source label="Video Playlists" icon="DefaultVideoPlaylists.png">
-  special://videoplaylists/
+  special://profile/playlists/video/
 </source>
 ```
 
----
+***
 
 ## Conditions
 
@@ -349,7 +350,7 @@ Evaluated at runtime using `xbmc.getCondVisibility()`:
 
 Both conditions must pass for the background to appear.
 
----
+***
 
 ## Output Properties
 
@@ -376,7 +377,7 @@ Access via `ListItem.Property(name)`:
 
 For static/property types, `backgroundPath` contains the defined path. For browse/multi types, it contains the user-selected path. For playlist types, your skin handles the slideshow logic using the path.
 
----
+***
 
 ## Quick Navigation
 

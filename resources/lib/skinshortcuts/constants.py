@@ -54,8 +54,6 @@ PROPERTY_TYPES = frozenset(
 )
 
 
-# Window name mappings for actions and content
-# Maps various aliases to canonical Kodi window names
 WINDOW_MAP: dict[str, str] = {
     "video": "Videos",
     "videos": "Videos",
@@ -72,7 +70,6 @@ WINDOW_MAP: dict[str, str] = {
     "liveradio": "RadioChannels",
 }
 
-# Content target mappings (used for widget targets)
 TARGET_MAP: dict[str, str] = {
     "video": "videos",
     "videos": "videos",

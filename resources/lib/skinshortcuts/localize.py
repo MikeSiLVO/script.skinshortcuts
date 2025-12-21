@@ -12,7 +12,6 @@ try:
 except ImportError:
     IN_KODI = False
 
-# Pattern for $ADDON[addon.id #####] which needs special handling
 ADDON_PATTERN = re.compile(r"\$ADDON\[([^\s\]]+)\s+(\d+)\]")
 
 
@@ -23,14 +22,14 @@ def resolve_label(label: str) -> str:
         $LOCALIZE[#####] - Kodi/skin string ID
         $NUMBER[#####] - Numeric value
         $ADDON[addon.id #####] - Addon string ID
-        ##### - Plain number treated as string ID (Kodi convention)
+        32000-32999 - Script string ID (auto-wrapped)
+        ##### - Plain number treated as $LOCALIZE string ID
         Plain text - returned as-is
     """
     if not label or not IN_KODI:
         return label
 
-    # Check for $ADDON[addon.id #####] first - needs special handling
-    # Must be checked before generic $ handling since getInfoLabel doesn't support $ADDON
+    # Must check $ADDON before generic $ since getInfoLabel doesn't support $ADDON
     if label.startswith("$ADDON["):
         match = ADDON_PATTERN.match(label)
         if match:
@@ -42,21 +41,21 @@ def resolve_label(label: str) -> str:
                 if result:
                     return result
             except RuntimeError:
-                # Addon not installed - return label as-is (no warning, this is expected
-                # when widgets reference optional addons filtered by visibility)
                 pass
         return label
 
-    # Any $... pattern - use getInfoLabel ($LOCALIZE, $NUMBER, $INFO, etc.)
     if label.startswith("$"):
         result = xbmc.getInfoLabel(label)
         if result:
             return result
         return label
 
-    # Plain number - treat as localize string ID (Kodi convention)
     if label.isdigit():
-        result = xbmc.getInfoLabel(f"$LOCALIZE[{label}]")
+        num = int(label)
+        if 32000 <= num < 33000:
+            result = xbmcaddon.Addon().getLocalizedString(num)
+        else:
+            result = xbmc.getInfoLabel(f"$LOCALIZE[{label}]")
         if result:
             return result
         return label

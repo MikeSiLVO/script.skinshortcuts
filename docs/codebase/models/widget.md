@@ -4,13 +4,13 @@
 **Lines:** 84
 **Purpose:** Dataclass models for widgets and widget groupings.
 
----
+***
 
 ## Overview
 
 Defines the Widget model and related grouping structures for the widget picker system.
 
----
+***
 
 ## Type Alias
 
@@ -20,11 +20,12 @@ WidgetGroupContent = Union[Widget, WidgetGroup, Content]  # line 14
 
 Items that can appear in a WidgetGroup's items list.
 
----
+***
 
 ## Classes
 
 ### Widget (line 17)
+
 A widget assignable to menu items.
 
 | Field | Type | Default | Description |
@@ -39,17 +40,20 @@ A widget assignable to menu items.
 | `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
 | `sort_by` | str | "" | Sort field |
 | `sort_order` | str | "" | Sort order (ascending/descending) |
-| `limit` | int\|None | None | Item limit |
+| `limit` | int|None | None | Item limit |
 | `source` | str | "" | Source type (library, playlist, addon) |
 | `slot` | str | "" | For custom widgets: property slot (e.g., "widget.2") |
 
 **Properties:**
-- `is_custom` → bool - Returns True if type=="custom"
+
+* `is_custom` → bool - Returns True if type=="custom"
 
 **Methods:**
-- `to_properties(prefix="widget")` → dict[str,str] - Convert to skin property dict
+
+* `to_properties(prefix="widget")` → dict[str,str] - Convert to skin property dict
 
 **Property output:**
+
 ```python
 {
     "widget": "recentmovies",
@@ -62,9 +66,10 @@ A widget assignable to menu items.
 
 **Used by:** config.py, dialog.py (widget picker), builders/includes.py
 
----
+***
 
 ### WidgetGroup (line 61)
+
 A group/category in widget picker.
 
 | Field | Type | Default | Description |
@@ -78,26 +83,27 @@ A group/category in widget picker.
 
 **Used by:** WidgetConfig, dialog.py (_pick_widget_from_groups), loaders/widget.py
 
----
+***
 
 ### WidgetConfig (line 73)
+
 Top-level widget configuration container.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `widgets` | list[Widget] | [] | All defined widgets (flat list) |
-| `groupings` | list[WidgetGroup\|Widget] | [] | Picker structure (can include standalone widgets) |
+| `groupings` | list[WidgetGroup|Widget] | [] | Picker structure (can include standalone widgets) |
 | `show_get_more` | bool | True | Whether to show "Get More..." option |
 
 **Used by:** config.py (SkinConfig._widget_config), loaders/widget.py
 
----
+***
 
 ## Dead Code Analysis
 
 All classes appear to be in active use.
 
----
+***
 
 ## Test Candidates
 

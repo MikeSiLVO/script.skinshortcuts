@@ -25,10 +25,7 @@ def load_widgets(path: str | Path) -> WidgetConfig:
 
     root = parse_xml(path, "widgets", WidgetConfigError)
 
-    # Parse settings from root attributes
     show_get_more = get_bool(root, "showGetMore", default=True)
-
-    # Parse widgets and groups from root level
     widgets: list[Widget] = []
     groupings: list[WidgetGroup | Widget] = []
 
@@ -61,14 +58,9 @@ def _parse_widget(elem, path: str, default_source: str = "") -> Widget:
     widget_type = get_attr(elem, "type") or ""
     widget_path = get_text(elem, "path") or ""
 
-    # Custom widgets don't require a path (items are user-defined)
-    # All other widgets must have a path
     if not widget_path and widget_type != "custom":
         raise WidgetConfigError(path, f"Widget '{widget_name}' missing <path>")
 
-    # Support both attribute and child element for these fields
-    # (attributes take precedence for inline grouping widgets)
-    # Widget source: widget attribute overrides group default
     source = get_attr(elem, "source") or default_source
 
     return Widget(
@@ -96,11 +88,9 @@ def _parse_widget_group(elem, path: str, default_source: str = "") -> WidgetGrou
         return None
 
     condition = get_attr(elem, "condition") or ""
-    # Group source: inherits from parent, can be overridden
     source = get_attr(elem, "source") or default_source
     items: list[Widget | WidgetGroup | Content] = []
 
-    # Parse children in document order to preserve sequence
     for child in elem:
         if child.tag == "widget":
             widget = _parse_widget(child, path, default_source=source)

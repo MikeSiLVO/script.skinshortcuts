@@ -20,8 +20,6 @@ from ..models.property import (
 )
 from .base import apply_suffix_transform
 
-# --- XML Parsing ---
-
 
 class PropertyLoader:
     """Loads property schema from properties.xml."""
@@ -67,7 +65,6 @@ class PropertyLoader:
         buttons = {}
         buttons_elem = root.find("buttons")
         if buttons_elem is not None:
-            # Get default suffix from parent <buttons> element
             default_suffix = (buttons_elem.get("suffix") or "").lower() == "true"
             for child in buttons_elem:
                 if child.tag == "button":
@@ -75,7 +72,6 @@ class PropertyLoader:
                     if btn:
                         buttons[btn.button_id] = btn
                 elif child.tag == "group":
-                    # Group can override suffix for its children
                     group_suffix_attr = child.get("suffix")
                     if group_suffix_attr is not None:
                         group_suffix = group_suffix_attr.lower() == "true"
@@ -189,7 +185,6 @@ class PropertyLoader:
                 f"Button {button_id} missing property attribute",
             )
 
-        # Use button's suffix attribute if present, otherwise use parent default
         suffix_attr = elem.get("suffix")
         if suffix_attr is not None:
             suffix = suffix_attr.lower() == "true"
