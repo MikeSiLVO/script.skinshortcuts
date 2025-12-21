@@ -61,9 +61,7 @@ class TemplateLoader:
             tree = ET.parse(str(self.path))
             root = tree.getroot()
         except ET.ParseError as e:
-            raise TemplateConfigError(
-                str(self.path), f"XML parse error: {e}", e.position[0]
-            ) from e
+            raise TemplateConfigError(str(self.path), f"XML parse error: {e}", e.position[0]) from e
         except Exception as e:
             raise TemplateConfigError(str(self.path), f"Failed to load file: {e}") from e
 
@@ -149,17 +147,21 @@ class TemplateLoader:
                 preset_name = (child.get("content") or "").strip()
                 if preset_name:
                     condition = (child.get("condition") or "").strip()
-                    children.append(PresetGroupChild(
-                        preset_name=preset_name,
-                        condition=condition,
-                    ))
+                    children.append(
+                        PresetGroupChild(
+                            preset_name=preset_name,
+                            condition=condition,
+                        )
+                    )
             elif child.tag == "values":
                 condition = (child.get("condition") or "").strip()
                 values = {k: v for k, v in child.attrib.items() if k != "condition"}
-                children.append(PresetGroupChild(
-                    values=values,
-                    condition=condition,
-                ))
+                children.append(
+                    PresetGroupChild(
+                        values=values,
+                        condition=condition,
+                    )
+                )
 
         return PresetGroup(name=name, children=children)
 
@@ -261,9 +263,7 @@ class TemplateLoader:
         default = (elem.get("default") or "").strip()
         return TemplateParam(name=name, default=default)
 
-    def _parse_property(
-        self, elem: ET.Element, suffix: str = ""
-    ) -> TemplateProperty | None:
+    def _parse_property(self, elem: ET.Element, suffix: str = "") -> TemplateProperty | None:
         """Parse a property element."""
         name = (elem.get("name") or "").strip()
         if not name:
@@ -286,9 +286,7 @@ class TemplateLoader:
             condition=condition,
         )
 
-    def _parse_var(
-        self, elem: ET.Element, suffix: str = ""
-    ) -> TemplateVar | None:
+    def _parse_var(self, elem: ET.Element, suffix: str = "") -> TemplateVar | None:
         """Parse a var element for internal template resolution."""
         name = (elem.get("name") or "").strip()
         if not name:
@@ -315,9 +313,7 @@ class TemplateLoader:
         rows = []
         for values_elem in elem.findall("values"):
             condition = (values_elem.get("condition") or "").strip()
-            values = {
-                k: v for k, v in values_elem.attrib.items() if k != "condition"
-            }
+            values = {k: v for k, v in values_elem.attrib.items() if k != "condition"}
             rows.append(PresetValues(condition=condition, values=values))
 
         return Preset(name=name, rows=rows)
@@ -328,11 +324,13 @@ class TemplateLoader:
         for output_elem in elem.findall("output"):
             output_include = (output_elem.get("include") or "").strip()
             if output_include:
-                outputs.append(TemplateOutput(
-                    include=output_include,
-                    id_prefix=(output_elem.get("idprefix") or "").strip(),
-                    suffix=(output_elem.get("suffix") or "").strip(),
-                ))
+                outputs.append(
+                    TemplateOutput(
+                        include=output_include,
+                        id_prefix=(output_elem.get("idprefix") or "").strip(),
+                        suffix=(output_elem.get("suffix") or "").strip(),
+                    )
+                )
 
         include = (elem.get("include") or "").strip()
         id_prefix = (elem.get("idprefix") or "").strip()
@@ -351,6 +349,7 @@ class TemplateLoader:
             build = BuildMode.MENU
 
         template_only = (elem.get("templateonly") or "").strip().lower()
+        menu = (elem.get("menu") or "").strip()
 
         conditions = []
         for cond_elem in elem.findall("condition"):
@@ -418,6 +417,7 @@ class TemplateLoader:
             build=build,
             id_prefix=id_prefix,
             template_only=template_only,
+            menu=menu,
             outputs=outputs,
             conditions=conditions,
             params=params,

@@ -97,7 +97,7 @@ shortcuts/
     <widget name="recent" label="Recently Added" type="movies">
       <path>videodb://recentlyaddedmovies/</path>
     </widget>
-    <content source="playlists" target="video"/>
+    <content source="playlists" target="videos"/>
   </group>
 </widgets>
 ```

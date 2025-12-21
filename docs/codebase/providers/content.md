@@ -47,9 +47,13 @@ Scan directory for playlist files.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `label` | str | required | Display label |
-| `action` | str | required | Kodi action string |
+| `action` | str | required | Kodi action string (ActivateWindow for display) |
 | `icon` | str | "DefaultShortcut.png" | Icon path |
 | `label2` | str | "" | Secondary label |
+| `action_play` | str | "" | PlayMedia action (for playlists) |
+| `action_party` | str | "" | Party mode action (for music playlists) |
+
+**Playlist Actions:** When `action_play` is set, the picker dialog offers a choice between display/play/party modes.
 
 ***
 
@@ -117,11 +121,25 @@ Resolve playlists from standard or custom paths.
 
 ***
 
-### `_scan_playlist_directory`(directory, default_window) (line 190)
+### `_scan_playlist_directory`(directory, default_window, target="") (line 190)
 
 Convert playlist files to ResolvedShortcut objects.
 
 Uses `scan_playlist_files()` for scanning, then determines correct window for .xsp files.
+
+**Filtering by target:**
+
+| Target | Includes playlist types |
+|--------|-------------------------|
+| `video` | movies, tvshows, episodes, musicvideos |
+| `music` | songs, albums, artists |
+| `mixed` or `""` | All types including mixed |
+
+**Playlist actions populated:**
+
+* `action` - ActivateWindow (display playlist)
+* `action_play` - PlayMedia (play playlist)
+* `action_party` - PlayerControl(PartyMode) (music playlists only)
 
 ***
 

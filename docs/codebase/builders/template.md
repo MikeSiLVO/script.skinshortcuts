@@ -1,7 +1,6 @@
 # builders/template.py
 
 **Path:** `resources/lib/skinshortcuts/builders/template.py`
-**Lines:** 828
 **Purpose:** Build Kodi include XML from templates.xml and menu data.
 
 ***
@@ -12,7 +11,7 @@ The TemplateBuilder is the most complex part of the build system. It processes t
 
 ***
 
-## Regex Patterns (lines 31-33)
+## Regex Patterns
 
 | Pattern | Purpose |
 |---------|---------|
@@ -21,9 +20,9 @@ The TemplateBuilder is the most complex part of the build system. It processes t
 
 ***
 
-## TemplateBuilder Class (line 36)
+## TemplateBuilder Class
 
-### `__init__`(schema, menus, container="9000", property_schema=None) (line 39)
+### `__init__`(schema, menus, container="9000", property_schema=None)
 
 Initialize builder.
 
@@ -36,7 +35,7 @@ Initialize builder.
 
 ***
 
-### `_collect_assigned_templates`() → set[str] (line 53)
+### `_collect_assigned_templates`() → set[str]
 
 Collect template include names assigned to menu items.
 
@@ -48,13 +47,14 @@ Collect template include names assigned to menu items.
 
 ***
 
-### build() → ET.Element (line 73)
+### build() → ET.Element
 
 Build all template includes and variables.
 
 **Behavior:**
 
 * Templates with same include name are merged
+* **Variables with same name are merged** (children appended to existing)
 * Variables are output at root level (siblings to includes)
 * Empty includes get a `<description>` element to avoid Kodi log warnings
 * `templateonly="true"` templates are never output
@@ -65,20 +65,33 @@ Build all template includes and variables.
 
 ***
 
-### `_build_template_into`(template, include, variables_list) (line 126)
+### `_build_template_into`(template, output, include, variable_map)
 
 Build template controls and variables for all matching menu items.
 
 **Behavior:**
 
 * Iterates all menus and items
+* **Filters by `template.menu` if specified** (e.g., only process "mainmenu")
 * Skips disabled items
 * Checks template conditions
 * Builds context, controls, and variables per item
 
 ***
 
-### write(path, indent=True) (line 826)
+### `_add_variable`(var_elem, variable_map)
+
+Add a variable to the map, merging if same name exists.
+
+**Behavior:**
+
+* If a variable with the same name already exists, append this variable's children to the existing one
+* Otherwise, add as new entry
+* Enables multiple menu items to contribute `<value>` elements to a single variable
+
+***
+
+### write(path, indent=True)
 
 Write template includes to file.
 
@@ -86,14 +99,14 @@ Write template includes to file.
 
 ## Context Building
 
-### `_build_context`(template, item, idx, menu) (line 171)
+### `_build_context`(template, output, item, idx, menu)
 
 Build property context for a menu item.
 
 **Context built in order:**
 
 1. Menu default properties + item properties (merged, item overrides defaults)
-2. Built-in properties: `index`, `name`, `menu`, `idprefix`, `id`
+2. Built-in properties: `index`, `name`, `menu`, `idprefix`, `id`, `suffix`
 3. Fallback values (applied early so template conditions can use them)
 4. Template properties
 5. Template vars
@@ -102,7 +115,7 @@ Build property context for a menu item.
 
 ***
 
-### `_apply_fallbacks`(item, context) (line 525)
+### `_apply_fallbacks`(item, context)
 
 Apply property fallbacks for missing properties from PropertySchema.
 
@@ -114,7 +127,7 @@ Apply property fallbacks for missing properties from PropertySchema.
 
 ***
 
-### `_resolve_property`(prop, item, context) (line 340)
+### `_resolve_property`(prop, item, context, suffix="")
 
 Resolve a property value.
 
@@ -126,7 +139,7 @@ Resolve a property value.
 
 ***
 
-### `_substitute_property_refs`(text, item, context) (line 361)
+### `_substitute_property_refs`(text, item, context)
 
 Substitute `$PROPERTY[...]` in text during context building.
 
@@ -134,13 +147,13 @@ Checks context first, then item properties.
 
 ***
 
-### `_resolve_var`(var, item, context) (line 379)
+### `_resolve_var`(var, item, context)
 
 Resolve a var (first matching condition wins).
 
 ***
 
-### `_get_from_source`(source, item, context) (line 395)
+### `_get_from_source`(source, item, context)
 
 Get value from a source (built-in, item property, or preset).
 
@@ -153,7 +166,7 @@ Get value from a source (built-in, item property, or preset).
 
 ***
 
-### `_lookup_preset`(preset, attr, item, context) (line 429)
+### `_lookup_preset`(preset, attr, item, context)
 
 Look up a value from a preset by evaluating conditions.
 
@@ -161,7 +174,7 @@ First matching condition wins. Default row (no condition) is fallback.
 
 ***
 
-### `_apply_property_group`(prop_group, item, context, suffix="") (line 446)
+### `_apply_property_group`(prop_group, item, context, suffix="")
 
 Apply properties from a property group to context.
 
@@ -173,7 +186,7 @@ Apply properties from a property group to context.
 
 ***
 
-### `_apply_preset`(ref, item, context) (line 485)
+### `_apply_preset`(ref, item, context, override_suffix="")
 
 Apply preset values directly as properties.
 
@@ -187,7 +200,7 @@ Apply preset values directly as properties.
 
 ## Variable Building
 
-### `_build_variable`(var_def, context, item) (line 223)
+### `_build_variable`(var_def, context, item)
 
 Build a Kodi `<variable>` element from a VariableDefinition.
 
@@ -199,7 +212,7 @@ Build a Kodi `<variable>` element from a VariableDefinition.
 
 ***
 
-### `_build_variable_group`(group_ref, context, item, variables_list) (line 260)
+### `_build_variable_group`(group_ref, context, item, variable_map, override_suffix="")
 
 Build variables from a variableGroup reference.
 
@@ -209,10 +222,11 @@ Build variables from a variableGroup reference.
 * Processes nested variableGroup references first (recursively)
 * Applies suffix transforms to conditions
 * Builds each matching variable from global definitions
+* Uses `_add_variable` to merge same-named variables
 
 ***
 
-### `_substitute_variable_content`(elem, context, item) (line 317)
+### `_substitute_variable_content`(elem, context, item)
 
 Substitute `$PROPERTY[...]` in variable content recursively.
 
@@ -222,7 +236,7 @@ Processes text, tail, attributes, and children.
 
 ## Control Processing
 
-### `_process_controls`(controls, context, item, menu) (line 642)
+### `_process_controls`(controls, context, item, menu)
 
 Process controls XML, applying substitutions.
 
@@ -230,7 +244,7 @@ Returns deep copy with all substitutions applied.
 
 ***
 
-### `_process_element`(elem, context, item, menu) (line 659)
+### `_process_element`(elem, context, item, menu)
 
 Recursively process an element.
 
@@ -245,7 +259,7 @@ Recursively process an element.
 
 ***
 
-### `_handle_include_substitution`(elem) (line 733)
+### `_handle_include_substitution`(elem)
 
 Convert `$INCLUDE[...]` in element text to Kodi `<include>` child elements.
 
@@ -257,7 +271,7 @@ Convert `$INCLUDE[...]` in element text to Kodi `<include>` child elements.
 
 ***
 
-### `_handle_skinshortcuts_include`(elem, context, item, menu) (line 750)
+### `_handle_skinshortcuts_include`(elem, context, item, menu)
 
 Handle `<skinshortcuts include="..."/>` element replacements.
 
@@ -270,7 +284,7 @@ Handle `<skinshortcuts include="..."/>` element replacements.
 
 ***
 
-### `_substitute_text`(text, context, item, menu) (line 804)
+### `_substitute_text`(text, context, item, menu)
 
 Substitute `$PROPERTY[...]` in text.
 
@@ -280,7 +294,7 @@ Checks context first, then item properties.
 
 ## Condition Evaluation
 
-### `_apply_suffix_to_condition`(condition, suffix) (line 574)
+### `_apply_suffix_to_condition`(condition, suffix)
 
 Apply suffix to property names in condition for Widget 1/2 reuse.
 
@@ -288,19 +302,19 @@ Does not suffix built-ins (`index`, `name`, `menu`, `id`, `idprefix`).
 
 ***
 
-### `_check_conditions`(conditions, item) (line 595)
+### `_check_conditions`(conditions, item, suffix="")
 
 Check if all template conditions match (ANDed together).
 
 ***
 
-### `_get_property_value`(prop_name, item, context) (line 599)
+### `_get_property_value`(prop_name, item, context)
 
 Get a property value, checking context first then item properties.
 
 ***
 
-### `_eval_condition`(condition, item, context) (line 610)
+### `_eval_condition`(condition, item, context)
 
 Evaluate a condition against a menu item.
 
@@ -312,7 +326,7 @@ Evaluate a condition against a menu item.
 
 ***
 
-### `_expand_expressions`(condition) (line 629)
+### `_expand_expressions`(condition)
 
 Expand `$EXP[name]` references in a condition.
 
@@ -330,3 +344,5 @@ Recursively expands nested expressions.
 6. `_handle_skinshortcuts_include()` with wrap vs unwrap
 7. Variable building with suffix transforms
 8. `_apply_fallbacks()` with suffix transforms
+9. Variable merging with `_add_variable()`
+10. Menu filtering with `template.menu`

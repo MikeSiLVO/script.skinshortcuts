@@ -259,6 +259,7 @@ class Template:
     build: BuildMode = BuildMode.MENU
     id_prefix: str = ""  # For computed control IDs (legacy, use outputs instead)
     template_only: str = ""  # "true"=never generate, "auto"=skip if unassigned
+    menu: str = ""  # Filter to specific menu (e.g., "mainmenu")
 
     outputs: list[TemplateOutput] = field(default_factory=list)  # Multi-output support
     conditions: list[str] = field(default_factory=list)  # ANDed together

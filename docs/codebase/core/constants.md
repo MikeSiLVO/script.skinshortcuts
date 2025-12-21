@@ -10,7 +10,6 @@
 
 | Constant | Value | Used By |
 |----------|-------|---------|
-| `MENU_FILE` | `"menu.xml"` | hashing.py, loaders/menu.py |
 | `MENUS_FILE` | `"menus.xml"` | hashing.py, loaders/menu.py, entry.py |
 | `WIDGETS_FILE` | `"widgets.xml"` | hashing.py, config.py |
 | `BACKGROUNDS_FILE` | `"backgrounds.xml"` | hashing.py, config.py |

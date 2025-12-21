@@ -66,8 +66,8 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
         <action>ActivateWindow(Videos,videodb://movies/)</action>
       </shortcut>
       <shortcut name="playlists" label="Playlists" icon="DefaultPlaylist.png"
-                path="special://profile/playlists/video/" browse="video"/>
-      <content source="playlists" target="video" folder="Video Playlists"/>
+                path="special://profile/playlists/video/" browse="videos"/>
+      <content source="playlists" target="videos" folder="Video Playlists"/>
     </group>
   </groupings>
 

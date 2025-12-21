@@ -57,7 +57,7 @@ from skinshortcuts.providers import resolve_content, scan_playlist_files
 from skinshortcuts.models import Content
 
 # Resolve dynamic content
-content = Content(source="addons", target="video")
+content = Content(source="addons", target="videos")
 shortcuts = resolve_content(content)
 
 # Scan for playlists (from profile playlists folder)

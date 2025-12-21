@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from ..constants import TARGET_MAP
 from ..exceptions import WidgetConfigError
 from ..models import Content, Widget, WidgetGroup
 from ..models.widget import WidgetConfig
@@ -63,12 +64,16 @@ def _parse_widget(elem, path: str, default_source: str = "") -> Widget:
 
     source = get_attr(elem, "source") or default_source
 
+    # Normalize target (e.g., "video" -> "videos")
+    raw_target = get_attr(elem, "target") or "videos"
+    target = TARGET_MAP.get(raw_target.lower(), raw_target)
+
     return Widget(
         name=widget_name,
         label=label,
         path=widget_path,
         type=widget_type,
-        target=get_attr(elem, "target") or "videos",
+        target=target,
         icon=get_attr(elem, "icon") or "",
         condition=get_attr(elem, "condition") or "",
         visible=get_attr(elem, "visible") or "",

@@ -362,6 +362,22 @@ When a background is assigned to a menu item, these core properties are set:
 | `backgroundPath` | Image path |
 | `backgroundLabel` | Display label |
 | `backgroundType` | Background type (static, property, browse, etc.) |
+| `backgroundPlaylistType` | Playlist content type (for playlist/live-playlist types only) |
+
+The `backgroundPlaylistType` property contains the raw content type from the smart playlist (.xsp) file:
+
+| Value | Description |
+|-------|-------------|
+| `movies` | Movie content |
+| `tvshows` | TV show content |
+| `episodes` | Episode content (no posters) |
+| `musicvideos` | Music video content (no posters) |
+| `songs` | Song content |
+| `albums` | Album content |
+| `artists` | Artist content |
+| `mixed` | Mixed content types |
+
+This property is useful for determining artwork display - episodes and musicvideos don't have poster artwork, so skins can use this to select appropriate fallback images.
 
 Additional properties can be configured via [properties.xml](properties.md).
 

@@ -16,7 +16,6 @@ except ImportError:
 
 from .constants import (
     BACKGROUNDS_FILE,
-    MENU_FILE,
     MENUS_FILE,
     PROPERTIES_FILE,
     TEMPLATES_FILE,
@@ -62,7 +61,6 @@ def generate_config_hashes(shortcuts_path: str | Path) -> dict[str, str | None]:
     """Generate hashes for all config files in shortcuts folder."""
     path = Path(shortcuts_path)
     config_files = [
-        MENU_FILE,
         MENUS_FILE,
         WIDGETS_FILE,
         BACKGROUNDS_FILE,

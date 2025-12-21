@@ -270,7 +270,7 @@ These set window properties that your dialog skin can use for button visibility:
 
 Protect items from accidental changes.
 
-### Prevent Deletion
+### Prevent Deletion/Disabling
 
 ```xml
 <item name="settings" required="true">
@@ -278,6 +278,8 @@ Protect items from accidental changes.
   <action>ActivateWindow(Settings)</action>
 </item>
 ```
+
+Items with `required="true"` cannot be deleted or disabled. If a user previously deleted a required item, it will be automatically restored when the skinner adds the `required` attribute.
 
 ### Confirmation Dialog
 
@@ -319,7 +321,7 @@ Define shortcuts available in the picker dialog.
       <!-- Nested group -->
     </group>
 
-    <content source="playlists" target="video" folder="Video Playlists"/>
+    <content source="playlists" target="videos" folder="Video Playlists"/>
   </group>
 </groupings>
 ```
@@ -376,22 +378,40 @@ Define shortcuts available in the picker dialog.
 Add dynamic content from system sources:
 
 ```xml
-<content source="playlists" target="video" folder="Video Playlists"/>
-<content source="addons" target="video"/>
+<content source="playlists" target="videos" folder="Video Playlists"/>
+<content source="addons" target="videos"/>
 <content source="favourites"/>
-<content source="sources" target="video"/>
+<content source="sources" target="videos"/>
 ```
 
 | Attribute | Description |
 |-----------|-------------|
 | `source` | Content type: `playlists`, `addons`, `sources`, `favourites`, `pvr`, `commands`, `settings`, `library`, `nodes` |
-| `target` | Media context: `video`, `music`, `pictures`, `programs`, `tv`, `radio`. For `library` source, see [Library Target Values](widgets.md#library-target-values). For `nodes` source, see [Nodes Target Values](widgets.md#nodes-target-values) |
+| `target` | Media context: `videos`, `music`, `pictures`, `programs`, `tv`, `radio`. For `library` source, see [Library Target Values](widgets.md#library-target-values). For `nodes` source, see [Nodes Target Values](widgets.md#nodes-target-values) |
 | `folder` | Wrap items in a folder with this label |
 | `path` | Custom path override |
 | `label` | Custom label for the content group |
 | `icon` | Custom icon for the content group |
 | `condition` | Property condition (evaluated against item properties) |
 | `visible` | Kodi visibility condition (evaluated at runtime) |
+
+### Playlist Filtering
+
+When `source="playlists"`, the `target` attribute filters smart playlists (.xsp) by type:
+
+| Target | Includes playlist types |
+|--------|-------------------------|
+| `video` | movies, tvshows, episodes, musicvideos |
+| `music` | songs, albums, artists |
+| (omitted) | All types including mixed |
+
+### Playlist Action Choice
+
+When the user selects a playlist shortcut, a dialog offers action choices:
+
+* **Display** - Opens the playlist in the library view (ActivateWindow)
+* **Play** - Plays the playlist immediately (PlayMedia)
+* **Party Mode** - Starts party mode shuffle (music playlists only)
 
 ***
 

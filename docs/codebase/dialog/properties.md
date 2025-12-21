@@ -1,7 +1,6 @@
 # dialog/properties.py
 
 **Path:** `resources/lib/skinshortcuts/dialog/properties.py`
-**Lines:** 565
 **Purpose:** Property management - widget, background, toggle, options.
 
 ***
@@ -12,11 +11,11 @@ PropertiesMixin handles property button clicks from the schema and manages widge
 
 ***
 
-## PropertiesMixin Class (line 31)
+## PropertiesMixin Class
 
 ### Property Button Handler
 
-#### `_handle_property_button`(button_id) → bool (line 91)
+#### `_handle_property_button`(button_id) → bool
 
 Handle a property button click from the schema.
 
@@ -37,7 +36,7 @@ Handle a property button click from the schema.
 
 ### Widget Properties
 
-#### `_handle_widget_property`(prop, item) (line 130)
+#### `_handle_widget_property`(prop, item)
 
 Show widget picker and auto-populate related properties.
 
@@ -52,13 +51,13 @@ Show widget picker and auto-populate related properties.
 
 **Note:** For custom widgets, sets `widgetType=custom` which triggers onclose action.
 
-#### `_set_widget_properties`(item, prefix, widget) (line 194)
+#### `_set_widget_properties`(item, prefix, widget)
 
 Set widget properties on item with auto-populated values.
 
 Handles `{menuitem}` placeholder substitution in widget path.
 
-#### `_clear_widget_properties`(item, prefix) (line 223)
+#### `_clear_widget_properties`(item, prefix)
 
 Clear all widget properties for a prefix.
 
@@ -66,7 +65,7 @@ Clear all widget properties for a prefix.
 
 ### Background Properties
 
-#### `_handle_background_property`(prop, item) (line 245)
+#### `_handle_background_property`(prop, item)
 
 Show background picker and auto-populate related properties.
 
@@ -77,7 +76,7 @@ Show background picker and auto-populate related properties.
 * `MULTI` - Folder browser
 * `PLAYLIST` / `LIVE_PLAYLIST` - Playlist picker
 
-#### `_set_background_properties`(item, prefix, bg) (line 341)
+#### `_set_background_properties`(item, prefix, bg)
 
 Set background properties on item.
 
@@ -87,13 +86,20 @@ Set background properties on item.
 * `{prefix}Label` - Display label
 * `{prefix}Path` - Background path
 
-#### `_set_background_properties_custom`(item, prefix, bg, custom_path, custom_label) (line 351)
+#### `_set_background_properties_custom`(item, prefix, bg, custom_path, custom_label, playlist_type="")
 
 Set background with user-browsed custom path.
 
 Used for browse, multi, and playlist backgrounds.
 
-#### `_clear_background_properties`(item, prefix) (line 377)
+**Sets:**
+
+* `{prefix}` - Background name
+* `{prefix}Label` - Display label
+* `{prefix}Path` - Background path
+* `{prefix}PlaylistType` - Playlist type (movies, tvshows, episodes, musicvideos, songs, albums, artists, mixed)
+
+#### `_clear_background_properties`(item, prefix)
 
 Clear all background properties for a prefix.
 
@@ -101,7 +107,7 @@ Clear all background properties for a prefix.
 
 ### Playlist Picker
 
-#### `_pick_playlist`(sources, label_prefix, current_path) → tuple[str, str] | None (line 398)
+#### `_pick_playlist`(sources, label_prefix, current_path) → tuple[str, str, str] | None
 
 Show picker for available playlists.
 
@@ -111,22 +117,81 @@ Show picker for available playlists.
 * `label_prefix` - Prefix for playlist labels (e.g., "Live Background")
 * `current_path` - Current playlist path to preselect (default "")
 
-**Returns:** Tuple of (path, display_label) or None if cancelled
+**Returns:** Tuple of (path, display_label, playlist_type) or None if cancelled
 
 **Behavior:**
 
 * Preselects playlist matching `current_path`
 * Uses `scan_playlist_files()` from providers module
+* Returns playlist type for artwork decisions (episodes/musicvideos lack posters)
+
+***
+
+### Smart Playlist Parsing
+
+#### `_parse_smart_playlist`(filepath) → tuple[str, str]
+
+Parse a smart playlist (.xsp file) for name and type.
+
+**Parameters:**
+
+* `filepath` - Path to the .xsp file
+
+**Returns:** Tuple of (name, playlist_type)
+
+**Behavior:**
+
+* Uses `_resolve_playlist_path()` to handle multipath URLs
+* Parses XML to extract `<name>` element text
+* Extracts `type` attribute from root `<smartplaylist>` element
+* Returns raw type: movies, tvshows, episodes, musicvideos, songs, albums, artists, mixed
+
+***
+
+### Multipath Resolution
+
+#### `_get_multipath_sources`(multipath_url) → list[str]
+
+Extract real paths from a Kodi multipath:// URL.
+
+**Parameters:**
+
+* `multipath_url` - A multipath:// URL (e.g., `multipath://%2fpath1%2f/%2fpath2%2f/`)
+
+**Returns:** List of decoded paths
+
+**Behavior:**
+
+* Kodi multipaths combine multiple directories into one virtual path
+* Format: `multipath://{URL_encoded_path1}/{URL_encoded_path2}/`
+* Returns original path if not a multipath URL
+
+#### `_resolve_playlist_path`(filepath) → str | None
+
+Resolve a playlist path to an actual readable file path.
+
+**Parameters:**
+
+* `filepath` - Path to resolve (may use special:// paths)
+
+**Returns:** Resolved filesystem path, or None if file not found
+
+**Behavior:**
+
+* Translates special:// paths using `xbmcvfs.translatePath()`
+* Handles `special://videoplaylists/` which is a multipath combining video and mixed playlist directories
+* Searches each source directory in the multipath for the file
+* Returns the first existing path found
 
 ***
 
 ### Other Property Types
 
-#### `_handle_toggle_property`(prop, item) (line 464)
+#### `_handle_toggle_property`(prop, item)
 
 Toggle between "True" and empty (cleared).
 
-#### `_handle_options_property`(prop, item) → bool (line 480)
+#### `_handle_options_property`(prop, item) → bool
 
 Show options list picker.
 

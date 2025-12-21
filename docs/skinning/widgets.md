@@ -150,7 +150,7 @@ Organize widgets into categories for the picker dialog:
     </group>
 
     <!-- Dynamic content -->
-    <content source="playlists" target="video"/>
+    <content source="playlists" target="videos"/>
   </group>
 
   <!-- Flat widget (no group) -->
@@ -183,14 +183,14 @@ Groups can contain:
 Add dynamic content from system sources:
 
 ```xml
-<content source="playlists" target="video"/>
-<content source="addons" target="video" folder="Video Add-ons"/>
+<content source="playlists" target="videos"/>
+<content source="addons" target="videos" folder="Video Add-ons"/>
 ```
 
 | Attribute | Description |
 |-----------|-------------|
 | `source` | Content type: `playlists`, `addons`, `sources`, `favourites`, `pvr`, `commands`, `settings`, `library`, `nodes` |
-| `target` | Media context: `video`, `music`, `pictures`, `programs`, `tv`, `radio` |
+| `target` | Media context: `videos`, `music`, `pictures`, `programs`, `tv`, `radio` |
 | `folder` | Wrap items in a folder with this label |
 | `path` | Custom path override |
 | `condition` | Property condition (evaluated against item properties) |
@@ -203,7 +203,7 @@ Add dynamic content from system sources:
 The `nodes` source provides access to library navigation nodes (the top-level library categories like Movies, TV Shows, Music Videos, etc.):
 
 ```xml
-<content source="nodes" target="video"/>
+<content source="nodes" target="videos"/>
 <content source="nodes" target="music"/>
 ```
 
@@ -211,7 +211,7 @@ The `nodes` source provides access to library navigation nodes (the top-level li
 
 | Target | Description |
 |--------|-------------|
-| `video` | Video library nodes (Movies, TV Shows, Music Videos, etc.) |
+| `videos` | Video library nodes (Movies, TV Shows, Music Videos, etc.) |
 | `music` | Music library nodes (Artists, Albums, Songs, etc.) |
 
 ***

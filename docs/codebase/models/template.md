@@ -1,7 +1,6 @@
 # models/template.py
 
 **Path:** `resources/lib/skinshortcuts/models/template.py`
-**Lines:** 262
 **Purpose:** Dataclass models for the template system (templates.xml).
 
 ***
@@ -14,7 +13,7 @@ The template system is the most complex part of Skin Shortcuts. It allows skins 
 
 ## Enums
 
-### BuildMode (line 10)
+### BuildMode
 
 Template build mode determining iteration behavior.
 
@@ -30,7 +29,7 @@ Template build mode determining iteration behavior.
 
 ## Classes
 
-### TemplateParam (line 19)
+### TemplateParam
 
 Parameter for parameterized includes (build="true" templates).
 
@@ -43,7 +42,7 @@ Parameter for parameterized includes (build="true" templates).
 
 ***
 
-### TemplateProperty (line 27)
+### TemplateProperty
 
 Property assignment in a template.
 
@@ -64,7 +63,7 @@ Property assignment in a template.
 
 ***
 
-### TemplateVar (line 43)
+### TemplateVar
 
 Multi-conditional property for internal resolution.
 
@@ -86,7 +85,7 @@ Multi-conditional property for internal resolution.
 
 ***
 
-### PresetValues (line 58)
+### PresetValues
 
 A single row in a preset lookup table.
 
@@ -99,7 +98,7 @@ A single row in a preset lookup table.
 
 ***
 
-### Preset (line 66)
+### Preset
 
 Lookup table returning multiple values based on conditions.
 
@@ -112,7 +111,7 @@ Lookup table returning multiple values based on conditions.
 
 ***
 
-### PropertyGroup (line 74)
+### PropertyGroup
 
 Reusable property group definition.
 
@@ -126,7 +125,7 @@ Reusable property group definition.
 
 ***
 
-### PropertyGroupReference (line 87)
+### PropertyGroupReference
 
 Reference to a property group.
 
@@ -140,7 +139,7 @@ Reference to a property group.
 
 ***
 
-### PresetReference (line 96)
+### PresetReference
 
 Reference to a preset for direct property resolution.
 
@@ -154,7 +153,7 @@ Reference to a preset for direct property resolution.
 
 ***
 
-### IncludeDefinition (line 109)
+### IncludeDefinition
 
 Reusable include definition for controls (like Kodi includes).
 
@@ -167,7 +166,7 @@ Reusable include definition for controls (like Kodi includes).
 
 ***
 
-### ListItem (line 120)
+### ListItem
 
 Item in a \<list\> for build="list" templates.
 
@@ -179,7 +178,7 @@ Item in a \<list\> for build="list" templates.
 
 ***
 
-### VariableDefinition (line 127)
+### VariableDefinition
 
 Kodi variable definition.
 
@@ -194,7 +193,7 @@ Output name format: `HomeWidget{id}{name}` (e.g., `HomeWidget80111PosterVar`)
 
 ***
 
-### VariableReference (line 139)
+### VariableReference
 
 Reference to a variable definition.
 
@@ -208,7 +207,7 @@ Reference to a variable definition.
 
 ***
 
-### VariableGroupRef (line 155)
+### VariableGroupRef
 
 Reference to another variableGroup (for nested groups).
 
@@ -220,7 +219,7 @@ Reference to another variableGroup (for nested groups).
 
 ***
 
-### VariableGroup (line 162)
+### VariableGroup
 
 Reusable group of variable references.
 
@@ -234,7 +233,7 @@ Reusable group of variable references.
 
 ***
 
-### VariableGroupReference (line 176)
+### VariableGroupReference
 
 Reference to a variable group from a template.
 
@@ -248,7 +247,7 @@ Reference to a variable group from a template.
 
 ***
 
-### Template (line 189)
+### Template
 
 Main template definition.
 
@@ -257,7 +256,8 @@ Main template definition.
 | `include` | str | required | Output include name |
 | `build` | BuildMode | MENU | Build mode |
 | `id_prefix` | str | "" | For computed control IDs |
-| `template_only` | str | "" | Include generation: "true"=never, "empty"=skip if empty |
+| `template_only` | str | "" | Include generation: "true"=never, "auto"=skip if unassigned |
+| `menu` | str | "" | Filter to specific menu (e.g., "mainmenu") |
 | `conditions` | list[str] | [] | Conditions ANDed together |
 | `params` | list[TemplateParam] | [] | For build="true" |
 | `properties` | list[TemplateProperty] | [] | Properties to set |
@@ -266,13 +266,14 @@ Main template definition.
 | `preset_refs` | list[PresetReference] | [] | Preset references |
 | `list_items` | list[ListItem] | [] | For build="list" |
 | `controls` | ET.Element|None | None | Raw XML controls |
+| `variables` | ET.Element|None | None | Inline variables section |
 | `variable_groups` | list[VariableGroupReference] | [] | Variable groups |
 
 **Used by:** TemplateSchema.templates, builders/template.py
 
 ***
 
-### SubmenuTemplate (line 196)
+### SubmenuTemplate
 
 Submenu template definition.
 
@@ -290,7 +291,7 @@ Submenu template definition.
 
 ***
 
-### TemplateSchema (line 210)
+### TemplateSchema
 
 Complete template schema container.
 
@@ -315,12 +316,6 @@ Complete template schema container.
 * `get_variable_group(name)` → VariableGroup|None
 
 **Used by:** config.py, loaders/template.py, builders/template.py, builders/includes.py
-
-***
-
-## Dead Code Analysis
-
-All classes appear to be in active use.
 
 ***
 

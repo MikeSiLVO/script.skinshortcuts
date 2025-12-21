@@ -6,6 +6,10 @@ import json
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
+from ..log import get_logger
+
+_log = get_logger("Properties")
+
 try:
     import xbmc
     import xbmcgui
@@ -42,28 +46,86 @@ def _get_playlists_base_path() -> str:
     return "special://profile/playlists/"
 
 
-def _get_smart_playlist_name(filepath: str) -> str:
-    """Get the name from a smart playlist (.xsp file).
+def _get_multipath_sources(multipath_url: str) -> list[str]:
+    """Extract real paths from a multipath:// URL.
 
-    Returns the <name> element text, or empty string on error.
+    Kodi multipaths combine multiple directories into one virtual path.
+    Format: multipath://{URL_encoded_path1}/{URL_encoded_path2}/
+    """
+    try:
+        from urllib.parse import unquote
+    except ImportError:
+        from urllib import unquote  # type: ignore
+
+    if not multipath_url.startswith("multipath://"):
+        return [multipath_url]
+
+    path_part = multipath_url[12:].rstrip("/")
+    if not path_part:
+        return []
+
+    encoded_paths = path_part.split("/")
+    return [unquote(p) for p in encoded_paths if p]
+
+
+def _resolve_playlist_path(filepath: str) -> str | None:
+    """Resolve a playlist path to an actual readable file path.
+
+    Handles special://videoplaylists/ which is a multipath combining
+    video and mixed playlist directories.
+    """
+    import xbmcvfs
+
+    translated = xbmcvfs.translatePath(filepath)
+
+    if translated.startswith("multipath://"):
+        filename = filepath.rsplit("/", 1)[-1]
+        source_dirs = _get_multipath_sources(translated)
+        for source_dir in source_dirs:
+            candidate = f"{source_dir.rstrip('/')}/{filename}"
+            if xbmcvfs.exists(candidate):
+                return candidate
+        return None
+
+    return translated
+
+
+def _parse_smart_playlist(filepath: str) -> tuple[str, str]:
+    """Parse a smart playlist (.xsp file) for name and type.
+
+    Returns:
+        Tuple of (name, playlist_type). Falls back to ("", "") on error.
+        playlist_type is the raw type: movies, tvshows, episodes, musicvideos,
+        songs, albums, artists, mixed, etc.
     """
     if not IN_KODI:
-        return ""
+        return "", ""
 
     try:
         import xml.etree.ElementTree as ET
 
         import xbmcvfs
 
-        f = xbmcvfs.File(filepath)
+        real_path = _resolve_playlist_path(filepath)
+        if not real_path:
+            _log.debug(f"file not found in source paths: {filepath}")
+            return "", ""
+
+        f = xbmcvfs.File(real_path)
         content = f.read()
         f.close()
 
         root = ET.fromstring(content)
         name_elem = root.find("name")
-        return name_elem.text if name_elem is not None and name_elem.text else ""
-    except Exception:
-        return ""
+        name = name_elem.text if name_elem is not None and name_elem.text else ""
+
+        playlist_type = root.get("type") or ""
+
+        return name, playlist_type
+    except Exception as e:
+        _log.error(f"parse error for {filepath}: {e}")
+        return "", ""
+
 
 from ..loaders import evaluate_condition, load_widgets
 from ..loaders.base import apply_suffix_transform
@@ -104,6 +166,7 @@ class PropertiesMixin:
     property_suffix: str
 
     if TYPE_CHECKING:
+
         def _get_selected_item(self) -> MenuItem | None: ...
         def _get_item_properties(self, item: MenuItem) -> dict[str, str]: ...
         def _get_item_property(self, item: MenuItem, name: str) -> str: ...
@@ -373,8 +436,10 @@ class PropertiesMixin:
                     bg.sources, bg.label if bg.sources else "", current_playlist
                 )
                 if result:
-                    path, display_label = result
-                    self._set_background_properties_custom(item, prefix, bg, path, display_label)
+                    path, display_label, playlist_type = result
+                    self._set_background_properties_custom(
+                        item, prefix, bg, path, display_label, playlist_type
+                    )
                     self._refresh_selected_item()
                     return
                 continue
@@ -395,7 +460,13 @@ class PropertiesMixin:
         self._set_item_property(item, prefix, bg.name, related, apply_suffix=False)
 
     def _set_background_properties_custom(
-        self, item: MenuItem, prefix: str, bg, custom_path: str, custom_label: str | None = None
+        self,
+        item: MenuItem,
+        prefix: str,
+        bg,
+        custom_path: str,
+        custom_label: str | None = None,
+        playlist_type: str | None = None,
     ) -> None:
         """Set background properties with a user-browsed custom path.
 
@@ -408,6 +479,7 @@ class PropertiesMixin:
             bg: The Background object
             custom_path: User-selected path
             custom_label: Optional custom label (e.g., "Live Background: Random Movies")
+            playlist_type: Optional playlist content type ("video" or "music")
         """
         self._log(f"Setting custom background for {prefix}: {bg.name} -> {custom_path}")
 
@@ -417,6 +489,8 @@ class PropertiesMixin:
             f"{prefix}Label": label,
             f"{prefix}Path": custom_path,
         }
+        if playlist_type:
+            related[f"{prefix}PlaylistType"] = playlist_type
 
         self._set_item_property(item, prefix, bg.name, related, apply_suffix=False)
 
@@ -436,7 +510,7 @@ class PropertiesMixin:
         sources: list | None = None,
         label_prefix: str = "",
         current_path: str = "",
-    ) -> tuple[str, str] | None:
+    ) -> tuple[str, str, str] | None:
         """Show picker for available playlists.
 
         Args:
@@ -446,8 +520,9 @@ class PropertiesMixin:
             current_path: Current playlist path to preselect
 
         Returns:
-            Tuple of (path, display_label) or None if cancelled.
+            Tuple of (path, display_label, playlist_type) or None if cancelled.
             display_label includes the prefix if provided.
+            playlist_type is the raw type from the .xsp file (movies, tvshows, etc.)
         """
         if not sources:
             base = _get_playlists_base_path()
@@ -476,39 +551,38 @@ class PropertiesMixin:
             source_playlists = scan_playlist_files(source.path)
             for raw_label, path in source_playlists:
                 label = raw_label
+                playlist_type = ""
+                _log.debug(f"checking playlist path={path}, ends_xsp={path.endswith('.xsp')}")
                 if path.endswith(".xsp"):
-                    xsp_name = _get_smart_playlist_name(path)
+                    xsp_name, playlist_type = _parse_smart_playlist(path)
+                    _log.debug(f"parsed result name={xsp_name}, type={playlist_type}")
                     if xsp_name:
                         label = xsp_name
 
                 display_label = f"{prefix}: {label}" if prefix else label
                 if preselect == -1 and path == current_path:
                     preselect = len(playlists)
-                playlists.append((display_label, path, source.icon))
+                playlists.append((display_label, path, source.icon, playlist_type))
 
         if not playlists:
             xbmcgui.Dialog().notification("No Playlists", "No playlists found")
             return None
 
         listitems = []
-        for label, _path, icon in playlists:
+        for label, _path, icon, _content_type in playlists:
             listitem = xbmcgui.ListItem(label)
             listitem.setArt({"icon": icon})
             listitems.append(listitem)
 
         title = f"Select {prefix}" if prefix else "Select Playlist"
-        selected = xbmcgui.Dialog().select(
-            title, listitems, useDetails=True, preselect=preselect
-        )
+        selected = xbmcgui.Dialog().select(title, listitems, useDetails=True, preselect=preselect)
 
         if selected == -1:
             return None
 
-        return (playlists[selected][1], playlists[selected][0])
+        return (playlists[selected][1], playlists[selected][0], playlists[selected][3])
 
-    def _handle_toggle_property(
-        self, prop, item: MenuItem, button, prop_name: str
-    ) -> None:
+    def _handle_toggle_property(self, prop, item: MenuItem, button, prop_name: str) -> None:
         """Handle a toggle-type property.
 
         Toggles between "True" and empty (cleared).
@@ -529,9 +603,7 @@ class PropertiesMixin:
 
         self._refresh_selected_item()
 
-    def _handle_options_property(
-        self, prop, item: MenuItem, button, prop_name: str
-    ) -> bool:
+    def _handle_options_property(self, prop, item: MenuItem, button, prop_name: str) -> bool:
         """Handle a regular property with options list.
 
         Args:

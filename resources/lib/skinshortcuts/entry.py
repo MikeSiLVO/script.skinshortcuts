@@ -9,6 +9,7 @@ from urllib.parse import parse_qs
 
 try:
     import xbmc
+    import xbmcgui
     import xbmcvfs
 
     IN_KODI = True
@@ -16,7 +17,7 @@ except ImportError:
     IN_KODI = False
 
 from .config import SkinConfig
-from .constants import INCLUDES_FILE, MENU_FILE, MENUS_FILE
+from .constants import INCLUDES_FILE, MENUS_FILE
 from .dialog import show_management_dialog
 from .hashing import generate_config_hashes, hash_file, needs_rebuild, write_hashes
 from .log import get_logger
@@ -81,34 +82,41 @@ def build_includes(
     """
     log.debug(f"build_includes called: path={shortcuts_path}, output={output_path}, force={force}")
 
-    if shortcuts_path is None:
-        shortcuts_path = get_skin_path()
-        log.debug(f"Auto-detected shortcuts path: {shortcuts_path}")
-
-    if not shortcuts_path:
-        log.error("Could not determine skin shortcuts path")
+    home = xbmcgui.Window(10000) if IN_KODI else None
+    if home and home.getProperty("skinshortcuts-isbuilding") == "True":
+        log.debug("Build already in progress, skipping")
         return False
 
-    path = Path(shortcuts_path)
-    menus_file = path / MENUS_FILE
-    menu_file = path / MENU_FILE
-
-    if not menus_file.exists() and not menu_file.exists():
-        log.warning(f"No menu config found in {shortcuts_path}")
-        return False
-
-    if output_path:
-        output_paths = [output_path]
-    else:
-        output_paths = get_output_paths()
-
-    if not force and not needs_rebuild(shortcuts_path, output_paths):
-        log.debug("Menu is up to date, skipping rebuild")
-        return False
-
-    log.debug(f"Loading config from: {shortcuts_path}")
+    if home:
+        home.setProperty("skinshortcuts-isbuilding", "True")
 
     try:
+        if shortcuts_path is None:
+            shortcuts_path = get_skin_path()
+            log.debug(f"Auto-detected shortcuts path: {shortcuts_path}")
+
+        if not shortcuts_path:
+            log.error("Could not determine skin shortcuts path")
+            return False
+
+        path = Path(shortcuts_path)
+        menus_file = path / MENUS_FILE
+
+        if not menus_file.exists():
+            log.warning(f"No menus.xml found in {shortcuts_path}")
+            return False
+
+        if output_path:
+            output_paths = [output_path]
+        else:
+            output_paths = get_output_paths()
+
+        if not force and not needs_rebuild(shortcuts_path, output_paths):
+            log.debug("Menu is up to date, skipping rebuild")
+            return False
+
+        log.debug(f"Loading config from: {shortcuts_path}")
+
         config = SkinConfig.load(shortcuts_path)
         log.info(
             f"Loaded {len(config.menus)} menus, "
@@ -150,6 +158,10 @@ def build_includes(
         import traceback
         log.error(traceback.format_exc())
         return False
+
+    finally:
+        if home:
+            home.clearProperty("skinshortcuts-isbuilding")
 
 
 def clear_custom_menu(

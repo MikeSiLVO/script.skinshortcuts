@@ -196,6 +196,8 @@ Properties available on items in the menu list (control 211):
 | Property | Description |
 |----------|-------------|
 | `ListItem.Property(isResettable)` | `true` if modified from default |
+| `ListItem.Property(skinshortcuts-isRequired)` | `True` if item cannot be deleted/disabled |
+| `ListItem.Property(skinshortcuts-isProtected)` | `True` if item has protection rules |
 
 ### Custom Properties
 

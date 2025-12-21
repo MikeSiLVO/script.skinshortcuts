@@ -114,10 +114,12 @@ class PickersMixin:
 
         shortcut = self._pick_shortcut(groups, item_props)
         if shortcut:
+            action = self._get_shortcut_action(shortcut)
+            if action is None:
+                return
+
             self.manager.set_label(self.menu_id, item.name, shortcut.label)
             item.label = shortcut.label
-
-            action = shortcut.get_action() if hasattr(shortcut, "get_action") else shortcut.action
             self.manager.set_action(self.menu_id, item.name, action)
             item.actions = [Action(action=action)] if action else []
 
@@ -126,6 +128,40 @@ class PickersMixin:
                 item.icon = shortcut.icon
 
             self._refresh_selected_item()
+
+    def _get_shortcut_action(self, shortcut: Shortcut) -> str | None:
+        """Get action from shortcut, showing playlist choice dialog if applicable."""
+        if shortcut.action_play:
+            return self._choose_playlist_action(shortcut)
+        return shortcut.get_action() if hasattr(shortcut, "get_action") else shortcut.action
+
+    def _choose_playlist_action(self, shortcut: Shortcut) -> str | None:
+        """Show dialog asking what to do with a playlist shortcut."""
+        from ..localize import LANGUAGE
+
+        if shortcut.action_party:
+            result = xbmcgui.Dialog().yesnocustom(  # type: ignore[attr-defined]
+                LANGUAGE(32040),
+                LANGUAGE(32060),
+                customlabel=xbmc.getLocalizedString(589),
+                nolabel=LANGUAGE(32061),
+                yeslabel=LANGUAGE(32062),
+            )
+            if result == -1:
+                return None
+            if result == 0:
+                return shortcut.action
+            if result == 1:
+                return shortcut.action_play
+            return shortcut.action_party
+
+        result = xbmcgui.Dialog().yesno(
+            LANGUAGE(32040),
+            LANGUAGE(32060),
+            nolabel=LANGUAGE(32061),
+            yeslabel=LANGUAGE(32062),
+        )
+        return shortcut.action_play if result else shortcut.action
 
     def _pick_shortcut(
         self, groups: list[Group], item_props: dict[str, str]
@@ -274,8 +310,10 @@ class PickersMixin:
                 name=f"dynamic-{content.source}-{len(shortcuts)}",
                 label=item.label,
                 action=item.action,
-                type=item.label2,  # label2 contains the type/category info
+                type=item.label2,
                 icon=item.icon,
+                action_play=item.action_play,
+                action_party=item.action_party,
             )
             shortcuts.append(shortcut)
 
@@ -331,17 +369,21 @@ class PickersMixin:
 
         addon_type = addon_types[selected][0]
 
+        # browse_type for Kodi API, widget_target for our properties
         if addon_type == "video":
-            content_type = "video"
+            browse_type = "video"
+            widget_target = "videos"
         elif addon_type == "audio":
-            content_type = "music"
+            browse_type = "music"
+            widget_target = "music"
         else:
-            content_type = "files"
+            browse_type = "programs"
+            widget_target = "programs"
 
         result = xbmcgui.Dialog().browse(
             0,  # Folder/file selection
             "Select Widget Source",
-            content_type,
+            browse_type,
             "",
             False,
             False,
@@ -358,8 +400,8 @@ class PickersMixin:
             name=f"custom-{addon_name}",
             label=addon_name,
             path=path,
-            type=content_type,
-            target=content_type,
+            type=widget_target,
+            target=widget_target,
             icon=f"DefaultAddon{addon_type.title()}.png",
         )
 

@@ -37,7 +37,7 @@ Dynamic content reference resolved at runtime (playlists, addons, sources, etc).
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `source` | str | required | Content type: playlists, addons, library, sources, favourites, pvr, commands, settings |
-| `target` | str | "" | Media context: video, music, pictures, programs, tv, radio |
+| `target` | str | "" | Media context: videos, music, pictures, programs, tv, radio |
 | `path` | str | "" | Custom path override |
 | `condition` | str | "" | Property condition (evaluated against item properties) |
 | `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
@@ -96,10 +96,14 @@ A shortcut option in picker groupings.
 | `icon` | str | "DefaultShortcut.png" | Icon path |
 | `condition` | str | "" | Property condition (evaluated against item properties) |
 | `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
+| `action_play` | str | "" | PlayMedia action (for playlists) |
+| `action_party` | str | "" | Party mode action (for music playlists) |
 
 **Methods:**
 
 * `get_action()` → str - Returns action, or constructs ActivateWindow from browse+path
+
+**Playlist Actions:** When `action_play` is set, the picker dialog offers a choice between display/play/party modes (see dialog/pickers.py).
 
 **Used by:** dialog.py (shortcut picker), loaders/menu.py
 

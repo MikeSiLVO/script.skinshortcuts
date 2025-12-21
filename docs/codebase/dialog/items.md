@@ -1,7 +1,6 @@
 # dialog/items.py
 
 **Path:** `resources/lib/skinshortcuts/dialog/items.py`
-**Lines:** 408
 **Purpose:** Item operations - add, delete, move, label, icon, action.
 
 ***
@@ -12,15 +11,15 @@ ItemsMixin provides all item manipulation operations including add, delete, move
 
 ***
 
-## ItemsMixin Class (line 24)
+## ItemsMixin Class
 
 ### Item Operations
 
-#### `_add_item`() (line 54)
+#### `_add_item`()
 
 Add a new item after the current selection.
 
-#### `_delete_item`() (line 74)
+#### `_delete_item`()
 
 Delete the selected item.
 
@@ -34,26 +33,31 @@ Delete the selected item.
 * Removes from manager's working copy
 * Updates deleted property indicator (via manager)
 
-#### `_move_item`(direction) (line 106)
+#### `_move_item`(direction)
 
 Move item up (-1) or down (1).
 
 **Note:** Manager handles the swap in working copy; dialog just rebuilds list.
 
-#### `_toggle_disabled`() (line 184)
+#### `_toggle_disabled`()
 
 Toggle the disabled state of selected item.
 
-#### `_restore_deleted_item`() (line 198)
+**Checks:**
+
+* Required items cannot be disabled
+
+#### `_restore_deleted_item`()
 
 Show picker to restore a previously deleted item.
 
 **Behavior:**
 
 * Gets removed items from manager (compares working vs defaults)
+* Items hidden by `dialog_visible` condition are excluded (they're not actually deleted)
 * Restores via manager.restore_item()
 
-#### `_reset_current_item`() (line 233)
+#### `_reset_current_item`()
 
 Reset item to skin defaults. Restores original properties from skin config.
 
@@ -61,15 +65,15 @@ Reset item to skin defaults. Restores original properties from skin config.
 
 ### Label/Icon/Action Methods
 
-#### `_set_label`() (line 121)
+#### `_set_label`()
 
 Change label via keyboard input.
 
-#### `_set_icon`() (line 139)
+#### `_set_icon`()
 
 Browse for icon using icon sources from menus.xml.
 
-#### `_set_action`() (line 159)
+#### `_set_action`()
 
 Set custom action via keyboard.
 
@@ -81,7 +85,7 @@ Set custom action via keyboard.
 
 ### Property Setter
 
-#### `_set_item_property`(item, name, value, related, apply_suffix) (line 346)
+#### `_set_item_property`(item, name, value, related, apply_suffix)
 
 Unified property setter for menu items.
 
@@ -102,7 +106,7 @@ Unified property setter for menu items.
 
 ### Browse Methods
 
-#### `_browse_with_sources`(sources, title, browse_type, mask) → str | None (line 255)
+#### `_browse_with_sources`(sources, title, browse_type, mask) → str | None
 
 Browse for a file using configured sources.
 
@@ -124,7 +128,7 @@ Browse for a file using configured sources.
 
 ### Context Menu
 
-#### `_show_context_menu`() (line 326)
+#### `_show_context_menu`()
 
 Show context menu for selected item.
 

@@ -1,0 +1,24 @@
+name: Type Check
+
+on:
+  push:
+    branches: [master, beta-*]
+  pull_request:
+    branches: [master]
+
+jobs:
+  pyright:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pyright
+        run: pip install pyright
+
+      - name: Run pyright
+        run: pyright

@@ -54,7 +54,6 @@ Generate hashes for all config files in shortcuts folder.
 
 **Files hashed:**
 
-* menu.xml
 * menus.xml
 * widgets.xml
 * backgrounds.xml

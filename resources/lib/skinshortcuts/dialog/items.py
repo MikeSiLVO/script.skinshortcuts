@@ -116,14 +116,16 @@ class ItemsMixin:
         if not item:
             return
 
-        keyboard = xbmc.Keyboard("", xbmc.getLocalizedString(528))
+        from ..localize import resolve_label
+
+        current_label = resolve_label(item.label)
+        keyboard = xbmc.Keyboard(current_label, xbmc.getLocalizedString(528))
         keyboard.doModal()
         if keyboard.isConfirmed():
             new_label = keyboard.getText()
-            if new_label:
-                self.manager.set_label(self.menu_id, item.name, new_label)
-                item.label = new_label
-                self._refresh_selected_item()
+            self.manager.set_label(self.menu_id, item.name, new_label)
+            item.label = new_label
+            self._refresh_selected_item()
 
     def _set_icon(self) -> None:
         """Browse for a new icon using icon sources from menus.xml."""
@@ -177,6 +179,10 @@ class ItemsMixin:
 
         item = self._get_selected_item()
         if not item:
+            return
+
+        if item.required and not item.disabled:
+            xbmcgui.Dialog().ok("Cannot Disable", f"'{item.label}' is required.")
             return
 
         new_state = not item.disabled

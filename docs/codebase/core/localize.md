@@ -26,7 +26,21 @@ Captures: addon ID and string ID
 
 ## Functions
 
-### resolve_label(label) → str (line 19)
+### LANGUAGE(string_id) → str (line 20)
+
+Get localized string from this addon.
+
+**Parameters:**
+
+* `string_id` - Integer string ID from addon's strings.po
+
+**Returns:** Localized string, or string ID as string if not in Kodi
+
+**Used by:** dialog/pickers.py (playlist action dialog)
+
+***
+
+### resolve_label(label) → str (line 27)
 
 Resolve a label string to its localized value.
 

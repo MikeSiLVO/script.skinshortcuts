@@ -1,10 +1,5 @@
 """Logging utilities for Skin Shortcuts.
 
-Provides a centralized logging interface that:
-- Uses consistent prefix: script.skinshortcuts:
-- Forces debug logging during beta (always on)
-- Works both in Kodi and standalone (for testing)
-
 Usage:
     from skinshortcuts.log import get_logger
     log = get_logger("TemplateBuilder")

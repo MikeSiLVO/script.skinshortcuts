@@ -199,12 +199,9 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
 
     items: list[MenuItem] = []
     for item in default_menu.items:
-        if item.name in override.removed:
+        if item.name in override.removed and not item.required:
             continue
-        # Filter by dialog_visible for items not explicitly in userdata
-        if item.name not in {o.name for o in override.items} and not _check_dialog_visible(
-            item.dialog_visible
-        ):
+        if item.dialog_visible and not _check_dialog_visible(item.dialog_visible):
             continue
         items.append(item)
 

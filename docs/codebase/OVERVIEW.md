@@ -131,7 +131,7 @@ widget.2, widgetPath.2, widgetType.2, etc.
 
 ```python
 from providers import resolve_content
-shortcuts = resolve_content(Content(source="addons", target="video"))
+shortcuts = resolve_content(Content(source="addons", target="videos"))
 ```
 
 ***

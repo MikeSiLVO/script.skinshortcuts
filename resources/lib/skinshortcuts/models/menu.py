@@ -137,8 +137,10 @@ class Shortcut:
     browse: str = ""
     type: str = ""
     icon: str = "DefaultShortcut.png"
-    condition: str = ""  # Property condition (evaluated against item properties)
-    visible: str = ""  # Kodi visibility condition (evaluated at runtime)
+    condition: str = ""
+    visible: str = ""
+    action_play: str = ""
+    action_party: str = ""
 
     def get_action(self) -> str:
         """Get the resolved action string.

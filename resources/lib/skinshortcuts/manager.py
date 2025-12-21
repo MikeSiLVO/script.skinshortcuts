@@ -242,7 +242,14 @@ class MenuManager:
             return list(default_menu.items)
 
         working_names = {item.name for item in working_menu.items}
-        return [item for item in default_menu.items if item.name not in working_names]
+        removed = []
+        for item in default_menu.items:
+            if item.name in working_names:
+                continue
+            if item.dialog_visible and not _check_dialog_visible(item.dialog_visible):
+                continue
+            removed.append(item)
+        return removed
 
     def has_removed_items(self, menu_id: str) -> bool:
         """Check if menu has removed items that can be restored."""

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta5" provider-name="SiLVO, anxdpanic">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta6" provider-name="SiLVO, anxdpanic">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="script.module.simpleeval" version="0.9.10"/>

@@ -9,10 +9,19 @@ try:
     import xbmcaddon
 
     IN_KODI = True
+    _ADDON = xbmcaddon.Addon()
 except ImportError:
     IN_KODI = False
+    _ADDON = None
 
 ADDON_PATTERN = re.compile(r"\$ADDON\[([^\s\]]+)\s+(\d+)\]")
+
+
+def LANGUAGE(string_id: int) -> str:
+    """Get localized string from this addon."""
+    if not IN_KODI or not _ADDON:
+        return str(string_id)
+    return _ADDON.getLocalizedString(string_id)
 
 
 def resolve_label(label: str) -> str:

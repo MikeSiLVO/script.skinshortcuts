@@ -48,12 +48,15 @@ Build includes.xml from skin config files.
 
 **Process:**
 
-1. Check if menu.xml or menus.xml exists
-2. Check if rebuild is needed (unless force=True)
-3. Load SkinConfig (with userdata)
-4. Build includes.xml to all resolution folders
-5. Save config hashes
-6. Reload skin
+1. Check build lock (`skinshortcuts-isbuilding` window property) - skip if already building
+2. Set build lock
+3. Check if menus.xml exists
+4. Check if rebuild is needed (unless force=True)
+5. Load SkinConfig (with userdata)
+6. Build includes.xml to all resolution folders
+7. Save config hashes
+8. Reload skin
+9. Clear build lock (in finally block)
 
 **Returns:** True if built successfully
 

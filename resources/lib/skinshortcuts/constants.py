@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-MENU_FILE = "menu.xml"
 MENUS_FILE = "menus.xml"
 WIDGETS_FILE = "widgets.xml"
 BACKGROUNDS_FILE = "backgrounds.xml"

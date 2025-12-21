@@ -32,6 +32,8 @@ class ResolvedShortcut:
     action: str
     icon: str = "DefaultShortcut.png"
     label2: str = ""
+    action_play: str = ""
+    action_party: str = ""
 
 
 def scan_playlist_files(directory: str) -> list[tuple[str, str]]:
@@ -196,35 +198,52 @@ class ContentProvider:
 
         shortcuts = []
         for path in paths:
-            shortcuts.extend(self._scan_playlist_directory(path, default_window))
+            shortcuts.extend(self._scan_playlist_directory(path, default_window, target))
 
         self._cache[cache_key] = shortcuts
         return shortcuts
 
     def _scan_playlist_directory(
-        self, directory: str, default_window: str
+        self, directory: str, default_window: str, target: str = ""
     ) -> list[ResolvedShortcut]:
         """Scan a directory for playlist files and convert to shortcuts."""
         shortcuts = []
+        filter_video = target in ("video", "videos")
+        filter_music = target in ("audio", "music")
+
+        video_types = ("movies", "tvshows", "episodes", "musicvideos")
+        music_types = ("songs", "albums", "artists")
 
         for label, filepath in scan_playlist_files(directory):
             window = default_window
             display_label = label
+            playlist_type = ""
 
             if filepath.endswith(".xsp"):
                 playlist_type, playlist_name = self._parse_smart_playlist(filepath)
                 if playlist_name:
                     display_label = playlist_name
-                if playlist_type in ("songs", "albums", "artists", "mixed"):
+                if playlist_type in music_types:
                     window = "Music"
-                else:
+                elif playlist_type in video_types:
                     window = "Videos"
+
+            if filter_video and playlist_type and playlist_type not in video_types:
+                continue
+            if filter_music and playlist_type and playlist_type not in music_types:
+                continue
+
+            action_party = ""
+            if window == "Music":
+                action_party = f"PlayerControl(PartyMode({filepath}))"
 
             shortcuts.append(
                 ResolvedShortcut(
                     label=display_label,
                     action=f"ActivateWindow({window},{filepath},return)",
                     icon="DefaultPlaylist.png",
+                    action_play=f"PlayMedia({filepath})",
+                    action_party=action_party,
                 )
             )
 
@@ -512,11 +531,13 @@ class ContentProvider:
             return self._cache[cache_key]
 
         target_lower = target.lower()
-        if target_lower not in ("video", "music"):
+        if target_lower not in ("video", "videos", "music"):
             return []
 
-        base_path = f"special://xbmc/system/library/{target_lower}/"
-        window = "Videos" if target_lower == "video" else "Music"
+        # Normalize for Kodi library path (uses "video" not "videos")
+        lib_type = "video" if target_lower in ("video", "videos") else "music"
+        base_path = f"special://xbmc/system/library/{lib_type}/"
+        window = "Videos" if lib_type == "video" else "Music"
 
         shortcuts = []
         try:

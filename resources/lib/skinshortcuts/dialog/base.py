@@ -310,6 +310,8 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         listitem.setProperty("path", item.action or "")
         listitem.setProperty("originalAction", item.original_action or item.action or "")
         listitem.setProperty("skinshortcuts-disabled", "True" if item.disabled else "False")
+        listitem.setProperty("skinshortcuts-isRequired", "True" if item.required else "False")
+        listitem.setProperty("skinshortcuts-isProtected", "True" if item.protection else "False")
 
         if item.icon:
             listitem.setArt({"thumb": item.icon, "icon": item.icon})

@@ -372,7 +372,7 @@ def load_groupings(path: str | Path) -> list[Group]:
               <shortcut name="..." label="..." browse="videos">
                 <path>videodb://movies/genres/</path>
               </shortcut>
-              <content source="playlists" target="video"/>
+              <content source="playlists" target="videos"/>
               <group name="...">...</group>  <!-- nested -->
             </group>
           </groupings>

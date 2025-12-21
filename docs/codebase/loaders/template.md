@@ -1,7 +1,6 @@
 # loaders/template.py
 
 **Path:** `resources/lib/skinshortcuts/loaders/template.py`
-**Lines:** 484
 **Purpose:** Load template schema from templates.xml with expression, preset, and variable support.
 
 ***
@@ -12,9 +11,9 @@ Parses the `templates.xml` file which defines how menu items are transformed int
 
 ***
 
-## TemplateLoader Class (line 36)
+## TemplateLoader Class
 
-### `__init__`(path) (line 39)
+### `__init__`(path)
 
 Initialize with path to templates.xml.
 
@@ -27,7 +26,7 @@ Initialize with path to templates.xml.
 * `_variable_groups` - VariableGroup objects
 * `_includes` - Parsed IncludeDefinition objects
 
-### load() → TemplateSchema (line 47)
+### load() → TemplateSchema
 
 Load and parse the template schema.
 
@@ -85,7 +84,7 @@ Parse a variableGroup element.
 **Contains:**
 
 * `<variable name="..." condition="..."/>` references
-* `<variableGroup name="..."/>` nested group refs
+* `<variableGroup content="..."/>` nested group refs
 
 ***
 
@@ -103,13 +102,13 @@ Parse `<includes>` section containing `<include>` definitions for control XML re
 
 ***
 
-### `_parse_param`(elem) (line 228)
+### `_parse_param`(elem)
 
 Parse `<param name="..." default="..."/>` for raw templates.
 
 ***
 
-### `_parse_property`(elem, suffix="") (line 236)
+### `_parse_property`(elem, suffix="")
 
 Parse `<property name="..." from="..." condition="...">value</property>`.
 
@@ -117,7 +116,7 @@ Applies suffix transforms to `from` and `condition` if suffix provided.
 
 ***
 
-### `_parse_var`(elem, suffix="") (line 262)
+### `_parse_var`(elem, suffix="")
 
 Parse `<var name="..."><value condition="...">value</value></var>`.
 
@@ -125,13 +124,13 @@ Applies suffix transforms to conditions if suffix provided.
 
 ***
 
-### `_parse_preset`(elem) (line 282)
+### `_parse_preset`(elem)
 
 Parse `<preset name="..."><values condition="..." attr="val"/></preset>`.
 
 ***
 
-### `_parse_template`(elem) (line 298)
+### `_parse_template`(elem)
 
 Parse main template element.
 
@@ -140,6 +139,8 @@ Parse main template element.
 * `include` (required) - Output include name
 * `build` - "list", "true" (raw), or default (menu)
 * `idprefix` - For computed control IDs
+* `templateonly` - "true" to never build, "auto" to skip if unassigned
+* `menu` - Filter to specific menu (e.g., "mainmenu")
 
 **Children:**
 
@@ -152,10 +153,11 @@ Parse main template element.
 * `<variableGroup>` - Variable group references
 * `<list><item .../></list>` - For build="list"
 * `<controls>` - Raw XML controls
+* `<variables>` - Inline variable definitions
 
 ***
 
-### `_parse_submenu`(elem) (line 379)
+### `_parse_submenu`(elem)
 
 Parse submenu template element.
 
@@ -165,31 +167,31 @@ Parse submenu template element.
 
 ***
 
-### `_parse_property_group_ref`(elem) (line 419)
+### `_parse_property_group_ref`(elem)
 
 Parse property group reference.
 
-**Attributes:** name, suffix, condition
+**Attributes:** content, suffix, condition
 
 ***
 
-### `_parse_preset_ref`(elem) (line 433)
+### `_parse_preset_ref`(elem)
 
 Parse preset reference for direct property resolution.
 
-**Attributes:** name, suffix, condition
+**Attributes:** content, suffix, condition
 
 ***
 
-### `_parse_variable_group_ref`(elem) (line 448)
+### `_parse_variable_group_ref`(elem)
 
 Parse variableGroup reference in a template.
 
-**Attributes:** name, suffix, condition
+**Attributes:** content, suffix, condition
 
 ***
 
-### `_parse_variable_definition`(elem) (line 463)
+### `_parse_variable_definition`(elem)
 
 Parse a variable definition (global or inline).
 
@@ -200,7 +202,7 @@ Parse a variable definition (global or inline).
 
 ## Module Function
 
-### load_templates(path) (line 480)
+### load_templates(path)
 
 Convenience function to load template schema.
 
@@ -253,7 +255,7 @@ Convenience function to load template schema.
       <variable name="PosterVar" condition="widgetArt=Poster"/>
     </variableGroup>
     <variableGroup name="allVars">
-      <variableGroup name="artworkVars"/>  <!-- nested reference -->
+      <variableGroup content="artworkVars"/>  <!-- nested reference -->
     </variableGroup>
   </variables>
 
@@ -267,10 +269,21 @@ Convenience function to load template schema.
   <!-- Templates at root level -->
   <template include="HomeWidgets">
     <condition>hasWidget</condition>
-    <propertyGroup name="widgetProps"/>
-    <preset name="dimensions"/>
-    <variableGroup name="allVars"/>
+    <propertyGroup content="widgetProps"/>
+    <preset content="dimensions"/>
+    <variableGroup content="allVars"/>
     <controls>...</controls>
+  </template>
+
+  <!-- Template with menu filter and inline variables -->
+  <template include="BackgroundVars" menu="mainmenu" templateonly="true">
+    <condition>backgroundPath</condition>
+    <property name="backgroundPath" from="backgroundPath"/>
+    <variables>
+      <variable name="MainMenu_BackgroundPath">
+        <value condition="...">$PROPERTY[backgroundPath]</value>
+      </variable>
+    </variables>
   </template>
 
   <!-- Submenu templates at root level -->
@@ -282,12 +295,6 @@ Convenience function to load template schema.
 
 ***
 
-## Dead Code Analysis
-
-All code appears to be in active use.
-
-***
-
 ## Test Candidates
 
 1. `load()` with complete templates.xml
@@ -295,3 +302,5 @@ All code appears to be in active use.
 3. BuildMode parsing (list, true, default)
 4. Preset parsing with conditions
 5. Variable group nesting
+6. Menu attribute filtering
+7. Inline variables parsing

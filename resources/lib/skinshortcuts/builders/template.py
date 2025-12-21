@@ -75,12 +75,13 @@ class TemplateBuilder:
         """Build all template includes and variables.
 
         Templates with the same include name are merged into a single include element.
+        Variables with the same name are merged (children appended to existing).
         Variables are output at the root level (siblings to includes).
         """
         root = ET.Element("includes")
 
         include_map: dict[str, ET.Element] = {}
-        variables_list: list[ET.Element] = []
+        variable_map: dict[str, ET.Element] = {}
 
         # templateonly: "true" = never generate, "auto" = skip if unassigned
         template_only_settings: dict[str, str] = {}
@@ -97,11 +98,9 @@ class TemplateBuilder:
                     include_elem.set("name", include_name)
                     include_map[include_name] = include_elem
 
-                self._build_template_into(
-                    template, output, include_map[include_name], variables_list
-                )
+                self._build_template_into(template, output, include_map[include_name], variable_map)
 
-        for var_elem in variables_list:
+        for var_elem in variable_map.values():
             root.append(var_elem)
 
         for include_name, include_elem in include_map.items():
@@ -122,17 +121,21 @@ class TemplateBuilder:
         template: Template,
         output: TemplateOutput,
         include: ET.Element,
-        variables_list: list[ET.Element],
+        variable_map: dict[str, ET.Element],
     ) -> None:
         """Build template controls and variables for a specific output.
 
         Controls go into the include element.
-        Variables go into the variables_list (output at root level).
+        Variables go into the variable_map (merged by name, output at root level).
 
         The output's suffix is applied to all conditions and references,
         allowing one template to generate multiple includes.
         """
         for menu in self.menus:
+            # Filter by menu if specified
+            if template.menu and menu.name != template.menu:
+                continue
+
             for idx, item in enumerate(menu.items, start=1):
                 if item.disabled:
                     continue
@@ -151,14 +154,12 @@ class TemplateBuilder:
                 for var_def in template.variables:
                     var_elem = self._build_variable(var_def, context, item)
                     if var_elem is not None:
-                        variables_list.append(var_elem)
+                        self._add_variable(var_elem, variable_map)
 
                 for group_ref in template.variable_groups:
-                    effective_suffix = self._combine_suffixes(
-                        output.suffix, group_ref.suffix
-                    )
+                    effective_suffix = self._combine_suffixes(output.suffix, group_ref.suffix)
                     self._build_variable_group(
-                        group_ref, context, item, variables_list, effective_suffix
+                        group_ref, context, item, variable_map, effective_suffix
                     )
 
     def _combine_suffixes(self, base_suffix: str, ref_suffix: str) -> str:
@@ -275,12 +276,33 @@ class TemplateBuilder:
 
         return var_elem
 
+    def _add_variable(
+        self,
+        var_elem: ET.Element,
+        variable_map: dict[str, ET.Element],
+    ) -> None:
+        """Add a variable to the map, merging if same name exists.
+
+        If a variable with the same name already exists, append this variable's
+        children to the existing one. Otherwise, add as new entry.
+        """
+        var_name = var_elem.get("name", "")
+        if not var_name:
+            return
+
+        if var_name in variable_map:
+            # Merge: append children to existing variable
+            for child in var_elem:
+                variable_map[var_name].append(child)
+        else:
+            variable_map[var_name] = var_elem
+
     def _build_variable_group(
         self,
         group_ref: VariableGroupReference,
         context: dict[str, str],
         item: MenuItem,
-        variables_list: list[ET.Element],
+        variable_map: dict[str, ET.Element],
         override_suffix: str = "",
     ) -> None:
         """Build variables from a variableGroup reference.
@@ -306,7 +328,7 @@ class TemplateBuilder:
             from ..models.template import VariableGroupReference as VGRef
 
             nested_group_ref = VGRef(name=nested_ref.name, suffix=suffix, condition="")
-            self._build_variable_group(nested_group_ref, context, item, variables_list)
+            self._build_variable_group(nested_group_ref, context, item, variable_map)
 
         for var_ref in var_group.references:
             condition = var_ref.condition
@@ -324,7 +346,7 @@ class TemplateBuilder:
 
             var_elem = self._build_variable(var_def, context, item)
             if var_elem is not None:
-                variables_list.append(var_elem)
+                self._add_variable(var_elem, variable_map)
 
     def _substitute_variable_content(
         self,
@@ -644,9 +666,7 @@ class TemplateBuilder:
         """Strip {NOSUFFIX:...} markers, keeping only the content."""
         return re.sub(r"\{NOSUFFIX:([^}]+)\}", r"\1", condition)
 
-    def _check_conditions(
-        self, conditions: list[str], item: MenuItem, suffix: str = ""
-    ) -> bool:
+    def _check_conditions(self, conditions: list[str], item: MenuItem, suffix: str = "") -> bool:
         """Check if all template conditions match.
 
         When suffix is provided, it's applied to property names in conditions
@@ -789,8 +809,8 @@ class TemplateBuilder:
                 include_name = match.group(1)
                 include_elem = ET.Element("include")
                 include_elem.text = include_name
-                include_elem.tail = elem.text[match.end():]
-                elem.text = elem.text[:match.start()]
+                include_elem.tail = elem.text[match.end() :]
+                elem.text = elem.text[: match.start()]
                 elem.insert(0, include_elem)
 
     def _handle_skinshortcuts_include(
@@ -818,9 +838,7 @@ class TemplateBuilder:
         for i, child, include_name, wrap in reversed(children_to_replace):
             include_def = self.schema.get_include(include_name)
             if include_def and include_def.controls is not None:
-                expanded = self._process_controls(
-                    include_def.controls, context, item, menu
-                )
+                expanded = self._process_controls(include_def.controls, context, item, menu)
                 if expanded is not None:
                     tail = child.tail
                     elem.remove(child)
