@@ -1,8 +1,6 @@
 # Skin Shortcuts v3 - Codebase Documentation Index
 
 **Version:** 3.0.0-dev
-**Total Files:** 35 Python source files
-**Total Lines:** ~9,500
 
 **Quick Start:** See [OVERVIEW.md](OVERVIEW.md)
 
@@ -12,67 +10,68 @@
 
 ### Core Modules (`core/`)
 
-| File | Doc | Lines | Purpose |
-|------|-----|-------|---------|
-| conditions.py | [conditions.md](core/conditions.md) | ~190 | Condition evaluation |
-| constants.py | [constants.md](core/constants.md) | ~85 | All constants |
-| exceptions.py | [exceptions.md](core/exceptions.md) | ~40 | Exception hierarchy |
-| localize.py | [localize.md](core/localize.md) | ~60 | Label localization |
-| hashing.py | [hashing.md](core/hashing.md) | ~150 | Rebuild detection |
-| userdata.py | [userdata.md](core/userdata.md) | ~260 | User data storage |
-| manager.py | [manager.md](core/manager.md) | ~500 | Menu manager API |
-| config.py | [config.md](core/config.md) | ~220 | Config loader |
-| entry.py | [entry.md](core/entry.md) | ~340 | Entry point |
+| File | Doc | Purpose |
+|------|-----|---------|
+| conditions.py | [conditions.md](core/conditions.md) | Condition evaluation |
+| expressions.py | [expressions.md](core/expressions.md) | $MATH and $IF expressions |
+| constants.py | [constants.md](core/constants.md) | All constants |
+| exceptions.py | [exceptions.md](core/exceptions.md) | Exception hierarchy |
+| localize.py | [localize.md](core/localize.md) | Label localization |
+| hashing.py | [hashing.md](core/hashing.md) | Rebuild detection |
+| userdata.py | [userdata.md](core/userdata.md) | User data storage |
+| manager.py | [manager.md](core/manager.md) | Menu manager API |
+| config.py | [config.md](core/config.md) | Config loader |
+| entry.py | [entry.md](core/entry.md) | Entry point |
 
 ### Dialog Package (`dialog/`)
 
-| File | Doc | Lines | Purpose |
-|------|-----|-------|---------|
-| Overview | [README.md](dialog/README.md) | - | Package overview |
-| __init__.py | [init.md](dialog/init.md) | ~130 | Public API |
-| base.py | [base.md](dialog/base.md) | ~670 | Core initialization, events |
-| items.py | [items.md](dialog/items.md) | ~410 | Item operations |
-| pickers.py | [pickers.md](dialog/pickers.md) | ~520 | Shortcut/widget pickers |
-| properties.py | [properties.md](dialog/properties.md) | ~610 | Property management |
-| subdialogs.py | [subdialogs.md](dialog/subdialogs.md) | ~260 | Subdialog handling |
+| File | Doc | Purpose |
+|------|-----|---------|
+| Overview | [README.md](dialog/README.md) | Package overview |
+| `__init__.py` | [init.md](dialog/init.md) | Public API |
+| base.py | [base.md](dialog/base.md) | Core initialization, events |
+| items.py | [items.md](dialog/items.md) | Item operations |
+| pickers.py | [pickers.md](dialog/pickers.md) | Shortcut/widget pickers |
+| properties.py | [properties.md](dialog/properties.md) | Property management |
+| subdialogs.py | [subdialogs.md](dialog/subdialogs.md) | Subdialog handling |
 
 ### Models Package (`models/`)
 
-| File | Doc | Lines | Purpose |
-|------|-----|-------|---------|
-| Overview | [README.md](models/README.md) | - | Package overview |
-| menu.py | [menu.md](models/menu.md) | ~370 | Menu/item models |
-| widget.py | [widget.md](models/widget.md) | ~80 | Widget models |
-| background.py | [background.md](models/background.md) | ~96 | Background models |
-| property.py | [property.md](models/property.md) | ~100 | Property schema models |
-| template.py | [template.md](models/template.md) | ~260 | Template models |
+| File | Doc | Purpose |
+|------|-----|---------|
+| Overview | [README.md](models/README.md) | Package overview |
+| menu.py | [menu.md](models/menu.md) | Menu/item models |
+| widget.py | [widget.md](models/widget.md) | Widget models |
+| background.py | [background.md](models/background.md) | Background models |
+| property.py | [property.md](models/property.md) | Property schema models |
+| template.py | [template.md](models/template.md) | Template models |
 
 ### Loaders Package (`loaders/`)
 
-| File | Doc | Lines | Purpose |
-|------|-----|-------|---------|
-| Overview | [README.md](loaders/README.md) | - | Package overview |
-| base.py | [base.md](loaders/base.md) | ~150 | Base XML utilities |
-| menu.py | [menu.md](loaders/menu.md) | ~480 | Menu config loader |
-| widget.py | [widget.md](loaders/widget.md) | ~122 | Widget config loader |
-| background.py | [background.md](loaders/background.md) | ~162 | Background loader |
-| property.py | [property.md](loaders/property.md) | ~280 | Property schema loader |
-| template.py | [template.md](loaders/template.md) | ~480 | Template schema loader |
+| File | Doc | Purpose |
+|------|-----|---------|
+| Overview | [README.md](loaders/README.md) | Package overview |
+| base.py | [base.md](loaders/base.md) | Base XML utilities |
+| menu.py | [menu.md](loaders/menu.md) | Menu config loader |
+| widget.py | [widget.md](loaders/widget.md) | Widget config loader |
+| background.py | [background.md](loaders/background.md) | Background loader |
+| property.py | [property.md](loaders/property.md) | Property schema loader |
+| template.py | [template.md](loaders/template.md) | Template schema loader |
 
 ### Builders Package (`builders/`)
 
-| File | Doc | Lines | Purpose |
-|------|-----|-------|---------|
-| Overview | [README.md](builders/README.md) | - | Package overview |
-| includes.py | [includes.md](builders/includes.md) | ~290 | Includes.xml builder |
-| template.py | [template.md](builders/template.md) | ~850 | Template processor |
+| File | Doc | Purpose |
+|------|-----|---------|
+| Overview | [README.md](builders/README.md) | Package overview |
+| includes.py | [includes.md](builders/includes.md) | Includes.xml builder |
+| template.py | [template.md](builders/template.md) | Template processor |
 
 ### Providers Package (`providers/`)
 
-| File | Doc | Lines | Purpose |
-|------|-----|-------|---------|
-| Overview | [README.md](providers/README.md) | - | Package overview |
-| content.py | [content.md](providers/content.md) | ~500 | Dynamic content resolver |
+| File | Doc | Purpose |
+|------|-----|---------|
+| Overview | [README.md](providers/README.md) | Package overview |
+| content.py | [content.md](providers/content.md) | Dynamic content resolver |
 
 ***
 
@@ -292,3 +291,4 @@ When adding tests to the codebase, these are the recommended priorities:
 | Add new exception | exceptions.py |
 | Add new constant | constants.py |
 | Evaluate conditions | conditions.py |
+| Evaluate $MATH/$IF | expressions.py |

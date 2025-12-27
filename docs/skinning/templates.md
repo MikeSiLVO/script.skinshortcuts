@@ -14,6 +14,7 @@ The `templates.xml` file defines how the script generates include files. Templat
 * [Properties](#properties)
 * [Vars](#vars)
 * [Controls](#controls)
+* [Dynamic Expressions](#dynamic-expressions)
 * [Skinshortcuts Tag](#skinshortcuts-tag)
 * [Property Groups](#property-groups)
 * [Presets](#presets)
@@ -354,6 +355,100 @@ XML content output per item:
 | `$PARAM[name]` | Parameter (raw mode only) |
 
 Note: Vars defined with `<var>` are resolved during context building and accessible via `$PROPERTY[name]`.
+
+***
+
+## Dynamic Expressions
+
+Dynamic expressions allow computed values and conditional logic in templates.
+
+### $MATH - Arithmetic Expressions
+
+Compute numeric values using property variables:
+
+```xml
+<control type="panel" id="$MATH[mainmenuid * 1000 + 600 + id]">
+<posx>$MATH[index * 100 + 50]</posx>
+<width>$MATH[(columns - 1) * spacing + itemWidth]</width>
+```
+
+#### Supported Operators
+
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `+` | Addition | `id + 100` |
+| `-` | Subtraction | `id - 1` |
+| `*` | Multiplication | `mainmenuid * 1000` |
+| `/` | Division | `width / 2` |
+| `//` | Floor division | `total // count` |
+| `%` | Modulo (remainder) | `index % 2` |
+| `()` | Grouping | `(id - 1) * 100` |
+
+**Notes:**
+- Property values are automatically converted to numbers
+- Returns integers when possible, floats otherwise
+- Invalid expressions return the original text unchanged
+
+### $IF - Conditional Expressions
+
+Return different values based on conditions:
+
+```xml
+$IF[condition THEN trueValue]
+$IF[condition THEN trueValue ELSE falseValue]
+$IF[cond1 THEN val1 ELIF cond2 THEN val2 ELSE val3]
+```
+
+**Examples:**
+
+```xml
+<!-- Simple condition -->
+<param name="showThumb" value="$IF[widgetArt~Thumb THEN true ELSE false]"/>
+
+<!-- URL parameter separator -->
+<path>$PROPERTY[widgetPath]$IF[widgetPath~? THEN & ELSE ?]reload=true</path>
+
+<!-- Multiple conditions -->
+<layout>$IF[widgetType=movies THEN poster ELIF widgetType=albums THEN square ELSE landscape]</layout>
+
+<!-- Using keyword operators -->
+<visible>$IF[widgetPath NOT EMPTY THEN true ELSE false]</visible>
+<target>$IF[widgetType IN movies,episodes,tvshows THEN videos ELSE music]</target>
+```
+
+#### Condition Operators
+
+Uses the same [condition syntax](conditions.md) as other attributes:
+
+| Symbol | Keyword | Description | Example |
+|--------|---------|-------------|---------|
+| `=` | `EQUALS` | Equality | `widgetType=movies` |
+| `~` | `CONTAINS` | Substring | `widgetPath~videodb://` |
+| | `EMPTY` | Empty check | `widgetPath EMPTY` |
+| | `IN` | Value in list | `widgetType IN movies,tvshows` |
+| `+` | `AND` | Logical and | `widgetType=movies + widgetArt=Poster` |
+| `\|` | `OR` | Logical or | `widgetType=movies \| widgetType=tvshows` |
+| `!` | `NOT` | Negation | `!widgetPath` or `NOT widgetPath EMPTY` |
+
+### Nesting
+
+Expressions can be nested:
+
+```xml
+<!-- $PROPERTY inside $IF -->
+<value>$IF[useCustom THEN $PROPERTY[customPath] ELSE $PROPERTY[defaultPath]]</value>
+
+<!-- $MATH inside $IF -->
+<id>$IF[isSubmenu THEN $MATH[id + 1000] ELSE $PROPERTY[id]]</id>
+```
+
+### Order of Processing
+
+In template text substitution:
+1. `$MATH[...]` - arithmetic expressions
+2. `$IF[...]` - conditional expressions
+3. `$PROPERTY[...]` - property substitution
+4. `$INCLUDE[...]` - include conversion
 
 ***
 
@@ -828,6 +923,6 @@ When `$INCLUDE[...]` appears as text content in an element (e.g., after `$PROPER
 
 [Back to Top](#template-configuration)
 
-**Sections:** [Overview](#overview) | [File Structure](#file-structure) | [Template Element](#template-element) | [Multi-Output](#multi-output-templates) | [Build Modes](#build-modes) | [Properties](#properties) | [Vars](#vars) | [Controls](#controls) | [Skinshortcuts Tag](#skinshortcuts-tag) | [Property Groups](#property-groups) | [Presets](#presets) | [Variables](#variables) | [Expressions](#expressions) | [Includes](#includes) | [Submenus](#submenus) | [Conditions](#conditions) | [templateonly](#templateonly-attribute)
+**Sections:** [Overview](#overview) | [File Structure](#file-structure) | [Template Element](#template-element) | [Multi-Output](#multi-output-templates) | [Build Modes](#build-modes) | [Properties](#properties) | [Vars](#vars) | [Controls](#controls) | [Dynamic Expressions](#dynamic-expressions) | [Skinshortcuts Tag](#skinshortcuts-tag) | [Property Groups](#property-groups) | [Presets](#presets) | [Variables](#variables) | [Expressions](#expressions) | [Includes](#includes) | [Submenus](#submenus) | [Conditions](#conditions) | [templateonly](#templateonly-attribute)
 
 **Related Docs:** [Conditions](conditions.md) | [Properties](properties.md) | [Menus](menus.md) | [Widgets](widgets.md)

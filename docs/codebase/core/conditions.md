@@ -1,7 +1,6 @@
 # conditions.py
 
 **Path:** `resources/lib/skinshortcuts/conditions.py`
-**Lines:** ~225
 **Purpose:** Condition evaluation utilities for property-based conditions.
 
 ***
@@ -14,26 +13,41 @@ Evaluates property conditions using a simple expression language. Used throughou
 
 ## Expression Language
 
-| Syntax | Meaning | Example |
-|--------|---------|---------|
-| `prop` | Truthy (has value) | `widgetPath` |
-| `!prop` | Falsy (empty/not set) | `!suffix` |
-| `prop=value` | Equality | `widgetType=movies` |
-| `prop=` | Empty string check | `suffix=` |
-| `prop~value` | Contains | `widgetPath~library` |
-| `cond1 + cond2` | AND | `widgetType=movies + widgetPath~library` |
-| `cond1 \| cond2` | OR | `widgetType=movies \| widgetType=tvshows` |
-| `!cond` | NOT | `!widgetType=custom` or `!suffix` |
-| `[cond]` | Grouping | `![widgetType=movies \| widgetType=tvshows]` |
-| `prop=v1 \| v2 \| v3` | Compact OR | Expands to `prop=v1 \| prop=v2 \| prop=v3` |
+Supports both symbol and keyword forms for all operators.
 
-**Note:** Negation (`!`) applies to the immediately following term, so `!a + b` evaluates as `(!a) AND b`, not `!(a + b)`. Use brackets for grouped negation: `![a + b]`.
+### Comparison Operators
+
+| Symbol | Keyword | Meaning | Example |
+|--------|---------|---------|---------|
+| *(none)* | - | Truthy (has value) | `widgetPath` |
+| `=` | `EQUALS` | Equality | `widgetType=movies` or `widgetType EQUALS movies` |
+| `=` (empty) | - | Empty string check | `suffix=` |
+| `~` | `CONTAINS` | Contains substring | `widgetPath~library` or `widgetPath CONTAINS library` |
+| - | `EMPTY` | Is empty/not set | `widgetPath EMPTY` |
+| - | `IN` | Value in list | `widgetType IN movies,episodes,tvshows` |
+
+### Logical Operators
+
+| Symbol | Keyword | Meaning | Example |
+|--------|---------|---------|---------|
+| `+` | `AND` | Logical AND | `cond1 + cond2` or `cond1 AND cond2` |
+| `\|` | `OR` | Logical OR | `cond1 \| cond2` or `cond1 OR cond2` |
+| `!` | `NOT` | Negation | `!cond` or `NOT cond` |
+| `[]` | - | Grouping | `![cond1 \| cond2]` |
+
+### Compact OR
+
+```text
+prop=v1 | v2 | v3  →  prop=v1 | prop=v2 | prop=v3
+```
+
+**Note:** Negation applies to the immediately following term. `!a + b` evaluates as `(!a) AND b`, not `!(a + b)`. Use brackets for grouped negation: `![a + b]`.
 
 ***
 
 ## Functions
 
-### evaluate_condition(condition, properties) → bool (line 109)
+### evaluate_condition(condition, properties) → bool
 
 Main entry point - evaluate a condition against property values.
 
@@ -44,18 +58,22 @@ Main entry point - evaluate a condition against property values.
 
 **Returns:** True if condition matches, False otherwise. Empty/None conditions return True.
 
+**Process:**
+
+1. Normalize keywords to symbols (`AND`→`+`, `OR`→`|`, etc.)
+2. Expand compact OR syntax
+3. Evaluate expanded condition recursively
+
 **Used by:**
 
-* `dialog/base.py` - Fallback evaluation
-* `dialog/properties.py` - Option filtering
-* `dialog/pickers.py` - Shortcut filtering
-* `dialog/subdialogs.py` - Onclose condition evaluation
+* `dialog/` modules - Option filtering, fallbacks
 * `builders/template.py` - Template conditionals
-* `loaders/__init__.py` - Re-exported for backwards compatibility
+* `expressions.py` - $IF expression evaluation
+* `loaders/__init__.py` - Re-exported for convenience
 
 ***
 
-### expand_compact_or(condition) → str (line 21)
+### expand_compact_or(condition) → str
 
 Expand compact OR syntax to full form.
 
@@ -70,39 +88,38 @@ Expand compact OR syntax to full form.
 
 ## Internal Functions
 
-### `_split_preserving_brackets(text, delimiter)` → list[str] (line 70)
+### `_normalize_keywords(condition)` → str
+
+Convert keyword operators to symbol equivalents. Uses word boundaries to avoid replacing within values.
+
+**Conversions:** `AND`→`+`, `OR`→`|`, `NOT`→`!`, `EQUALS`→`=`, `CONTAINS`→`~`
+
+### `_split_preserving_brackets(text, delimiter)` → list[str]
 
 Split text by delimiter but preserve content inside brackets.
 
-### `_expand_or_segment(segment)` → str (line 95)
+### `_expand_or_segment(segment)` → str
 
-Expand a single OR segment.
+Expand a single OR segment with property cascading.
 
-### `_evaluate_expanded(condition, properties)` → bool (line 166)
+### `_evaluate_expanded(condition, properties)` → bool
 
-Evaluate an expanded condition (handles AND, OR, NOT, grouping).
+Evaluate an expanded condition. Handles AND, OR, NOT, and grouping recursively.
 
-### `_evaluate_single(condition, properties)` → bool (line 194)
+### `_evaluate_single(condition, properties)` → bool
 
 Evaluate a single atomic condition:
 
 * `property` → True if property has non-empty value (truthy)
-* `!property` → True if property is empty/not set (falsy)
+* `property EMPTY` → True if property is empty/not set
+* `property IN a,b,c` → True if property value is in list
 * `property=value` → True if property equals value
 * `property~value` → True if property contains value
 
 ***
 
-## Test Candidates
+## Related Modules
 
-1. `evaluate_condition()` with truthy check (`prop`)
-2. `evaluate_condition()` with falsy check (`!prop`)
-3. `evaluate_condition()` with equality (`=`)
-4. `evaluate_condition()` with contains (`~`)
-5. `evaluate_condition()` with AND (`+`)
-6. `evaluate_condition()` with OR (`|`)
-7. `evaluate_condition()` with NOT (`!prop=value`)
-8. `evaluate_condition()` with grouping (`[]`)
-9. `evaluate_condition()` negation in compounds (`!a + b`)
-10. `expand_compact_or()` expansion
-11. Edge cases: empty conditions, missing properties
+* `expressions.py` - Uses `evaluate_condition()` for $IF expressions
+* `builders/template.py` - Uses for template/preset conditionals
+* `dialog/` modules - Uses for option filtering

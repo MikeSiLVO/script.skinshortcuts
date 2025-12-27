@@ -1,8 +1,8 @@
 # models/background.py
 
 **Path:** `resources/lib/skinshortcuts/models/background.py`
-**Lines:** 96
-**Purpose:** Dataclass models for backgrounds and background groupings.
+
+Dataclass models for backgrounds and background groupings.
 
 ***
 
@@ -15,7 +15,7 @@ Defines the Background model and related grouping structures for the background 
 ## Type Alias
 
 ```python
-BackgroundGroupContent = Union[Background, BackgroundGroup, Content]  # line 15
+BackgroundGroupContent = Union[Background, BackgroundGroup, Content]
 ```
 
 Items that can appear in a BackgroundGroup's items list.
@@ -24,7 +24,7 @@ Items that can appear in a BackgroundGroup's items list.
 
 ## Enums
 
-### BackgroundType (line 18)
+### BackgroundType
 
 Enum defining available background types.
 
@@ -38,13 +38,13 @@ Enum defining available background types.
 | `LIVE` | Dynamic content from library |
 | `LIVE_PLAYLIST` | Dynamic content from user-selected playlist |
 
-**Used by:** Background.type, loaders/background.py, dialog.py
+**Used by:** Background.type, loaders/background.py, dialog/properties.py
 
 ***
 
 ## Classes
 
-### PlaylistSource (line 28)
+### PlaylistSource
 
 A source path for playlist scanning.
 
@@ -52,29 +52,29 @@ A source path for playlist scanning.
 |-------|------|---------|-------------|
 | `label` | str | required | Display label |
 | `path` | str | required | Path to scan for images |
-| `icon` | str | "DefaultPlaylist.png" | Icon for this source |
+| `icon` | str | `"DefaultPlaylist.png"` | Icon for this source |
 
-**Used by:** Background.sources, dialog.py (_pick_playlist)
+**Used by:** Background.sources, dialog/properties.py
 
 ***
 
-### BrowseSource (line 37)
+### BrowseSource
 
 A source path for browse dialogs.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `label` | str | required | Display label |
-| `path` | str | required | Browse starting path, or "browse" for free browser |
-| `condition` | str | "" | Property condition (evaluated against item properties) |
-| `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
-| `icon` | str | "" | Icon for this source |
+| `path` | str | required | Browse starting path, or `"browse"` for free browser |
+| `condition` | str | `""` | Property condition (evaluated against item properties) |
+| `visible` | str | `""` | Kodi visibility condition (evaluated at runtime) |
+| `icon` | str | `""` | Icon for this source |
 
-**Used by:** Background.browse_sources, dialog/items.py, dialog/properties.py
+**Used by:** Background.browse_sources, dialog/properties.py
 
 ***
 
-### Background (line 51)
+### Background
 
 A background assignable to menu items.
 
@@ -82,34 +82,42 @@ A background assignable to menu items.
 |-------|------|---------|-------------|
 | `name` | str | required | Unique identifier |
 | `label` | str | required | Display label |
-| `path` | str | "" | Image path (optional for browse/multi/playlist types) |
-| `type` | BackgroundType | STATIC | Background type |
-| `icon` | str | "" | Icon path |
-| `condition` | str | "" | Property condition (evaluated against item properties) |
-| `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
-| `sources` | list[PlaylistSource] | [] | Sources for playlist types |
-| `browse_sources` | list[BrowseSource] | [] | Sources for browse/multi types |
+| `path` | str | `""` | Image path (optional for browse/multi/playlist types) |
+| `type` | BackgroundType | `STATIC` | Background type |
+| `icon` | str | `""` | Icon path |
+| `condition` | str | `""` | Property condition (evaluated against item properties) |
+| `visible` | str | `""` | Kodi visibility condition (evaluated at runtime) |
+| `sources` | list[PlaylistSource] | `[]` | Sources for playlist types |
+| `browse_sources` | list[BrowseSource] | `[]` | Sources for browse/multi types |
+
+**Properties:**
+
+| Property | Returns | Description |
+|----------|---------|-------------|
+| `type_name` | str | Normalized type name (e.g., `"live-playlist"` not `"live_playlist"`) |
 
 **Methods:**
 
-* `to_properties()` → dict[str,str] - Convert to skin property dict
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `to_properties()` | dict[str, str] | Convert to skin property dict |
 
-**Property output:**
+**Property output from `to_properties()`:**
 
 ```python
 {
     "background": "my-background",
     "backgroundPath": "/path/to/image.jpg",
     "backgroundLabel": "My Background",
-    "backgroundType": "static"
+    "backgroundType": "live-playlist"  # normalized with hyphen
 }
 ```
 
-**Used by:** config.py, dialog.py (background picker), builders/includes.py
+**Used by:** config.py, dialog/properties.py
 
 ***
 
-### BackgroundGroup (line 74)
+### BackgroundGroup
 
 A group/category in background picker.
 
@@ -117,36 +125,30 @@ A group/category in background picker.
 |-------|------|---------|-------------|
 | `name` | str | required | Unique identifier |
 | `label` | str | required | Display label |
-| `condition` | str | "" | Property condition (evaluated against item properties) |
-| `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
-| `icon` | str | "" | Icon for picker display |
-| `items` | list[BackgroundGroupContent] | [] | Child items: Background, BackgroundGroup, or Content |
+| `condition` | str | `""` | Property condition (evaluated against item properties) |
+| `visible` | str | `""` | Kodi visibility condition (evaluated at runtime) |
+| `icon` | str | `""` | Icon for picker display |
+| `items` | list[BackgroundGroupContent] | `[]` | Child items: Background, BackgroundGroup, or Content |
 
-**Used by:** BackgroundConfig, dialog.py (_pick_background_from_groups), loaders/background.py
+**Used by:** BackgroundConfig, dialog/properties.py, loaders/background.py
 
 ***
 
-### BackgroundConfig (line 86)
+### BackgroundConfig
 
 Top-level background configuration container.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `backgrounds` | list[Background] | [] | All defined backgrounds (flat list) |
-| `groupings` | list[BackgroundGroup|Background] | [] | Picker structure (can include standalone backgrounds) |
+| `backgrounds` | list[Background] | `[]` | All defined backgrounds (flat list) |
+| `groupings` | list[BackgroundGroup \| Background] | `[]` | Picker structure (can include standalone backgrounds) |
 
-**Used by:** config.py (SkinConfig._background_config), loaders/background.py
-
-***
-
-## Dead Code Analysis
-
-All classes appear to be in active use.
+**Used by:** config.py, loaders/background.py
 
 ***
 
 ## Test Candidates
 
 1. `BackgroundType` enum values and names
-2. `Background.to_properties()` output format
-3. `Background.to_properties()` type name lowercase conversion
+2. `Background.type_name` property normalization
+3. `Background.to_properties()` output format
