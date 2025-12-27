@@ -184,7 +184,7 @@ Provide starting locations for the file browser:
 
 ```xml
 <source label="Skin Backgrounds" icon="DefaultFolder.png"
-        condition="Skin.HasSetting(UseHDBackgrounds)">
+        visible="Skin.HasSetting(UseHDBackgrounds)">
   special://skin/backgrounds/hd/
 </source>
 <source label="Browse...">browse</source>
@@ -194,7 +194,8 @@ Provide starting locations for the file browser:
 |-----------|-------------|
 | `label` | Display label in source picker |
 | `icon` | Icon for this source |
-| `condition` | Kodi visibility condition |
+| `condition` | Property condition (evaluated against item properties) |
+| `visible` | Kodi visibility condition (evaluated at runtime) |
 
 Use `browse` as the path for free file browser access.
 

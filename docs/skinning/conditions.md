@@ -55,7 +55,9 @@ Property conditions use a simple expression language to compare against the curr
 * `<shortcut condition="...">` - Filter in shortcut picker
 * `<group condition="...">` - Filter group in picker
 * `<widget condition="...">` - Filter widget in picker
+* `<background condition="...">` - Filter background in picker
 * `<option condition="...">` - Filter property option
+* `<source condition="...">` - Filter icon/browse source
 * Template `<condition>` - Control template building
 * Template `<property condition="...">` - Conditional property
 * Template `<value condition="...">` - Conditional var value
@@ -72,9 +74,10 @@ Evaluated at runtime using Kodi's condition system.
 * `<shortcut visible="...">` - Filter in shortcut picker
 * `<group visible="...">` - Filter group in picker
 * `<widget visible="...">` - Filter widget in picker
+* `<background visible="...">` - Filter background in picker
 * `<item visible="...">` - Filter in management dialog
-* Background `<condition>` - Filter background option
-* Icon `<source condition="...">` - Filter icon source
+* `<source visible="...">` - Filter icon/browse source
+* `<action condition="...">` - Conditional action execution
 
 ### Common Kodi Conditions
 
@@ -153,14 +156,46 @@ propertyName~value
 
 ## Operators
 
-| Operator | Meaning | Example |
-|----------|---------|---------|
-| *(none)* | Has value (truthy) | `widgetPath` |
-| `=` | Equals | `widgetType=movies` |
-| `~` | Contains | `widgetPath~videodb://` |
-| `+` | AND | `widgetType=movies + widgetStyle=Panel` |
-| `\|` | OR | `widgetType=movies \| widgetType=tvshows` |
-| `!` | NOT (negate) | `!widgetPath` or `!widgetType=movies` |
+Operators can be written as symbols or keywords. Use whichever style you prefer.
+
+### Comparison Operators
+
+| Symbol | Keyword | Meaning | Example |
+|--------|---------|---------|---------|
+| *(none)* | - | Has value (truthy) | `widgetPath` |
+| `=` | `EQUALS` | Equals | `widgetType=movies` or `widgetType EQUALS movies` |
+| `~` | `CONTAINS` | Contains substring | `widgetPath~videodb://` or `widgetPath CONTAINS videodb://` |
+| - | `EMPTY` | Is empty/not set | `widgetPath EMPTY` |
+| - | `IN` | Value in list | `widgetType IN movies,episodes,tvshows` |
+
+### Logical Operators
+
+| Symbol | Keyword | Meaning | Example |
+|--------|---------|---------|---------|
+| `+` | `AND` | Both must be true | `cond1 + cond2` or `cond1 AND cond2` |
+| `\|` | `OR` | Either must be true | `cond1 \| cond2` or `cond1 OR cond2` |
+| `!` | `NOT` | Negate condition | `!widgetPath` or `NOT widgetPath` |
+
+### EMPTY Operator
+
+Check if a property is empty or not set:
+
+```xml
+<option condition="widgetPath EMPTY">
+<option condition="NOT widgetPath EMPTY">
+```
+
+Equivalent to `!widgetPath` but more readable in complex conditions.
+
+### IN Operator
+
+Check if a property value matches any item in a comma-separated list:
+
+```xml
+<option condition="widgetType IN movies,episodes,tvshows">
+```
+
+Equivalent to `widgetType=movies | widgetType=episodes | widgetType=tvshows` but more concise.
 
 ***
 
@@ -172,10 +207,12 @@ Both conditions must be true:
 
 ```text
 condition1 + condition2
+condition1 AND condition2
 ```
 
 ```xml
 <option condition="widgetType=movies + widgetStyle=Panel">
+<option condition="widgetType EQUALS movies AND widgetStyle EQUALS Panel">
 ```
 
 ### OR
@@ -184,10 +221,12 @@ Either condition must be true:
 
 ```text
 condition1 | condition2
+condition1 OR condition2
 ```
 
 ```xml
 <shortcut condition="widgetType=movies | widgetType=tvshows">
+<shortcut condition="widgetType EQUALS movies OR widgetType EQUALS tvshows">
 ```
 
 ### Mixed
@@ -230,11 +269,15 @@ Check if property is empty or not set:
 
 ```text
 !propertyName
+NOT propertyName
+propertyName EMPTY
 ```
 
 ```xml
 <!-- True when suffix is empty (widget1 in multi-output) -->
 <skinshortcuts include="Navigation1" condition="!suffix"/>
+<skinshortcuts include="Navigation1" condition="NOT suffix"/>
+<skinshortcuts include="Navigation1" condition="suffix EMPTY"/>
 
 <!-- True when widgetPath is not set -->
 <option condition="!widgetPath">
@@ -246,10 +289,12 @@ Check if property does NOT equal a value:
 
 ```text
 !propertyName=value
+NOT propertyName=value
 ```
 
 ```xml
 <option condition="!widgetType=movies">
+<option condition="NOT widgetType EQUALS movies">
 ```
 
 ### Negation in Compound Conditions
@@ -258,11 +303,13 @@ Negation applies to the immediately following term:
 
 ```text
 !prop + other = (!prop) AND (other)
+NOT prop AND other = (NOT prop) AND (other)
 ```
 
 ```xml
 <!-- suffix empty AND widgetArt equals Poster -->
 <option condition="!suffix + widgetArt=Poster">
+<option condition="NOT suffix AND widgetArt EQUALS Poster">
 ```
 
 ### Grouped Negation

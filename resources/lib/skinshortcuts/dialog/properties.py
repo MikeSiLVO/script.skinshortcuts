@@ -455,6 +455,7 @@ class PropertiesMixin:
         related: dict[str, str | None] = {
             f"{prefix}Label": resolve_label(bg.label),
             f"{prefix}Path": bg.path,
+            f"{prefix}Type": bg.type_name,
         }
 
         self._set_item_property(item, prefix, bg.name, related, apply_suffix=False)
@@ -488,6 +489,7 @@ class PropertiesMixin:
         related: dict[str, str | None] = {
             f"{prefix}Label": label,
             f"{prefix}Path": custom_path,
+            f"{prefix}Type": bg.type_name,
         }
         if playlist_type:
             related[f"{prefix}PlaylistType"] = playlist_type
@@ -499,8 +501,10 @@ class PropertiesMixin:
         self._log(f"Clearing background properties for {prefix}")
 
         related: dict[str, str | None] = {
-            f"{prefix}Name": None,
+            f"{prefix}Label": None,
             f"{prefix}Path": None,
+            f"{prefix}Type": None,
+            f"{prefix}PlaylistType": None,
         }
 
         self._set_item_property(item, prefix, "", related, apply_suffix=False)

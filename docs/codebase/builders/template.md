@@ -16,7 +16,10 @@ The TemplateBuilder is the most complex part of the build system. It processes t
 | Pattern | Purpose |
 |---------|---------|
 | `_PROPERTY_PATTERN` | Matches `$PROPERTY[name]` |
-| `_EXP_PATTERN` | Matches `$EXP[name]` (expressions) |
+| `_EXP_PATTERN` | Matches `$EXP[name]` (template expressions) |
+| `_INCLUDE_PATTERN` | Matches `$INCLUDE[name]` |
+
+Dynamic expressions (`$MATH`, `$IF`) are handled by `expressions.py`.
 
 ***
 
@@ -286,9 +289,15 @@ Handle `<skinshortcuts include="..."/>` element replacements.
 
 ### `_substitute_text`(text, context, item, menu)
 
-Substitute `$PROPERTY[...]` in text.
+Substitute dynamic expressions in text.
 
-Checks context first, then item properties.
+**Processing order:**
+
+1. `$MATH[...]` - Arithmetic expressions (via `expressions.py`)
+2. `$IF[...]` - Conditional expressions (via `expressions.py`)
+3. `$PROPERTY[...]` - Property substitution
+
+Checks context first, then item properties for `$PROPERTY`.
 
 ***
 

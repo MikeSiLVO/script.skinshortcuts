@@ -11,6 +11,7 @@ import xml.etree.ElementTree as ET
 from typing import TYPE_CHECKING
 
 from ..conditions import evaluate_condition
+from ..expressions import process_if_expressions, process_math_expressions
 from ..loaders.base import apply_suffix_to_from, apply_suffix_transform
 from ..models.template import TemplateProperty
 
@@ -866,8 +867,24 @@ class TemplateBuilder:
         item: MenuItem,
         menu: Menu,
     ) -> str:
-        """Substitute $PROPERTY[...] in text."""
+        """Substitute $MATH, $IF, and $PROPERTY expressions in text.
 
+        Order of operations:
+        1. $MATH[...] - arithmetic expressions
+        2. $IF[...] - conditional expressions
+        3. $PROPERTY[...] - property substitution
+        """
+        properties = {**item.properties, **context}
+
+        # Process $MATH expressions
+        if "$MATH[" in text:
+            text = process_math_expressions(text, properties)
+
+        # Process $IF expressions
+        if "$IF[" in text:
+            text = process_if_expressions(text, properties)
+
+        # Process $PROPERTY expressions
         def replace_property(match: re.Match) -> str:
             name = match.group(1)
             if name in context:

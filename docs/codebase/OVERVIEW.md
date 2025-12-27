@@ -43,6 +43,8 @@ entry.py (RunScript entry point)
 | `userdata.py` | User customizations (JSON), merge with skin defaults |
 | `hashing.py` | Rebuild detection via config hashes |
 | `localize.py` | Label resolution ($LOCALIZE, $INFO, etc.) |
+| `conditions.py` | Condition evaluation (=, ~, AND, OR, NOT, EMPTY, IN) |
+| `expressions.py` | Dynamic expressions ($MATH, $IF) for templates |
 | `constants.py` | Shared constants (file names, target maps) |
 | `exceptions.py` | Custom exception hierarchy |
 

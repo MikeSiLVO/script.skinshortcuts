@@ -66,13 +66,18 @@ class Background:
     sources: list[PlaylistSource] = field(default_factory=list)  # For playlist types
     browse_sources: list[BrowseSource] = field(default_factory=list)  # For browse/multi
 
+    @property
+    def type_name(self) -> str:
+        """Return normalized type name matching XML attribute values."""
+        return self.type.name.lower().replace("_", "-")
+
     def to_properties(self) -> dict[str, str]:
         """Convert to property dictionary for skin access."""
         return {
             "background": self.name,
             "backgroundPath": self.path,
             "backgroundLabel": self.label,
-            "backgroundType": self.type.name.lower(),
+            "backgroundType": self.type_name,
         }
 
 
