@@ -1677,11 +1677,13 @@ class GUI(xbmcgui.WindowXMLDialog):
             log("Choose widget (312)")
             list_control = self.getControl(211)
             listitem = list_control.getSelectedItem()
+            widgetpath = listitem.getProperty("widgetPath")
 
             # If we're setting for an additional widget, get its number
             widget_id = ""
             if self.current_window.getProperty("widgetID"):
                 widget_id = ".%s" % self.current_window.getProperty("widgetID")
+                widgetpath = self._get_additionalproperty(listitem, "widgetPath%s" % widget_id)
                 self.current_window.clearProperty("widgetID")
 
             # Get the default widget for this item
@@ -1692,14 +1694,14 @@ class GUI(xbmcgui.WindowXMLDialog):
             self.lib_func.load_library("widgets")
 
             # Let user choose widget
-            if listitem.getProperty("widgetPath") == "":
+            if widgetpath == "":
                 selected_shortcut = self.lib_func.select_shortcut(grouping="widget", show_none=True)
             else:
                 selected_shortcut = self.lib_func.select_shortcut(
                     grouping="widget",
                     show_none=True,
                     custom=True,
-                    current_action=listitem.getProperty("widgetPath")
+                    current_action=widgetpath
                 )
 
             if selected_shortcut is None:
@@ -2532,6 +2534,20 @@ class GUI(xbmcgui.WindowXMLDialog):
         listitem.setProperty("additionalListItemProperties", repr(properties))
 
         self._add_additional_properties(listitem)
+
+    def _get_additionalproperty(self, listitem, property_name):
+        # Retrieve the additional properties of a user item
+        properties = []
+        if listitem.getProperty("additionalListItemProperties"):
+            properties = ast.literal_eval(listitem.getProperty("additionalListItemProperties"))
+
+        # Search for the property
+        for prop in properties:
+            if prop[0] == property_name:
+                return prop[1]
+
+        # If the property was not found, return None
+        return None
 
     def _remove_additionalproperty(self, listitem, property_name):
         # Remove an item from the additional properties of a user item
