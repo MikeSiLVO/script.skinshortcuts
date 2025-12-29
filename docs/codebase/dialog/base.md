@@ -178,7 +178,7 @@ Handle actions (cancel closes dialog, context shows menu).
 
 ### `_update_window_properties`() (line 481)
 
-Update window properties for skin context (groupname, allowWidgets, etc).
+Update window properties for skin context (menuname, allowWidgets, etc).
 
 ### `_update_deleted_property`() (line 473)
 

@@ -82,7 +82,7 @@ Defines a menu that is only built when referenced by a parent item.
 
 ```xml
 <submenu name="movies">
-  <allow widgets="false" backgrounds="false" submenus="false"/>
+  <allow widgets="false" backgrounds="false" submenus="false" />
   <item name="all-movies">
     <label>All Movies</label>
     <action>ActivateWindow(Videos,videodb://movies/)</action>
@@ -201,7 +201,7 @@ Menu-level defaults apply to all items in the menu.
 
 ```xml
 <menu name="mainmenu">
-  <allow widgets="true" backgrounds="true" submenus="true"/>
+  <allow widgets="true" backgrounds="true" submenus="true" />
   <defaults>
     <action when="before">Dialog.Close(all,true)</action>
     <property name="widgetStyle">Panel</property>
@@ -247,7 +247,7 @@ Controls which features are available in the management dialog. This is a direct
 
 ```xml
 <menu name="mainmenu">
-  <allow widgets="true" backgrounds="true" submenus="true"/>
+  <allow widgets="true" backgrounds="true" submenus="true" />
   ...
 </menu>
 ```
@@ -287,7 +287,7 @@ Items with `required="true"` cannot be deleted or disabled. If a user previously
 <item name="skin-settings">
   <label>Skin Settings</label>
   <action>ActivateWindow(SkinSettings)</action>
-  <protect type="all" heading="$LOCALIZE[19098]" message="$LOCALIZE[31377]"/>
+  <protect type="all" heading="$LOCALIZE[19098]" message="$LOCALIZE[31377]" />
 </item>
 ```
 
@@ -312,8 +312,7 @@ Define shortcuts available in the picker dialog.
       <action>ActivateWindow(Videos,videodb://movies/)</action>
     </shortcut>
 
-    <shortcut name="playlists" label="Browse Playlists" icon="DefaultPlaylist.png"
-              browse="videos" visible="Library.HasContent(movies)">
+    <shortcut name="playlists" label="Browse Playlists" icon="DefaultPlaylist.png" browse="videos" visible="Library.HasContent(movies)">
       <path>special://profile/playlists/video/</path>
     </shortcut>
 
@@ -321,7 +320,7 @@ Define shortcuts available in the picker dialog.
       <!-- Nested group -->
     </group>
 
-    <content source="playlists" target="videos" folder="Video Playlists"/>
+    <content source="playlists" target="videos" folder="Video Playlists" />
   </group>
 </groupings>
 ```
@@ -378,10 +377,10 @@ Define shortcuts available in the picker dialog.
 Add dynamic content from system sources:
 
 ```xml
-<content source="playlists" target="videos" folder="Video Playlists"/>
-<content source="addons" target="videos"/>
-<content source="favourites"/>
-<content source="sources" target="videos"/>
+<content source="playlists" target="videos" folder="Video Playlists" />
+<content source="addons" target="videos" />
+<content source="favourites" />
+<content source="sources" target="videos" />
 ```
 
 | Attribute | Description |
@@ -461,10 +460,10 @@ Define subdialogs triggered by button clicks. Used for multi-widget support.
 ```xml
 <dialogs>
   <subdialog buttonID="800" mode="widget1" setfocus="309">
-    <onclose condition="widgetType=custom" action="menu" menu="{item}.customwidget"/>
+    <onclose condition="widgetType=custom" action="menu" menu="{item}.customwidget" />
   </subdialog>
   <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2">
-    <onclose condition="widgetType.2=custom" action="menu" menu="{item}.customwidget.2"/>
+    <onclose condition="widgetType.2=custom" action="menu" menu="{item}.customwidget.2" />
   </subdialog>
 </dialogs>
 ```

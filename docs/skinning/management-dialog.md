@@ -122,7 +122,7 @@ Properties set on the dialog window for conditional visibility:
 
 | Property | Description |
 |----------|-------------|
-| `groupname` | Current menu ID (e.g., `mainmenu`) |
+| `menuname` | Current menu ID (e.g., `mainmenu`) |
 | `allowWidgets` | `true` or `false` |
 | `allowBackgrounds` | `true` or `false` |
 | `allowSubmenus` | `true` or `false` |
@@ -222,9 +222,9 @@ In `menus.xml`:
 
 ```xml
 <dialogs>
-  <subdialog buttonID="800" mode="widget1" setfocus="309"/>
+  <subdialog buttonID="800" mode="widget1" setfocus="309" />
   <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2">
-    <onclose condition="widgetType.2=custom" action="menu" menu="{item}.customwidget.2"/>
+    <onclose condition="widgetType.2=custom" action="menu" menu="{item}.customwidget.2" />
   </subdialog>
 </dialogs>
 ```
@@ -272,7 +272,7 @@ Use visibility conditions to show different controls. Note that subdialog proper
 Execute actions when subdialog closes:
 
 ```xml
-<onclose condition="widgetType.2=custom" action="menu" menu="{item}.customwidget.2"/>
+<onclose condition="widgetType.2=custom" action="menu" menu="{item}.customwidget.2" />
 ```
 
 * `{item}` is replaced with current item name

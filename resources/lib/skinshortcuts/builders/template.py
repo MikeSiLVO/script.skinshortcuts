@@ -13,7 +13,10 @@ from typing import TYPE_CHECKING
 from ..conditions import evaluate_condition
 from ..expressions import process_if_expressions, process_math_expressions
 from ..loaders.base import apply_suffix_to_from, apply_suffix_transform
+from ..log import get_logger
 from ..models.template import TemplateProperty
+
+log = get_logger("TemplateBuilder")
 
 if TYPE_CHECKING:
     from ..models import Menu, MenuItem
@@ -32,6 +35,7 @@ if TYPE_CHECKING:
     )
 
 _PROPERTY_PATTERN = re.compile(r"\$PROPERTY\[([^\]]+)\]")
+_PARENT_PATTERN = re.compile(r"\$PARENT\[([^\]]+)\]")
 _EXP_PATTERN = re.compile(r"\$EXP\[([^\]]+)\]")
 _INCLUDE_PATTERN = re.compile(r"\$INCLUDE\[([^\]]+)\]")
 
@@ -778,6 +782,20 @@ class TemplateBuilder:
                     elem.attrib.pop("condition", None)
                     elem.attrib.pop("wrap", None)
 
+            items_name = elem.get("items")
+            if items_name:
+                condition = elem.get("condition")
+                if condition and not self._eval_condition(condition, item, context):
+                    elem.set("_skinshortcuts_remove", "true")
+                    return
+
+                elem.set("_skinshortcuts_items", items_name)
+                elem.set("_skinshortcuts_items_filter", elem.get("filter") or "")
+                elem.attrib.pop("items", None)
+                elem.attrib.pop("condition", None)
+                elem.attrib.pop("filter", None)
+                return
+
         if elem.text:
             elem.text = self._substitute_text(elem.text, context, item, menu)
         if elem.tail:
@@ -794,6 +812,7 @@ class TemplateBuilder:
                 children_to_remove.append(child)
 
         self._handle_skinshortcuts_include(elem, context, item, menu)
+        self._handle_skinshortcuts_items(elem, context, item, menu)
 
         for child in children_to_remove:
             elem.remove(child)
@@ -860,31 +879,263 @@ class TemplateBuilder:
             else:
                 elem.remove(child)
 
+    def _handle_skinshortcuts_items(
+        self,
+        elem: ET.Element,
+        context: dict[str, str],
+        item: MenuItem,
+        menu: Menu,
+    ) -> None:
+        """Handle <skinshortcuts items="..."> submenu iteration.
+
+        Finds children marked with _skinshortcuts_items attribute and expands
+        them by iterating over submenu items. The submenu is looked up as
+        {parent_item.name}.{items_name}.
+
+        $PROPERTY[...] within the items block references submenu item properties.
+        $PARENT[...] references parent menu item properties.
+        """
+        children_to_replace: list[tuple[int, ET.Element, str, str]] = []
+        for i, child in enumerate(elem):
+            items_name = child.get("_skinshortcuts_items")
+            if items_name:
+                filter_cond = child.get("_skinshortcuts_items_filter") or ""
+                children_to_replace.append((i, child, items_name, filter_cond))
+
+        for i, child, items_name, filter_cond in reversed(children_to_replace):
+            submenu_id = f"{item.name}.{items_name}"
+            submenu = self._menu_map.get(submenu_id)
+
+            if not submenu:
+                log.debug(f"Submenu '{submenu_id}' not found for items iteration")
+                elem.remove(child)
+                continue
+            if not submenu.items:
+                log.debug(f"Submenu '{submenu_id}' has no items")
+                elem.remove(child)
+                continue
+
+            vars_list, preset_refs, prop_group_refs, output_elems = (
+                self._parse_items_transformations(child)
+            )
+
+            expanded_controls: list[ET.Element] = []
+            for sub_idx, sub_item in enumerate(submenu.items, start=1):
+                if sub_item.disabled:
+                    continue
+
+                if filter_cond and not self._eval_condition(filter_cond, sub_item, {}):
+                    continue
+
+                sub_context = self._build_items_context(sub_item, sub_idx, submenu)
+
+                self._apply_items_transformations(
+                    sub_context, sub_item, vars_list, preset_refs, prop_group_refs
+                )
+
+                for out_elem in output_elems:
+                    cloned = copy.deepcopy(out_elem)
+                    self._process_items_element(
+                        cloned, sub_context, context, sub_item, item
+                    )
+                    expanded_controls.append(cloned)
+
+            tail = child.tail
+            elem.remove(child)
+            for j, ctrl in enumerate(expanded_controls):
+                elem.insert(i + j, ctrl)
+            if tail and expanded_controls:
+                last = expanded_controls[-1]
+                last.tail = (last.tail or "") + tail
+
+    def _parse_items_transformations(
+        self, elem: ET.Element
+    ) -> tuple[
+        list[TemplateVar],
+        list[tuple[str, str]],
+        list[tuple[str, str]],
+        list[ET.Element],
+    ]:
+        """Parse property transformation elements from <skinshortcuts items>.
+
+        Returns:
+            Tuple of (vars, preset_refs, property_group_refs, output_elements)
+        """
+        from ..models.template import TemplateProperty as TProp
+        from ..models.template import TemplateVar as TVar
+
+        vars_list: list[TVar] = []
+        preset_refs: list[tuple[str, str]] = []
+        prop_group_refs: list[tuple[str, str]] = []
+        output_elems: list[ET.Element] = []
+
+        for child in elem:
+            if child.tag == "var":
+                name = child.get("name") or ""
+                values: list[TProp] = []
+                for val_elem in child.findall("value"):
+                    cond = val_elem.get("condition") or ""
+                    val = val_elem.text or ""
+                    values.append(TProp(name="", value=val, condition=cond))
+                if name:
+                    vars_list.append(TVar(name=name, values=values))
+            elif child.tag == "preset":
+                name = child.get("content") or ""
+                condition = child.get("condition") or ""
+                if name:
+                    preset_refs.append((name, condition))
+            elif child.tag == "propertyGroup":
+                name = child.get("content") or ""
+                condition = child.get("condition") or ""
+                if name:
+                    prop_group_refs.append((name, condition))
+            else:
+                output_elems.append(child)
+
+        return vars_list, preset_refs, prop_group_refs, output_elems
+
+    def _build_items_context(
+        self,
+        sub_item: MenuItem,
+        sub_idx: int,
+        submenu: Menu,
+    ) -> dict[str, str]:
+        """Build property context for a submenu item.
+
+        Context contains submenu item properties plus built-ins (index, name, menu, label).
+        Parent properties are accessed via $PARENT[...], not included in context.
+        """
+        context: dict[str, str] = {**submenu.defaults.properties, **sub_item.properties}
+        context["index"] = str(sub_idx)
+        context["name"] = sub_item.name
+        context["menu"] = submenu.name
+        context["label"] = sub_item.label
+
+        self._apply_fallbacks(sub_item, context)
+
+        return context
+
+    def _apply_items_transformations(
+        self,
+        context: dict[str, str],
+        sub_item: MenuItem,
+        vars_list: list[TemplateVar],
+        preset_refs: list[tuple[str, str]],
+        prop_group_refs: list[tuple[str, str]],
+    ) -> None:
+        """Apply var/preset/propertyGroup transformations to submenu item context."""
+        for var in vars_list:
+            value = self._resolve_var(var, sub_item, context)
+            if value is not None:
+                context[var.name] = value
+
+        for name, condition in preset_refs:
+            if condition and not self._eval_condition(condition, sub_item, context):
+                continue
+            preset = self.schema.get_preset(name)
+            if preset:
+                for row in preset.rows:
+                    if row.condition:
+                        if self._eval_condition(row.condition, sub_item, context):
+                            for attr_name, attr_value in row.values.items():
+                                if attr_name not in context:
+                                    context[attr_name] = attr_value
+                            break
+                    else:
+                        for attr_name, attr_value in row.values.items():
+                            if attr_name not in context:
+                                context[attr_name] = attr_value
+                        break
+
+        for name, condition in prop_group_refs:
+            if condition and not self._eval_condition(condition, sub_item, context):
+                continue
+            prop_group = self.schema.get_property_group(name)
+            if prop_group:
+                self._apply_property_group(prop_group, sub_item, context)
+
+    def _process_items_element(
+        self,
+        elem: ET.Element,
+        sub_context: dict[str, str],
+        parent_context: dict[str, str],
+        sub_item: MenuItem,
+        parent_item: MenuItem,
+    ) -> None:
+        """Process an element within items iteration, substituting both contexts.
+
+        $PROPERTY[...] -> submenu item properties (sub_context)
+        $PARENT[...] -> parent item properties (parent_context)
+        """
+        if elem.text:
+            elem.text = self._substitute_text(
+                elem.text, sub_context, sub_item,
+                parent_context=parent_context, parent_item=parent_item
+            )
+        if elem.tail:
+            elem.tail = self._substitute_text(
+                elem.tail, sub_context, sub_item,
+                parent_context=parent_context, parent_item=parent_item
+            )
+        for attr, value in list(elem.attrib.items()):
+            elem.set(
+                attr,
+                self._substitute_text(
+                    value, sub_context, sub_item,
+                    parent_context=parent_context, parent_item=parent_item
+                ),
+            )
+
+        for child in elem:
+            self._process_items_element(
+                child, sub_context, parent_context, sub_item, parent_item
+            )
+
     def _substitute_text(
         self,
         text: str,
         context: dict[str, str],
         item: MenuItem,
-        menu: Menu,
+        _menu: Menu | None = None,
+        parent_context: dict[str, str] | None = None,
+        parent_item: MenuItem | None = None,
     ) -> str:
-        """Substitute $MATH, $IF, and $PROPERTY expressions in text.
+        """Substitute $EXP, $PROPERTY, $MATH, and $IF expressions in text.
 
         Order of operations:
-        1. $MATH[...] - arithmetic expressions
-        2. $IF[...] - conditional expressions
-        3. $PROPERTY[...] - property substitution
+        1. $EXP[...] - expression references
+        2. $PARENT[...] - parent item properties (if parent_item provided)
+        3. $PROPERTY[...] - property substitution (so refs in $MATH get resolved)
+        4. $MATH[...] - arithmetic expressions
+        5. $IF[...] - conditional expressions
+
+        Args:
+            text: Text to process
+            context: Property context for $PROPERTY substitution
+            item: Menu item for property fallback
+            _menu: Unused, kept for compatibility
+            parent_context: Optional parent context for $PARENT substitution
+            parent_item: Optional parent item for $PARENT substitution
         """
-        properties = {**item.properties, **context}
+        if "$EXP[" in text:
+            text = self._expand_expressions(text)
 
-        # Process $MATH expressions
-        if "$MATH[" in text:
-            text = process_math_expressions(text, properties)
+        if parent_item is not None:
 
-        # Process $IF expressions
-        if "$IF[" in text:
-            text = process_if_expressions(text, properties)
+            def replace_parent(match: re.Match) -> str:
+                prop_name = match.group(1)
+                if parent_context and prop_name in parent_context:
+                    return parent_context[prop_name]
+                if prop_name == "label":
+                    return parent_item.label
+                if prop_name == "name":
+                    return parent_item.name
+                if prop_name in parent_item.properties:
+                    return parent_item.properties[prop_name]
+                return ""
 
-        # Process $PROPERTY expressions
+            text = _PARENT_PATTERN.sub(replace_parent, text)
+
         def replace_property(match: re.Match) -> str:
             name = match.group(1)
             if name in context:
@@ -893,7 +1144,21 @@ class TemplateBuilder:
                 return item.properties[name]
             return ""
 
-        return _PROPERTY_PATTERN.sub(replace_property, text)
+        text = _PROPERTY_PATTERN.sub(replace_property, text)
+
+        properties = {**item.properties, **context}
+        if parent_context:
+            properties = {**parent_context, **properties}
+        if parent_item:
+            properties = {**parent_item.properties, **properties}
+
+        if "$MATH[" in text:
+            text = process_math_expressions(text, properties)
+
+        if "$IF[" in text:
+            text = process_if_expressions(text, properties)
+
+        return text
 
     def write(self, path: str, indent: bool = True) -> None:
         """Write template includes to file."""

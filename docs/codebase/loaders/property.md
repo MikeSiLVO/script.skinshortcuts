@@ -44,7 +44,7 @@ Parse `<include name="...">` definitions for reuse.
 
 #### `_expand_include`(include_elem, suffix="")
 
-Expand an `<include content="..."/>` reference.
+Expand an `<include content="..." />` reference.
 
 Supports suffix transform via `suffix` attribute.
 
@@ -132,34 +132,34 @@ Convenience function to load property schema.
   <!-- Includes section for reusable option sets -->
   <includes>
     <include name="styleOptions">
-      <option value="List" label="List"/>
-      <option value="Panel" label="Panel"/>
+      <option value="List" label="List" />
+      <option value="Panel" label="Panel" />
     </include>
   </includes>
 
   <!-- Property definitions (data schema) -->
-  <property name="widget" type="widget"/>
+  <property name="widget" type="widget" />
   <property name="widgetStyle" requires="widgetPath">
     <options>
-      <include content="styleOptions"/>
+      <include content="styleOptions" />
       <option value="custom" label="Custom" condition="widgetType=custom">
         <icon>special://skin/icons/custom.png</icon>
       </option>
     </options>
   </property>
-  <property name="background" type="background"/>
+  <property name="background" type="background" />
 
   <!-- Button mappings -->
   <buttons>
     <!-- Group with suffix for widget buttons -->
     <group suffix="true">
-      <button id="309" property="widget" title="Select Widget"/>
-      <button id="1001" property="widgetStyle" title="Widget Style" showNone="false"/>
+      <button id="309" property="widget" title="Select Widget" />
+      <button id="1001" property="widgetStyle" title="Widget Style" showNone="false" />
       <!-- Toggle with type/requires on button (no property definition needed) -->
-      <button id="1022" property="widgetHide" type="toggle" requires="widgetStyle" title="Hide Widget"/>
+      <button id="1022" property="widgetHide" type="toggle" requires="widgetStyle" title="Hide Widget" />
     </group>
     <!-- Non-widget buttons outside group (no suffix) -->
-    <button id="310" property="background" type="background" title="Background"/>
+    <button id="310" property="background" type="background" title="Background" />
   </buttons>
 
   <!-- Fallbacks -->

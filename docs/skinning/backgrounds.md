@@ -150,8 +150,7 @@ Uses a Kodi info label that resolves to an image path:
   <icon>DefaultPicture.png</icon>
 </background>
 
-<background name="slideshow" label="Random Movie Slideshow" type="property"
-            visible="System.AddonIsEnabled(script.skin.info.service) + Library.HasContent(movies)">
+<background name="slideshow" label="Random Movie Slideshow" type="property" visible="System.AddonIsEnabled(script.skin.info.service) + Library.HasContent(movies)">
   <path>$INFO[Window(Home).Property(SkinHelper.Slideshow.Movie.FanArt)]</path>
   <icon>DefaultMovies.png</icon>
 </background>
@@ -183,8 +182,7 @@ User browses for a single image file:
 Provide starting locations for the file browser:
 
 ```xml
-<source label="Skin Backgrounds" icon="DefaultFolder.png"
-        visible="Skin.HasSetting(UseHDBackgrounds)">
+<source label="Skin Backgrounds" icon="DefaultFolder.png" visible="Skin.HasSetting(UseHDBackgrounds)">
   special://skin/backgrounds/hd/
 </source>
 <source label="Browse...">browse</source>
@@ -244,8 +242,7 @@ User selects a playlist to extract images from:
 Dynamic background from library content:
 
 ```xml
-<background name="random-movies" label="Random Movie Fanart" type="live"
-            visible="Library.HasContent(movies)">
+<background name="random-movies" label="Random Movie Fanart" type="live" visible="Library.HasContent(movies)">
   <path>random movies</path>
   <icon>DefaultMovies.png</icon>
 </background>
@@ -329,8 +326,7 @@ See [Conditions](conditions.md) for syntax.
 Evaluated at runtime using `xbmc.getCondVisibility()`:
 
 ```xml
-<background name="skin-fanart" label="Skin Fanart"
-            visible="System.AddonIsEnabled(script.skin.info.service)">
+<background name="skin-fanart" label="Skin Fanart" visible="System.AddonIsEnabled(script.skin.info.service)">
   ...
 </background>
 
@@ -342,9 +338,7 @@ Evaluated at runtime using `xbmc.getCondVisibility()`:
 ### Multiple Conditions
 
 ```xml
-<background name="advanced" label="Advanced Background"
-            condition="widgetType=movies"
-            visible="Skin.HasSetting(ShowAdvancedBackgrounds)">
+<background name="advanced" label="Advanced Background" condition="widgetType=movies" visible="Skin.HasSetting(ShowAdvancedBackgrounds)">
   ...
 </background>
 ```
@@ -378,7 +372,7 @@ The `backgroundPlaylistType` property contains the raw content type from the sma
 | `artists` | Artist content |
 | `mixed` | Mixed content types |
 
-This property is useful for determining artwork display - episodes and musicvideos don't have poster artwork, so skins can use this to select appropriate fallback images.
+Episodes and musicvideos don't have poster artwork. Skins can use this property to select fallback images.
 
 Additional properties can be configured via [properties.xml](properties.md).
 

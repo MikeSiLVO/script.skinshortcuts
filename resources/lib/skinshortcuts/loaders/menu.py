@@ -259,8 +259,6 @@ def _parse_item(elem, menu_name: str, path: str) -> MenuItem:
                 condition=get_attr(action_elem, "condition") or "",
             ))
 
-    if not actions:
-        raise MenuConfigError(path, f"Item '{item_name}' missing <action>")
 
     properties = {}
     for prop_elem in elem.findall("property"):

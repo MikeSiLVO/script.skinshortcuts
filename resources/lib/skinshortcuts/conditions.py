@@ -247,7 +247,14 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
         prop_name, value = condition.split("=", 1)
         prop_name = prop_name.strip()
         value = value.strip()
-        actual = properties.get(prop_name, "")
+        # Check if left side is a property name or a literal value
+        if prop_name in properties:
+            actual = properties[prop_name]
+        elif prop_name.lower() in ("true", "false"):
+            # Literal boolean comparison (e.g., from $IF after $PROPERTY substitution)
+            actual = prop_name
+        else:
+            actual = ""
         result = actual == value
         return not result if negated else result
 
@@ -259,6 +266,15 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
         result = value in actual
         return not result if negated else result
 
-    # Property name only: truthy if non-empty
-    result = bool(properties.get(condition, ""))
+    # Literal boolean value (e.g., from $PROPERTY substitution)
+    if condition.lower() in ("true", "false"):
+        result = condition.lower() == "true"
+        return not result if negated else result
+
+    # Property name only: truthy if non-empty (but "false" string is falsy)
+    val = properties.get(condition, "")
+    if val.lower() in ("true", "false"):
+        result = val.lower() == "true"
+    else:
+        result = bool(val)
     return not result if negated else result

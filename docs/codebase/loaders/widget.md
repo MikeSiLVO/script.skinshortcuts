@@ -99,7 +99,7 @@ Parse a widget group element.
   </widget>
 
   <!-- Custom widget (no path required) -->
-  <widget name="custom" label="Custom" type="custom" slot="widget"/>
+  <widget name="custom" label="Custom" type="custom" slot="widget" />
 
   <!-- Group with nested widgets -->
   <group name="movies" label="Movies" icon="DefaultMovies.png" source="library">
@@ -109,7 +109,7 @@ Parse a widget group element.
 
     <!-- Nested group -->
     <group name="genres" label="By Genre">
-      <content source="library" target="moviegenres"/>
+      <content source="library" target="moviegenres" />
     </group>
   </group>
 

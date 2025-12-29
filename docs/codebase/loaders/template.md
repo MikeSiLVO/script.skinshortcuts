@@ -83,8 +83,8 @@ Parse a variableGroup element.
 
 **Contains:**
 
-* `<variable name="..." condition="..."/>` references
-* `<variableGroup content="..."/>` nested group refs
+* `<variable name="..." condition="..." />` references
+* `<variableGroup content="..." />` nested group refs
 
 ***
 
@@ -104,7 +104,7 @@ Parse `<includes>` section containing `<include>` definitions for control XML re
 
 ### `_parse_param`(elem)
 
-Parse `<param name="..." default="..."/>` for raw templates.
+Parse `<param name="..." default="..." />` for raw templates.
 
 ***
 
@@ -126,7 +126,7 @@ Applies suffix transforms to conditions if suffix provided.
 
 ### `_parse_preset`(elem)
 
-Parse `<preset name="..."><values condition="..." attr="val"/></preset>`.
+Parse `<preset name="..."><values condition="..." attr="val" /></preset>`.
 
 ***
 
@@ -229,15 +229,15 @@ Convenience function to load template schema.
   <!-- Presets section -->
   <presets>
     <preset name="dimensions">
-      <values condition="widgetLayout=list" width="100" height="50"/>
-      <values width="200" height="100"/>
+      <values condition="widgetLayout=list" width="100" height="50" />
+      <values width="200" height="100" />
     </preset>
   </presets>
 
   <!-- Property groups section -->
   <propertyGroups>
     <propertyGroup name="widgetProps">
-      <property name="content" from="widgetPath"/>
+      <property name="content" from="widgetPath" />
       <var name="aspect">
         <value condition="widgetType=poster">stretch</value>
         <value>scale</value>
@@ -252,10 +252,10 @@ Convenience function to load template schema.
       <value>fallback</value>
     </variable>
     <variableGroup name="artworkVars">
-      <variable name="PosterVar" condition="widgetArt=Poster"/>
+      <variable name="PosterVar" condition="widgetArt=Poster" />
     </variableGroup>
     <variableGroup name="allVars">
-      <variableGroup content="artworkVars"/>  <!-- nested reference -->
+      <variableGroup content="artworkVars" />  <!-- nested reference -->
     </variableGroup>
   </variables>
 
@@ -269,16 +269,16 @@ Convenience function to load template schema.
   <!-- Templates at root level -->
   <template include="HomeWidgets">
     <condition>hasWidget</condition>
-    <propertyGroup content="widgetProps"/>
-    <preset content="dimensions"/>
-    <variableGroup content="allVars"/>
+    <propertyGroup content="widgetProps" />
+    <preset content="dimensions" />
+    <variableGroup content="allVars" />
     <controls>...</controls>
   </template>
 
   <!-- Template with menu filter and inline variables -->
   <template include="BackgroundVars" menu="mainmenu" templateonly="true">
     <condition>backgroundPath</condition>
-    <property name="backgroundPath" from="backgroundPath"/>
+    <property name="backgroundPath" from="backgroundPath" />
     <variables>
       <variable name="MainMenu_BackgroundPath">
         <value condition="...">$PROPERTY[backgroundPath]</value>
@@ -288,7 +288,7 @@ Convenience function to load template schema.
 
   <!-- Submenu templates at root level -->
   <submenu include="Submenu" level="1">
-    <property name="items" from="submenu"/>
+    <property name="items" from="submenu" />
   </submenu>
 </templates>
 ```

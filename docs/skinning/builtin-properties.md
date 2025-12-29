@@ -151,8 +151,8 @@ Properties defined in `properties.xml` are stored on items.
 <!-- properties.xml -->
 <property name="widgetStyle" type="options">
   <options>
-    <option value="Panel" label="Panel"/>
-    <option value="Wide" label="Wide"/>
+    <option value="Panel" label="Panel" />
+    <option value="Wide" label="Wide" />
   </options>
 </property>
 ```
@@ -187,8 +187,8 @@ Templates can define additional properties for output.
 ```xml
 <!-- templates.xml -->
 <template include="MainMenu" idprefix="menu">
-  <property name="id" from="id"/>
-  <property name="index" from="index"/>
+  <property name="id" from="id" />
+  <property name="index" from="index" />
   <property name="focusCondition">Container(9000).HasFocus($PROPERTY[index])</property>
   <var name="aspectRatio">
     <value condition="widgetArt=Poster">stretch</value>

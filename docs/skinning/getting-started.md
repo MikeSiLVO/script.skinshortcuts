@@ -170,9 +170,9 @@ To let users assign widgets to menu items:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <properties>
-  <property name="widget" type="widget"/>
+  <property name="widget" type="widget" />
   <buttons>
-    <button id="309" property="widget" type="widget"/>
+    <button id="309" property="widget" type="widget" />
   </buttons>
 </properties>
 ```

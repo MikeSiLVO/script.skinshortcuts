@@ -106,7 +106,7 @@ propertyName
 <shortcut condition="widgetPath">
 
 <!-- True if suffix has any value (widget2 in multi-output) -->
-<skinshortcuts include="HorizontalNavigation2" condition="suffix"/>
+<skinshortcuts include="HorizontalNavigation2" condition="suffix" />
 ```
 
 ### Property Empty (Falsy)
@@ -115,14 +115,17 @@ Check if property is empty or not set:
 
 ```text
 !propertyName
+propertyName EMPTY
 ```
+
+Both forms are equivalent. See also: [EMPTY Operator](#empty-operator)
 
 ```xml
 <!-- True if widgetPath is empty or not set -->
 <shortcut condition="!widgetPath">
 
 <!-- True if no suffix (widget1 in multi-output) -->
-<skinshortcuts include="HorizontalNavigation1" condition="!suffix"/>
+<skinshortcuts include="HorizontalNavigation1" condition="!suffix" />
 ```
 
 ### Equality
@@ -165,7 +168,7 @@ Operators can be written as symbols or keywords. Use whichever style you prefer.
 | *(none)* | - | Has value (truthy) | `widgetPath` |
 | `=` | `EQUALS` | Equals | `widgetType=movies` or `widgetType EQUALS movies` |
 | `~` | `CONTAINS` | Contains substring | `widgetPath~videodb://` or `widgetPath CONTAINS videodb://` |
-| - | `EMPTY` | Is empty/not set | `widgetPath EMPTY` |
+| - | `EMPTY` | Is empty/not set | `widgetPath EMPTY` (same as `!widgetPath`) |
 | - | `IN` | Value in list | `widgetType IN movies,episodes,tvshows` |
 
 ### Logical Operators
@@ -185,7 +188,10 @@ Check if a property is empty or not set:
 <option condition="NOT widgetPath EMPTY">
 ```
 
-Equivalent to `!widgetPath` but more readable in complex conditions.
+> **Equivalents:** These all mean "widgetPath is empty/not set":
+> - `widgetPath EMPTY`
+> - `!widgetPath`
+> - `NOT widgetPath`
 
 ### IN Operator
 
@@ -275,9 +281,9 @@ propertyName EMPTY
 
 ```xml
 <!-- True when suffix is empty (widget1 in multi-output) -->
-<skinshortcuts include="Navigation1" condition="!suffix"/>
-<skinshortcuts include="Navigation1" condition="NOT suffix"/>
-<skinshortcuts include="Navigation1" condition="suffix EMPTY"/>
+<skinshortcuts include="Navigation1" condition="!suffix" />
+<skinshortcuts include="Navigation1" condition="NOT suffix" />
+<skinshortcuts include="Navigation1" condition="suffix EMPTY" />
 
 <!-- True when widgetPath is not set -->
 <option condition="!widgetPath">
@@ -385,9 +391,7 @@ Multiple `<condition>` elements are ANDed together.
 ```xml
 <groupings>
   <group name="library" label="Library" visible="Library.HasContent(movies)">
-    <shortcut name="movies" label="Movies"
-              condition="widgetType=movies"
-              visible="Library.HasContent(movies)">
+    <shortcut name="movies" label="Movies" condition="widgetType=movies" visible="Library.HasContent(movies)">
       <action>ActivateWindow(Videos,videodb://movies/)</action>
     </shortcut>
   </group>
@@ -400,8 +404,8 @@ For multi-widget support, templates can define multiple outputs with different s
 
 ```xml
 <template name="Widgets">
-  <output include="widget1" idprefix="8011"/>
-  <output include="widget2" idprefix="8021" suffix=".2"/>
+  <output include="widget1" idprefix="8011" />
+  <output include="widget2" idprefix="8021" suffix=".2" />
   ...
 </template>
 ```
@@ -410,12 +414,12 @@ The `suffix` built-in property is available in conditions:
 
 ```xml
 <!-- Widget 1 (no suffix) -->
-<skinshortcuts include="HorizontalNavigation1" condition="!suffix"/>
-<values condition="!suffix" top="424"/>
+<skinshortcuts include="HorizontalNavigation1" condition="!suffix" />
+<values condition="!suffix" top="424" />
 
 <!-- Widget 2 (suffix=.2) -->
-<skinshortcuts include="HorizontalNavigation2" condition="suffix=.2"/>
-<values condition="suffix=.2" top="70"/>
+<skinshortcuts include="HorizontalNavigation2" condition="suffix=.2" />
+<values condition="suffix=.2" top="70" />
 
 <!-- Any widget with a suffix -->
 <option condition="suffix">

@@ -90,7 +90,7 @@ Parse subdialog definitions from `<dialogs>` element.
 ```xml
 <dialogs>
   <subdialog buttonID="800" mode="widget1" setfocus="309" suffix=".2">
-    <onclose condition="widgetType=custom" action="menu" menu="{item}.customwidget"/>
+    <onclose condition="widgetType=custom" action="menu" menu="{item}.customwidget" />
   </subdialog>
 </dialogs>
 ```
@@ -145,7 +145,7 @@ Parse a menu item element.
 
 * `<label2>`, `<icon>`, `<thumb>`, `<visible>`, `<disabled>`
 * `<property name="...">` children
-* `<protect type="..." heading="..." message="..."/>`
+* `<protect type="..." heading="..." message="..." />`
 * `widget`, `background`, `submenu`, `required` attributes
 
 **Note:** `widget` and `background` attributes are shorthand for properties.

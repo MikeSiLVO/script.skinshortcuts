@@ -496,7 +496,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def _update_window_properties(self) -> None:
         """Update window properties for skin to show current context."""
         try:
-            self.setProperty("groupname", self.menu_id)
+            self.setProperty("menuname", self.menu_id)
 
             if self.manager:
                 menu = self.manager.config.get_menu(self.menu_id)

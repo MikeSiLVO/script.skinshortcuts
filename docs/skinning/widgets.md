@@ -43,9 +43,7 @@ Widgets and groups are defined directly at the root level:
 ## Widget Element
 
 ```xml
-<widget name="recent-movies" label="$LOCALIZE[20386]" type="movies"
-        target="videos" icon="DefaultRecentlyAddedMovies.png"
-        source="library" condition="..." visible="...">
+<widget name="recent-movies" label="$LOCALIZE[20386]" type="movies" target="videos" icon="DefaultRecentlyAddedMovies.png" source="library" condition="..." visible="...">
   <path>videodb://recentlyaddedmovies/</path>
   <limit>25</limit>
   <sortby>dateadded</sortby>
@@ -146,11 +144,11 @@ Organize widgets into categories for the picker dialog:
 
     <!-- Nested group -->
     <group name="genres" label="By Genre">
-      <content source="library" target="moviegenres"/>
+      <content source="library" target="moviegenres" />
     </group>
 
     <!-- Dynamic content -->
-    <content source="playlists" target="videos"/>
+    <content source="playlists" target="videos" />
   </group>
 
   <!-- Flat widget (no group) -->
@@ -183,8 +181,8 @@ Groups can contain:
 Add dynamic content from system sources:
 
 ```xml
-<content source="playlists" target="videos"/>
-<content source="addons" target="videos" folder="Video Add-ons"/>
+<content source="playlists" target="videos" />
+<content source="addons" target="videos" folder="Video Add-ons" />
 ```
 
 | Attribute | Description |
@@ -203,8 +201,8 @@ Add dynamic content from system sources:
 The `nodes` source provides access to library navigation nodes (the top-level library categories like Movies, TV Shows, Music Videos, etc.):
 
 ```xml
-<content source="nodes" target="videos"/>
-<content source="nodes" target="music"/>
+<content source="nodes" target="videos" />
+<content source="nodes" target="music" />
 ```
 
 #### Nodes Target Values
@@ -221,15 +219,15 @@ The `nodes` source provides access to library navigation nodes (the top-level li
 The `library` source provides access to library database content (genres, years, actors, etc.):
 
 ```xml
-<content source="library" target="moviegenres"/>
-<content source="library" target="tvgenres"/>
-<content source="library" target="musicgenres"/>
-<content source="library" target="years"/>
-<content source="library" target="studios"/>
-<content source="library" target="actors"/>
-<content source="library" target="directors"/>
-<content source="library" target="artists"/>
-<content source="library" target="albums"/>
+<content source="library" target="moviegenres" />
+<content source="library" target="tvgenres" />
+<content source="library" target="musicgenres" />
+<content source="library" target="years" />
+<content source="library" target="studios" />
+<content source="library" target="actors" />
+<content source="library" target="directors" />
+<content source="library" target="artists" />
+<content source="library" target="albums" />
 ```
 
 #### Library Target Values
@@ -285,9 +283,7 @@ Evaluated at runtime using `xbmc.getCondVisibility()`:
 ### Multiple Conditions
 
 ```xml
-<widget name="advanced" label="Advanced Widget"
-        condition="widgetType=movies"
-        visible="Skin.HasSetting(ShowAdvancedWidgets)">
+<widget name="advanced" label="Advanced Widget" condition="widgetType=movies" visible="Skin.HasSetting(ShowAdvancedWidgets)">
   ...
 </widget>
 ```
@@ -338,8 +334,8 @@ Configure via [subdialogs](menus.md#subdialogs) in `menus.xml`:
 
 ```xml
 <dialogs>
-  <subdialog buttonID="800" mode="widget1" setfocus="309"/>
-  <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2"/>
+  <subdialog buttonID="800" mode="widget1" setfocus="309" />
+  <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2" />
 </dialogs>
 ```
 

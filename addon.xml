@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta7" provider-name="SiLVO, anxdpanic">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta8" provider-name="SiLVO, anxdpanic">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
-v3.0.0~beta4
-- Complete addon rewrite
-- JSON-based userdata
+v3.0.0~beta8
+- Template: skinshortcuts items attribute for submenu iteration
+- Template: $PARENT[] expression for parent item properties
+- Template: $MATH[] and $IF[] dynamic expressions
+- Dialog: groupname property renamed to menuname
         </news>
         <summary lang="en_GB">Custom menus, properties, and artwork for skins</summary>
         <platform>all</platform>
