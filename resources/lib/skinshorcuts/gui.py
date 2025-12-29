@@ -151,7 +151,7 @@ class GUI(xbmcgui.WindowXMLDialog):
 
             # Set enabled condition for various controls
             # Load any skin-defined enable condition overrides
-            enable_overrides: dict[int, str] = {}
+            enable_overrides = {}
             tree = self.data_func.get_overrides_skin()
             for elem in tree.findall("enable"):
                 control_id = elem.get("id")
@@ -163,7 +163,7 @@ class GUI(xbmcgui.WindowXMLDialog):
             for control_id in (111, 302, 307, 401):
                 condition = locked_condition
                 if control_id in enable_overrides:
-                    condition = f"{locked_condition} + [{enable_overrides[control_id]}]"
+                    condition = "%s + [%s]" % (locked_condition, enable_overrides[control_id])
                 try:
                     self.getControl(control_id).setEnableCondition(condition)
                 except:
