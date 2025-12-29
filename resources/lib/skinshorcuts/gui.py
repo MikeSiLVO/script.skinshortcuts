@@ -150,31 +150,25 @@ class GUI(xbmcgui.WindowXMLDialog):
                 pass
 
             # Set enabled condition for various controls
+            # Load any skin-defined enable condition overrides
+            enable_overrides: dict[int, str] = {}
+            tree = self.data_func.get_overrides_skin()
+            for elem in tree.findall("enable"):
+                control_id = elem.get("id")
+                if control_id and elem.text:
+                    enable_overrides[int(control_id)] = elem.text
+
             has111 = True
-            try:
-                self.getControl(111).setEnableCondition(
-                    "String.IsEmpty(Container(211).ListItem.Property(LOCKED))"
-                )
-            except:
-                has111 = False
-            try:
-                self.getControl(302).setEnableCondition(
-                    "String.IsEmpty(Container(211).ListItem.Property(LOCKED))"
-                )
-            except:
-                pass
-            try:
-                self.getControl(307).setEnableCondition(
-                    "String.IsEmpty(Container(211).ListItem.Property(LOCKED))"
-                )
-            except:
-                pass
-            try:
-                self.getControl(401).setEnableCondition(
-                    "String.IsEmpty(Container(211).ListItem.Property(LOCKED))"
-                )
-            except:
-                pass
+            locked_condition = "String.IsEmpty(Container(211).ListItem.Property(LOCKED))"
+            for control_id in (111, 302, 307, 401):
+                condition = locked_condition
+                if control_id in enable_overrides:
+                    condition = f"{locked_condition} + [{enable_overrides[control_id]}]"
+                try:
+                    self.getControl(control_id).setEnableCondition(condition)
+                except:
+                    if control_id == 111:
+                        has111 = False
 
             # Set button labels
             if self.nolabels == "false":
