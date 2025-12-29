@@ -1466,7 +1466,7 @@ class LibraryFunctions:
 
                         listitem = self.create([path, item['name'], shortcut_type, {
                             "icon": "DefaultAddon.png",
-                            "thumb": "thumb"
+                            "thumb": thumb
                         }])
 
                         # If this is a plugin, mark that we can browse it
