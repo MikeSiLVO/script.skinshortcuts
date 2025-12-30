@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from ..models import Menu, MenuItem
     from ..models.property import PropertySchema
     from ..models.template import (
+        ItemsDefinition,
         Preset,
         PresetGroupReference,
         PresetReference,
@@ -330,9 +331,11 @@ class TemplateBuilder:
         suffix = override_suffix if override_suffix else group_ref.suffix
 
         for nested_ref in var_group.group_refs:
-            from ..models.template import VariableGroupReference as VGRef
+            from ..models.template import VariableGroupReference
 
-            nested_group_ref = VGRef(name=nested_ref.name, suffix=suffix, condition="")
+            nested_group_ref = VariableGroupReference(
+                name=nested_ref.name, suffix=suffix, condition=""
+            )
             self._build_variable_group(nested_group_ref, context, item, variable_map)
 
         for var_ref in var_group.references:
@@ -782,18 +785,10 @@ class TemplateBuilder:
                     elem.attrib.pop("condition", None)
                     elem.attrib.pop("wrap", None)
 
-            items_name = elem.get("items")
-            if items_name:
-                condition = elem.get("condition")
-                if condition and not self._eval_condition(condition, item, context):
-                    elem.set("_skinshortcuts_remove", "true")
-                    return
-
-                elem.set("_skinshortcuts_items", items_name)
-                elem.set("_skinshortcuts_items_filter", elem.get("filter") or "")
-                elem.attrib.pop("items", None)
-                elem.attrib.pop("condition", None)
-                elem.attrib.pop("filter", None)
+            insert_name = elem.get("insert")
+            if insert_name:
+                elem.set("_skinshortcuts_insert", insert_name)
+                elem.attrib.pop("insert", None)
                 return
 
         if elem.text:
@@ -884,26 +879,38 @@ class TemplateBuilder:
         elem: ET.Element,
         context: dict[str, str],
         item: MenuItem,
-        menu: Menu,
+        _menu: Menu,
     ) -> None:
-        """Handle <skinshortcuts items="..."> submenu iteration.
+        """Handle <skinshortcuts insert="X" /> submenu iteration.
 
-        Finds children marked with _skinshortcuts_items attribute and expands
-        them by iterating over submenu items. The submenu is looked up as
-        {parent_item.name}.{items_name}.
+        Finds children marked with _skinshortcuts_insert attribute, looks up
+        the matching ItemsDefinition, and expands by iterating over submenu items.
+        The submenu is looked up as {parent_item.name}.{items_def.source}.
 
-        $PROPERTY[...] within the items block references submenu item properties.
+        $PROPERTY[...] within the items controls references submenu item properties.
         $PARENT[...] references parent menu item properties.
         """
-        children_to_replace: list[tuple[int, ET.Element, str, str]] = []
+        children_to_replace: list[tuple[int, ET.Element, str]] = []
         for i, child in enumerate(elem):
-            items_name = child.get("_skinshortcuts_items")
-            if items_name:
-                filter_cond = child.get("_skinshortcuts_items_filter") or ""
-                children_to_replace.append((i, child, items_name, filter_cond))
+            insert_name = child.get("_skinshortcuts_insert")
+            if insert_name:
+                children_to_replace.append((i, child, insert_name))
 
-        for i, child, items_name, filter_cond in reversed(children_to_replace):
-            submenu_id = f"{item.name}.{items_name}"
+        for i, child, insert_name in reversed(children_to_replace):
+            items_def = self.schema.get_items_template(insert_name)
+            if not items_def:
+                log.debug(f"Items definition '{insert_name}' not found")
+                elem.remove(child)
+                continue
+
+            if items_def.condition and not self._eval_condition(
+                items_def.condition, item, context
+            ):
+                elem.remove(child)
+                continue
+
+            source = items_def.get_source()
+            submenu_id = f"{item.name}.{source}"
             submenu = self._menu_map.get(submenu_id)
 
             if not submenu:
@@ -915,22 +922,26 @@ class TemplateBuilder:
                 elem.remove(child)
                 continue
 
-            vars_list, preset_refs, prop_group_refs, output_elems = (
-                self._parse_items_transformations(child)
-            )
+            if items_def.controls is None:
+                elem.remove(child)
+                continue
+
+            output_elems = list(items_def.controls)
 
             expanded_controls: list[ET.Element] = []
             for sub_idx, sub_item in enumerate(submenu.items, start=1):
                 if sub_item.disabled:
                     continue
 
-                if filter_cond and not self._eval_condition(filter_cond, sub_item, {}):
+                if items_def.filter and not self._eval_condition(
+                    items_def.filter, sub_item, {}
+                ):
                     continue
 
                 sub_context = self._build_items_context(sub_item, sub_idx, submenu)
 
-                self._apply_items_transformations(
-                    sub_context, sub_item, vars_list, preset_refs, prop_group_refs
+                self._apply_items_transformations_from_definition(
+                    sub_context, sub_item, items_def
                 )
 
                 for out_elem in output_elems:
@@ -948,51 +959,38 @@ class TemplateBuilder:
                 last = expanded_controls[-1]
                 last.tail = (last.tail or "") + tail
 
-    def _parse_items_transformations(
-        self, elem: ET.Element
-    ) -> tuple[
-        list[TemplateVar],
-        list[tuple[str, str]],
-        list[tuple[str, str]],
-        list[ET.Element],
-    ]:
-        """Parse property transformation elements from <skinshortcuts items>.
+    def _apply_items_transformations_from_definition(
+        self,
+        sub_context: dict[str, str],
+        sub_item: MenuItem,
+        items_def: ItemsDefinition,
+    ) -> None:
+        """Apply property transformations from an ItemsDefinition."""
+        resolved_props: set[str] = set()
+        for prop in items_def.properties:
+            if prop.name in resolved_props:
+                continue
+            value = self._resolve_property(prop, sub_item, sub_context, "")
+            if value is not None:
+                sub_context[prop.name] = value
+                resolved_props.add(prop.name)
 
-        Returns:
-            Tuple of (vars, preset_refs, property_group_refs, output_elements)
-        """
-        from ..models.template import TemplateProperty as TProp
-        from ..models.template import TemplateVar as TVar
+        for var in items_def.vars:
+            value = self._resolve_var(var, sub_item, sub_context, "")
+            if value is not None:
+                sub_context[var.name] = value
 
-        vars_list: list[TVar] = []
-        preset_refs: list[tuple[str, str]] = []
-        prop_group_refs: list[tuple[str, str]] = []
-        output_elems: list[ET.Element] = []
+        for ref in items_def.preset_refs:
+            if ref.condition and not self._eval_condition(ref.condition, sub_item, sub_context):
+                continue
+            self._apply_preset(ref, sub_item, sub_context, "")
 
-        for child in elem:
-            if child.tag == "var":
-                name = child.get("name") or ""
-                values: list[TProp] = []
-                for val_elem in child.findall("value"):
-                    cond = val_elem.get("condition") or ""
-                    val = val_elem.text or ""
-                    values.append(TProp(name="", value=val, condition=cond))
-                if name:
-                    vars_list.append(TVar(name=name, values=values))
-            elif child.tag == "preset":
-                name = child.get("content") or ""
-                condition = child.get("condition") or ""
-                if name:
-                    preset_refs.append((name, condition))
-            elif child.tag == "propertyGroup":
-                name = child.get("content") or ""
-                condition = child.get("condition") or ""
-                if name:
-                    prop_group_refs.append((name, condition))
-            else:
-                output_elems.append(child)
-
-        return vars_list, preset_refs, prop_group_refs, output_elems
+        for ref in items_def.property_groups:
+            if ref.condition and not self._eval_condition(ref.condition, sub_item, sub_context):
+                continue
+            group = self.schema.get_property_group(ref.name)
+            if group:
+                self._apply_property_group(group, sub_item, sub_context, "")
 
     def _build_items_context(
         self,

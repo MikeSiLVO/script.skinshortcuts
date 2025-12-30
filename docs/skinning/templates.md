@@ -549,50 +549,84 @@ If the condition evaluates to false, the entire element is removed.
 
 ## Submenu Items Iteration
 
-The `<skinshortcuts items="...">` element iterates over submenu items within a template, generating controls for each item.
+Items templates iterate over submenu items, generating controls for each item. They are defined separately from regular templates and referenced via insert markers.
 
-### Basic Syntax
+### Defining Items Templates
+
+Items templates are defined at the root level using `<template items="name">`:
 
 ```xml
-<template include="Widgets">
-  <condition>widgetType=custom</condition>
-  <controls>
-    <control type="grouplist" id="$MATH[$PROPERTY[index] * 1000 + 400]">
-      <skinshortcuts>visibility</skinshortcuts>
+<templates>
+  <!-- Items template definition -->
+  <template items="widgets" source="widgets">
+    <property name="widget_id" from="index" />
+    <property name="widget_path" from="widgetPath" />
+    <property name="widget_label" from="label" />
 
-      <skinshortcuts items="widgets" condition="widgetType=custom">
-        <control type="group" id="$MATH[$PARENT[index] * 1000 + 600 + $PROPERTY[index]]">
-          <include content="WidgetPanel">
-            <param name="path">$PROPERTY[widgetPath]</param>
-            <param name="label">$PROPERTY[label]</param>
-          </include>
-        </control>
-      </skinshortcuts>
+    <controls>
+      <control type="group" id="$MATH[$PARENT[index] * 1000 + 600 + widget_id]">
+        <include content="WidgetPanel">
+          <param name="path">$PROPERTY[widget_path]</param>
+          <param name="label">$PROPERTY[widget_label]</param>
+          <param name="parent">$PARENT[label]</param>
+        </include>
+      </control>
+    </controls>
+  </template>
 
-    </control>
-  </controls>
-</template>
+  <!-- Regular template that uses the items template -->
+  <template include="Widgets">
+    <condition>widgetType=custom</condition>
+    <controls>
+      <control type="grouplist">
+        <skinshortcuts>visibility</skinshortcuts>
+
+        <!-- Insert widgets here -->
+        <skinshortcuts insert="widgets" />
+      </control>
+    </controls>
+  </template>
+</templates>
+```
+
+### Items Template Attributes
+
+| Attribute | Required | Description |
+|-----------|----------|-------------|
+| `items` | Yes | Template name for insert marker lookup |
+| `source` | No | Submenu suffix to iterate (defaults to `items` value) |
+| `filter` | No | Only include submenu items matching this condition |
+
+### Insert Marker
+
+Use `<skinshortcuts insert="name" />` in regular templates to insert the items template output:
+
+```xml
+<controls>
+  <skinshortcuts insert="widgets" />
+</controls>
 ```
 
 ### How It Works
 
-1. The template iterates over main menu items matching the template condition
-2. For each main menu item, `<skinshortcuts items="widgets">` looks up a submenu named `{item.name}.widgets`
-3. For each submenu item, the inner controls are generated with property substitution
+1. The regular template iterates over main menu items
+2. For each main menu item, `<skinshortcuts insert="widgets" />` finds the items template
+3. The items template looks up submenu `{parent.name}.{source}` (e.g., `movies.widgets`)
+4. For each submenu item, the items template controls are generated
 
 ### Submenu Naming Convention
 
-The submenu is looked up as `{parent_item.name}.{items_name}`:
+The submenu is looked up as `{parent_item.name}.{source}`:
 
-| Parent Item | Items Attribute | Submenu Looked Up |
-|-------------|-----------------|-------------------|
-| `movies` | `items="widgets"` | `movies.widgets` |
-| `tvshows` | `items="hubWidgets"` | `tvshows.hubWidgets` |
-| `music` | `items="widgets"` | `music.widgets` |
+| Parent Item | Source | Submenu Looked Up |
+|-------------|--------|-------------------|
+| `movies` | `widgets` | `movies.widgets` |
+| `tvshows` | `hubWidgets` | `tvshows.hubWidgets` |
+| `music` | `widgets` | `music.widgets` |
 
 ### Property Contexts
 
-Two property contexts are available within items iteration:
+Two property contexts are available within items templates:
 
 | Placeholder | Description |
 |-------------|-------------|
@@ -618,50 +652,41 @@ Two property contexts are available within items iteration:
 | `label` | Parent menu item label |
 | *custom* | Any property defined on the parent item |
 
-### Attributes
-
-| Attribute | Required | Description |
-|-----------|----------|-------------|
-| `items` | Yes | Submenu name suffix (e.g., `widgets` → `{parent}.widgets`) |
-| `condition` | No | Only iterate if parent item matches condition |
-| `filter` | No | Only include submenu items matching this condition |
-
 ### Condition vs Filter
 
-* `condition` - Evaluated against the **parent** menu item. If false, the entire items block is skipped.
-* `filter` - Evaluated against each **submenu** item. Items not matching are skipped.
+* `condition` on items template - Evaluated against the **parent** menu item. If false, the entire insert is skipped.
+* `filter` on items template - Evaluated against each **submenu** item. Items not matching are skipped.
 
 ```xml
-<!-- Only for items with widgetType=custom, only include Poster widgets -->
-<skinshortcuts items="widgets" condition="widgetType=custom" filter="widgetArt=Poster">
-  ...
-</skinshortcuts>
+<!-- Only include poster-style widgets -->
+<template items="poster_widgets" source="widgets" filter="widgetArt=Poster">
+  <controls>...</controls>
+</template>
 ```
 
 ### Property Transformations
 
-Vars and presets can be defined inside the items block to transform submenu item properties:
+Vars and presets can be defined in items templates:
 
 ```xml
-<skinshortcuts items="widgets" condition="widgetType=custom">
-  <!-- Var: set widgetInclude based on widgetArt -->
+<template items="widgets" source="widgets">
   <var name="widgetInclude">
     <value condition="widgetArt=Poster">Widget_Poster</value>
     <value condition="widgetArt=Landscape">Widget_Landscape</value>
     <value>Widget_Default</value>
   </var>
 
-  <!-- Preset: apply dimensions based on widgetArt -->
   <preset content="WidgetDimensions" />
 
-  <!-- Controls use the resolved properties -->
-  <control type="group">
-    <include content="$PROPERTY[widgetInclude]">
-      <param name="width">$PROPERTY[width]</param>
-      <param name="height">$PROPERTY[height]</param>
-    </include>
-  </control>
-</skinshortcuts>
+  <controls>
+    <control type="group">
+      <include content="$PROPERTY[widgetInclude]">
+        <param name="width">$PROPERTY[width]</param>
+        <param name="height">$PROPERTY[height]</param>
+      </include>
+    </control>
+  </controls>
+</template>
 ```
 
 ### Supported Transformations
@@ -674,20 +699,24 @@ Vars and presets can be defined inside the items block to transform submenu item
 
 ### Dynamic Expressions
 
-All dynamic expressions work within items:
+All dynamic expressions work within items templates:
 
 ```xml
-<skinshortcuts items="widgets">
-  <control type="group" id="$MATH[$PARENT[index] * 1000 + 600 + $PROPERTY[index]]">
-    <visible>String.IsEqual(Container(9000).ListItem.Property(name),$PARENT[name])</visible>
-    <limit>$IF[$PROPERTY[widgetLimit] THEN $PROPERTY[widgetLimit] ELSE 25]</limit>
-  </control>
-</skinshortcuts>
+<template items="widgets" source="widgets">
+  <property name="idx" from="index" />
+
+  <controls>
+    <control type="group" id="$MATH[$PARENT[index] * 1000 + 600 + idx]">
+      <visible>String.IsEqual(Container(9000).ListItem.Property(name),$PARENT[name])</visible>
+      <limit>$IF[$PROPERTY[widgetLimit] THEN $PROPERTY[widgetLimit] ELSE 25]</limit>
+    </control>
+  </controls>
+</template>
 ```
 
-### Multiple Items Blocks
+### Multiple Insert Points
 
-A template can have multiple items blocks for different submenus:
+A template can use multiple insert markers for different items templates:
 
 ```xml
 <template include="Widgets">
@@ -695,22 +724,39 @@ A template can have multiple items blocks for different submenus:
   <controls>
     <control type="grouplist">
       <!-- Primary widgets -->
-      <skinshortcuts items="widgets" condition="widgetType=custom">
-        <control type="group">...</control>
-      </skinshortcuts>
+      <skinshortcuts insert="widgets" />
 
-      <!-- Hub widgets (only if hubEnabled=true) -->
-      <skinshortcuts items="hubWidgets" condition="hubEnabled=true">
-        <control type="group">...</control>
-      </skinshortcuts>
+      <!-- Hub widgets -->
+      <skinshortcuts insert="hub_widgets" />
+    </control>
+
+    <!-- Breadcrumb area -->
+    <control type="group">
+      <skinshortcuts insert="breadcrumb" />
     </control>
   </controls>
 </template>
 ```
 
+With corresponding items templates:
+
+```xml
+<template items="widgets" source="widgets">
+  <controls>...</controls>
+</template>
+
+<template items="hub_widgets" source="hubWidgets">
+  <controls>...</controls>
+</template>
+
+<template items="breadcrumb" source="widgets">
+  <controls>...</controls>
+</template>
+```
+
 ### Empty Submenus
 
-If a submenu doesn't exist or has no items, the items block produces no output. Other sibling elements in the template are unaffected.
+If a submenu doesn't exist or has no items, the insert marker produces no output. Other sibling elements in the template are unaffected.
 
 ### Disabled Items
 

@@ -7,20 +7,7 @@
 
 ## Overview
 
-The TemplateBuilder is the most complex part of the build system. It processes templates defined in templates.xml, iterating over menu items and generating controls, properties, and variables with substitutions.
-
-***
-
-## Regex Patterns
-
-| Pattern | Purpose |
-|---------|---------|
-| `_PROPERTY_PATTERN` | Matches `$PROPERTY[name]` |
-| `_PARENT_PATTERN` | Matches `$PARENT[name]` (items iteration) |
-| `_EXP_PATTERN` | Matches `$EXP[name]` (template expressions) |
-| `_INCLUDE_PATTERN` | Matches `$INCLUDE[name]` |
-
-Dynamic expressions (`$MATH`, `$IF`) are handled by `expressions.py`.
+Processes templates defined in templates.xml, iterating over menu items and generating controls, properties, and variables with substitutions. The most complex part of the build system.
 
 ***
 
@@ -28,72 +15,22 @@ Dynamic expressions (`$MATH`, `$IF`) are handled by `expressions.py`.
 
 ### `__init__`(schema, menus, container="9000", property_schema=None)
 
-Initialize builder.
-
-**Parameters:**
-
-* `schema` - TemplateSchema from templates.xml
-* `menus` - list[Menu] to build from
-* `container` - Container ID for visibility conditions (default "9000")
-* `property_schema` - Optional PropertySchema for fallbacks
-
-***
-
-### `_collect_assigned_templates`() → set[str]
-
-Collect template include names assigned to menu items.
-
-**Behavior:**
-
-* Scans all menu item properties for `$INCLUDE[skinshortcuts-template-*]` pattern
-* Used by `templateonly="auto"` to skip unassigned templates
-* Returns set of include names (e.g., `skinshortcuts-template-MovieWidgets`)
-
-***
+| Parameter | Description |
+|-----------|-------------|
+| `schema` | TemplateSchema from templates.xml |
+| `menus` | list[Menu] to build from |
+| `container` | Container ID for visibility conditions |
+| `property_schema` | Optional PropertySchema for fallbacks |
 
 ### build() → ET.Element
 
 Build all template includes and variables.
 
-**Behavior:**
-
-* Templates with same include name are merged
-* **Variables with same name are merged** (children appended to existing)
-* Variables are output at root level (siblings to includes)
-* Empty includes get a `<description>` element to avoid Kodi log warnings
-* `templateonly="true"` templates are never output
-* `templateonly="auto"` templates are skipped if not in `_assigned_templates`
-* Output: `<includes>` containing `<variable>` and `<include>` elements
-
-**Used by:** builders/includes.py
-
-***
-
-### `_build_template_into`(template, output, include, variable_map)
-
-Build template controls and variables for all matching menu items.
-
-**Behavior:**
-
-* Iterates all menus and items
-* **Filters by `template.menu` if specified** (e.g., only process "mainmenu")
-* Skips disabled items
-* Checks template conditions
-* Builds context, controls, and variables per item
-
-***
-
-### `_add_variable`(var_elem, variable_map)
-
-Add a variable to the map, merging if same name exists.
-
-**Behavior:**
-
-* If a variable with the same name already exists, append this variable's children to the existing one
-* Otherwise, add as new entry
-* Enables multiple menu items to contribute `<value>` elements to a single variable
-
-***
+- Templates with same include name are merged
+- Variables with same name are merged (children appended)
+- Empty includes get `<description>` to avoid Kodi warnings
+- `templateonly="true"` templates never output
+- `templateonly="auto"` templates skipped if not assigned to any menu item
 
 ### write(path, indent=True)
 
@@ -101,350 +38,85 @@ Write template includes to file.
 
 ***
 
+## Substitution Patterns
+
+| Pattern | Description |
+|---------|-------------|
+| `$PROPERTY[name]` | Property/var value from context or item |
+| `$PARENT[name]` | Parent item property (items iteration only) |
+| `$EXP[name]` | Expression from templates.xml (recursive) |
+| `$INCLUDE[name]` | Converted to Kodi `<include>` element |
+| `$MATH[expr]` | Arithmetic expression (via expressions.py) |
+| `$IF[cond THEN val]` | Conditional expression (via expressions.py) |
+
+Processing order: `$EXP` → `$PARENT` → `$PROPERTY` → `$MATH` → `$IF`
+
+***
+
 ## Context Building
 
-### `_build_context`(template, output, item, idx, menu)
+Property context built in order (later overrides earlier):
 
-Build property context for a menu item.
-
-**Context built in order:**
-
-1. Menu default properties + item properties (merged, item overrides defaults)
-2. Built-in properties: `index`, `name`, `menu`, `idprefix`, `id`, `suffix`
-3. Fallback values (applied early so template conditions can use them)
+1. Menu defaults + item properties
+2. Built-ins: `index`, `name`, `menu`, `idprefix`, `id`, `suffix`
+3. Fallback values from PropertySchema
 4. Template properties
-5. Template vars
-6. Preset references (set raw values from lookup tables)
-7. Property group references (may transform/derive from preset values)
+5. Template vars (first matching condition wins)
+6. Preset references
+7. Property group references
 
 ***
 
-### `_apply_fallbacks`(item, context)
+## Skinshortcuts Elements
 
-Apply property fallbacks for missing properties from PropertySchema.
+Special elements processed within `<controls>`:
 
-**Behavior:**
-
-* Collects suffixes in use (e.g., `.2`, `.3`)
-* Applies fallback rules for each suffix variant
-* Transforms conditions to use suffixed property names
-
-***
-
-### `_resolve_property`(prop, item, context, suffix="")
-
-Resolve a property value.
-
-**Modes:**
-
-* Condition check first (skip if not met)
-* `from_source` - Get from another property
-* Literal value with `$PROPERTY[...]` substitution
+| Element | Output |
+|---------|--------|
+| `<skinshortcuts>visibility</skinshortcuts>` | `<visible>` condition matching current item |
+| `<skinshortcuts include="name" />` | Unwrapped include contents |
+| `<skinshortcuts include="name" wrap="true" />` | Kodi `<include>` element |
+| `<skinshortcuts include="name" condition="prop" />` | Conditional include |
+| `<skinshortcuts insert="name" />` | Items template insert point |
 
 ***
 
-### `_substitute_property_refs`(text, item, context)
+## Items Iteration
 
-Substitute `$PROPERTY[...]` in text during context building.
+Handles `<template items="name">` elements that iterate over submenu items.
 
-Checks context first, then item properties.
-
-***
-
-### `_resolve_var`(var, item, context)
-
-Resolve a var (first matching condition wins).
-
-***
-
-### `_get_from_source`(source, item, context)
-
-Get value from a source (built-in, item property, or preset).
-
-**Source resolution order:**
-
-1. Preset lookup: `preset[attr]` or `preset.attr`
-2. Built-ins: `index`, `name`, `menu`, `id`, `idprefix`
-3. Context values
-4. Item properties
+- Looks up submenu as `{parent_item.name}.{source}` (e.g., `movies.widgets`)
+- `$PROPERTY[...]` references submenu item properties
+- `$PARENT[...]` references parent menu item properties
+- Skips disabled items
+- Applies filter condition to each submenu item
+- Supports vars, presets, propertyGroups within items block
 
 ***
 
-### `_lookup_preset`(preset, attr, item, context)
+## Key Internal Methods
 
-Look up a value from a preset by evaluating conditions.
-
-First matching condition wins. Default row (no condition) is fallback.
-
-***
-
-### `_apply_property_group`(prop_group, item, context, suffix="")
-
-Apply properties from a property group to context.
-
-**Behavior:**
-
-* Applies suffix transforms to `from_source` and conditions
-* Only sets property if not already in context (first match wins)
-* Supports suffix transforms for Widget 1/2 reuse
-
-***
-
-### `_apply_preset`(ref, item, context, override_suffix="")
-
-Apply preset values directly as properties.
-
-**Behavior:**
-
-* Suffix is applied to CONDITIONS, not preset name
-* Evaluates conditions and sets all matched row values
-* Only sets if not already in context
+| Method | Purpose |
+|--------|---------|
+| `_build_context` | Build property context for menu item |
+| `_apply_fallbacks` | Apply PropertySchema fallbacks with suffix support |
+| `_resolve_property` | Resolve property value (from_source or literal) |
+| `_resolve_var` | Resolve var (first matching condition) |
+| `_apply_property_group` | Apply property group with suffix transforms |
+| `_apply_preset` | Apply preset values as properties |
+| `_process_controls` | Process controls XML with substitutions |
+| `_substitute_text` | Substitute all dynamic expressions in text |
+| `_build_variable` | Build Kodi `<variable>` element |
+| `_build_variable_group` | Build variables from variableGroup reference |
+| `_handle_skinshortcuts_items` | Process items iteration |
+| `_eval_condition` | Evaluate condition against item |
 
 ***
 
-## Variable Building
+## Suffix Transforms
 
-### `_build_variable`(var_def, context, item)
+When suffix is specified (e.g., `.2` for widget slot 2):
 
-Build a Kodi `<variable>` element from a VariableDefinition.
-
-**Behavior:**
-
-* Checks variable condition (if any)
-* Uses `output` attribute or original name for output name
-* Substitutes `$PROPERTY[...]` in name and all content
-
-***
-
-### `_build_variable_group`(group_ref, context, item, variable_map, override_suffix="")
-
-Build variables from a variableGroup reference.
-
-**Behavior:**
-
-* Checks group-level condition
-* Processes nested variableGroup references first (recursively)
-* Applies suffix transforms to conditions
-* Builds each matching variable from global definitions
-* Uses `_add_variable` to merge same-named variables
-
-***
-
-### `_substitute_variable_content`(elem, context, item)
-
-Substitute `$PROPERTY[...]` in variable content recursively.
-
-Processes text, tail, attributes, and children.
-
-***
-
-## Control Processing
-
-### `_process_controls`(controls, context, item, menu)
-
-Process controls XML, applying substitutions.
-
-Returns deep copy with all substitutions applied.
-
-***
-
-### `_process_element`(elem, context, item, menu)
-
-Recursively process an element.
-
-**Handles:**
-
-* `<skinshortcuts>visibility</skinshortcuts>` → `<visible>` condition
-* `<skinshortcuts include="name" />` → Expanded include (unwrapped)
-* `<skinshortcuts include="name" wrap="true" />` → Expanded as Kodi `<include>` element
-* `<skinshortcuts include="name" condition="propName" />` → Conditional include (only expanded if property exists)
-* `$PROPERTY[...]` substitution in text/attributes
-* `$INCLUDE[...]` in text → Kodi `<include>` element
-
-***
-
-### `_handle_include_substitution`(elem)
-
-Convert `$INCLUDE[...]` in element text to Kodi `<include>` child elements.
-
-**Behavior:**
-
-* Searches element text for `$INCLUDE[name]` pattern
-* Creates a Kodi `<include>name</include>` child element
-* Used for template includes assigned via widget paths (e.g., `$INCLUDE[skinshortcuts-template-*]`)
-
-***
-
-### `_handle_skinshortcuts_include`(elem, context, item, menu)
-
-Handle `<skinshortcuts include="..." />` element replacements.
-
-**Behavior:**
-
-* Finds children marked with `_skinshortcuts_include` attribute
-* If `wrap="true"` was set, outputs as Kodi `<include name="...">` element
-* Otherwise, unwraps and inserts the include's children directly
-* Elements marked for removal (condition not met) are cleaned up after processing
-
-***
-
-### `_substitute_text`(text, context, item, menu=None, parent_context=None, parent_item=None)
-
-Substitute dynamic expressions in text.
-
-**Processing order:**
-
-1. `$EXP[...]` - Expression references (recursive expansion)
-2. `$PARENT[...]` - Parent item properties (if parent_item provided)
-3. `$PROPERTY[...]` - Property substitution
-4. `$MATH[...]` - Arithmetic expressions (via `expressions.py`)
-5. `$IF[...]` - Conditional expressions (via `expressions.py`)
-
-**Parameters:**
-
-* `text` - Text to process
-* `context` - Property context for `$PROPERTY` substitution
-* `item` - Menu item for property fallback
-* `menu` - Unused, kept for compatibility
-* `parent_context` - Optional parent context for `$PARENT` substitution (items iteration)
-* `parent_item` - Optional parent item for `$PARENT` substitution (items iteration)
-
-Checks context first, then item properties for `$PROPERTY`. For `$PARENT`, checks parent_context, then special properties (`label`, `name`), then parent_item.properties.
-
-***
-
-## Condition Evaluation
-
-### `_apply_suffix_to_condition`(condition, suffix)
-
-Apply suffix to property names in condition for Widget 1/2 reuse.
-
-Does not suffix built-ins (`index`, `name`, `menu`, `id`, `idprefix`).
-
-***
-
-### `_check_conditions`(conditions, item, suffix="")
-
-Check if all template conditions match (ANDed together).
-
-***
-
-### `_get_property_value`(prop_name, item, context)
-
-Get a property value, checking context first then item properties.
-
-***
-
-### `_eval_condition`(condition, item, context)
-
-Evaluate a condition against a menu item.
-
-**Behavior:**
-
-* Expands expressions first (`$EXP[name]`)
-* Merges context with item properties (context takes precedence)
-* Uses `evaluate_condition()` from conditions module
-
-***
-
-### `_expand_expressions`(condition)
-
-Expand `$EXP[name]` references in a condition.
-
-Recursively expands nested expressions.
-
-***
-
-## Submenu Items Iteration
-
-Methods for handling `<skinshortcuts items="...">` elements that iterate over submenu items.
-
-***
-
-### `_handle_skinshortcuts_items`(elem, context, item, menu)
-
-Handle `<skinshortcuts items="...">` submenu iteration.
-
-**Behavior:**
-
-* Finds children marked with `_skinshortcuts_items` attribute
-* Looks up submenu as `{parent_item.name}.{items_name}` (e.g., `movies.widgets`)
-* Skips disabled submenu items
-* Applies filter condition to each submenu item
-* Parses transformations (vars, presets, propertyGroups) from items element
-* Builds context and generates controls for each matching submenu item
-* `$PROPERTY[...]` references submenu item properties
-* `$PARENT[...]` references parent menu item properties
-
-***
-
-### `_parse_items_transformations`(elem) → tuple
-
-Parse property transformation elements from `<skinshortcuts items>`.
-
-**Returns:** Tuple of (vars_list, preset_refs, prop_group_refs, output_elements)
-
-* `vars_list` - List of TemplateVar objects from `<var>` children
-* `preset_refs` - List of (name, condition) tuples from `<preset>` children
-* `prop_group_refs` - List of (name, condition) tuples from `<propertyGroup>` children
-* `output_elements` - Remaining child elements (controls to generate)
-
-***
-
-### `_build_items_context`(sub_item, sub_idx, submenu) → dict
-
-Build property context for a submenu item.
-
-**Context contains:**
-
-* Submenu defaults merged with item properties
-* Built-in properties: `index`, `name`, `menu`, `label`
-* Fallback values from PropertySchema
-
-Parent properties are accessed via `$PARENT[...]`, not included in this context.
-
-***
-
-### `_apply_items_transformations`(context, sub_item, vars_list, preset_refs, prop_group_refs)
-
-Apply var/preset/propertyGroup transformations to submenu item context.
-
-**Behavior:**
-
-* Applies vars using `_resolve_var()` (first matching condition wins)
-* Applies presets (evaluates conditions, sets matched row values)
-* Applies property groups via `_apply_property_group()`
-* Only sets properties not already in context (first match wins)
-
-***
-
-### `_process_items_element`(elem, sub_context, parent_context, sub_item, parent_item)
-
-Process an element within items iteration, substituting both contexts.
-
-**Behavior:**
-
-* Recursively processes element and all children
-* Calls `_substitute_text()` with both contexts for dual substitution
-* `$PROPERTY[...]` → submenu item properties (sub_context)
-* `$PARENT[...]` → parent item properties (parent_context)
-
-***
-
-## Test Candidates
-
-1. `_build_context()` property precedence ordering
-2. `_resolve_property()` with from_source and conditions
-3. `_apply_preset()` with conditions and suffix
-4. `_expand_expressions()` recursive expansion
-5. `_process_controls()` with various substitution patterns
-6. `_handle_skinshortcuts_include()` with wrap vs unwrap
-7. Variable building with suffix transforms
-8. `_apply_fallbacks()` with suffix transforms
-9. Variable merging with `_add_variable()`
-10. Menu filtering with `template.menu`
-11. `_handle_skinshortcuts_items()` submenu lookup and iteration
-12. `_substitute_text()` with parent context (`$PARENT[...]`)
-13. Items iteration with filter attribute
-14. Items iteration with disabled submenu items
-15. Items transformations (vars, presets) within items block
+- `from="widgetPath"` → `from="widgetPath.2"`
+- `condition="widgetType=movies"` → `condition="widgetType.2=movies"`
+- Built-ins (`index`, `name`, `menu`, `id`, `idprefix`) are never suffixed

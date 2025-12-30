@@ -13,7 +13,7 @@ try:
 except ImportError:
     IN_KODI = False
 
-from ..loaders import evaluate_condition, load_menu_config, load_properties
+from ..loaders import evaluate_condition, load_menus, load_properties
 from ..loaders.base import apply_suffix_transform
 from ..localize import resolve_label
 from ..log import get_logger
@@ -196,7 +196,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                     self._subdialogs = {sd.button_id: sd for sd in self._shared_subdialogs}
             else:
                 menus_path = Path(self.shortcuts_path) / "menus.xml"
-                menu_config = load_menu_config(menus_path)
+                menu_config = load_menus(menus_path)
                 self.icon_sources = menu_config.icon_sources
                 self.show_context_menu = menu_config.show_context_menu
                 self._subdialogs = {sd.button_id: sd for sd in menu_config.subdialogs}

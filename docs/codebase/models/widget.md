@@ -1,112 +1,42 @@
 # models/widget.py
 
 **Path:** `resources/lib/skinshortcuts/models/widget.py`
-**Lines:** 84
-**Purpose:** Dataclass models for widgets and widget groupings.
-
-***
-
-## Overview
-
-Defines the Widget model and related grouping structures for the widget picker system.
-
-***
-
-## Type Alias
-
-```python
-WidgetGroupContent = Union[Widget, WidgetGroup, Content]  # line 14
-```
-
-Items that can appear in a WidgetGroup's items list.
+**Purpose:** Dataclasses for widgets and widget groupings.
 
 ***
 
 ## Classes
 
-### Widget (line 17)
+### Widget
 
-A widget assignable to menu items.
+| Field | Type | Description |
+|-------|------|-------------|
+| `name`, `label` | str | Identifier and display |
+| `path` | str | Widget content path |
+| `type` | str | Widget type (movies, tvshows, custom) |
+| `target` | str | Target window (default: videos) |
+| `icon`, `condition`, `visible` | str | Display/filtering |
+| `sort_by`, `sort_order` | str | Sorting options |
+| `limit` | int | Item limit |
+| `source` | str | Source type (library, playlist, addon) |
+| `slot` | str | For custom widgets: property slot |
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Unique identifier |
-| `label` | str | required | Display label |
-| `path` | str | required | Widget content path |
-| `type` | str | "" | Widget type (movies, tvshows, custom, etc) |
-| `target` | str | "videos" | Target window |
-| `icon` | str | "" | Icon path |
-| `condition` | str | "" | Property condition (evaluated against item properties) |
-| `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
-| `sort_by` | str | "" | Sort field |
-| `sort_order` | str | "" | Sort order (ascending/descending) |
-| `limit` | int|None | None | Item limit |
-| `source` | str | "" | Source type (library, playlist, addon) |
-| `slot` | str | "" | For custom widgets: property slot (e.g., "widget.2") |
+**Properties:** `is_custom` - True if type=="custom"
 
-**Properties:**
+**Methods:** `to_properties(prefix)` - Convert to property dict (widget, widgetLabel, widgetPath, widgetTarget, widgetSource)
 
-* `is_custom` → bool - Returns True if type=="custom"
+### WidgetGroup
 
-**Methods:**
+| Field | Type | Description |
+|-------|------|-------------|
+| `name`, `label` | str | Identifier and display |
+| `icon`, `condition`, `visible` | str | Display/filtering |
+| `items` | list | Child Widgets, WidgetGroups, or Content |
 
-* `to_properties(prefix="widget")` → dict[str,str] - Convert to skin property dict
+### WidgetConfig
 
-**Property output:**
-
-```python
-{
-    "widget": "recentmovies",
-    "widgetLabel": "Recent Movies",
-    "widgetPath": "videodb://recentlyaddedmovies/",
-    "widgetTarget": "videos",
-    "widgetSource": "library"  # only if source is set
-}
-```
-
-**Used by:** config.py, dialog.py (widget picker), builders/includes.py
-
-***
-
-### WidgetGroup (line 61)
-
-A group/category in widget picker.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Unique identifier |
-| `label` | str | required | Display label |
-| `condition` | str | "" | Property condition (evaluated against item properties) |
-| `visible` | str | "" | Kodi visibility condition (evaluated at runtime) |
-| `icon` | str | "" | Icon for picker display |
-| `items` | list[WidgetGroupContent] | [] | Child items: Widget, WidgetGroup, or Content |
-
-**Used by:** WidgetConfig, dialog.py (_pick_widget_from_groups), loaders/widget.py
-
-***
-
-### WidgetConfig (line 73)
-
-Top-level widget configuration container.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `widgets` | list[Widget] | [] | All defined widgets (flat list) |
-| `groupings` | list[WidgetGroup|Widget] | [] | Picker structure (can include standalone widgets) |
-| `show_get_more` | bool | True | Whether to show "Get More..." option |
-
-**Used by:** config.py (SkinConfig._widget_config), loaders/widget.py
-
-***
-
-## Dead Code Analysis
-
-All classes appear to be in active use.
-
-***
-
-## Test Candidates
-
-1. `Widget.is_custom` property
-2. `Widget.to_properties()` with and without source
-3. `Widget.to_properties()` with custom prefix
+| Field | Type | Description |
+|-------|------|-------------|
+| `widgets` | list[Widget] | All defined widgets (flat) |
+| `groupings` | list | Picker structure |
+| `show_get_more` | bool | Show "Get More..." option |

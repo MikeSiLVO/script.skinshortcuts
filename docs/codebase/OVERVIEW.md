@@ -77,11 +77,11 @@ RunScript(script.skinshortcuts,type=clear,menu=movies.customwidget)
 ### Configuration Loading
 
 ```
-menus.xml ──► load_menu_config() ──► MenuConfig (menus, groupings, subdialogs)
+menus.xml ──► load_menus() ──► MenuConfig (menus, groupings, subdialogs)
 widgets.xml ──► load_widgets() ──► WidgetConfig (widgets, groups)
 backgrounds.xml ──► load_backgrounds() ──► BackgroundConfig
 properties.xml ──► load_properties() ──► PropertySchema
-templates.xml ──► load_templates() ──► TemplateSchema
+templates.xml ──► load_templates() ──► TemplateSchema (templates, items_templates, presets, etc.)
 userdata.json ──► load_userdata() ──► merge into menus
 ```
 
@@ -145,6 +145,7 @@ shortcuts = resolve_content(Content(source="addons", target="videos"))
 | Add menu item property | `models/menu.py` MenuItem, `dialog/properties.py` |
 | Add new widget type | `models/widget.py`, `loaders/widget.py` |
 | Change includes output | `builders/includes.py`, `builders/template.py` |
+| Add items template | `loaders/template.py`, `models/template.py` (ItemsDefinition) |
 | Add dynamic content source | `providers/content.py` |
 | Modify dialog behavior | `dialog/` (see package README) |
 | Add skin config option | `loaders/menu.py` (menus.xml parsing) |

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Union
 
-    GroupContent = Union["Shortcut", "Group", "Content"]
+    GroupContent = Union["Shortcut", "ShortcutGroup", "Content"]
 
 
 @dataclass
@@ -157,12 +157,12 @@ class Shortcut:
 
 
 @dataclass
-class Group:
+class ShortcutGroup:
     """A group/category of shortcuts in groupings.
 
     Items can be:
     - Shortcut: A specific shortcut option
-    - Group: A nested sub-group
+    - ShortcutGroup: A nested sub-group
     - Content: A dynamic content reference resolved at runtime
     """
 
@@ -356,7 +356,7 @@ class MenuConfig:
     """Menu configuration including menus, groupings, and icon sources."""
 
     menus: list[Menu] = field(default_factory=list)
-    groupings: list[Group] = field(default_factory=list)
+    groupings: list[ShortcutGroup] = field(default_factory=list)
     icon_sources: list[IconSource] = field(default_factory=list)
     subdialogs: list[SubDialog] = field(default_factory=list)
     action_overrides: list[ActionOverride] = field(default_factory=list)

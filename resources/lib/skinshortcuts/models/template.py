@@ -198,10 +198,16 @@ class VariableReference:
 
 
 @dataclass
-class VariableGroupRef:
-    """Reference to another variableGroup (for nested groups)."""
+class VariableGroupReference:
+    """Reference to a variable group.
 
-    name: str  # Name of the referenced variableGroup
+    Used both for template references (with suffix/condition) and nested
+    group composition within variableGroups (with defaults).
+    """
+
+    name: str
+    suffix: str = ""
+    condition: str = ""
 
 
 @dataclass
@@ -215,20 +221,7 @@ class VariableGroup:
 
     name: str
     references: list[VariableReference] = field(default_factory=list)
-    group_refs: list[VariableGroupRef] = field(default_factory=list)  # Nested groups
-
-
-@dataclass
-class VariableGroupReference:
-    """Reference to a variable group from a template.
-
-    When used in a template, builds all matching variables from the group
-    with optional suffix transformation for slot support.
-    """
-
-    name: str  # Name of variable group to apply
-    suffix: str = ""  # Suffix for condition transforms (e.g., ".2")
-    condition: str = ""  # Optional condition for applying this group
+    group_refs: list[VariableGroupReference] = field(default_factory=list)
 
 
 @dataclass
@@ -242,6 +235,43 @@ class TemplateOutput:
     include: str  # Output include name
     id_prefix: str = ""  # For computed control IDs
     suffix: str = ""  # Suffix to apply to all conditions/references
+
+
+@dataclass
+class ItemsDefinition:
+    """Definition for items insertion within a template.
+
+    Defines what content to generate for each submenu item at insert points.
+    Used with <skinshortcuts insert="X" /> markers in controls.
+
+    Attributes:
+        name: Insert point name to match (e.g., "widgets", "breadcrumb")
+        source: Submenu name suffix - looks up {parent}.{source} submenu.
+                If empty, defaults to name.
+        condition: Optional condition evaluated against parent menu item.
+                   If false, the entire insert is skipped.
+        filter: Optional condition evaluated against each submenu item.
+                Items not matching are skipped.
+        properties: Property definitions for each submenu item.
+        vars: Variable definitions for conditional property values.
+        preset_refs: Preset references to apply.
+        property_groups: Property group references to apply.
+        controls: XML content to generate for each submenu item.
+    """
+
+    name: str
+    source: str = ""
+    condition: str = ""
+    filter: str = ""
+    properties: list[TemplateProperty] = field(default_factory=list)
+    vars: list[TemplateVar] = field(default_factory=list)
+    preset_refs: list[PresetReference] = field(default_factory=list)
+    property_groups: list[PropertyGroupReference] = field(default_factory=list)
+    controls: ET.Element | None = None
+
+    def get_source(self) -> str:
+        """Get the submenu source, defaulting to name if not specified."""
+        return self.source or self.name
 
 
 @dataclass
@@ -312,6 +342,7 @@ class TemplateSchema:
     preset_groups: dict[str, PresetGroup] = field(default_factory=dict)
     variable_definitions: dict[str, VariableDefinition] = field(default_factory=dict)
     variable_groups: dict[str, VariableGroup] = field(default_factory=dict)
+    items_templates: dict[str, ItemsDefinition] = field(default_factory=dict)
     templates: list[Template] = field(default_factory=list)
     submenus: list[SubmenuTemplate] = field(default_factory=list)
 
@@ -342,3 +373,7 @@ class TemplateSchema:
     def get_variable_group(self, name: str) -> VariableGroup | None:
         """Get variable group by name."""
         return self.variable_groups.get(name)
+
+    def get_items_template(self, name: str) -> ItemsDefinition | None:
+        """Get items template by name."""
+        return self.items_templates.get(name)

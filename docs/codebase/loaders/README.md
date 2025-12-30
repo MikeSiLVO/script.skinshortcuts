@@ -7,79 +7,41 @@
 
 ## Overview
 
-The loaders package parses skin XML configuration files (menus.xml, widgets.xml, backgrounds.xml, properties.xml, templates.xml) into model objects. Each loader handles a specific file type.
+Parses skin XML configuration files into model objects. Each loader handles a specific file type.
 
 ***
 
 ## Modules
 
-| File | Doc | Lines | Purpose |
-|------|-----|-------|---------|
-| `__init__.py` | | ~30 | Re-exports public functions |
-| `base.py` | [loaders-base.md](loaders-base.md) | 152 | Shared XML utilities |
-| `menu.py` | [loaders-menu.md](loaders-menu.md) | 476 | menus.xml parser |
-| `widget.py` | [loaders-widget.md](loaders-widget.md) | 149 | widgets.xml parser |
-| `background.py` | [loaders-background.md](loaders-background.md) | 99 | backgrounds.xml parser |
-| `property.py` | [loaders-property.md](loaders-property.md) | 284 | properties.xml parser |
-| `template.py` | [loaders-template.md](loaders-template.md) | 454 | templates.xml parser |
+| File | Doc | Purpose |
+|------|-----|---------|
+| `base.py` | [base.md](base.md) | Shared XML utilities |
+| `menu.py` | [menu.md](menu.md) | menus.xml parser |
+| `widget.py` | [widget.md](widget.md) | widgets.xml parser |
+| `background.py` | [background.md](background.md) | backgrounds.xml parser |
+| `property.py` | [property.md](property.md) | properties.xml parser |
+| `template.py` | [template.md](template.md) | templates.xml parser |
 
 ***
 
 ## Public Functions
 
-### Menu Loading (`menu.py`)
-
-* `load_menu_config(path)` - Load complete menu config from menus.xml
-* `load_groupings(path)` - Load shortcut groupings only
-
-### Widget Loading (`widget.py`)
-
-* `load_widgets(path)` - Load widget config from widgets.xml
-* `load_widget_groupings(path)` - Load widget groupings only
-
-### Background Loading (`background.py`)
-
-* `load_backgrounds(path)` - Load backgrounds from backgrounds.xml
-
-### Property Loading (`property.py`)
-
-* `load_properties(path)` - Load property schema from properties.xml
-* `evaluate_condition(condition, props)` - Re-exported from `conditions.py` for convenience
-
-### Template Loading (`template.py`)
-
-* `load_templates(path)` - Load template schema from templates.xml
-
-### Base Utilities (`base.py`)
-
-* `apply_suffix_transform(text, suffix)` - Apply suffix to property references
-* `apply_suffix_to_from(text, suffix)` - Apply suffix in template from attributes
+| Function | Module | Purpose |
+|----------|--------|---------|
+| `load_menus(path)` | menu.py | Load menus.xml |
+| `load_groupings(path)` | menu.py | Load shortcut groupings only |
+| `load_widgets(path)` | widget.py | Load widgets.xml |
+| `load_backgrounds(path)` | background.py | Load backgrounds.xml |
+| `load_properties(path)` | property.py | Load properties.xml |
+| `load_templates(path)` | template.py | Load templates.xml |
 
 ***
 
-## Usage Pattern
+## XML File Documentation
 
-```python
-from skinshortcuts.loaders import load_menu_config, load_widgets
-
-# Load configurations
-menu_config = load_menu_config(Path("shortcuts/menus.xml"))
-widget_config = load_widgets(Path("shortcuts/widgets.xml"))
-
-# Access parsed data
-menus = menu_config.menus
-groupings = menu_config.groupings
-widgets = widget_config.widgets
-```
-
-***
-
-## File Format Reference
-
-Each loader expects specific XML structure. See individual module docs for schema details:
-
-* [menus.xml schema](loaders-menu.md)
-* [widgets.xml schema](loaders-widget.md)
-* [backgrounds.xml schema](loaders-background.md)
-* [properties.xml schema](loaders-property.md)
-* [templates.xml schema](loaders-template.md)
+For XML file format documentation, see:
+- [skinning/menus.md](../../skinning/menus.md)
+- [skinning/widgets.md](../../skinning/widgets.md)
+- [skinning/backgrounds.md](../../skinning/backgrounds.md)
+- [skinning/properties.md](../../skinning/properties.md)
+- [skinning/templates.md](../../skinning/templates.md)

@@ -10,7 +10,6 @@ from ..models.menu import (
     ActionOverride,
     Content,
     DefaultAction,
-    Group,
     IconSource,
     Menu,
     MenuAllow,
@@ -20,12 +19,13 @@ from ..models.menu import (
     OnCloseAction,
     Protection,
     Shortcut,
+    ShortcutGroup,
     SubDialog,
 )
 from .base import get_attr, get_text, parse_content, parse_xml
 
 
-def load_menu_config(path: str | Path) -> MenuConfig:
+def load_menus(path: str | Path) -> MenuConfig:
     """Load complete menu configuration from menus.xml.
 
     Returns:
@@ -39,7 +39,7 @@ def load_menu_config(path: str | Path) -> MenuConfig:
     path_str = str(path)
 
     menus = _parse_menus(root, path_str)
-    groupings = _parse_groupings(root, path_str)
+    groupings = _parse_shortcut_groupings(root, path_str)
     icon_sources = _parse_icons(root)
     subdialogs = _parse_dialogs(root)
     action_overrides = _parse_overrides(root)
@@ -351,13 +351,13 @@ def _parse_allow(elem) -> MenuAllow:
     )
 
 
-def load_groupings(path: str | Path) -> list[Group]:
+def load_groupings(path: str | Path) -> list[ShortcutGroup]:
     """Load shortcut groupings from menus.xml file.
 
     Groupings define the available shortcuts for the picker dialog.
     They are stored inside a <groupings> element within <menus>.
 
-    Note: Consider using load_menu_config() instead which returns full MenuConfig.
+    Note: Consider using load_menus() instead which returns full MenuConfig.
 
     Schema:
         <menus>
@@ -381,10 +381,10 @@ def load_groupings(path: str | Path) -> list[Group]:
         return []
 
     root = parse_xml(path, "menus", MenuConfigError)
-    return _parse_groupings(root, str(path))
+    return _parse_shortcut_groupings(root, str(path))
 
 
-def _parse_groupings(root, path: str) -> list[Group]:
+def _parse_shortcut_groupings(root, path: str) -> list[ShortcutGroup]:
     """Parse groupings from root element."""
     groupings_elem = root.find("groupings")
     if groupings_elem is None:
@@ -392,14 +392,14 @@ def _parse_groupings(root, path: str) -> list[Group]:
 
     groups = []
     for group_elem in groupings_elem.findall("group"):
-        group = _parse_group(group_elem, path)
+        group = _parse_shortcut_group(group_elem, path)
         if group:
             groups.append(group)
 
     return groups
 
 
-def _parse_group(elem, path: str) -> Group | None:
+def _parse_shortcut_group(elem, path: str) -> ShortcutGroup | None:
     """Parse a group element (supports nested groups, shortcuts, and content refs)."""
     group_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
@@ -408,7 +408,7 @@ def _parse_group(elem, path: str) -> Group | None:
 
     condition = get_attr(elem, "condition") or ""
     icon = get_attr(elem, "icon") or ""
-    items: list[Shortcut | Group | Content] = []
+    items: list[Shortcut | ShortcutGroup | Content] = []
 
     for child in elem:
         if child.tag == "shortcut":
@@ -416,7 +416,7 @@ def _parse_group(elem, path: str) -> Group | None:
             if shortcut:
                 items.append(shortcut)
         elif child.tag == "group":
-            nested = _parse_group(child, path)
+            nested = _parse_shortcut_group(child, path)
             if nested:
                 items.append(nested)
         elif child.tag == "content":
@@ -425,7 +425,7 @@ def _parse_group(elem, path: str) -> Group | None:
                 items.append(content)
 
     visible = get_attr(elem, "visible") or ""
-    return Group(
+    return ShortcutGroup(
         name=group_name, label=label, condition=condition, visible=visible, icon=icon, items=items
     )
 

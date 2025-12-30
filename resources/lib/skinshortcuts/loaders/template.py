@@ -14,6 +14,7 @@ from ..models.template import (
     BuildMode,
     Expression,
     IncludeDefinition,
+    ItemsDefinition,
     ListItem,
     Preset,
     PresetGroup,
@@ -32,7 +33,6 @@ from ..models.template import (
     TemplateVar,
     VariableDefinition,
     VariableGroup,
-    VariableGroupRef,
     VariableGroupReference,
     VariableReference,
 )
@@ -51,6 +51,7 @@ class TemplateLoader:
         self._variable_definitions: dict[str, VariableDefinition] = {}
         self._variable_groups: dict[str, VariableGroup] = {}
         self._includes: dict[str, IncludeDefinition] = {}
+        self._items_templates: dict[str, ItemsDefinition] = {}
 
     def load(self) -> TemplateSchema:
         """Load and parse the template schema."""
@@ -79,8 +80,14 @@ class TemplateLoader:
 
         templates = []
         for elem in root.findall("template"):
-            template = self._parse_template(elem)
-            templates.append(template)
+            items_name = (elem.get("items") or "").strip()
+            if items_name:
+                items_def = self._parse_items_template(elem, items_name)
+                if items_def:
+                    self._items_templates[items_name] = items_def
+            else:
+                template = self._parse_template(elem)
+                templates.append(template)
 
         submenus = []
         for elem in root.findall("submenu"):
@@ -95,6 +102,7 @@ class TemplateLoader:
             preset_groups=self._preset_groups,
             variable_definitions=self._variable_definitions,
             variable_groups=self._variable_groups,
+            items_templates=self._items_templates,
             templates=templates,
             submenus=submenus,
         )
@@ -225,7 +233,7 @@ class TemplateLoader:
         for group_elem in elem.findall("variableGroup"):
             group_name = (group_elem.get("content") or "").strip()
             if group_name:
-                group_refs.append(VariableGroupRef(name=group_name))
+                group_refs.append(VariableGroupReference(name=group_name))
 
         return VariableGroup(name=name, references=references, group_refs=group_refs)
 
@@ -468,6 +476,66 @@ class TemplateLoader:
             name=name,
             properties=properties,
             vars=vars_list,
+            property_groups=property_groups,
+            controls=copy.deepcopy(controls) if controls is not None else None,
+        )
+
+    def _parse_items_template(self, elem: ET.Element, name: str) -> ItemsDefinition | None:
+        """Parse <template items="X"> into an ItemsDefinition.
+
+        Syntax:
+            <template items="widgets" source="widgets" filter="widgetPath">
+                <condition>widgetType=custom</condition>
+                <property name="id" from="index" />
+                <var name="style">...</var>
+                <preset content="layoutDims" />
+                <propertyGroup content="widgetProps" />
+                <controls>
+                    <control type="group">...</control>
+                </controls>
+            </template>
+        """
+        source = (elem.get("source") or "").strip()
+        filter_cond = (elem.get("filter") or "").strip()
+
+        condition = ""
+        cond_elem = elem.find("condition")
+        if cond_elem is not None:
+            condition = (cond_elem.text or "").strip()
+
+        properties = []
+        vars_list = []
+        preset_refs = []
+        property_groups = []
+
+        for child in elem:
+            if child.tag == "property":
+                prop = self._parse_property(child)
+                if prop:
+                    properties.append(prop)
+            elif child.tag == "var":
+                var = self._parse_var(child)
+                if var:
+                    vars_list.append(var)
+            elif child.tag == "preset":
+                ref = self._parse_preset_ref(child)
+                if ref:
+                    preset_refs.append(ref)
+            elif child.tag == "propertyGroup":
+                ref = self._parse_property_group_ref(child)
+                if ref:
+                    property_groups.append(ref)
+
+        controls = elem.find("controls")
+
+        return ItemsDefinition(
+            name=name,
+            source=source,
+            condition=condition,
+            filter=filter_cond,
+            properties=properties,
+            vars=vars_list,
+            preset_refs=preset_refs,
             property_groups=property_groups,
             controls=copy.deepcopy(controls) if controls is not None else None,
         )

@@ -584,35 +584,46 @@ The `suffix=".2"` transforms property reads (`widgetPath` → `widgetPath.2`) an
 
 #### Submenu Items Iteration
 
-Iterate over submenu items within a template:
+Items templates iterate over submenu items. They are defined separately and referenced via insert markers:
 
 ```xml
-<template include="Widgets">
-  <condition>widgetType=custom</condition>
-  <controls>
-    <control type="grouplist" id="$MATH[$PROPERTY[index] * 1000 + 400]">
-      <skinshortcuts>visibility</skinshortcuts>
+<templates>
+  <!-- Items template: defines what to generate for each submenu item -->
+  <template items="widgets" source="widgets" filter="widgetArt=Poster">
+    <var name="widgetInclude">
+      <value condition="widgetArt=Poster">Widget_Poster</value>
+      <value>Widget_Default</value>
+    </var>
 
-      <skinshortcuts items="widgets" condition="widgetType=custom" filter="widgetArt=Poster">
-        <var name="widgetInclude">
-          <value condition="widgetArt=Poster">Widget_Poster</value>
-          <value>Widget_Default</value>
-        </var>
-        <control type="group" id="$MATH[$PARENT[index] * 1000 + 600 + $PROPERTY[index]]">
-          <include content="$PROPERTY[widgetInclude]">
-            <param name="path">$PROPERTY[widgetPath]</param>
-          </include>
-        </control>
-      </skinshortcuts>
+    <controls>
+      <control type="group" id="$MATH[$PARENT[index] * 1000 + 600 + $PROPERTY[index]]">
+        <include content="$PROPERTY[widgetInclude]">
+          <param name="path">$PROPERTY[widgetPath]</param>
+          <param name="parent">$PARENT[label]</param>
+        </include>
+      </control>
+    </controls>
+  </template>
 
-    </control>
-  </controls>
-</template>
+  <!-- Regular template: uses insert marker to include items -->
+  <template include="Widgets">
+    <condition>widgetType=custom</condition>
+    <controls>
+      <control type="grouplist" id="$MATH[$PROPERTY[index] * 1000 + 400]">
+        <skinshortcuts>visibility</skinshortcuts>
+
+        <!-- Insert widgets here -->
+        <skinshortcuts insert="widgets" />
+      </control>
+    </controls>
+  </template>
+</templates>
 ```
 
-* `items="widgets"` - Looks up submenu `{parent.name}.widgets`
-* `condition` - Only iterate if parent matches
+* `<template items="widgets">` - Defines an items template named "widgets"
+* `source="widgets"` - Looks up submenu `{parent.name}.widgets`
 * `filter` - Only include submenu items matching condition
+* `<skinshortcuts insert="widgets" />` - Insert marker in regular templates
 * `$PROPERTY[...]` - Submenu item properties
 * `$PARENT[...]` - Parent item properties
 

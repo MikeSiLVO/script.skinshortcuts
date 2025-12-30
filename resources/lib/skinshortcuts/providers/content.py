@@ -48,7 +48,7 @@ def scan_playlist_files(directory: str) -> list[tuple[str, str]]:
     playlists = []
 
     try:
-        dirs, files = xbmcvfs.listdir(directory)
+        _dirs, files = xbmcvfs.listdir(directory)
     except Exception:
         return playlists
 
@@ -541,7 +541,7 @@ class ContentProvider:
 
         shortcuts = []
         try:
-            dirs, files = xbmcvfs.listdir(base_path)
+            dirs, _files = xbmcvfs.listdir(base_path)
         except Exception:
             self._cache[cache_key] = shortcuts
             return shortcuts

@@ -1,76 +1,29 @@
 # exceptions.py
 
 **Path:** `resources/lib/skinshortcuts/exceptions.py`
-**Lines:** 42
-**Purpose:** Exception hierarchy for error handling throughout the addon.
+**Purpose:** Exception hierarchy for error handling.
 
 ***
 
-## Overview
+## Hierarchy
 
-Defines a hierarchy of custom exceptions used for error reporting. All exceptions inherit from `SkinShortcutsError` which inherits from Python's base `Exception`.
-
-***
-
-## Classes
-
-### SkinShortcutsError (line 6)
-
-Base exception class. All other exceptions inherit from this.
-
-### ConfigError (line 10)
-
-Base for configuration file errors. Stores file path and optional line number.
-
-**Constructor:**
-
-```python
-def __init__(self, file_path: str, message: str, line: int | None = None)
+```
+SkinShortcutsError
+├── ConfigError (base for config file errors)
+│   ├── MenuConfigError
+│   ├── WidgetConfigError
+│   ├── BackgroundConfigError
+│   ├── PropertyConfigError
+│   └── TemplateConfigError
+└── TemplateError (template processing errors)
 ```
 
-**Attributes:**
+### ConfigError
 
-* `file_path` - path to the problematic config file
-* `line` - line number where error occurred (optional)
+Base for config file errors. Stores file path and optional line number.
 
-**Message format:** `"{file_path}:{line}: {message}"` or `"{file_path}: {message}"`
+```python
+ConfigError(file_path, message, line=None)
+```
 
-### Config-Specific Errors (lines 20-37)
-
-All inherit from `ConfigError` with no additional logic:
-
-| Class | Config File |
-|-------|-------------|
-| `MenuConfigError` | menus.xml |
-| `WidgetConfigError` | widgets.xml |
-| `BackgroundConfigError` | backgrounds.xml |
-| `PropertyConfigError` | properties.xml |
-| `TemplateConfigError` | templates.xml |
-
-### TemplateError (line 40)
-
-For errors processing skin templates. Inherits directly from `SkinShortcutsError`.
-
-***
-
-## Usage
-
-**Raised by:**
-
-* `loaders/menu.py` → `MenuConfigError`
-* `loaders/widget.py` → `WidgetConfigError`
-* `loaders/background.py` → `BackgroundConfigError`
-* `loaders/property.py` → `PropertyConfigError`
-* `loaders/template.py` → `TemplateConfigError`
-* `builders/template.py` → `TemplateError`
-
-**Caught by:**
-
-* `entry.py` - catches generic exceptions during build
-
-***
-
-## Test Candidates
-
-1. `ConfigError` message formatting with/without line number
-2. Exception inheritance hierarchy verification
+Message format: `"{file_path}:{line}: {message}"`

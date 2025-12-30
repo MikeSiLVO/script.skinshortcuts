@@ -92,7 +92,7 @@ RunScript(script.skinshortcuts,...)
 
 ```
 SkinConfig.load()
-    ├── load_menu_config() → MenuConfig
+    ├── load_menus() → MenuConfig
     ├── load_widgets() → WidgetConfig
     ├── load_backgrounds() → BackgroundConfig
     ├── load_templates() → TemplateSchema
@@ -163,67 +163,12 @@ ManagementDialog.close()
 
 * **Created by:** loaders/template.py
 * **Used by:** config.py, builders/template.py
+* **Key components:** templates, submenus, items_templates, presets, property_groups, variable_definitions, variable_groups, includes, expressions
 
 ### UserData
 
 * **Created by:** userdata.py (load_userdata)
 * **Used by:** config.py, manager.py
-
-***
-
-## Dead Code Analysis
-
-No confirmed dead code remains. Previous dead code has been cleaned up:
-
-* \~~`constants.py: USER_DATA_FILE`~~ (removed)
-* \~~`exceptions.py: GroupingsConfigError`~~ (removed)
-* \~~`exceptions.py: ValidationError`~~ (removed)
-* \~~`exceptions.py: BuildError`~~ (removed)
-
-### Standalone Helper Functions
-
-| Location | Item | Notes |
-|----------|------|-------|
-| loaders/widget.py | `load_widget_groupings()` | Used by `dialog/properties.py` for widget picker |
-
-***
-
-## Duplication Analysis
-
-### Minimal Duplication Found
-
-1. **Playlist scanning** - Consolidated into `providers/content.scan_playlist_files()`.
-
-2. **Condition evaluation** - Used consistently via `conditions.py.evaluate_condition()`.
-
-3. **Suffix transforms** - `loaders/base.py.apply_suffix_transform()` is the single source.
-
-***
-
-## Future Test Priorities
-
-When adding tests to the codebase, these are the recommended priorities:
-
-### High Priority (Core Logic)
-
-1. `userdata.merge_menu()` - menu merging with overrides
-2. `conditions.evaluate_condition()` - condition parsing
-3. `builders/template._build_context()` - context assembly
-4. `config._apply_action_overrides()` - action replacement
-
-### Medium Priority (Pickers/UI)
-
-5. `dialog/pickers._pick_from_groups()` - navigation logic
-6. `dialog/items._set_item_property()` - property management
-7. `dialog/subdialogs._handle_onclose()` - onclose flow
-
-### Lower Priority (I/O)
-
-8. `hashing.needs_rebuild()` - hash comparison
-9. `localize.resolve_label()` - string resolution
-10. `providers/content.resolve()` - content resolution
-
-**Note:** Most tests require mocking Kodi APIs (xbmc, xbmcgui, xbmcvfs).
 
 ***
 
@@ -283,6 +228,7 @@ When adding tests to the codebase, these are the recommended priorities:
 | Parse templates.xml | loaders/template.py |
 | Build includes.xml | builders/includes.py |
 | Process templates | builders/template.py |
+| Handle items iteration | builders/template.py (_handle_skinshortcuts_items) |
 | Show management dialog | dialog/ |
 | Save user changes | userdata.py, manager.py |
 | Check if rebuild needed | hashing.py |

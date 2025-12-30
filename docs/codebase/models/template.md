@@ -1,327 +1,101 @@
 # models/template.py
 
 **Path:** `resources/lib/skinshortcuts/models/template.py`
-**Purpose:** Dataclass models for the template system (templates.xml).
+**Purpose:** Dataclasses for template system.
 
 ***
 
-## Overview
-
-The template system is the most complex part of Skin Shortcuts. It allows skins to define how menu items are transformed into Kodi includes with properties, variables, and controls.
-
-***
-
-## Enums
-
-### BuildMode
-
-Template build mode determining iteration behavior.
+## BuildMode Enum
 
 | Value | Description |
 |-------|-------------|
 | `MENU` | Iterate over menu items (default) |
-| `LIST` | Iterate over \<list\> items defined in template |
-| `RAW` | Raw output, no iteration (parameterized include) |
-
-**Used by:** Template.build, builders/template.py
+| `LIST` | Iterate over `<list>` items |
+| `RAW` | No iteration (parameterized include) |
 
 ***
 
-## Classes
-
-### TemplateParam
-
-Parameter for parameterized includes (build="true" templates).
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Parameter name |
-| `default` | str | "" | Default value if not provided |
-
-**Used by:** Template.params
-
-***
-
-### TemplateProperty
-
-Property assignment in a template.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Property name to set |
-| `value` | str | "" | Literal value |
-| `from_source` | str | "" | Source property name (copies value from item) |
-| `condition` | str | "" | Condition for this assignment |
-
-**Modes:**
-
-* Literal: `name="left", value="245"`
-* From source: `name="content", from_source="widgetPath"`
-* Conditional: `name="aspect", condition="...", value="stretch"`
-
-**Used by:** Template, SubmenuTemplate, PropertyGroup, TemplateVar
-
-***
-
-### TemplateVar
-
-Multi-conditional property for internal resolution.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Variable name |
-| `values` | list[TemplateProperty] | [] | Conditional values |
-
-**Example XML:**
-
-```xml
-<var name="aspect">
-    <value condition="widgetArt=Poster">stretch</value>
-    <value>scale</value>
-</var>
-```
-
-**Used by:** Template.vars, SubmenuTemplate.vars, PropertyGroup.vars
-
-***
-
-### PresetValues
-
-A single row in a preset lookup table.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `condition` | str | "" | Condition for this row |
-| `values` | dict[str,str] | {} | Property values when matched |
-
-**Used by:** Preset.rows
-
-***
-
-### Preset
-
-Lookup table returning multiple values based on conditions.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Preset name |
-| `rows` | list[PresetValues] | [] | Rows with conditions |
-
-**Used by:** TemplateSchema.presets, builders/template.py
-
-***
-
-### PropertyGroup
-
-Reusable property group definition.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Group name |
-| `properties` | list[TemplateProperty] | [] | Properties to apply |
-| `vars` | list[TemplateVar] | [] | Variables to resolve |
-
-**Used by:** TemplateSchema.property_groups
-
-***
-
-### PropertyGroupReference
-
-Reference to a property group.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Property group name |
-| `suffix` | str | "" | Suffix for transforms (e.g., ".2") |
-| `condition` | str | "" | Condition for applying |
-
-**Used by:** Template.property_groups, SubmenuTemplate.property_groups
-
-***
-
-### PresetReference
-
-Reference to a preset for direct property resolution.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Preset name |
-| `suffix` | str | "" | Suffix for transforms |
-| `condition` | str | "" | Condition for applying |
-
-**Used by:** Template.preset_refs
-
-***
-
-### IncludeDefinition
-
-Reusable include definition for controls (like Kodi includes).
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Include name |
-| `controls` | ET.Element|None | None | Raw XML content |
-
-**Used by:** TemplateSchema.includes, builders/template.py
-
-***
-
-### ListItem
-
-Item in a \<list\> for build="list" templates.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `attributes` | dict[str,str] | {} | Attribute values |
-
-**Used by:** Template.list_items
-
-***
-
-### VariableDefinition
-
-Kodi variable definition.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Variable name (e.g., "PosterVar") |
-| `content` | ET.Element|None | None | Variable XML content |
-
-Output name format: `HomeWidget{id}{name}` (e.g., `HomeWidget80111PosterVar`)
-
-**Used by:** TemplateSchema.variable_definitions
-
-***
-
-### VariableReference
-
-Reference to a variable definition.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Variable definition name |
-| `condition` | str | "" | Per-item condition |
-| `output` | str | "" | Override output name |
-
-**Used by:** VariableGroup.variables
-
-***
-
-### VariableGroupRef
-
-Reference to another variableGroup (for nested groups).
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Name of the referenced variableGroup |
-
-**Used by:** VariableGroup.group_refs
-
-***
-
-### VariableGroup
-
-Reusable group of variable references.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Group name |
-| `references` | list[VariableReference] | [] | Variable references |
-| `group_refs` | list[VariableGroupRef] | [] | Nested group references |
-
-**Used by:** TemplateSchema.variable_groups
-
-***
-
-### VariableGroupReference
-
-Reference to a variable group from a template.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | str | required | Variable group name |
-| `suffix` | str | "" | Suffix for transforms |
-| `condition` | str | "" | Condition for applying |
-
-**Used by:** Template.variable_groups
-
-***
-
-### Template
-
-Main template definition.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `include` | str | required | Output include name |
-| `build` | BuildMode | MENU | Build mode |
-| `id_prefix` | str | "" | For computed control IDs |
-| `template_only` | str | "" | Include generation: "true"=never, "auto"=skip if unassigned |
-| `menu` | str | "" | Filter to specific menu (e.g., "mainmenu") |
-| `conditions` | list[str] | [] | Conditions ANDed together |
-| `params` | list[TemplateParam] | [] | For build="true" |
-| `properties` | list[TemplateProperty] | [] | Properties to set |
-| `vars` | list[TemplateVar] | [] | Variables to resolve |
-| `property_groups` | list[PropertyGroupReference] | [] | Group references |
-| `preset_refs` | list[PresetReference] | [] | Preset references |
-| `list_items` | list[ListItem] | [] | For build="list" |
-| `controls` | ET.Element|None | None | Raw XML controls |
-| `variables` | ET.Element|None | None | Inline variables section |
-| `variable_groups` | list[VariableGroupReference] | [] | Variable groups |
-
-**Used by:** TemplateSchema.templates, builders/template.py
-
-***
-
-### SubmenuTemplate
-
-Submenu template definition.
-
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `include` | str | "" | Output include name |
-| `level` | int | 0 | Submenu level |
-| `name` | str | "" | Menu name filter |
-| `properties` | list[TemplateProperty] | [] | Properties to set |
-| `vars` | list[TemplateVar] | [] | Variables to resolve |
-| `property_groups` | list[PropertyGroupReference] | [] | Group references |
-| `controls` | ET.Element|None | None | Raw XML controls |
-
-**Used by:** TemplateSchema.submenus, builders/template.py
-
-***
+## Main Classes
 
 ### TemplateSchema
 
-Complete template schema container.
+Top-level container.
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `expressions` | dict[str,str] | {} | Named expressions |
-| `property_groups` | dict[str,PropertyGroup] | {} | Property groups |
-| `includes` | dict[str,IncludeDefinition] | {} | Include definitions |
-| `presets` | dict[str,Preset] | {} | Presets |
-| `variable_definitions` | dict[str,VariableDefinition] | {} | Variable definitions |
-| `variable_groups` | dict[str,VariableGroup] | {} | Variable groups |
-| `templates` | list[Template] | [] | Templates |
-| `submenus` | list[SubmenuTemplate] | [] | Submenu templates |
+| Field | Type | Description |
+|-------|------|-------------|
+| `expressions` | dict[str,str] | Named expressions |
+| `property_groups` | dict | PropertyGroup definitions |
+| `presets` | dict | Preset lookup tables |
+| `includes` | dict | IncludeDefinition for control reuse |
+| `variable_definitions` | dict | Kodi variable definitions |
+| `variable_groups` | dict | Variable group definitions |
+| `items_templates` | dict | ItemsDefinition for submenu iteration |
+| `templates` | list[Template] | Template definitions |
+| `submenus` | list[SubmenuTemplate] | Submenu templates |
 
-**Methods:**
+### Template
 
-* `get_expression(name)` → str|None
-* `get_property_group(name)` → PropertyGroup|None
-* `get_include(name)` → IncludeDefinition|None
-* `get_preset(name)` → Preset|None
-* `get_variable_definition(name)` → VariableDefinition|None
-* `get_variable_group(name)` → VariableGroup|None
+| Field | Type | Description |
+|-------|------|-------------|
+| `include` | str | Output include name |
+| `build` | BuildMode | Build mode |
+| `id_prefix` | str | For computed control IDs |
+| `template_only` | str | "true"=never build, "auto"=skip if unassigned |
+| `menu` | str | Filter to specific menu |
+| `conditions` | list[str] | Build conditions (ANDed) |
+| `properties` | list[TemplateProperty] | Properties to set |
+| `vars` | list[TemplateVar] | Variables to resolve |
+| `property_groups` | list[PropertyGroupReference] | Group references |
+| `preset_refs` | list[PresetReference] | Preset references |
+| `controls` | ET.Element | Raw XML controls |
 
-**Used by:** config.py, loaders/template.py, builders/template.py, builders/includes.py
+### SubmenuTemplate
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `include` | str | Output include name |
+| `level` | int | Submenu level |
+| `name` | str | Menu name filter |
+| `properties`, `vars`, `property_groups`, `controls` | | Same as Template |
 
 ***
 
-## Test Candidates
+## Property/Variable Classes
 
-1. `BuildMode` enum parsing
-2. `TemplateSchema` lookup methods
-3. Property group suffix transforms
-4. Preset condition matching
+| Class | Purpose |
+|-------|---------|
+| `TemplateProperty` | Property assignment (literal value or from_source) |
+| `TemplateVar` | Multi-conditional property |
+| `PropertyGroup` | Reusable property set |
+| `PropertyGroupReference` | Reference with suffix/condition |
+| `Preset` | Lookup table with condition rows |
+| `PresetReference` | Reference with suffix/condition |
+
+***
+
+## Variable Classes
+
+| Class | Purpose |
+|-------|---------|
+| `VariableDefinition` | Kodi variable definition |
+| `VariableReference` | Reference with condition/output override |
+| `VariableGroup` | Group of variable references |
+| `VariableGroupReference` | Reference with suffix/condition |
+
+***
+
+## Items Iteration
+
+### ItemsDefinition
+
+For `<template items="...">` submenu iteration.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | str | Insert marker name |
+| `source` | str | Submenu suffix |
+| `condition` | str | Parent item condition |
+| `filter` | str | Submenu item filter |
+| `properties`, `vars`, `preset_refs`, `property_groups`, `controls` | | Transformations |
+
+See [skinning/templates.md](../../skinning/templates.md) for XML documentation.

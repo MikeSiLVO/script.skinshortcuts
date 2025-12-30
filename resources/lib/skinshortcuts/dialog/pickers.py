@@ -39,7 +39,7 @@ class PickerItem(Protocol):
 
 @runtime_checkable
 class PickerGroup(Protocol):
-    """Protocol for group items in picker hierarchy (Group, WidgetGroup, BackgroundGroup)."""
+    """Protocol for group items in picker hierarchy."""
 
     name: str
     label: str
@@ -56,9 +56,9 @@ from ..models import (
     Background,
     BackgroundGroup,
     Content,
-    Group,
     MenuItem,
     Shortcut,
+    ShortcutGroup,
     Widget,
     WidgetGroup,
 )
@@ -164,7 +164,7 @@ class PickersMixin:
         return shortcut.action_play if result else shortcut.action
 
     def _pick_shortcut(
-        self, groups: list[Group], item_props: dict[str, str]
+        self, groups: list[ShortcutGroup], item_props: dict[str, str]
     ) -> Shortcut | None:
         """Pick a shortcut from groupings using generic hierarchy picker."""
         result = self._pick_from_hierarchy(
@@ -172,12 +172,12 @@ class PickersMixin:
             item_props,
             title="Choose Category",
             leaf_types=(Shortcut,),
-            group_types=(Group,),
+            group_types=(ShortcutGroup,),
             default_leaf_icon="DefaultShortcut.png",
             default_group_icon="DefaultFolder.png",
             show_none=False,
             content_resolver=self._resolve_content_to_shortcuts,
-            create_folder_group=lambda label, items: Group(
+            create_folder_group=lambda label, items: ShortcutGroup(
                 name=f"folder-{label}",
                 label=label,
                 icon="DefaultFolder.png",
@@ -472,7 +472,7 @@ class PickersMixin:
         *,
         title: str = "Select",
         leaf_types: tuple = (Shortcut,),
-        group_types: tuple = (Group,),
+        group_types: tuple = (ShortcutGroup,),
         default_leaf_icon: str = "DefaultShortcut.png",
         default_group_icon: str = "DefaultFolder.png",
         show_none: bool = False,

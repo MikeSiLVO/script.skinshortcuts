@@ -9,7 +9,7 @@ from pathlib import Path
 from .builders import IncludesBuilder
 from .loaders import (
     load_backgrounds,
-    load_menu_config,
+    load_menus,
     load_properties,
     load_templates,
     load_widgets,
@@ -72,7 +72,7 @@ class SkinConfig:
         """
         path = Path(shortcuts_path)
 
-        menu_config = load_menu_config(path / "menus.xml")
+        menu_config = load_menus(path / "menus.xml")
         widgets = load_widgets(path / "widgets.xml")
         backgrounds = load_backgrounds(path / "backgrounds.xml")
         templates = load_templates(path / "templates.xml")

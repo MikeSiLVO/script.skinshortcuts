@@ -12,7 +12,6 @@ $IF - Conditional expressions:
 from __future__ import annotations
 
 import re
-from typing import Callable
 
 from .conditions import evaluate_condition
 
@@ -43,7 +42,7 @@ class MathEvaluator:
             if isinstance(result, float) and result.is_integer():
                 return str(int(result))
             return str(result)
-        except (ValueError, ZeroDivisionError) as e:
+        except (ValueError, ZeroDivisionError):
             # On error, return the original expression
             return expr
 
