@@ -47,7 +47,7 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 <templates>
   <!-- Reusable expressions -->
   <expressions>
-    <expression name="HasWidget">!String.IsEmpty(widgetPath)</expression>
+    <expression name="HasWidget">widgetPath</expression>
   </expressions>
 
   <!-- Reusable property groups -->
@@ -799,10 +799,10 @@ Reference in template:
 
 ```xml
 <!-- Only apply widget props if item has a widget -->
-<propertyGroup name="widgetProps" condition="!String.IsEmpty(widgetPath)" />
+<propertyGroup name="widgetProps" condition="widgetPath" />
 
 <!-- Apply with suffix for Widget 2 -->
-<propertyGroup name="widgetProps" suffix=".2" condition="!String.IsEmpty(widgetPath.2)" />
+<propertyGroup name="widgetProps" suffix=".2" condition="widgetPath.2" />
 ```
 
 ### Suffix Transform
@@ -857,7 +857,7 @@ All matched attributes become properties.
 
 ```xml
 <!-- Apply layout preset for Widget 2 properties -->
-<preset name="widgetLayout" suffix=".2" condition="!String.IsEmpty(widgetPath.2)" />
+<preset name="widgetLayout" suffix=".2" condition="widgetPath.2" />
 ```
 
 When `suffix` is specified, preset conditions like `widgetStyle=Panel` are transformed to `widgetStyle.2=Panel`.
@@ -923,10 +923,10 @@ Reference in template:
 
 ```xml
 <!-- Build widget variables only for items with widgets -->
-<variableGroup name="widgetVars" condition="!String.IsEmpty(widgetPath)" />
+<variableGroup name="widgetVars" condition="widgetPath" />
 
 <!-- Build Widget 2 variables with suffix transform -->
-<variableGroup name="widgetVars" suffix=".2" condition="!String.IsEmpty(widgetPath.2)" />
+<variableGroup name="widgetVars" suffix=".2" condition="widgetPath.2" />
 ```
 
 ### Variable Attributes
@@ -945,15 +945,17 @@ Named conditions for reuse:
 
 ```xml
 <expressions>
-  <expression name="HasWidget">!String.IsEmpty(widgetPath)</expression>
-  <expression name="IsMovies">String.IsEqual(widgetType,movies)</expression>
+  <expression name="HasWidget">widgetPath</expression>
+  <expression name="IsMovies">widgetType=movies</expression>
+  <expression name="IsVideoWidget">widgetType=movies | episodes | tvshows</expression>
 </expressions>
 ```
 
-Use in controls:
+Use in template conditions:
 
 ```xml
-<visible>$EXP[HasWidget]</visible>
+<skinshortcuts include="WidgetControls" condition="$EXP[HasWidget]" />
+<propertyGroup name="movieProps" condition="$EXP[IsMovies]" />
 ```
 
 ***
@@ -1018,7 +1020,7 @@ Control when a template builds:
 ```xml
 <template include="MovieWidget">
   <condition>widgetType=movies</condition>
-  <condition>!String.IsEmpty(widgetPath)</condition>
+  <condition>widgetPath</condition>
   ...
 </template>
 ```
@@ -1088,7 +1090,7 @@ When `$INCLUDE[...]` appears as text content in an element (e.g., after `$PROPER
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
   <expressions>
-    <expression name="HasWidget">!String.IsEmpty(widgetPath)</expression>
+    <expression name="HasWidget">widgetPath</expression>
   </expressions>
 
   <propertyGroups>

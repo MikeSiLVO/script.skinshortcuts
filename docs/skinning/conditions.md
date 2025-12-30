@@ -369,7 +369,7 @@ Nested grouping:
 ```xml
 <template include="MovieWidgets">
   <condition>widgetType=movies</condition>
-  <condition>!String.IsEmpty(widgetPath)</condition>
+  <condition>widgetPath</condition>
 </template>
 ```
 

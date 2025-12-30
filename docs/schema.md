@@ -395,7 +395,7 @@ Defines templates for generating skin includes. For detailed documentation, see 
 <templates>
   <!-- Named expressions -->
   <expressions>
-    <expression name="HasWidget" nosuffix="false">!String.IsEmpty(widgetPath)</expression>
+    <expression name="HasWidget" nosuffix="false">widgetPath</expression>
     <expression name="WidgetContainer" nosuffix="true">9000</expression>
   </expressions>
 

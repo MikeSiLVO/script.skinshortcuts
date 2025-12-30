@@ -514,8 +514,8 @@ v3 introduces a new template system. If your v2 skin used custom templates, you 
 
 ```xml
 <expressions>
-  <expression name="HasWidget">!String.IsEmpty(widgetPath)</expression>
-  <expression name="IsMovies">String.IsEqual(widgetType,movies)</expression>
+  <expression name="HasWidget">widgetPath</expression>
+  <expression name="IsMovies">widgetType=movies</expression>
 </expressions>
 ```
 
