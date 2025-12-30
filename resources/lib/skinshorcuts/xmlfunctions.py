@@ -69,7 +69,7 @@ class XMLFunctions:
             try:
                 contents = read_file(profiles_xml)
                 tree = ETree.fromstring(contents)
-            except FileNotFoundError:
+            except (FileNotFoundError, ETree.ParseError):
                 pass
 
         profilelist = []
