@@ -57,6 +57,28 @@ All return bool. Update working copy.
 | `set_disabled(menu_id, item_id, disabled)` | Set disabled state |
 | `set_custom_property(menu_id, item_id, name, value)` | Set custom property |
 
+### Custom Widget Operations
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `create_custom_widget_menu(menu_id, item_id, suffix)` | str | Create custom widget menu, return its ID |
+| `get_custom_widget_menu(menu_id, item_id, suffix)` | str | Get custom widget menu ID |
+| `clear_custom_widget(menu_id, item_id, suffix)` | bool | Clear custom widget menu and reference |
+
+Custom widget menus use auto-generated IDs (`custom-{uuid}`) and are referenced via `customWidget` or `customWidget.{N}` properties on items.
+
+### Reset Operations
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `reset_menu(menu_id)` | bool | Reset single menu to defaults |
+| `reset_menu_tree(menu_id)` | bool | Reset menu and all referenced submenus |
+| `reset_all_submenus()` | bool | Reset all menus with `is_submenu=True` |
+
+**reset_menu_tree**: Follows `item.submenu` references recursively with cycle detection.
+
+**reset_all_submenus**: Resets menus defined with `<submenu>` tag (not `<menu>`).
+
 ### Persistence
 
 | Method | Returns | Description |

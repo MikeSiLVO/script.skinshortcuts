@@ -7,7 +7,7 @@
 
 ## Overview
 
-Stores user modifications to menus in JSON format. Provides merging logic to combine skin defaults with user overrides.
+Stores user modifications to menus and view selections in JSON format. Provides merging logic to combine skin defaults with user overrides.
 
 **Storage:** `special://profile/addon_data/script.skinshortcuts/{skin_dir}.userdata.json`
 
@@ -43,6 +43,22 @@ Merge default menu with user overrides.
 | Field | Type | Description |
 |-------|------|-------------|
 | `menus` | dict[str, MenuOverride] | Overrides by menu name |
+| `views` | dict[str, dict[str, str]] | View selections: source → content → view_id |
+
+**View Sources:**
+- `library` - Library view selections
+- `plugins` - Generic plugin view selections
+- `plugin.video.X` - Plugin-specific view overrides
+
+**View Methods:**
+
+| Method | Description |
+|--------|-------------|
+| `get_view(source, content)` | Get selected view ID |
+| `set_view(source, content, view_id)` | Set view selection |
+| `clear_view(source, content)` | Clear view selection |
+| `clear_all_views()` | Clear all view selections |
+| `get_plugin_overrides(content)` | Get plugin-specific overrides for content type |
 
 ### MenuOverride
 

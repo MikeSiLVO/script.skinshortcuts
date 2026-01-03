@@ -33,9 +33,13 @@ Spawn child dialog to edit submenu. Hides parent, spawns child with shared state
 | Method | Purpose |
 |--------|---------|
 | `_handle_onclose` | Evaluate and execute onclose actions |
-| `_open_onclose_menu` | Open menu from onclose action (e.g., custom widget) |
+| `_resolve_menu_reference` | Resolve menu reference with placeholder support |
+| `_open_onclose_menu` | Open resolved menu from onclose action |
 
-**Menu name substitution:** `{item}` → current item name (e.g., `movies.customwidget`)
+**Menu reference placeholders:**
+- `{customWidget}` → custom widget slot 1 (creates if needed)
+- `{customWidget.2}` → custom widget slot 2 (creates if needed)
+- `{item}.customwidget` → legacy format, converted to explicit reference
 
 ***
 

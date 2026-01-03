@@ -17,7 +17,7 @@ except ImportError:
     IN_KODI = False
 
 from .config import SkinConfig
-from .constants import INCLUDES_FILE, MENUS_FILE
+from .constants import INCLUDES_FILE, MENUS_FILE, VIEWS_FILE
 from .dialog import show_management_dialog
 from .hashing import generate_config_hashes, hash_file, needs_rebuild, write_hashes
 from .log import get_logger
@@ -101,9 +101,10 @@ def build_includes(
 
         path = Path(shortcuts_path)
         menus_file = path / MENUS_FILE
+        views_file = path / VIEWS_FILE
 
-        if not menus_file.exists():
-            log.warning(f"No menus.xml found in {shortcuts_path}")
+        if not menus_file.exists() and not views_file.exists():
+            log.error(f"No menus.xml or views.xml found in {shortcuts_path}")
             return False
 
         if output_path:
@@ -123,8 +124,8 @@ def build_includes(
             f"{len(config.widgets)} widgets, {len(config.backgrounds)} backgrounds"
         )
 
-        if not config.menus:
-            log.warning("No menus found in config")
+        if not config.menus and not config.view_config.content_rules:
+            log.error("No menus or view rules found in config")
             return False
 
         if not output_paths:
@@ -164,32 +165,30 @@ def build_includes(
             home.clearProperty("skinshortcuts-isbuilding")
 
 
-def clear_custom_menu(
+def clear_custom_widget(
     menu: str,
+    item: str,
+    suffix: str = "",
     property_name: str = "",
     shortcuts_path: str | None = None,
 ) -> bool:
-    """Clear a custom widget menu and optionally reset a property.
-
-    Called via RunScript to clear custom widget items. The menu parameter
-    should be the custom menu name (e.g., "movies.customwidget").
-
-    If property_name is specified, it will also clear the widget property
-    on the parent item (e.g., clear "widget" property on "movies" item).
+    """Clear a custom widget menu and optionally reset related properties.
 
     Args:
-        menu: Custom menu name to clear (e.g., "movies.customwidget")
-        property_name: Optional property to clear on parent item
+        menu: Parent menu ID (e.g., "mainmenu")
+        item: Item ID to clear custom widget from (e.g., "movies")
+        suffix: Widget slot suffix (e.g., ".2" for second slot)
+        property_name: Optional property prefix to clear (e.g., "widget")
         shortcuts_path: Path to shortcuts folder
 
     Returns:
         True if cleared successfully
     """
-    if not menu:
-        log.warning("clear_custom_menu: No menu specified")
+    if not menu or not item:
+        log.warning("clear_custom_widget: menu and item are required")
         return False
 
-    log.debug(f"Clearing custom menu: {menu}, property: {property_name}")
+    log.debug(f"Clearing custom widget: menu={menu}, item={item}, suffix={suffix}")
 
     if shortcuts_path is None:
         shortcuts_path = get_skin_path()
@@ -199,31 +198,25 @@ def clear_custom_menu(
 
         manager = MenuManager(shortcuts_path)
 
-        custom_menu = manager.config.get_menu(menu)
-        if custom_menu:
-            custom_menu.items.clear()
-            manager._changed = True
-            log.debug(f"Cleared items from menu: {menu}")
+        manager.clear_custom_widget(menu, item, suffix)
 
-        if property_name and ".customwidget" in menu:
-            parent_name = menu.split(".customwidget")[0]
-            for parent_menu in manager.config.menus:
-                item = parent_menu.get_item(parent_name)
-                if item:
-                    props_to_clear = [
-                        property_name,
-                        f"{property_name}Name",
-                        f"{property_name}Path",
-                        f"{property_name}Type",
-                        f"{property_name}Target",
-                        f"{property_name}Label",
-                    ]
-                    for prop in props_to_clear:
-                        if prop in item.properties:
-                            del item.properties[prop]
-                    manager._changed = True
-                    log.debug(f"Cleared {property_name} property on item: {parent_name}")
-                    break
+        if property_name:
+            working_item = manager._get_working_item(menu, item)
+            if working_item:
+                prop_suffix = suffix or ""
+                props_to_clear = [
+                    f"{property_name}{prop_suffix}",
+                    f"{property_name}Name{prop_suffix}",
+                    f"{property_name}Path{prop_suffix}",
+                    f"{property_name}Type{prop_suffix}",
+                    f"{property_name}Target{prop_suffix}",
+                    f"{property_name}Label{prop_suffix}",
+                ]
+                for prop in props_to_clear:
+                    if prop in working_item.properties:
+                        del working_item.properties[prop]
+                manager._changed = True
+                log.debug(f"Cleared {property_name} properties on item: {item}")
 
         if manager.has_changes():
             manager.save()
@@ -233,7 +226,7 @@ def clear_custom_menu(
         return True
 
     except Exception as e:
-        log.error(f"Error clearing custom menu: {e}")
+        log.error(f"Error clearing custom widget: {e}")
         import traceback
         log.error(traceback.format_exc())
         return False
@@ -277,14 +270,130 @@ def reset_all_menus(shortcuts_path: str | None = None) -> bool:
     return True
 
 
+def view_select(
+    content: str = "",
+    plugin: str = "",
+    shortcuts_path: str | None = None,
+) -> bool:
+    """Show view selection dialog.
+
+    Args:
+        content: Optional content type (e.g., "movies") for direct picker
+        plugin: Optional plugin ID for plugin-specific override
+        shortcuts_path: Path to shortcuts folder
+
+    Returns:
+        True if changes were made
+    """
+    if not IN_KODI:
+        return False
+
+    if shortcuts_path is None:
+        shortcuts_path = get_skin_path()
+
+    from .config import SkinConfig
+    from .dialog.views import show_view_browser, show_view_picker
+    from .userdata import load_userdata, save_userdata
+
+    config = SkinConfig.load(shortcuts_path)
+    userdata = load_userdata()
+
+    if content:
+        changed = show_view_picker(config.view_config, userdata, content, plugin)
+    else:
+        changed = show_view_browser(config.view_config, userdata)
+
+    if changed:
+        save_userdata(userdata)
+        build_includes(shortcuts_path, force=True)
+
+    return changed
+
+
+def reset_views(shortcuts_path: str | None = None) -> bool:
+    """Reset all view selections to defaults.
+
+    Args:
+        shortcuts_path: Path to shortcuts folder (for rebuild after reset)
+
+    Returns:
+        True if reset successfully
+    """
+    if not IN_KODI:
+        return False
+
+    import xbmcgui
+
+    if not xbmcgui.Dialog().yesno(
+        xbmc.getLocalizedString(186),  # "Reset"
+        "Reset all view selections to skin defaults?",
+    ):
+        return False
+
+    from .userdata import load_userdata, save_userdata
+
+    userdata = load_userdata()
+    userdata.clear_all_views()
+    save_userdata(userdata)
+
+    log.info("Reset all view selections")
+
+    if shortcuts_path is None:
+        shortcuts_path = get_skin_path()
+
+    build_includes(shortcuts_path, force=True)
+    return True
+
+
+def reset_menus(shortcuts_path: str | None = None) -> bool:
+    """Reset all menu selections to defaults (keeps view selections).
+
+    Args:
+        shortcuts_path: Path to shortcuts folder (for rebuild after reset)
+
+    Returns:
+        True if reset successfully
+    """
+    if not IN_KODI:
+        return False
+
+    import xbmcgui
+
+    if not xbmcgui.Dialog().yesno(
+        xbmc.getLocalizedString(186),  # "Reset"
+        "Reset all menus to skin defaults?[CR]View selections will be preserved.",
+    ):
+        return False
+
+    from .userdata import load_userdata, save_userdata
+
+    userdata = load_userdata()
+    userdata.menus.clear()
+    save_userdata(userdata)
+
+    log.info("Reset all menus (views preserved)")
+
+    if shortcuts_path is None:
+        shortcuts_path = get_skin_path()
+
+    build_includes(shortcuts_path, force=True)
+    return True
+
+
 def main() -> None:
     """Main entry point for RunScript."""
     log.info("Skin Shortcuts started")
 
     args = {}
     if len(sys.argv) > 1:
-        query = sys.argv[1].lstrip("?")
-        args = {k: v[0] for k, v in parse_qs(query).items()}
+        if "&" in sys.argv[1] or len(sys.argv) == 2:
+            query = sys.argv[1].lstrip("?")
+            args = {k: v[0] for k, v in parse_qs(query).items()}
+        else:
+            for arg in sys.argv[1:]:
+                if "=" in arg:
+                    key, value = arg.split("=", 1)
+                    args[key] = value
 
     action = args.get("type", "buildxml")
 
@@ -313,9 +422,42 @@ def main() -> None:
             log.debug("No changes saved, skipping rebuild")
     elif action == "resetall":
         reset_all_menus(args.get("path"))
+    elif action == "resetmenus":
+        reset_menus(args.get("path"))
+    elif action == "resetviews":
+        reset_views(args.get("path"))
+    elif action == "viewselect":
+        view_select(
+            content=args.get("content", ""),
+            plugin=args.get("plugin", ""),
+            shortcuts_path=args.get("path"),
+        )
+    elif action == "reset":
+        # Reset specific menu (optionally with submenus)
+        menu = args.get("menu", "")
+        if menu:
+            from .manager import MenuManager
+            shortcuts_path = args.get("path") or get_skin_path()
+            manager = MenuManager(shortcuts_path)
+            if args.get("submenus", "").lower() == "true":
+                manager.reset_menu_tree(menu)
+            else:
+                manager.reset_menu(menu)
+            manager.save()
+            build_includes(shortcuts_path, force=True)
+    elif action == "resetsubmenus":
+        # Reset all submenus
+        from .manager import MenuManager
+        shortcuts_path = args.get("path") or get_skin_path()
+        manager = MenuManager(shortcuts_path)
+        manager.reset_all_submenus()
+        manager.save()
+        build_includes(shortcuts_path, force=True)
     elif action == "clear":
-        clear_custom_menu(
+        clear_custom_widget(
             menu=args.get("menu", ""),
+            item=args.get("item", ""),
+            suffix=args.get("suffix", ""),
             property_name=args.get("property", ""),
             shortcuts_path=args.get("path"),
         )

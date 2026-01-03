@@ -2,7 +2,7 @@
 
 The `menus.xml` file defines menu structure, items, shortcut picker groupings, and dialog settings.
 
-***
+---
 
 ## Table of Contents
 
@@ -20,7 +20,7 @@ The `menus.xml` file defines menu structure, items, shortcut picker groupings, a
 * [Action Overrides](#action-overrides)
 * [Context Menu](#context-menu)
 
-***
+---
 
 ## File Structure
 
@@ -51,7 +51,7 @@ The `menus.xml` file defines menu structure, items, shortcut picker groupings, a
 </menus>
 ```
 
-***
+---
 
 ## Menu Element
 
@@ -74,7 +74,7 @@ Defines a standalone menu that generates an include.
 
 **Container binding:** When `container` is set, visibility conditions are generated for submenus and widgets based on focused item position.
 
-***
+---
 
 ## Submenu Element
 
@@ -104,7 +104,7 @@ Link a submenu to an item:
 </item>
 ```
 
-***
+---
 
 ## Item Element
 
@@ -154,7 +154,7 @@ Defines a menu item.
 | `visible="..."` (attribute on `<item>`) | Management dialog | Hides item from dialog when condition fails (e.g., hide playdisc when no disc drive) |
 | `<visible>` (child element) | Generated include | Output as `<visible>` in the include file |
 
-***
+---
 
 ## Actions
 
@@ -193,7 +193,7 @@ Use the `condition` attribute for fallback behavior:
 
 The first matching action executes. Unconditional actions always match.
 
-***
+---
 
 ## Defaults
 
@@ -239,7 +239,7 @@ The `<defaults>` element also supports `widget` and `background` attributes as s
 | `when` | `before`, `after` | When to run relative to item action |
 | `condition` | Kodi condition | Only run when condition is true |
 
-***
+---
 
 ## Allow Settings
 
@@ -264,7 +264,9 @@ These set window properties that your dialog skin can use for button visibility:
 * `Window.Property(allowBackgrounds)` = `true` or `false`
 * `Window.Property(allowSubmenus)` = `true` or `false`
 
-***
+> **See also:** [Management Dialog](management-dialog.md) for using these properties in your dialog skin
+
+---
 
 ## Protection
 
@@ -299,7 +301,7 @@ Items with `required="true"` cannot be deleted or disabled. If a user previously
 | `heading` | - | String | Dialog heading |
 | `message` | - | String | Dialog message |
 
-***
+---
 
 ## Shortcut Groupings
 
@@ -412,7 +414,9 @@ When the user selects a playlist shortcut, a dialog offers action choices:
 * **Play** - Plays the playlist immediately (PlayMedia)
 * **Party Mode** - Starts party mode shuffle (music playlists only)
 
-***
+> **See also:** [Conditions](conditions.md) for `condition` and `visible` attribute syntax
+
+---
 
 ## Icon Sources
 
@@ -451,7 +455,7 @@ Multiple conditional sources:
 
 Use `browse` as the path for free file browser.
 
-***
+---
 
 ## Subdialogs
 
@@ -485,7 +489,9 @@ Define subdialogs triggered by button clicks. Used for multi-widget support.
 | `menu` | Menu name for `action="menu"`. Supports `{item}` placeholder |
 | `condition` | Condition evaluated against item properties |
 
-***
+> **See also:** [Management Dialog](management-dialog.md#subdialogs) for implementing subdialog UI
+
+---
 
 ## Action Overrides
 
@@ -503,7 +509,7 @@ Replace deprecated or changed actions:
 
 The element text is the replacement action.
 
-***
+---
 
 ## Context Menu
 
@@ -515,12 +521,6 @@ Enable or disable context menu on items:
 
 Default: `true`. Set to `false`, `no`, or `0` to disable.
 
-***
+---
 
-## Quick Navigation
-
-[Back to Top](#menu-configuration)
-
-**Sections:** [File Structure](#file-structure) | [Menu Element](#menu-element) | [Submenu Element](#submenu-element) | [Item Element](#item-element) | [Actions](#actions) | [Defaults](#defaults) | [Allow Settings](#allow-settings) | [Protection](#protection) | [Shortcut Groupings](#shortcut-groupings) | [Icon Sources](#icon-sources) | [Subdialogs](#subdialogs) | [Action Overrides](#action-overrides) | [Context Menu](#context-menu)
-
-**Related Docs:** [Widgets](widgets.md) | [Backgrounds](backgrounds.md) | [Properties](properties.md) | [Templates](templates.md) | [Conditions](conditions.md)
+[↑ Top](#menu-configuration) · [Skinning Docs](index.md)

@@ -2,7 +2,7 @@
 
 Conditions filter items and control behavior based on property values.
 
-***
+---
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ Conditions filter items and control behavior based on property values.
 * [Grouping](#grouping)
 * [Examples](#examples)
 
-***
+---
 
 ## Two Types of Conditions
 
@@ -44,7 +44,7 @@ Checked against Kodi runtime state:
 <shortcut name="tmdb-widget" visible="System.AddonIsEnabled(plugin.video.themoviedb.helper)">
 ```
 
-***
+---
 
 ## Property Conditions
 
@@ -63,7 +63,7 @@ Property conditions use a simple expression language to compare against the curr
 * Template `<value condition="...">` - Conditional var value
 * Fallback `<when condition="...">` - Conditional fallback
 
-***
+---
 
 ## Kodi Visibility Conditions
 
@@ -89,7 +89,7 @@ visible="System.HasAddon(resource.images.moviegenreicons.transparent)"
 visible="!String.IsEmpty(Window(Home).Property(SomeProperty))"
 ```
 
-***
+---
 
 ## Property Condition Syntax
 
@@ -155,7 +155,7 @@ propertyName~value
 <shortcut condition="widgetPath~videodb://">
 ```
 
-***
+---
 
 ## Operators
 
@@ -203,7 +203,7 @@ Check if a property value matches any item in a comma-separated list:
 
 Equivalent to `widgetType=movies | widgetType=episodes | widgetType=tvshows` but more concise.
 
-***
+---
 
 ## Combining Conditions
 
@@ -243,7 +243,7 @@ AND has higher precedence than OR. Use grouping for complex logic:
 [condition1 | condition2] + condition3
 ```
 
-***
+---
 
 ## Compact OR Syntax
 
@@ -265,7 +265,7 @@ propertyName=value1 | propertyName=value2 | propertyName=value3
 <option condition="widgetType=movies | widgetType=episodes | widgetType=tvshows">
 ```
 
-***
+---
 
 ## Negation
 
@@ -331,7 +331,7 @@ Negate an entire group:
 <option condition="![widgetType=movies | widgetType=tvshows]">
 ```
 
-***
+---
 
 ## Grouping
 
@@ -352,7 +352,7 @@ Nested grouping:
 <option condition="![widgetType=movies | [widgetType=tvshows + widgetStyle=Panel]]">
 ```
 
-***
+---
 
 ## Examples
 
@@ -434,7 +434,9 @@ Suffixed properties can also be checked directly:
 
 Suffix transforms are applied automatically when using `suffix` attribute on outputs.
 
-***
+> **See also:** [Templates](templates.md) for template conditions, [Properties](properties.md) for fallback configuration
+
+---
 
 ## Evaluation Order
 
@@ -446,12 +448,6 @@ Suffix transforms are applied automatically when using `suffix` attribute on out
 6. Property-only terms (`prop` or `!prop`) check for truthy/falsy value
 7. Equality (`=`) and contains (`~`) compare against the value
 
-***
+---
 
-## Quick Navigation
-
-[Back to Top](#condition-syntax)
-
-**Sections:** [Two Types](#two-types-of-conditions) | [Property Conditions](#property-conditions) | [Kodi Visibility](#kodi-visibility-conditions) | [Syntax](#property-condition-syntax) | [Operators](#operators) | [Combining](#combining-conditions) | [Compact OR](#compact-or-syntax) | [Negation](#negation) | [Grouping](#grouping) | [Examples](#examples)
-
-**Related Docs:** [Templates](templates.md) | [Properties](properties.md) | [Menus](menus.md) | [Widgets](widgets.md)
+[↑ Top](#condition-syntax) · [Skinning Docs](index.md)

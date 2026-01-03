@@ -86,18 +86,62 @@ def _item_override_to_dict(item: MenuItemOverride) -> dict[str, Any]:
 
 @dataclass
 class UserData:
-    """All user customizations for a skin."""
+    """All user customizations for a skin.
+
+    The views field stores user view selections:
+    source -> content -> view_id
+    Sources are: 'library', 'plugins', or 'plugin.video.X' for specific plugins.
+    """
 
     menus: dict[str, MenuOverride] = field(default_factory=dict)
+    views: dict[str, dict[str, str]] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
-        return {
-            "menus": {
+        result: dict[str, Any] = {}
+        if self.menus:
+            result["menus"] = {
                 menu_id: _menu_override_to_dict(override)
                 for menu_id, override in self.menus.items()
             }
-        }
+        if self.views:
+            result["views"] = self.views
+        return result
+
+    def get_view(self, source: str, content: str) -> str | None:
+        """Get user's selected view for a source and content type."""
+        source_views = self.views.get(source)
+        if source_views:
+            return source_views.get(content)
+        return None
+
+    def set_view(self, source: str, content: str, view_id: str) -> None:
+        """Set user's view selection for a source and content type."""
+        if source not in self.views:
+            self.views[source] = {}
+        self.views[source][content] = view_id
+
+    def clear_view(self, source: str, content: str) -> None:
+        """Clear user's view selection for a source and content type."""
+        if source in self.views:
+            self.views[source].pop(content, None)
+            if not self.views[source]:
+                del self.views[source]
+
+    def clear_all_views(self) -> None:
+        """Clear all view selections."""
+        self.views.clear()
+
+    def get_plugin_overrides(self, content: str) -> dict[str, str]:
+        """Get all plugin-specific view overrides for a content type.
+
+        Returns dict of plugin_id -> view_id for plugins with custom selections.
+        """
+        overrides = {}
+        for source, selections in self.views.items():
+            if source.startswith("plugin.") and content in selections:
+                overrides[source] = selections[content]
+        return overrides
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> UserData:
@@ -119,7 +163,8 @@ class UserData:
                 items.append(MenuItemOverride(**item_data, actions=actions))
             removed = menu_data.get("removed", [])
             menus[menu_id] = MenuOverride(items=items, removed=removed)
-        return cls(menus=menus)
+        views: dict[str, dict[str, str]] = data.get("views", {})
+        return cls(menus=menus, views=views)
 
 
 def load_userdata(path: str | None = None) -> UserData:

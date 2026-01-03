@@ -8,9 +8,11 @@ from .base import apply_suffix_to_from, apply_suffix_transform
 from .menu import load_groupings, load_menus
 from .property import PropertyLoader, load_properties
 from .template import TemplateLoader, load_templates
+from .views import load_views
 from .widget import load_widgets
 
 __all__ = [
+    "load_views",
     "load_widgets",
     "load_backgrounds",
     "load_menus",

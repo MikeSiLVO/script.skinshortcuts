@@ -2,7 +2,7 @@
 
 The `properties.xml` file defines custom properties, button mappings, and fallback values.
 
-***
+---
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ The `properties.xml` file defines custom properties, button mappings, and fallba
 * [Includes](#includes)
 * [Suffix Transforms](#suffix-transforms)
 
-***
+---
 
 ## Overview
 
@@ -26,7 +26,7 @@ Properties extend menu items beyond built-in fields (label, icon, action). Commo
 * Custom toggle settings
 * Any skin-specific metadata
 
-***
+---
 
 ## File Structure
 
@@ -67,7 +67,7 @@ Properties extend menu items beyond built-in fields (label, icon, action). Commo
 </properties>
 ```
 
-***
+---
 
 ## Property Element
 
@@ -100,7 +100,7 @@ Properties extend menu items beyond built-in fields (label, icon, action). Commo
 | `widget` | Opens widget picker |
 | `background` | Opens background picker |
 
-***
+---
 
 ## Options
 
@@ -139,7 +139,7 @@ Multiple icons with conditions for dynamic display:
 
 First matching condition wins. Empty condition is default.
 
-***
+---
 
 ## Button Mappings
 
@@ -186,7 +186,9 @@ Group buttons with shared settings:
 </group>
 ```
 
-***
+> **See also:** [Management Dialog](management-dialog.md#control-ids) for control ID reference
+
+---
 
 ## Fallbacks
 
@@ -217,7 +219,9 @@ Default values when property is not set:
 
 Rules are evaluated in order. First match wins.
 
-***
+> **See also:** [Conditions](conditions.md) for condition syntax
+
+---
 
 ## Includes
 
@@ -259,7 +263,7 @@ Reuse option sets across properties:
 | `content` | Name of include to expand |
 | `suffix` | Apply suffix transform to conditions |
 
-***
+---
 
 ## Suffix Transforms
 
@@ -302,7 +306,7 @@ Subdialogs set suffix via the `suffix` attribute:
 
 Button mappings with `suffix="true"` automatically use the dialog's suffix.
 
-***
+---
 
 ## Complete Example
 
@@ -362,12 +366,6 @@ Button mappings with `suffix="true"` automatically use the dialog's suffix.
 </properties>
 ```
 
-***
+---
 
-## Quick Navigation
-
-[Back to Top](#property-configuration)
-
-**Sections:** [Overview](#overview) | [File Structure](#file-structure) | [Property Element](#property-element) | [Options](#options) | [Button Mappings](#button-mappings) | [Fallbacks](#fallbacks) | [Includes](#includes) | [Suffix Transforms](#suffix-transforms)
-
-**Related Docs:** [Templates](templates.md) | [Conditions](conditions.md) | [Menus](menus.md) | [Builtin Properties](builtin-properties.md)
+[↑ Top](#property-configuration) · [Skinning Docs](index.md)

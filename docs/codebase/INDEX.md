@@ -34,6 +34,7 @@
 | pickers.py | [pickers.md](dialog/pickers.md) | Shortcut/widget pickers |
 | properties.py | [properties.md](dialog/properties.md) | Property management |
 | subdialogs.py | [subdialogs.md](dialog/subdialogs.md) | Subdialog handling |
+| views.py | [views.md](dialog/views.md) | View selection dialogs |
 
 ### Models Package (`models/`)
 
@@ -45,6 +46,7 @@
 | background.py | [background.md](models/background.md) | Background models |
 | property.py | [property.md](models/property.md) | Property schema models |
 | template.py | [template.md](models/template.md) | Template models |
+| views.py | [views.md](models/views.md) | View lock models |
 
 ### Loaders Package (`loaders/`)
 
@@ -57,6 +59,7 @@
 | background.py | [background.md](loaders/background.md) | Background loader |
 | property.py | [property.md](loaders/property.md) | Property schema loader |
 | template.py | [template.md](loaders/template.md) | Template schema loader |
+| views.py | [views.md](loaders/views.md) | View config loader |
 
 ### Builders Package (`builders/`)
 
@@ -65,6 +68,7 @@
 | Overview | [README.md](builders/README.md) | Package overview |
 | includes.py | [includes.md](builders/includes.md) | Includes.xml builder |
 | template.py | [template.md](builders/template.md) | Template processor |
+| views.py | [views.md](builders/views.md) | View expression builder |
 
 ### Providers Package (`providers/`)
 
@@ -84,7 +88,8 @@ RunScript(script.skinshortcuts,...)
     └── entry.main()
         ├── build_includes() → SkinConfig.load() → build_includes()
         ├── show_management_dialog() → ManagementDialog
-        ├── reset_all_menus()
+        ├── view_select() → show_view_browser() / show_view_picker()
+        ├── reset_all_menus() / reset_menus() / reset_views()
         └── clear_custom_menu()
 ```
 
@@ -97,6 +102,7 @@ SkinConfig.load()
     ├── load_backgrounds() → BackgroundConfig
     ├── load_templates() → TemplateSchema
     ├── load_properties() → PropertySchema
+    ├── load_views() → ViewConfig
     └── load_userdata() → UserData
         └── merge_menu() for each menu
 ```
@@ -109,7 +115,8 @@ SkinConfig.build_includes()
         ├── _build_menu_include()
         ├── _build_submenu_include()
         ├── _build_custom_widget_includes()
-        └── TemplateBuilder.build() if templates exist
+        ├── TemplateBuilder.build() if templates exist
+        └── ViewExpressionBuilder.build() if views exist
 ```
 
 ### Dialog Flow
@@ -165,10 +172,15 @@ ManagementDialog.close()
 * **Used by:** config.py, builders/template.py
 * **Key components:** templates, submenus, items_templates, presets, property_groups, variable_definitions, variable_groups, includes, expressions
 
+### ViewConfig
+
+* **Created by:** loaders/views.py
+* **Used by:** config.py, builders/views.py, dialog/views.py
+
 ### UserData
 
 * **Created by:** userdata.py (load_userdata)
-* **Used by:** config.py, manager.py
+* **Used by:** config.py, manager.py, builders/views.py, dialog/views.py
 
 ***
 
@@ -192,20 +204,20 @@ ManagementDialog.close()
     ┌──────────┐    ┌──────────────────────────┐
     │manager.py│    │       loaders/           │
     │  (API)   │    │ menu, widget, background │
-    └────┬─────┘    │ property, template       │
+    └────┬─────┘    │ property, template, views│
          │          └────────────┬─────────────┘
          ▼                       │
     ┌──────────┐                 ▼
     │userdata  │    ┌──────────────────────────┐
     │  .py     │    │        models/           │
     └──────────┘    │ Menu, Widget, Background │
-                    │ PropertySchema, Template │
+                    │ Property, Template, View │
                     └────────────┬─────────────┘
                                  │
                                  ▼
                     ┌──────────────────────────┐
                     │       builders/          │
-                    │ includes.py, template.py │
+                    │ includes, template, views│
                     └──────────────────────────┘
                                  │
                                  ▼
@@ -226,10 +238,13 @@ ManagementDialog.close()
 | Parse menus.xml | loaders/menu.py |
 | Parse widgets.xml | loaders/widget.py |
 | Parse templates.xml | loaders/template.py |
+| Parse views.xml | loaders/views.py |
 | Build includes.xml | builders/includes.py |
+| Build view expressions | builders/views.py |
 | Process templates | builders/template.py |
 | Handle items iteration | builders/template.py (_handle_skinshortcuts_items) |
 | Show management dialog | dialog/ |
+| Show view selection | dialog/views.py |
 | Save user changes | userdata.py, manager.py |
 | Check if rebuild needed | hashing.py |
 | Resolve dynamic content | providers/content.py |

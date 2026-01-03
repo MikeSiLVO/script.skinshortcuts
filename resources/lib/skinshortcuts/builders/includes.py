@@ -10,6 +10,8 @@ if TYPE_CHECKING:
     from ..models import Menu, MenuItem
     from ..models.property import PropertySchema
     from ..models.template import TemplateSchema
+    from ..models.views import ViewConfig
+    from ..userdata import UserData
 
 
 class IncludesBuilder:
@@ -20,10 +22,14 @@ class IncludesBuilder:
         menus: list[Menu],
         templates: TemplateSchema | None = None,
         property_schema: PropertySchema | None = None,
+        view_config: ViewConfig | None = None,
+        userdata: UserData | None = None,
     ):
         self.menus = menus
         self.templates = templates
         self.property_schema = property_schema
+        self.view_config = view_config
+        self.userdata = userdata
         self._menu_map: dict[str, Menu] = {m.name: m for m in menus}
 
     def build(self) -> ET.Element:
@@ -64,6 +70,13 @@ class IncludesBuilder:
             template_root = template_builder.build()
             for template_include in template_root:
                 root.append(template_include)
+
+        if self.view_config and self.view_config.content_rules and self.userdata:
+            from .views import ViewExpressionBuilder
+
+            view_builder = ViewExpressionBuilder(self.view_config, self.userdata)
+            for expr in view_builder.build():
+                root.append(expr)
 
         return root
 
@@ -139,11 +152,13 @@ class IncludesBuilder:
     def _build_custom_widget_includes(self, parent_menu: Menu) -> list[ET.Element]:
         """Build custom widget includes for a root menu.
 
-        Custom widgets are menus named '{item.name}.customwidget' or
-        '{item.name}.customwidget.2', etc. Each item+slot combo gets its own include.
+        Custom widgets are referenced via item properties:
+        - customWidget -> slot 1, include: skinshortcuts-{item}-customwidget
+        - customWidget.2 -> slot 2, include: skinshortcuts-{item}-customwidget2
+        - etc.
 
         Returns:
-            List of include elements, one per custom widget menu found.
+            List of include elements, one per custom widget reference found.
         """
         includes = []
 
@@ -152,8 +167,12 @@ class IncludesBuilder:
                 continue
 
             for suffix in ["", ".2", ".3", ".4", ".5", ".6", ".7", ".8", ".9", ".10"]:
-                cw_menu_name = f"{parent_item.name}.customwidget{suffix}"
-                cw_menu = self._menu_map.get(cw_menu_name)
+                prop_name = f"customWidget{suffix}"
+                cw_menu_ref = parent_item.properties.get(prop_name)
+                if not cw_menu_ref:
+                    continue
+
+                cw_menu = self._menu_map.get(cw_menu_ref)
                 if not cw_menu or not cw_menu.items:
                     continue
 

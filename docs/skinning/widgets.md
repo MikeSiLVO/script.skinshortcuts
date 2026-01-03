@@ -2,7 +2,7 @@
 
 The `widgets.xml` file defines widgets that users can assign to menu items.
 
-***
+---
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ The `widgets.xml` file defines widgets that users can assign to menu items.
 * [Output Properties](#output-properties)
 * [Multiple Widgets](#multiple-widgets)
 
-***
+---
 
 ## File Structure
 
@@ -38,7 +38,7 @@ Widgets and groups are defined directly at the root level:
 </widgets>
 ```
 
-***
+---
 
 ## Widget Element
 
@@ -90,7 +90,7 @@ Widgets and groups are defined directly at the root level:
 <path>plugin://plugin.video.example/?action=list</path>
 ```
 
-***
+---
 
 ## Widget Types
 
@@ -124,7 +124,7 @@ Custom widgets let users define their own item list:
 
 When selected, the dialog opens an item editor for the custom menu.
 
-***
+---
 
 ## Groups
 
@@ -174,7 +174,7 @@ Groups can contain:
 * `<group>` - Nested groups
 * `<content>` - Dynamic content
 
-***
+---
 
 ## Dynamic Content
 
@@ -212,7 +212,7 @@ The `nodes` source provides access to library navigation nodes (the top-level li
 | `videos` | Video library nodes (Movies, TV Shows, Music Videos, etc.) |
 | `music` | Music library nodes (Artists, Albums, Songs, etc.) |
 
-***
+---
 
 ### Library Source
 
@@ -250,7 +250,7 @@ The `library` source provides access to library database content (genres, years,
 | `artists` | Music artists |
 | `albums` | Music albums |
 
-***
+---
 
 ## Conditions
 
@@ -290,7 +290,7 @@ Evaluated at runtime using `xbmc.getCondVisibility()`:
 
 Both conditions must pass for the widget to appear.
 
-***
+---
 
 ## Output Properties
 
@@ -318,7 +318,9 @@ Access via `ListItem.Property(name)`:
 </control>
 ```
 
-***
+> **See also:** [Built-in Properties](builtin-properties.md) for complete property reference
+
+---
 
 ## Multiple Widgets
 
@@ -351,12 +353,6 @@ Display additional widgets:
 </control>
 ```
 
-***
+---
 
-## Quick Navigation
-
-[Back to Top](#widget-configuration)
-
-**Sections:** [File Structure](#file-structure) | [Widget Element](#widget-element) | [Widget Types](#widget-types) | [Groups](#groups) | [Dynamic Content](#dynamic-content) | [Conditions](#conditions) | [Output Properties](#output-properties) | [Multiple Widgets](#multiple-widgets)
-
-**Related Docs:** [Menus](menus.md) | [Backgrounds](backgrounds.md) | [Properties](properties.md) | [Templates](templates.md) | [Conditions](conditions.md)
+[↑ Top](#widget-configuration) · [Skinning Docs](index.md)

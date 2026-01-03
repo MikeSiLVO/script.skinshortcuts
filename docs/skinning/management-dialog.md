@@ -2,7 +2,7 @@
 
 The management dialog (`script-skinshortcuts.xml`) provides the UI for editing menus.
 
-***
+---
 
 ## Table of Contents
 
@@ -14,13 +14,13 @@ The management dialog (`script-skinshortcuts.xml`) provides the UI for editing m
 * [Subdialogs](#subdialogs)
 * [Script Commands](#script-commands)
 
-***
+---
 
 ## Overview
 
 The script opens a WindowXMLDialog from your skin's `script-skinshortcuts.xml`. You design the layout and controls; the script handles the logic.
 
-***
+---
 
 ## Dialog XML
 
@@ -64,7 +64,7 @@ Create `script-skinshortcuts.xml` in your skin's XML folder:
 </window>
 ```
 
-***
+---
 
 ## Control IDs
 
@@ -112,7 +112,9 @@ All property buttons (widget, background, custom options) are configured in `pro
 
 These are not built-in - you must define button mappings in your `properties.xml`.
 
-***
+> **See also:** [Properties](properties.md#button-mappings) for configuring property buttons
+
+---
 
 ## Window Properties
 
@@ -149,7 +151,7 @@ These properties are set on the **Home window** (not the dialog) so they remain 
 <visible>String.IsEqual(Window(Home).Property(skinshortcuts-suffix),.2)</visible>
 ```
 
-***
+---
 
 ## ListItem Properties
 
@@ -210,7 +212,9 @@ Any property defined in `properties.xml`:
 
 Properties with options also get a `{name}Label` property with the resolved label.
 
-***
+> **See also:** [Built-in Properties](builtin-properties.md) for properties in generated includes
+
+---
 
 ## Subdialogs
 
@@ -278,14 +282,14 @@ Execute actions when subdialog closes:
 * `{item}` is replaced with current item name
 * Opens item editor for custom widget menu
 
-***
+---
 
 ## Script Commands
 
 ### Open Management Dialog
 
 ```xml
-<onclick>RunScript(script.skinshortcuts,type=manage&amp;menu=mainmenu)</onclick>
+<onclick>RunScript(script.skinshortcuts,type=manage,menu=mainmenu)</onclick>
 ```
 
 | Parameter | Required | Description |
@@ -298,7 +302,7 @@ Execute actions when subdialog closes:
 
 ```xml
 <onclick>RunScript(script.skinshortcuts,type=buildxml)</onclick>
-<onclick>RunScript(script.skinshortcuts,type=buildxml&amp;force=true)</onclick>
+<onclick>RunScript(script.skinshortcuts,type=buildxml,force=true)</onclick>
 ```
 
 | Parameter | Description |
@@ -308,27 +312,77 @@ Execute actions when subdialog closes:
 | `path` | Custom shortcuts path |
 | `output` | Custom output path |
 
-### Reset All Menus
+### Reset All
 
 ```xml
 <onclick>RunScript(script.skinshortcuts,type=resetall)</onclick>
 ```
 
-Prompts for confirmation, then deletes userdata and rebuilds.
+Prompts for confirmation, then deletes all userdata (menus and views) and rebuilds.
 
-### Clear Custom Menu
+### Reset Menus Only
 
 ```xml
-<onclick>RunScript(script.skinshortcuts,type=clear&amp;menu=movies.customwidget&amp;property=widget)</onclick>
+<onclick>RunScript(script.skinshortcuts,type=resetmenus)</onclick>
+```
+
+Prompts for confirmation, resets all menus to defaults but preserves view selections.
+
+### Reset Views Only
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=resetviews)</onclick>
+```
+
+Prompts for confirmation, resets all view selections to defaults but preserves menu customizations.
+
+### Reset Single Menu
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=reset,menu=mainmenu)</onclick>
+```
+
+Resets a specific menu to skin defaults. Does not prompt for confirmation.
+
+| Parameter | Description |
+|-----------|-------------|
+| `type` | `reset` |
+| `menu` | Menu ID to reset |
+| `submenus` | `true` to also reset all submenus |
+| `path` | Custom shortcuts path |
+
+### Reset Menu and Submenus
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=reset,menu=mainmenu,submenus=true)</onclick>
+```
+
+Resets a menu and all submenus referenced by item `submenu` properties (recursive).
+
+### Reset All Submenus
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=resetsubmenus)</onclick>
+```
+
+Resets all submenus (menus defined with `<submenu>` tag) without affecting top-level menus.
+
+### Clear Custom Widget
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=clear,menu=mainmenu,item=movies,property=widget)</onclick>
+<onclick>RunScript(script.skinshortcuts,type=clear,menu=mainmenu,item=movies,suffix=.2,property=widget)</onclick>
 ```
 
 | Parameter | Description |
 |-----------|-------------|
 | `type` | `clear` |
-| `menu` | Custom menu name to clear |
-| `property` | Property to clear on parent item |
+| `menu` | Parent menu ID (e.g., `mainmenu`) |
+| `item` | Item ID to clear custom widget from |
+| `suffix` | Widget slot suffix (e.g., `.2` for second slot) |
+| `property` | Property prefix to clear (e.g., `widget`) |
 
-***
+---
 
 ## Dialog Flow
 
@@ -341,12 +395,6 @@ Prompts for confirmation, then deletes userdata and rebuilds.
 7. Script rebuilds includes if changes were made
 8. Skin reloads to apply new includes
 
-***
+---
 
-## Quick Navigation
-
-[Back to Top](#management-dialog)
-
-**Sections:** [Overview](#overview) | [Dialog XML](#dialog-xml) | [Control IDs](#control-ids) | [Window Properties](#window-properties) | [ListItem Properties](#listitem-properties) | [Subdialogs](#subdialogs) | [Script Commands](#script-commands) | [Dialog Flow](#dialog-flow)
-
-**Related Docs:** [Getting Started](getting-started.md) | [Menus](menus.md) | [Properties](properties.md) | [Builtin Properties](builtin-properties.md)
+[↑ Top](#management-dialog) · [Skinning Docs](index.md)

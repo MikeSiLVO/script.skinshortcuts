@@ -12,6 +12,7 @@ from .loaders import (
     load_menus,
     load_properties,
     load_templates,
+    load_views,
     load_widgets,
 )
 from .models import Background, Menu, Widget
@@ -19,6 +20,7 @@ from .models.background import BackgroundConfig, BackgroundGroup
 from .models.menu import ActionOverride, SubDialog
 from .models.property import PropertySchema
 from .models.template import TemplateSchema
+from .models.views import ViewConfig
 from .models.widget import WidgetConfig
 from .userdata import UserData, _create_item_from_override, load_userdata, merge_menu
 
@@ -31,6 +33,7 @@ class SkinConfig:
     default_menus: list[Menu] = field(default_factory=list)
     _widget_config: WidgetConfig = field(default_factory=WidgetConfig)
     _background_config: BackgroundConfig = field(default_factory=BackgroundConfig)
+    _view_config: ViewConfig = field(default_factory=ViewConfig)
     userdata: UserData = field(default_factory=UserData)
     templates: TemplateSchema = field(default_factory=TemplateSchema)
     property_schema: PropertySchema = field(default_factory=PropertySchema)
@@ -56,6 +59,11 @@ class SkinConfig:
         """Get background groupings for picker dialog."""
         return self._background_config.groupings
 
+    @property
+    def view_config(self) -> ViewConfig:
+        """Get view configuration."""
+        return self._view_config
+
     @classmethod
     def load(
         cls,
@@ -77,6 +85,7 @@ class SkinConfig:
         backgrounds = load_backgrounds(path / "backgrounds.xml")
         templates = load_templates(path / "templates.xml")
         property_schema = load_properties(path / "properties.xml")
+        views = load_views(path / "views.xml")
 
         userdata = load_userdata(userdata_path) if load_user else UserData()
         menus = []
@@ -100,6 +109,7 @@ class SkinConfig:
             default_menus=copy.deepcopy(menu_config.menus),
             _widget_config=widgets,
             _background_config=backgrounds,
+            _view_config=views,
             userdata=userdata,
             templates=templates,
             property_schema=property_schema,
@@ -199,6 +209,8 @@ class SkinConfig:
             menus=menus,
             templates=self.templates,
             property_schema=self.property_schema,
+            view_config=self._view_config,
+            userdata=self.userdata,
         )
         builder.write(output_path)
 

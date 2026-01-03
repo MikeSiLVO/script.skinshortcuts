@@ -2,7 +2,7 @@
 
 This guide walks through integrating Skin Shortcuts into your skin.
 
-***
+---
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ This guide walks through integrating Skin Shortcuts into your skin.
 * [Adding Widgets](#adding-widgets)
 * [Next Steps](#next-steps)
 
-***
+---
 
 ## Overview
 
@@ -26,7 +26,7 @@ Skin Shortcuts generates menu includes from XML configuration files. The workflo
 3. Script generates `script-skinshortcuts-includes.xml`
 4. Skin displays menus using `<include>` elements
 
-***
+---
 
 ## File Setup
 
@@ -44,7 +44,9 @@ skin.name/
 
 All files except `menus.xml` are optional. Start with just `menus.xml` and add others as needed.
 
-***
+> **See also:** [File Overview](files.md) for detailed file descriptions
+
+---
 
 ## Basic Menu
 
@@ -75,7 +77,9 @@ Create `shortcuts/menus.xml`:
 
 This defines a menu named `mainmenu` with three items.
 
-***
+> **See also:** [Menu Configuration](menus.md) for full element reference
+
+---
 
 ## Opening the Dialog
 
@@ -84,7 +88,7 @@ Add a button to open the management dialog:
 ```xml
 <control type="button">
   <label>Edit Menu</label>
-  <onclick>RunScript(script.skinshortcuts,type=manage&amp;menu=mainmenu)</onclick>
+  <onclick>RunScript(script.skinshortcuts,type=manage,menu=mainmenu)</onclick>
 </control>
 ```
 
@@ -96,7 +100,9 @@ Add a button to open the management dialog:
 | `menu` | Yes | Menu name to edit (e.g., `mainmenu`) |
 | `path` | No | Custom shortcuts path (defaults to `special://skin/shortcuts/`) |
 
-***
+> **See also:** [Management Dialog](management-dialog.md) for dialog controls and properties
+
+---
 
 ## Displaying the Menu
 
@@ -125,7 +131,9 @@ Use the generated include in your skin:
 
 Each include generates `<item>` elements with properties accessible via `ListItem.Property(name)`.
 
-***
+> **See also:** [Built-in Properties](builtin-properties.md) for available properties
+
+---
 
 ## Building Includes
 
@@ -146,7 +154,7 @@ The script automatically builds includes when the management dialog closes with 
 
 **Output location:** `script-skinshortcuts-includes.xml` is written to each resolution folder defined in your skin's `addon.xml` (e.g., `16x9/`, `21x9/`).
 
-***
+---
 
 ## Adding Widgets
 
@@ -185,7 +193,7 @@ To let users assign widgets to menu items:
 </control>
 ```
 
-Button IDs are configured in `properties.xml`. See [Properties](properties.md) for full configuration.
+Button IDs are configured in `properties.xml`.
 
 ### 4. Display widget content:
 
@@ -197,22 +205,8 @@ Button IDs are configured in `properties.xml`. See [Properties](properties.md) f
 </control>
 ```
 
-***
+> **See also:** [Widget Configuration](widgets.md) and [Property Schemas](properties.md)
 
-## Next Steps
+---
 
-* [Menus](menus.md) - Full menu configuration reference
-* [Widgets](widgets.md) - Widget definitions and picker groupings
-* [Backgrounds](backgrounds.md) - Background options
-* [Properties](properties.md) - Custom property schemas
-* [Management Dialog](management-dialog.md) - Dialog control IDs and properties
-
-***
-
-## Quick Navigation
-
-[Back to Top](#getting-started)
-
-**Sections:** [Overview](#overview) | [File Setup](#file-setup) | [Basic Menu](#basic-menu) | [Opening the Dialog](#opening-the-dialog) | [Displaying the Menu](#displaying-the-menu) | [Building Includes](#building-includes) | [Adding Widgets](#adding-widgets) | [Next Steps](#next-steps)
-
-**Related Docs:** [Files](files.md) | [Menus](menus.md) | [Widgets](widgets.md) | [Properties](properties.md) | [Management Dialog](management-dialog.md)
+[↑ Top](#getting-started) · [Skinning Docs](index.md)

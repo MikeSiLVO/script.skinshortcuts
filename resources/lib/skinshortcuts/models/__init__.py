@@ -51,6 +51,7 @@ from .template import (
     VariableGroupReference,
     VariableReference,
 )
+from .views import View, ViewConfig, ViewContent
 from .widget import Widget, WidgetConfig, WidgetGroup
 
 __all__ = [
@@ -95,6 +96,9 @@ __all__ = [
     "VariableGroup",
     "VariableGroupReference",
     "VariableReference",
+    "View",
+    "ViewConfig",
+    "ViewContent",
     "Widget",
     "WidgetConfig",
     "WidgetGroup",

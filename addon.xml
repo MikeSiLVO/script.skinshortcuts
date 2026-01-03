@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta9" provider-name="SiLVO, anxdpanic">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta10" provider-name="SiLVO, anxdpanic">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
+v3.0.0~beta10
+- View locking: view selection by content type, separate for library and plugins
+- New reset commands: type=resetviews, type=resetmenus, type=reset,menu=X, type=reset,menu=X,submenus=true, type=resetsubmenus
+
 v3.0.0~beta9
 - Template: add items attribute for submenu iteration
 - Template: $PARENT[] expression for parent item properties
@@ -15,7 +19,7 @@ v3.0.0~beta9
         <summary lang="en_GB">Custom menus, properties, and artwork for skins</summary>
         <platform>all</platform>
         <license>GPL-2.0-only</license>
-        <forum>https://forum.kodi.tv/showthread.php?tid=178294</forum>
+        <forum>https://forum.kodi.tv/showthread.php?tid=383314</forum>
         <source>https://github.com/mikesilvo164/script.skinshortcuts</source>
         <assets>
             <icon>resources/media/icon.png</icon>

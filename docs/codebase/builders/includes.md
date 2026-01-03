@@ -64,6 +64,6 @@ Write includes XML to file.
 | `_build_menu_include` | Build main menu include, skips disabled items |
 | `_build_submenu_include` | Build combined submenu include with parent refs and visibility |
 | `_build_submenu_item` | Build submenu item with parent linking |
-| `_build_custom_widget_includes` | Build includes for `{item}.customwidget` through `.customwidget.10` |
+| `_build_custom_widget_includes` | Build includes by following `customWidget` property references |
 | `_build_item` | Build single item element with all properties |
 | `_is_template_only` | Check if property should be excluded from output |

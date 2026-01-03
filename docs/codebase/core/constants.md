@@ -14,6 +14,7 @@
 | `BACKGROUNDS_FILE` | `"backgrounds.xml"` |
 | `PROPERTIES_FILE` | `"properties.xml"` |
 | `TEMPLATES_FILE` | `"templates.xml"` |
+| `VIEWS_FILE` | `"views.xml"` |
 | `INCLUDES_FILE` | `"script-skinshortcuts-includes.xml"` |
 
 ***
@@ -24,6 +25,7 @@
 |----------|-------|
 | `DEFAULT_ICON` | `"DefaultShortcut.png"` |
 | `DEFAULT_TARGET` | `"videos"` |
+| `DEFAULT_VIEW_PREFIX` | `"ShortcutView_"` |
 
 ***
 

@@ -11,6 +11,7 @@
 |------|-----|---------|
 | `includes.py` | [includes.md](includes.md) | Main includes.xml builder |
 | `template.py` | [template.md](template.md) | Template processor |
+| `views.py` | [views.md](views.md) | View expression builder |
 
 ***
 
@@ -24,7 +25,8 @@ IncludesBuilder.write()
     ├── _build_menu_include() → skinshortcuts-{menu}
     ├── _build_submenu_include() → skinshortcuts-{menu}-submenu
     ├── _build_custom_widget_includes() → skinshortcuts-{item}-customwidget{n}
-    └── TemplateBuilder.build() → Template-based includes
+    ├── TemplateBuilder.build() → Template-based includes
+    └── ViewExpressionBuilder.build() → View lock expressions
             │
             ▼
 script-skinshortcuts-includes.xml

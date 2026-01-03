@@ -20,3 +20,4 @@ Pure data containers with minimal logic. Parsing done by loaders, business logic
 | `background.py` | [background.md](background.md) | Background, BackgroundType |
 | `property.py` | [property.md](property.md) | PropertySchema, SchemaProperty, ButtonMapping |
 | `template.py` | [template.md](template.md) | TemplateSchema, Template, SubmenuTemplate |
+| `views.py` | [views.md](views.md) | View, ViewContent, ViewConfig |

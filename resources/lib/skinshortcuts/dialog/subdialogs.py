@@ -12,7 +12,7 @@ except ImportError:
     IN_KODI = False
 
 from ..loaders import evaluate_condition
-from ..models import Menu, MenuItem
+from ..models import MenuItem
 
 if TYPE_CHECKING:
     from ..manager import MenuManager
@@ -121,6 +121,10 @@ class SubdialogsMixin:
         Evaluates each onclose action's condition against the current item state.
         The first matching action is executed.
 
+        Supports special menu placeholders:
+        - {customWidget} - custom widget slot 1
+        - {customWidget.2} - custom widget slot 2, etc.
+
         Args:
             subdialog: The subdialog definition with onclose actions
             item: The original menu item (used as fallback)
@@ -139,16 +143,81 @@ class SubdialogsMixin:
                 continue
 
             if action.action == "menu" and action.menu:
-                menu_name = action.menu.replace("{item}", current_item.name)
-                self._log(f"Onclose: opening menu {menu_name}")
-                self._open_onclose_menu(menu_name, subdialog)
+                menu_name = self._resolve_menu_reference(action.menu, current_item, subdialog)
+                if menu_name:
+                    self._log(f"Onclose: opening menu {menu_name}")
+                    self._open_onclose_menu(menu_name, subdialog)
                 return
+
+    def _resolve_menu_reference(
+        self, menu_ref: str, item: MenuItem, subdialog: SubDialog
+    ) -> str:
+        """Resolve a menu reference from an onclose action.
+
+        Handles special placeholders:
+        - {customWidget} or {customWidget.N} - get/create custom widget menu
+        - {item}.X - legacy format, converted to explicit reference
+
+        Args:
+            menu_ref: The menu reference string from onclose action
+            item: The current menu item
+            subdialog: The subdialog definition
+
+        Returns:
+            Resolved menu name/ID
+        """
+        if not self.manager:
+            return ""
+
+        # Handle {customWidget} or {customWidget.N} placeholder
+        if menu_ref.startswith("{customWidget"):
+            suffix = ""
+            if "." in menu_ref:
+                suffix = "." + menu_ref.split(".")[1].rstrip("}")
+            else:
+                suffix = subdialog.suffix or ""
+
+            prop_name = f"customWidget{suffix}"
+            menu_id = item.properties.get(prop_name)
+
+            if not menu_id:
+                menu_id = self.manager.create_custom_widget_menu(
+                    self.menu_id, item.name, suffix
+                )
+                self._log(f"Created custom widget menu: {menu_id}")
+
+            return menu_id
+
+        # Handle legacy {item}.customwidget format - convert to explicit reference
+        if "{item}" in menu_ref and ".customwidget" in menu_ref:
+            resolved = menu_ref.replace("{item}", item.name)
+            suffix = ""
+            if ".customwidget." in resolved:
+                suffix = "." + resolved.split(".customwidget.")[1]
+            elif resolved.endswith(".customwidget"):
+                suffix = ""
+            else:
+                suffix = subdialog.suffix or ""
+
+            prop_name = f"customWidget{suffix}"
+            menu_id = item.properties.get(prop_name)
+
+            if not menu_id:
+                menu_id = self.manager.create_custom_widget_menu(
+                    self.menu_id, item.name, suffix
+                )
+                self._log(f"Created custom widget menu (legacy): {menu_id}")
+
+            return menu_id
+
+        # Regular menu reference
+        return menu_ref.replace("{item}", item.name)
 
     def _open_onclose_menu(self, menu_name: str, subdialog: SubDialog) -> None:
         """Open a menu from an onclose action.
 
         Args:
-            menu_name: Name of the menu to open
+            menu_name: Name of the menu to open (already resolved)
             subdialog: The parent subdialog definition (for dialog mode)
         """
         if not self.manager:
@@ -158,9 +227,10 @@ class SubdialogsMixin:
 
         menu = self.manager.config.get_menu(menu_name)
         if not menu:
-            menu = Menu(name=menu_name, is_submenu=True)
-            self.manager.config.menus.append(menu)
-            self._log(f"Created new menu from onclose: {menu_name}")
+            menu = self.manager.working.get(menu_name)
+        if not menu:
+            self._log(f"Menu not found: {menu_name}")
+            return
 
         selected_index = self._get_selected_index()
 

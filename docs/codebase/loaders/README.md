@@ -21,6 +21,7 @@ Parses skin XML configuration files into model objects. Each loader handles a sp
 | `background.py` | [background.md](background.md) | backgrounds.xml parser |
 | `property.py` | [property.md](property.md) | properties.xml parser |
 | `template.py` | [template.md](template.md) | templates.xml parser |
+| `views.py` | [views.md](views.md) | views.xml parser |
 
 ***
 
@@ -34,6 +35,7 @@ Parses skin XML configuration files into model objects. Each loader handles a sp
 | `load_backgrounds(path)` | background.py | Load backgrounds.xml |
 | `load_properties(path)` | property.py | Load properties.xml |
 | `load_templates(path)` | template.py | Load templates.xml |
+| `load_views(path)` | views.py | Load views.xml |
 
 ***
 
@@ -45,3 +47,4 @@ For XML file format documentation, see:
 - [skinning/backgrounds.md](../../skinning/backgrounds.md)
 - [skinning/properties.md](../../skinning/properties.md)
 - [skinning/templates.md](../../skinning/templates.md)
+- [skinning/views.md](../../skinning/views.md)

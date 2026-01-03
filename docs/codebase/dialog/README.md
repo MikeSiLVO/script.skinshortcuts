@@ -21,6 +21,7 @@ Implements WindowXMLDialog for editing menus, items, widgets, backgrounds, and c
 | `pickers.py` | [pickers.md](pickers.md) | Shortcut and widget picker dialogs |
 | `properties.py` | [properties.md](properties.md) | Property management (widget, background) |
 | `subdialogs.py` | [subdialogs.md](subdialogs.md) | Subdialog and submenu handling |
+| `views.py` | [views.md](views.md) | View selection dialogs |
 
 ***
 

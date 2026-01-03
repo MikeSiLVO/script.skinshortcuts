@@ -19,6 +19,7 @@ from .constants import (
     MENUS_FILE,
     PROPERTIES_FILE,
     TEMPLATES_FILE,
+    VIEWS_FILE,
     WIDGETS_FILE,
 )
 from .log import get_logger
@@ -66,6 +67,7 @@ def generate_config_hashes(shortcuts_path: str | Path) -> dict[str, str | None]:
         BACKGROUNDS_FILE,
         PROPERTIES_FILE,
         TEMPLATES_FILE,
+        VIEWS_FILE,
     ]
 
     hashes: dict[str, str | None] = {}

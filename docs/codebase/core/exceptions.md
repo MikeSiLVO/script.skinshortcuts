@@ -14,7 +14,8 @@ SkinShortcutsError
 │   ├── WidgetConfigError
 │   ├── BackgroundConfigError
 │   ├── PropertyConfigError
-│   └── TemplateConfigError
+│   ├── TemplateConfigError
+│   └── ViewConfigError
 └── TemplateError (template processing errors)
 ```
 

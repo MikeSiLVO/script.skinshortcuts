@@ -2,7 +2,7 @@
 
 The `backgrounds.xml` file defines background options that users can assign to menu items.
 
-***
+---
 
 ## Table of Contents
 
@@ -20,7 +20,7 @@ The `backgrounds.xml` file defines background options that users can assign to m
 * [Conditions](#conditions)
 * [Output Properties](#output-properties)
 
-***
+---
 
 ## File Structure
 
@@ -44,7 +44,7 @@ Backgrounds and groups are defined directly at the root level:
 </backgrounds>
 ```
 
-***
+---
 
 ## Background Types
 
@@ -58,7 +58,7 @@ Backgrounds and groups are defined directly at the root level:
 | `live` | Dynamic content from library |
 | `live-playlist` | Dynamic content from user-selected playlist |
 
-***
+---
 
 ## Groups
 
@@ -108,7 +108,7 @@ Groups can contain:
 * `<group>` - Nested groups
 * `<content>` - Dynamic content (same as widgets/menus)
 
-***
+---
 
 ## Static
 
@@ -138,7 +138,7 @@ A single image file:
 | `<path>` | Yes | Image file path |
 | `<icon>` | No | Icon for picker |
 
-***
+---
 
 ## Property
 
@@ -163,7 +163,7 @@ Uses a Kodi info label that resolves to an image path:
 | `<path>` | Yes | Kodi info label |
 | `<icon>` | No | Icon for picker |
 
-***
+---
 
 ## Browse
 
@@ -197,7 +197,7 @@ Provide starting locations for the file browser:
 
 Use `browse` as the path for free file browser access.
 
-***
+---
 
 ## Multi
 
@@ -213,7 +213,7 @@ User browses for a folder (for slideshows):
 
 Works the same as `browse` type, but selects a folder instead of a single file.
 
-***
+---
 
 ## Playlist
 
@@ -235,7 +235,7 @@ User selects a playlist to extract images from:
 | `label` | Yes | Display label |
 | `icon` | No | Icon (default: `DefaultPlaylist.png`) |
 
-***
+---
 
 ## Live
 
@@ -256,7 +256,7 @@ Dynamic background from library content:
 | `random tvshows` | Random TV show fanart |
 | `random music` | Random album art |
 
-***
+---
 
 ## Live Playlist
 
@@ -272,7 +272,7 @@ Dynamic content from a user-selected playlist:
 
 Combines playlist selection with dynamic content extraction.
 
-***
+---
 
 ## Sources
 
@@ -305,7 +305,7 @@ Sources define playlist locations to browse:
 </source>
 ```
 
-***
+---
 
 ## Conditions
 
@@ -345,7 +345,7 @@ Evaluated at runtime using `xbmc.getCondVisibility()`:
 
 Both conditions must pass for the background to appear.
 
-***
+---
 
 ## Output Properties
 
@@ -388,12 +388,8 @@ Access via `ListItem.Property(name)`:
 
 For static/property types, `backgroundPath` contains the defined path. For browse/multi types, it contains the user-selected path. For playlist types, your skin handles the slideshow logic using the path.
 
-***
+> **See also:** [Built-in Properties](builtin-properties.md) for complete property reference
 
-## Quick Navigation
+---
 
-[Back to Top](#background-configuration)
-
-**Sections:** [File Structure](#file-structure) | [Background Types](#background-types) | [Groups](#groups) | [Static](#static) | [Property](#property) | [Browse](#browse) | [Multi](#multi) | [Playlist](#playlist) | [Live](#live) | [Live Playlist](#live-playlist) | [Sources](#sources) | [Conditions](#conditions) | [Output Properties](#output-properties)
-
-**Related Docs:** [Menus](menus.md) | [Widgets](widgets.md) | [Properties](properties.md) | [Templates](templates.md) | [Conditions](conditions.md)
+[↑ Top](#background-configuration) · [Skinning Docs](index.md)

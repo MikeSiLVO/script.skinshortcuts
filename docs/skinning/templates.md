@@ -2,7 +2,7 @@
 
 The `templates.xml` file defines how the script generates include files. Templates transform menu items into Kodi-compatible XML.
 
-***
+---
 
 ## Table of Contents
 
@@ -27,7 +27,7 @@ The `templates.xml` file defines how the script generates include files. Templat
 * [templateonly Attribute](#templateonly-attribute)
 * [Complete Example](#complete-example)
 
-***
+---
 
 ## Overview
 
@@ -38,7 +38,9 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 * Generate Kodi variables
 * Build conditional includes
 
-***
+> **See also:** [Built-in Properties](builtin-properties.md) for available item properties
+
+---
 
 ## File Structure
 
@@ -80,7 +82,7 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 </templates>
 ```
 
-***
+---
 
 ## Template Element
 
@@ -105,7 +107,7 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 | `idprefix` | No | - | Prefix for computed control IDs |
 | `templateonly` | No | - | Skip include generation: `true` (always) or `auto` (if unassigned) |
 
-***
+---
 
 ## Multi-Output Templates
 
@@ -205,7 +207,7 @@ Use a single template with multiple outputs:
 
 Differences between slots are handled via `suffix=.2` conditions in presets and conditional includes.
 
-***
+---
 
 ## Build Modes
 
@@ -261,7 +263,7 @@ No iteration, outputs controls once with parameter substitution:
 
 Use as `<include content="skinshortcuts-UtilityInclude"><param name="id">9001</param></include>`.
 
-***
+---
 
 ## Properties
 
@@ -315,7 +317,7 @@ Standard item properties are also available:
 
 These come from the menu item's properties, along with any custom properties set in menus.xml or by the user.
 
-***
+---
 
 ## Vars
 
@@ -331,7 +333,7 @@ Multi-conditional values resolved during context building:
 
 First matching condition wins. Once resolved, vars become properties accessible via `$PROPERTY[aspectRatio]`.
 
-***
+---
 
 ## Controls
 
@@ -357,7 +359,7 @@ XML content output per item:
 
 Note: Vars defined with `<var>` are resolved during context building and accessible via `$PROPERTY[name]`.
 
-***
+---
 
 ## Dynamic Expressions
 
@@ -451,7 +453,7 @@ In template text substitution:
 3. `$PROPERTY[...]` - property substitution
 4. `$INCLUDE[...]` - include conversion
 
-***
+---
 
 ## Skinshortcuts Tag
 
@@ -545,7 +547,7 @@ If the condition evaluates to false, the entire element is removed.
 | `condition` | No | Condition expression (see [Conditions](conditions.md)) |
 | `wrap` | No | If `true`, output as Kodi `<include>` element instead of unwrapping |
 
-***
+---
 
 ## Submenu Items Iteration
 
@@ -762,7 +764,7 @@ If a submenu doesn't exist or has no items, the insert marker produces no output
 
 Submenu items with `<disabled>true</disabled>` are automatically skipped during iteration.
 
-***
+---
 
 ## Property Groups
 
@@ -818,7 +820,9 @@ Transforms:
 * `from="widgetPath"` → `from="widgetPath.2"`
 * `condition="widgetType=movies"` → `condition="widgetType.2=movies"`
 
-***
+> **See also:** [Properties](properties.md) for defining custom properties
+
+---
 
 ## Presets
 
@@ -862,7 +866,7 @@ All matched attributes become properties.
 
 When `suffix` is specified, preset conditions like `widgetStyle=Panel` are transformed to `widgetStyle.2=Panel`.
 
-***
+---
 
 ## Variables
 
@@ -937,7 +941,7 @@ Reference in template:
 | `condition` | Build only when condition matches item |
 | `output` | Output name pattern (supports `$PROPERTY[]`) |
 
-***
+---
 
 ## Expressions
 
@@ -958,7 +962,7 @@ Use in template conditions:
 <propertyGroup name="movieProps" condition="$EXP[IsMovies]" />
 ```
 
-***
+---
 
 ## Includes
 
@@ -984,7 +988,7 @@ Use in controls via the `<skinshortcuts>` tag:
 
 See [Skinshortcuts Tag](#skinshortcuts-tag) for details on `include`, `condition`, and `wrap` attributes.
 
-***
+---
 
 ## Submenus
 
@@ -1011,7 +1015,7 @@ Template for submenu generation:
 | `level` | Submenu depth (1 = direct child, 2 = grandchild, etc.) |
 | `name` | Match specific submenu name (empty = all) |
 
-***
+---
 
 ## Conditions
 
@@ -1031,7 +1035,7 @@ Multiple `<condition>` elements are ANDed together. The template only builds for
 
 See [Conditions](conditions.md) for full syntax reference.
 
-***
+---
 
 ## templateonly Attribute
 
@@ -1082,7 +1086,7 @@ When `$INCLUDE[...]` appears as text content in an element (e.g., after `$PROPER
 <content><include>skinshortcuts-template-MovieWidgets</include></content>
 ```
 
-***
+---
 
 ## Complete Example
 
@@ -1137,12 +1141,6 @@ When `$INCLUDE[...]` appears as text content in an element (e.g., after `$PROPER
 </templates>
 ```
 
-***
+---
 
-## Quick Navigation
-
-[Back to Top](#template-configuration)
-
-**Sections:** [Overview](#overview) | [File Structure](#file-structure) | [Template Element](#template-element) | [Multi-Output](#multi-output-templates) | [Build Modes](#build-modes) | [Properties](#properties) | [Vars](#vars) | [Controls](#controls) | [Dynamic Expressions](#dynamic-expressions) | [Skinshortcuts Tag](#skinshortcuts-tag) | [Items Iteration](#submenu-items-iteration) | [Property Groups](#property-groups) | [Presets](#presets) | [Variables](#variables) | [Expressions](#expressions) | [Includes](#includes) | [Submenus](#submenus) | [Conditions](#conditions) | [templateonly](#templateonly-attribute)
-
-**Related Docs:** [Conditions](conditions.md) | [Properties](properties.md) | [Menus](menus.md) | [Widgets](widgets.md)
+[↑ Top](#template-configuration) · [Skinning Docs](index.md)
