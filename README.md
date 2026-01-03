@@ -28,6 +28,7 @@ Skin Shortcuts bridges the gap between skin developers and users by providing:
 - **Customizable Menus**: Users modify menus without editing XML
 - **Widget System**: Assign dynamic content to menu items
 - **Background System**: Per-item background images
+- **View Locking**: Automatic view selection by content type
 - **Template Engine**: Generate complex skin includes from simple definitions
 - **Property System**: Extensible custom properties with picker dialogs
 
@@ -46,7 +47,8 @@ skin.name/
     ├── widgets.xml       # Widget definitions (optional)
     ├── backgrounds.xml   # Background options (optional)
     ├── properties.xml    # Custom property schemas (optional)
-    └── templates.xml     # Output templates (optional)
+    ├── templates.xml     # Output templates (optional)
+    └── views.xml         # View locking rules (optional)
 ```
 
 ### 2. Define a Menu
@@ -100,7 +102,8 @@ skin.name/
     ├── widgets.xml       # Widget definitions and picker groupings
     ├── backgrounds.xml   # Background options
     ├── properties.xml    # Custom property schemas
-    └── templates.xml     # Template definitions for include generation
+    ├── templates.xml     # Template definitions for include generation
+    └── views.xml         # View locking rules and content detection
 ```
 
 **Generated Output:**
@@ -138,6 +141,7 @@ userdata/addon_data/script.skinshortcuts/
 | [Backgrounds](docs/skinning/backgrounds.md) | Background types and sources |
 | [Properties](docs/skinning/properties.md) | Custom property schemas, options, fallbacks |
 | [Templates](docs/skinning/templates.md) | Template system for include generation |
+| [Views](docs/skinning/views.md) | View locking and automatic view selection |
 
 ### Dialog Integration
 

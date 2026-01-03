@@ -39,7 +39,8 @@ skin.name/
     ├── widgets.xml       # Optional: Widget definitions
     ├── backgrounds.xml   # Optional: Background options
     ├── properties.xml    # Optional: Custom properties
-    └── templates.xml     # Optional: Output templates
+    ├── templates.xml     # Optional: Output templates
+    └── views.xml         # Optional: View locking
 ```
 
 All files except `menus.xml` are optional. Start with just `menus.xml` and add others as needed.

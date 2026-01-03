@@ -644,7 +644,13 @@ Items templates iterate over submenu items. They are defined separately and refe
 | `type=manage&group=mainmenu` | `type=manage&menu=mainmenu`             |
 | `type=buildxml&group=...`    | `type=buildxml` (no group param needed) |
 | `type=resetall`              | `type=resetall` (unchanged)             |
-| N/A                          | `type=clear&menu=mainmenu` (new)        |
+| N/A                          | `type=resetmenus` (new)                 |
+| N/A                          | `type=resetviews` (new)                 |
+| N/A                          | `type=resetsubmenus` (new)              |
+| N/A                          | `type=reset&menu=X` (new)               |
+| N/A                          | `type=reset&menu=X&submenus=true` (new) |
+| N/A                          | `type=viewselect` (new)                 |
+| N/A                          | `type=clear&menu=X&item=Y` (new)        |
 
 ### v2
 

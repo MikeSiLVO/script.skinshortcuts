@@ -223,9 +223,6 @@ Set view for specific plugin:
 ```xml
 <!-- Reset all view selections -->
 <onclick>RunScript(script.skinshortcuts,type=resetviews)</onclick>
-
-<!-- Reset menus only (preserve views) -->
-<onclick>RunScript(script.skinshortcuts,type=resetmenus)</onclick>
 ```
 
 ---
