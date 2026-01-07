@@ -41,8 +41,14 @@ jobs:
       - name: Create Zip
         id: zip
         run: |
-          # Clean up for release
-          rm -rf .git .github .gitignore .pylintrc
+          # Clean up for release - remove all dev files
+          rm -rf .git .github .gitignore .gitattributes
+          rm -rf .claude .vscode .idea
+          rm -rf .pylintrc pyrightconfig.json ruff.toml pyproject.toml
+          rm -rf __pycache__ .mypy_cache .ruff_cache .pytest_cache
+          rm -rf typings tests docs DOCS
+          rm -f README.md CHANGELOG.md
+          rm -f .DS_Store Thumbs.db desktop.ini
           cd ..
           filename=${{ github.event.repository.name }}-${{ steps.addon-info.outputs.version }}.zip
           zip -r $filename ${{ github.event.repository.name }}
