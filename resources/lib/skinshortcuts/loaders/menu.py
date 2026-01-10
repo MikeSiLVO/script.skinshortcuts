@@ -11,6 +11,7 @@ from ..models.menu import (
     Content,
     DefaultAction,
     IconSource,
+    IncludeRef,
     Menu,
     MenuAllow,
     MenuConfig,
@@ -231,6 +232,9 @@ def _parse_menu(elem, path: str, is_submenu: bool = False) -> Menu:
     defaults = _parse_defaults(elem.find("defaults"))
     allow = _parse_allow(elem.find("allow"))
     container = get_attr(elem, "container") or None
+    controltype = get_attr(elem, "controltype") or ""
+    startid_str = get_attr(elem, "id") or ""
+    startid = int(startid_str) if startid_str.isdigit() else 1
 
     return Menu(
         name=menu_name,
@@ -239,6 +243,8 @@ def _parse_menu(elem, path: str, is_submenu: bool = False) -> Menu:
         allow=allow,
         container=container,
         is_submenu=is_submenu,
+        controltype=controltype,
+        startid=startid,
     )
 
 
@@ -252,13 +258,25 @@ def _parse_item(elem, menu_name: str, path: str) -> MenuItem:
         raise MenuConfigError(path, f"Item '{item_name}' missing <label>")
 
     actions = []
-    for action_elem in elem.findall("action"):
-        if action_elem.text:
-            actions.append(Action(
-                action=action_elem.text.strip(),
-                condition=get_attr(action_elem, "condition") or "",
-            ))
+    includes = []
+    seen_action = False
 
+    for child in elem:
+        if child.tag == "action" and child.text:
+            seen_action = True
+            actions.append(Action(
+                action=child.text.strip(),
+                condition=get_attr(child, "condition") or "",
+            ))
+        elif child.tag == "skinshortcuts":
+            include_name = get_attr(child, "include")
+            if include_name:
+                position = "after-onclick" if seen_action else "before-onclick"
+                includes.append(IncludeRef(
+                    name=include_name,
+                    condition=get_attr(child, "condition") or "",
+                    position=position,
+                ))
 
     properties = {}
     for prop_elem in elem.findall("property"):
@@ -266,7 +284,8 @@ def _parse_item(elem, menu_name: str, path: str) -> MenuItem:
         if prop_name and prop_elem.text:
             properties[prop_name] = prop_elem.text.strip()
 
-    visible = get_text(elem, "visible") or ""
+    visible_parts = [v.text.strip() for v in elem.findall("visible") if v.text]
+    visible = " + ".join(visible_parts) if visible_parts else ""
 
     widget_attr = get_attr(elem, "widget")
     if widget_attr:
@@ -300,6 +319,7 @@ def _parse_item(elem, menu_name: str, path: str) -> MenuItem:
         protection=protection,
         properties=properties,
         submenu=get_attr(elem, "submenu"),
+        includes=includes,
     )
 
 
@@ -321,17 +341,31 @@ def _parse_defaults(elem) -> MenuDefaults:
         properties["background"] = background_attr
 
     actions = []
-    for action_elem in elem.findall("action"):
-        if action_elem.text:
+    includes = []
+    seen_action = False
+
+    for child in elem:
+        if child.tag == "action" and child.text:
+            seen_action = True
             actions.append(DefaultAction(
-                action=action_elem.text.strip(),
-                when=get_attr(action_elem, "when") or "before",
-                condition=get_attr(action_elem, "condition") or "",
+                action=child.text.strip(),
+                when=get_attr(child, "when") or "before",
+                condition=get_attr(child, "condition") or "",
             ))
+        elif child.tag == "skinshortcuts":
+            include_name = get_attr(child, "include")
+            if include_name:
+                position = "after-onclick" if seen_action else "before-onclick"
+                includes.append(IncludeRef(
+                    name=include_name,
+                    condition=get_attr(child, "condition") or "",
+                    position=position,
+                ))
 
     return MenuDefaults(
         properties=properties,
         actions=actions,
+        includes=includes,
     )
 
 

@@ -71,8 +71,14 @@ Defines a standalone menu that generates an include.
 |-----------|----------|-------------|
 | `name` | Yes | Unique identifier. Generated include is `skinshortcuts-{name}` |
 | `container` | No | List control ID for visibility conditions |
+| `controltype` | No | Output as `<control type="X">` instead of `<item>` (e.g., `button`) |
+| `id` | No | Starting control ID for `controltype` menus (default: 1) |
 
 **Container binding:** When `container` is set, visibility conditions are generated for submenus and widgets based on focused item position.
+
+**Control type menus:** When `controltype="button"`, items are output as `<control type="button">` elements instead of `<item>` elements. Use this for menus displayed in grouplists where you need individual button controls. Properties are not included in control output.
+
+**Control IDs:** Use `id` to set the starting control ID for `controltype` menus. For example, `id="8000"` outputs controls with IDs 8000, 8001, 8002, etc. This avoids conflicts with other controls in the window. Ignored for regular item menus.
 
 ---
 
@@ -154,6 +160,25 @@ Defines a menu item.
 | `visible="..."` (attribute on `<item>`) | Management dialog | Hides item from dialog when condition fails (e.g., hide playdisc when no disc drive) |
 | `<visible>` (child element) | Generated include | Output as `<visible>` in the include file |
 
+### Multiple Visibility Conditions
+
+Multiple `<visible>` elements are combined with `+` (AND in Kodi):
+
+```xml
+<item name="sleep-timer">
+  <label>Sleep Timer</label>
+  <action>ActivateWindow(SleepTimerDialog)</action>
+  <visible>System.CanPowerDown</visible>
+  <visible>!System.HasAlarm(shutdowntimer)</visible>
+</item>
+```
+
+Output:
+
+```xml
+<visible>System.CanPowerDown + !System.HasAlarm(shutdowntimer)</visible>
+```
+
 ---
 
 ## Actions
@@ -216,6 +241,7 @@ Menu-level defaults apply to all items in the menu.
 |---------|-------------|
 | `<action>` | Default actions for all items |
 | `<property>` | Default property values |
+| `<skinshortcuts>` | Include reference (for controltype menus) |
 
 The `<defaults>` element also supports `widget` and `background` attributes as shorthand:
 
@@ -238,6 +264,49 @@ The `<defaults>` element also supports `widget` and `background` attributes as s
 |-----------|--------|-------------|
 | `when` | `before`, `after` | When to run relative to item action |
 | `condition` | Kodi condition | Only run when condition is true |
+
+### Include References
+
+For `controltype` menus, insert include references into the output:
+
+```xml
+<defaults>
+  <skinshortcuts include="ButtonTextures" />
+  <action when="before">BeforeAction()</action>
+  <action when="after">AfterAction()</action>
+  <skinshortcuts include="ButtonExtras" condition="SomeCondition" />
+</defaults>
+```
+
+| Attribute | Required | Description |
+|-----------|----------|-------------|
+| `include` | Yes | Name of include to reference |
+| `condition` | No | Condition attribute on the output include element |
+
+**Position matters:** Includes placed before `<action>` elements appear before onclick in output. Includes placed after appear after onclick.
+
+Output:
+```xml
+<control type="button" id="1">
+  <label>...</label>
+  <include>ButtonTextures</include>
+  <onclick>BeforeAction()</onclick>
+  <onclick>ItemAction()</onclick>
+  <onclick>AfterAction()</onclick>
+  <include condition="SomeCondition">ButtonExtras</include>
+</control>
+```
+
+Include references can also be added per-item:
+
+```xml
+<item name="special">
+  <label>Special Button</label>
+  <skinshortcuts include="BeforeStuff" />
+  <action>SpecialAction()</action>
+  <skinshortcuts include="AfterStuff" />
+</item>
+```
 
 ---
 

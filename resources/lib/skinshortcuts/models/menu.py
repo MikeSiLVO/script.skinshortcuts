@@ -86,6 +86,24 @@ class Action:
 
 
 @dataclass
+class IncludeRef:
+    """A reference to an include, output as <include>name</include>.
+
+    Used with controltype menus to insert include references at specific
+    positions within the output control element.
+
+    Attributes:
+        name: The include name to reference
+        condition: Optional condition attribute on the include element
+        position: Where to place in output - "before-onclick", "after-onclick", or "end"
+    """
+
+    name: str
+    condition: str = ""
+    position: str = "end"
+
+
+@dataclass
 class Protection:
     """Protection rule for a menu item.
 
@@ -193,6 +211,7 @@ class MenuItem:
     properties: dict[str, str] = field(default_factory=dict)
     submenu: str | None = None
     original_action: str = ""  # Set from defaults, not saved to userdata
+    includes: list[IncludeRef] = field(default_factory=list)
 
     @property
     def action(self) -> str:
@@ -233,6 +252,7 @@ class MenuDefaults:
 
     properties: dict[str, str] = field(default_factory=dict)
     actions: list[DefaultAction] = field(default_factory=list)
+    includes: list[IncludeRef] = field(default_factory=list)
 
 
 @dataclass
@@ -254,6 +274,8 @@ class Menu:
     allow: MenuAllow = field(default_factory=MenuAllow)
     container: str | None = None  # Container ID for submenu visibility
     is_submenu: bool = False  # True if defined with <submenu> tag (not built as root include)
+    controltype: str = ""  # Output as <control type="X"> instead of <item> (e.g., "button")
+    startid: int = 1  # Starting control ID for controltype menus
 
     def get_item(self, item_name: str) -> MenuItem | None:
         """Get item by name."""

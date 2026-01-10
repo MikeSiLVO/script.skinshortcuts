@@ -314,8 +314,9 @@ Standard item properties are also available:
 | `icon` | Item icon |
 | `thumb` | Item thumbnail |
 | `path` | Primary action |
+| `visible` | Visibility condition |
 
-These come from the menu item's properties, along with any custom properties set in menus.xml or by the user.
+These come from the menu item's attributes, along with any custom properties set in menus.xml or by the user.
 
 ---
 
@@ -539,13 +540,56 @@ Supports full condition syntax including:
 
 If the condition evaluates to false, the entire element is removed.
 
-### Attributes
+### Onclick Expansion
+
+Generate onclick elements from a menu item's actions:
+
+```xml
+<controls>
+  <control type="button" id="$PROPERTY[id]">
+    <label>$PROPERTY[label]</label>
+    <skinshortcuts>onclick</skinshortcuts>
+    <visible>$PROPERTY[visible]</visible>
+  </control>
+</controls>
+```
+
+The `<skinshortcuts>onclick</skinshortcuts>` element is replaced with all onclick elements from the item's actions, including:
+
+1. **Before defaults** - Actions from menu's `<defaults>` with `when="before"`
+2. **Conditional item actions** - Item actions with `condition` attribute
+3. **Unconditional item actions** - Item actions without conditions
+4. **After defaults** - Actions from menu's `<defaults>` with `when="after"`
+
+Example output:
+
+```xml
+<control type="button" id="1">
+  <label>Settings</label>
+  <onclick>Dialog.Close(all,true)</onclick>
+  <onclick condition="System.Platform.Windows">WindowsAction()</onclick>
+  <onclick>ActivateWindow(Settings)</onclick>
+  <onclick>AfterAction()</onclick>
+  <visible>System.CanPowerDown</visible>
+</control>
+```
+
+This enables creating button menus where each menu item becomes an individual button control with full action support.
+
+### Attributes Summary
 
 | Attribute | Required | Description |
 |-----------|----------|-------------|
-| `include` | Yes | Name of include definition to expand |
+| `include` | No | Name of include definition to expand |
 | `condition` | No | Condition expression (see [Conditions](conditions.md)) |
 | `wrap` | No | If `true`, output as Kodi `<include>` element instead of unwrapping |
+
+**Text content:**
+
+| Value | Description |
+|-------|-------------|
+| `visibility` | Generate visibility condition matching current item |
+| `onclick` | Generate onclick elements from item actions |
 
 ---
 

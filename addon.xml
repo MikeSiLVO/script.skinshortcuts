@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta10" provider-name="SiLVO, anxdpanic">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta11" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
+3.0.0~beta11
+  - Control type menus: output controls instead of items via controltype attribute
+  - Include references in items/defaults via skinshortcuts element
+  - Template: built-in label, label2, icon, visible, path variables
+  - Template: onclick marker for action injection
+  - Multiple visible elements now joined with +
+
 v3.0.0~beta10
 - View locking: view selection by content type, separate for library and plugins
 - New reset commands: type=resetviews, type=resetmenus, type=reset,menu=X, type=reset,menu=X,submenus=true, type=resetsubmenus

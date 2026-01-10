@@ -84,7 +84,8 @@ class IncludesBuilder:
         include = ET.Element("include")
         include.set("name", f"skinshortcuts-{menu.name}")
 
-        for idx, item in enumerate(menu.items, start=1):
+        start = menu.startid if menu.controltype else 1
+        for idx, item in enumerate(menu.items, start=start):
             if item.disabled:
                 continue
             item_elem = self._build_item(item, idx, menu)
@@ -191,7 +192,11 @@ class IncludesBuilder:
         return includes
 
     def _build_item(self, item: MenuItem, idx: int, menu: Menu) -> ET.Element:
-        elem = ET.Element("item")
+        if menu.controltype:
+            elem = ET.Element("control")
+            elem.set("type", menu.controltype)
+        else:
+            elem = ET.Element("item")
         elem.set("id", str(idx))
 
         ET.SubElement(elem, "label").text = item.label
@@ -201,7 +206,16 @@ class IncludesBuilder:
         if item.thumb:
             ET.SubElement(elem, "thumb").text = item.thumb
 
-        # Order: before defaults -> conditional -> unconditional -> after defaults
+        all_includes = menu.defaults.includes + item.includes
+        before_includes = [i for i in all_includes if i.position == "before-onclick"]
+        after_includes = [i for i in all_includes if i.position == "after-onclick"]
+
+        for inc in before_includes:
+            include_elem = ET.SubElement(elem, "include")
+            include_elem.text = inc.name
+            if inc.condition:
+                include_elem.set("condition", inc.condition)
+
         before_actions = [a for a in menu.defaults.actions if a.when == "before"]
         after_actions = [a for a in menu.defaults.actions if a.when == "after"]
         conditional = [a for a in item.actions if a.condition]
@@ -225,23 +239,30 @@ class IncludesBuilder:
             if act.condition:
                 onclick.set("condition", act.condition)
 
+        for inc in after_includes:
+            include_elem = ET.SubElement(elem, "include")
+            include_elem.text = inc.name
+            if inc.condition:
+                include_elem.set("condition", inc.condition)
+
         if item.visible:
             ET.SubElement(elem, "visible").text = item.visible
 
-        self._add_property(elem, "id", str(idx))
-        self._add_property(elem, "name", item.name)
-        self._add_property(elem, "menu", menu.name)
-        self._add_property(elem, "path", item.action)  # Primary action for display
+        if not menu.controltype:
+            self._add_property(elem, "id", str(idx))
+            self._add_property(elem, "name", item.name)
+            self._add_property(elem, "menu", menu.name)
+            self._add_property(elem, "path", item.action)
 
-        if item.submenu:
-            self._add_property(elem, "submenuVisibility", item.submenu)
-            self._add_property(elem, "hasSubmenu", "True")
+            if item.submenu:
+                self._add_property(elem, "submenuVisibility", item.submenu)
+                self._add_property(elem, "hasSubmenu", "True")
 
-        all_properties = {**menu.defaults.properties, **item.properties}
-        for key, value in all_properties.items():
-            if self._is_template_only(key):
-                continue
-            self._add_property(elem, key, value)
+            all_properties = {**menu.defaults.properties, **item.properties}
+            for key, value in all_properties.items():
+                if self._is_template_only(key):
+                    continue
+                self._add_property(elem, key, value)
 
         return elem
 

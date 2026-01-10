@@ -240,6 +240,8 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
             container=default_menu.container,
             allow=default_menu.allow,
             is_submenu=default_menu.is_submenu,
+            controltype=default_menu.controltype,
+            startid=default_menu.startid,
         )
 
     items: list[MenuItem] = []
@@ -295,6 +297,8 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
         container=default_menu.container,
         allow=default_menu.allow,
         is_submenu=default_menu.is_submenu,
+        controltype=default_menu.controltype,
+        startid=default_menu.startid,
     )
 
 
@@ -314,6 +318,7 @@ def _apply_override(item: MenuItem, override: MenuItemOverride) -> MenuItem:
         properties={**item.properties, **override.properties},
         submenu=item.submenu,
         original_action=item.action,  # Store original for protection matching
+        includes=item.includes,
     )
 
 

@@ -198,6 +198,12 @@ class TemplateBuilder:
         context["id"] = f"{output.id_prefix}{idx}" if output.id_prefix else str(idx)
         context["suffix"] = output.suffix or ""
 
+        context["label"] = item.label
+        context["label2"] = item.label2
+        context["icon"] = item.icon
+        context["visible"] = item.visible
+        context["path"] = item.action
+
         self._apply_fallbacks(item, context)
 
         # First match wins for same-named properties
@@ -746,8 +752,19 @@ class TemplateBuilder:
         """Process controls XML, applying substitutions."""
         result = copy.deepcopy(controls)
         self._process_element(result, context, item, menu)
+        self._remove_empty_elements(result)
 
         return result
+
+    def _remove_empty_elements(self, elem: ET.Element) -> None:
+        """Remove leaf elements with no text content and no attributes."""
+        children_to_remove = []
+        for child in elem:
+            self._remove_empty_elements(child)
+            if len(child) == 0 and not child.text and not child.attrib:
+                children_to_remove.append(child)
+        for child in children_to_remove:
+            elem.remove(child)
 
     def _process_element(
         self,
@@ -764,6 +781,9 @@ class TemplateBuilder:
                     f"String.IsEqual(Container({self.container})."
                     f"ListItem.Property(name),{item.name})"
                 )
+            elif elem.text and elem.text.strip() == "onclick":
+                elem.set("_skinshortcuts_onclick", "true")
+                elem.text = ""
             include_name = elem.get("include")
             if include_name:
                 condition = elem.get("condition")
@@ -808,6 +828,7 @@ class TemplateBuilder:
 
         self._handle_skinshortcuts_include(elem, context, item, menu)
         self._handle_skinshortcuts_items(elem, context, item, menu)
+        self._handle_skinshortcuts_onclick(elem, item, menu)
 
         for child in children_to_remove:
             elem.remove(child)
@@ -959,6 +980,47 @@ class TemplateBuilder:
                 last = expanded_controls[-1]
                 last.tail = (last.tail or "") + tail
 
+    def _handle_skinshortcuts_onclick(
+        self,
+        elem: ET.Element,
+        item: MenuItem,
+        menu: Menu,
+    ) -> None:
+        """Handle <skinshortcuts>onclick</skinshortcuts> element replacement.
+
+        Finds children marked with _skinshortcuts_onclick attribute and replaces
+        them with onclick elements from the menu item's actions.
+
+        Actions are ordered: before defaults -> conditional -> unconditional -> after defaults.
+        Each onclick element preserves its condition attribute if present.
+        """
+        children_to_replace: list[tuple[int, ET.Element]] = []
+        for i, child in enumerate(elem):
+            if child.get("_skinshortcuts_onclick"):
+                children_to_replace.append((i, child))
+
+        for i, child in reversed(children_to_replace):
+            before_actions = [a for a in menu.defaults.actions if a.when == "before"]
+            after_actions = [a for a in menu.defaults.actions if a.when == "after"]
+            conditional = [a for a in item.actions if a.condition]
+            unconditional = [a for a in item.actions if not a.condition]
+
+            all_actions = before_actions + conditional + unconditional + after_actions
+
+            tail = child.tail
+            elem.remove(child)
+
+            for j, act in enumerate(all_actions):
+                onclick = ET.Element("onclick")
+                onclick.text = act.action
+                if act.condition:
+                    onclick.set("condition", act.condition)
+                elem.insert(i + j, onclick)
+
+            if tail and all_actions:
+                last_onclick = elem[i + len(all_actions) - 1]
+                last_onclick.tail = (last_onclick.tail or "") + tail
+
     def _apply_items_transformations_from_definition(
         self,
         sub_context: dict[str, str],
@@ -1000,14 +1062,19 @@ class TemplateBuilder:
     ) -> dict[str, str]:
         """Build property context for a submenu item.
 
-        Context contains submenu item properties plus built-ins (index, name, menu, label).
+        Context contains submenu item properties plus built-ins.
         Parent properties are accessed via $PARENT[...], not included in context.
         """
         context: dict[str, str] = {**submenu.defaults.properties, **sub_item.properties}
         context["index"] = str(sub_idx)
         context["name"] = sub_item.name
         context["menu"] = submenu.name
+
         context["label"] = sub_item.label
+        context["label2"] = sub_item.label2
+        context["icon"] = sub_item.icon
+        context["visible"] = sub_item.visible
+        context["path"] = sub_item.action
 
         self._apply_fallbacks(sub_item, context)
 

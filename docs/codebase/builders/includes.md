@@ -37,6 +37,8 @@ Write includes XML to file.
 
 ## Output Structure
 
+### Standard Item Output
+
 ```xml
 <item id="1">
   <label>Movies</label>
@@ -52,6 +54,23 @@ Write includes XML to file.
   ...custom properties...
 </item>
 ```
+
+### Control Type Output
+
+When `menu.controltype` is set (e.g., `"button"`):
+
+```xml
+<control type="button" id="8000">
+  <label>Movies</label>
+  <icon>...</icon>
+  <include condition="...">BeforeInclude</include>
+  <onclick>action</onclick>
+  <include>AfterInclude</include>
+  <visible>condition</visible>
+</control>
+```
+
+Properties are not included in control output. Include references from defaults and items are placed based on their position (before-onclick or after-onclick). Control IDs start from `menu.startid` (parsed from the `id` attribute, default: 1).
 
 **Action order:** before defaults → conditional item actions → unconditional item actions → after defaults
 
