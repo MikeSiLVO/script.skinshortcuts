@@ -64,7 +64,6 @@ class ItemsMixin:
         new_item = self.manager.add_item(self.menu_id, after_index=index)
         if new_item:
             insert_pos = index + 1 if index >= 0 else 0
-            self.items.insert(insert_pos, new_item)
             self._rebuild_list(focus_index=insert_pos)
 
     def _delete_item(self) -> None:
