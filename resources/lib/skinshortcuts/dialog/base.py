@@ -260,7 +260,12 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
 
         subdialog_list.reset()
 
-        item = self._get_selected_item()
+        # Use _selected_index directly - list control may not have updated yet after selectItem()
+        item = None
+        if self._selected_index is not None and 0 <= self._selected_index < len(self.items):
+            item = self.items[self._selected_index]
+        else:
+            item = self._get_selected_item()
         if item:
             listitem = self._create_listitem(item)
             subdialog_list.addItem(listitem)
@@ -323,12 +328,14 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             listitem.setProperty("widgetPath", item.properties.get("widgetPath", ""))
             listitem.setProperty("widgetType", item.properties.get("widgetType", ""))
             listitem.setProperty("widgetTarget", item.properties.get("widgetTarget", ""))
+            listitem.setProperty("widgetSource", item.properties.get("widgetSource", ""))
         else:
             listitem.setProperty("widget", "")
             listitem.setProperty("widgetLabel", "")
             listitem.setProperty("widgetPath", "")
             listitem.setProperty("widgetType", "")
             listitem.setProperty("widgetTarget", "")
+            listitem.setProperty("widgetSource", "")
 
         background_name = item.properties.get("background", "")
         if background_name:
@@ -347,6 +354,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 "widgetPath",
                 "widgetType",
                 "widgetTarget",
+                "widgetSource",
                 "widgetLabel",
                 "background",
                 "backgroundLabel",
@@ -416,7 +424,14 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             return -1
 
     def _get_selected_item(self) -> MenuItem | None:
-        """Get the currently selected MenuItem."""
+        """Get the currently selected MenuItem.
+
+        In subdialog mode, uses _selected_index (the item being edited) rather
+        than querying Container 211 which may have different focus.
+        """
+        if self.dialog_mode and self._selected_index is not None:
+            if 0 <= self._selected_index < len(self.items):
+                return self.items[self._selected_index]
         index = self._get_selected_index()
         if 0 <= index < len(self.items):
             return self.items[index]
