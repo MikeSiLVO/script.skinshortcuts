@@ -34,6 +34,7 @@ class ResolvedShortcut:
     label2: str = ""
     action_play: str = ""
     action_party: str = ""
+    content_type: str = ""
 
 
 def scan_playlist_files(directory: str) -> list[tuple[str, str]]:
@@ -244,6 +245,7 @@ class ContentProvider:
                     icon="DefaultPlaylist.png",
                     action_play=f"PlayMedia({filepath})",
                     action_party=action_party,
+                    content_type=playlist_type,
                 )
             )
 

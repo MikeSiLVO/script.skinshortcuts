@@ -285,15 +285,18 @@ class PickersMixin:
         provider = ContentProvider()
         resolved = provider.resolve(content)
 
+        source = content.source.rstrip("s") if content.source.endswith("s") else content.source
+
         widgets = []
         for item in resolved:
             widget = Widget(
                 name=f"dynamic-{content.source}-{len(widgets)}",
                 label=item.label,
                 path=self._extract_path_from_action(item.action),
-                type=content.target or "",
+                type=item.content_type or content.target or "",
                 target=self._map_target_to_window(content.target),
                 icon=item.icon,
+                source=source,
             )
             widgets.append(widget)
 
