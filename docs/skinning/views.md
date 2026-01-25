@@ -25,7 +25,7 @@ View locking allows users to select which view (list, poster wall, etc.) to use 
 Features:
 - Separate library and plugin defaults
 - User-customizable view selections
-- Per-plugin view overrides
+- Per-addon view overrides (any addon ID, not just plugins)
 - Granular content detection using compound conditions
 
 ---
@@ -210,9 +210,9 @@ Open picker for specific content:
 <onclick>RunScript(script.skinshortcuts,type=viewselect,content=movies)</onclick>
 ```
 
-### Plugin Override
+### Addon Override
 
-Set view for specific plugin:
+Set view for specific addon:
 
 ```xml
 <onclick>RunScript(script.skinshortcuts,type=viewselect,content=movies,plugin=plugin.video.example)</onclick>
@@ -298,8 +298,8 @@ View selections are stored in userdata JSON:
 | Source | Description |
 |--------|-------------|
 | `library` | User's library view selections |
-| `plugins` | Generic plugin view selections |
-| `plugin.X` | Plugin-specific overrides |
+| `plugins` | Generic plugin/addon view selections |
+| `{addon.id}` | Addon-specific overrides (e.g., `plugin.video.example`, `script.myaddon`) |
 
 ---
 

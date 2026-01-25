@@ -19,10 +19,10 @@ Hierarchical view browser for managing all view settings.
 
 Menu structure:
 - Library > (content types)
-- Plugins > (content types + Add Plugin Override)
-- (plugin overrides with reset options)
+- Plugins > (content types + Add Addon Override)
+- (addon overrides with reset options)
 - Reset Library Views
-- Reset Plugin Views
+- Reset Addon Views
 
 ### show_view_picker(config, userdata, content, plugin)
 
@@ -59,20 +59,20 @@ View Settings
 ├── Plugins >
 │   ├── Movies [current view]
 │   ├── TV Shows [current view]
-│   └── Add Plugin Override >
+│   └── Add Addon Override >
 ├── plugin.video.example (reset) >
 ├── Reset Library Views
-└── Reset Plugin Views
+└── Reset Addon Views
 ```
 
-### Plugin Override Flow
+### Addon Override Flow
 
-1. User selects "Add Plugin Override"
+1. User selects "Add Addon Override"
 2. Dialog shows installed video addons
 3. User selects addon
 4. Dialog shows content types
 5. User selects content type
-6. View picker shown for that plugin/content combination
+6. View picker shown for that addon/content combination
 
 ---
 
@@ -87,7 +87,7 @@ view_select(shortcuts_path="/path/to/skin")
 # Direct picker
 view_select(content="movies", shortcuts_path="/path/to/skin")
 
-# Plugin-specific
+# Addon-specific
 view_select(content="movies", plugin="plugin.video.example", shortcuts_path="/path/to/skin")
 ```
 
