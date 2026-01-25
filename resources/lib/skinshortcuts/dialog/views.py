@@ -110,7 +110,7 @@ def _browse_main_menu(config: ViewConfig, userdata: UserData) -> bool:
         items[0].setArt({"icon": "DefaultFolder.png"})
         items[1].setArt({"icon": "DefaultAddonProgram.png"})
 
-        plugin_overrides = _get_all_plugin_overrides(userdata)
+        plugin_overrides = _get_all_addon_overrides(userdata)
         if plugin_overrides:
             for plugin_id in sorted(plugin_overrides):
                 item = xbmcgui.ListItem(f"{plugin_id} (reset) >")
@@ -149,7 +149,7 @@ def _browse_main_menu(config: ViewConfig, userdata: UserData) -> bool:
                 changed = True
         else:
             if _confirm_reset("Reset all plugin view selections?"):
-                _clear_all_plugin_views(userdata)
+                _clear_all_addon_views(userdata)
                 changed = True
 
     return changed
@@ -359,13 +359,13 @@ def _get_video_addons() -> list[tuple[str, str]]:
     return sorted(addons, key=lambda x: x[1].lower())
 
 
-def _get_all_plugin_overrides(userdata: UserData) -> list[str]:
-    """Get list of plugin IDs with view overrides."""
-    plugins = []
+def _get_all_addon_overrides(userdata: UserData) -> list[str]:
+    """Get list of addon IDs with view overrides."""
+    addons = []
     for source in userdata.views:
-        if source.startswith("plugin."):
-            plugins.append(source)
-    return plugins
+        if source not in ("library", "plugins"):
+            addons.append(source)
+    return addons
 
 
 def _clear_plugin_views(userdata: UserData, plugin_id: str) -> None:
@@ -373,12 +373,12 @@ def _clear_plugin_views(userdata: UserData, plugin_id: str) -> None:
     userdata.views.pop(plugin_id, None)
 
 
-def _clear_all_plugin_views(userdata: UserData) -> None:
-    """Clear generic plugin default and all plugin-specific overrides."""
+def _clear_all_addon_views(userdata: UserData) -> None:
+    """Clear generic plugin default and all addon-specific overrides."""
     userdata.views.pop("plugins", None)
-    plugins = [k for k in userdata.views if k.startswith("plugin.")]
-    for plugin_id in plugins:
-        del userdata.views[plugin_id]
+    addons = [k for k in userdata.views if k not in ("library", "plugins")]
+    for addon_id in addons:
+        del userdata.views[addon_id]
 
 
 def _confirm_reset(message: str) -> bool:

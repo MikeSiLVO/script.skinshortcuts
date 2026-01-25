@@ -132,16 +132,21 @@ class UserData:
         """Clear all view selections."""
         self.views.clear()
 
-    def get_plugin_overrides(self, content: str) -> dict[str, str]:
-        """Get all plugin-specific view overrides for a content type.
+    def get_addon_overrides(self, content: str) -> dict[str, str]:
+        """Get all addon-specific view overrides for a content type.
 
-        Returns dict of plugin_id -> view_id for plugins with custom selections.
+        Returns dict of addon_id -> view_id for addons with custom selections.
+        Includes any source that isn't 'library' or 'plugins' (generic).
         """
         overrides = {}
         for source, selections in self.views.items():
-            if source.startswith("plugin.") and content in selections:
+            if source not in ("library", "plugins") and content in selections:
                 overrides[source] = selections[content]
         return overrides
+
+    def get_plugin_overrides(self, content: str) -> dict[str, str]:
+        """Alias for get_addon_overrides for backward compatibility."""
+        return self.get_addon_overrides(content)
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> UserData:
