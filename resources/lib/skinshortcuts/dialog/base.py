@@ -435,9 +435,12 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         In subdialog mode, uses _selected_index (the item being edited) rather
         than querying Container 211 which may have different focus.
         """
-        if self.dialog_mode and self._selected_index is not None:
-            if 0 <= self._selected_index < len(self.items):
-                return self.items[self._selected_index]
+        if (
+            self.dialog_mode
+            and self._selected_index is not None
+            and 0 <= self._selected_index < len(self.items)
+        ):
+            return self.items[self._selected_index]
         index = self._get_selected_index()
         if 0 <= index < len(self.items):
             return self.items[index]

@@ -7,8 +7,8 @@ import uuid
 from pathlib import Path
 
 from .config import SkinConfig
-from .models import Action, Menu, MenuItem
 from .log import get_logger
+from .models import Action, Menu, MenuItem
 from .userdata import (
     MenuItemOverride,
     MenuOverride,
@@ -494,7 +494,8 @@ class MenuManager:
             log.warning(f"set_custom_property: item not found - menu={menu_id}, item={item_id}")
             return False
 
-        log.info(f"set_custom_property: menu={menu_id}, item={item_id}, prop={prop_name}, value={value[:50] if value and len(value) > 50 else value}")
+        short_val = value[:50] + "..." if value and len(value) > 50 else value
+        log.info(f"set_custom_property: {menu_id}/{item_id} {prop_name}={short_val}")
         if value:
             item.properties[prop_name] = value
         elif prop_name in item.properties:
@@ -633,7 +634,7 @@ class MenuManager:
             if diff_props:
                 diff.properties = diff_props
                 has_changes = True
-                log.debug(f"_diff_item: {working.name} has property changes: {list(diff_props.keys())}")
+                log.debug(f"_diff_item: {working.name} props changed: {list(diff_props.keys())}")
 
         if has_changes:
             log.debug(f"_diff_item: {working.name} has changes")
