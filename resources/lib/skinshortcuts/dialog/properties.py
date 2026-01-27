@@ -484,7 +484,13 @@ class PropertiesMixin:
         """
         self._log(f"Setting custom background for {prefix}: {bg.name} -> {custom_path}")
 
-        label = custom_label if custom_label else resolve_label(bg.label)
+        # For browse/multi types, use the path as both value and label
+        if bg.type in (BackgroundType.BROWSE, BackgroundType.MULTI):
+            label = custom_label if custom_label else custom_path
+            value = custom_path
+        else:
+            label = custom_label if custom_label else resolve_label(bg.label)
+            value = bg.name
 
         related: dict[str, str | None] = {
             f"{prefix}Label": label,
@@ -494,7 +500,7 @@ class PropertiesMixin:
         if playlist_type:
             related[f"{prefix}PlaylistType"] = playlist_type
 
-        self._set_item_property(item, prefix, bg.name, related, apply_suffix=False)
+        self._set_item_property(item, prefix, value, related, apply_suffix=False)
 
     def _clear_background_properties(self, item: MenuItem, prefix: str) -> None:
         """Clear all background properties for a prefix."""
