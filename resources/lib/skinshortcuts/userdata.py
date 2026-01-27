@@ -268,8 +268,6 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
     for new_item in new_items:
         items.append(_create_item_from_override(new_item))
 
-    # Reorder: items with explicit positions go to exact index,
-    # others fill remaining slots in original order
     positioned_items: dict[int, MenuItem] = {}
     unpositioned_items: list[MenuItem] = []
 

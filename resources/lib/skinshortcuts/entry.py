@@ -433,7 +433,6 @@ def main() -> None:
             shortcuts_path=args.get("path"),
         )
     elif action == "reset":
-        # Reset specific menu (optionally with submenus)
         menu = args.get("menu", "")
         if menu:
             from .manager import MenuManager
@@ -446,7 +445,6 @@ def main() -> None:
             manager.save()
             build_includes(shortcuts_path, force=True)
     elif action == "resetsubmenus":
-        # Reset all submenus
         from .manager import MenuManager
         shortcuts_path = args.get("path") or get_skin_path()
         manager = MenuManager(shortcuts_path)

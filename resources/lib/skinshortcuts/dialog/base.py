@@ -112,11 +112,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
 
         self._shared_subdialogs = kwargs.get("subdialogs")
         self._subdialogs = {}
-
-        # Dialog mode sets Window.Property(skinshortcuts-dialog) for skin conditionals
         self.dialog_mode = kwargs.get("dialog_mode", "")
-
-        # Suffix applied to widget properties for multi-slot support (e.g., ".2")
         self.property_suffix = kwargs.get("property_suffix", "")
 
         self._setfocus = kwargs.get("setfocus")
@@ -231,14 +227,18 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         if self.manager:
             self.items = self.manager.get_menu_items(self.menu_id)
 
-            if not self.items and self.dialog_mode.startswith("custom-"):
-                default_item = MenuItem(
-                    name=f"user-{self.menu_id[:8]}",
-                    label="New Item",
-                    icon="DefaultFolder.png",
-                )
-                self.items.append(default_item)
-                self._log(f"Added default item to empty custom menu: {self.menu_id}")
+            if not self.items:
+                menu = self.manager.working.get(self.menu_id)
+                is_empty_submenu = menu and menu.is_submenu
+                is_custom_widget = self.dialog_mode.startswith("custom-")
+
+                if is_empty_submenu or is_custom_widget:
+                    default_item = MenuItem(
+                        name=f"user-{self.menu_id[:8]}",
+                        label="New Item",
+                        icon="DefaultFolder.png",
+                    )
+                    self.items.append(default_item)
 
     def _display_items(self) -> None:
         """Display items in the list control. Called once during onInit."""
@@ -363,7 +363,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 "label",
             ):
                 continue
-            # Skip widget properties for empty widget slots (no fallback display)
             if prop_name.startswith("widget"):
                 if "." in prop_name:
                     suffix = "." + prop_name.split(".", 1)[-1]
@@ -385,12 +384,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             if submenu and submenu.items:
                 listitem.setProperty("hasSubmenu", "true")
                 listitem.setProperty("submenu", submenu_name)
-            else:
-                # User-added items don't have pre-defined submenus yet
-                menu = self.manager.config.get_menu(self.menu_id)
-                if menu and menu.allow.submenus:
-                    listitem.setProperty("hasSubmenu", "true")
-                    listitem.setProperty("submenu", submenu_name)
 
             is_modified = False
             if self.manager:
@@ -526,9 +519,9 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 menu = self.manager.config.get_menu(self.menu_id)
                 if menu:
                     allow = menu.allow
-                    self.setProperty("allowWidgets", "true" if allow.widgets else "false")
-                    self.setProperty("allowBackgrounds", "true" if allow.backgrounds else "false")
-                    self.setProperty("allowSubmenus", "true" if allow.submenus else "false")
+                    self.setProperty("disableWidgets", "true" if not allow.widgets else "")
+                    self.setProperty("disableBackgrounds", "true" if not allow.backgrounds else "")
+                    self.setProperty("disableSubmenus", "true" if not allow.submenus else "")
 
             self._update_deleted_property()
 

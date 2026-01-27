@@ -718,9 +718,9 @@ Clears a specific menu's user data.
 | Property | Description |
 |----------|-------------|
 | `menuname` | Current menu ID being edited |
-| `allowWidgets` | `true` if widgets enabled for this menu |
-| `allowBackgrounds` | `true` if backgrounds enabled for this menu |
-| `allowSubmenus` | `true` if submenus enabled for this menu |
+| `disableWidgets` | `true` if widgets disabled for this menu (empty if allowed) |
+| `disableBackgrounds` | `true` if backgrounds disabled for this menu (empty if allowed) |
+| `disableSubmenus` | `true` if submenus disabled for this menu (empty if allowed) |
 | `skinshortcuts-hasdeleted` | `true` if deleted items exist |
 
 ### Home Window Properties

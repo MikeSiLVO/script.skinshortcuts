@@ -372,7 +372,6 @@ class PickersMixin:
 
         addon_type = addon_types[selected][0]
 
-        # browse_type for Kodi API, widget_target for our properties
         if addon_type == "video":
             browse_type = "video"
             widget_target = "videos"

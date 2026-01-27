@@ -717,9 +717,9 @@ Remove these controls from your dialog XML.
 | `groupname`                | ✓   | Renamed to `menuname`         |
 | `groupDisplayName`         | ✓   | Removed                       |
 | `menuname`                 | —   | ✓ (new, replaces `groupname`) |
-| `allowWidgets`             | —   | ✓ (new)                       |
-| `allowBackgrounds`         | —   | ✓ (new)                       |
-| `allowSubmenus`            | —   | ✓ (new)                       |
+| `disableWidgets`           | —   | ✓ (new) - `true` if disabled  |
+| `disableBackgrounds`       | —   | ✓ (new) - `true` if disabled  |
+| `disableSubmenus`          | —   | ✓ (new) - `true` if disabled  |
 | `skinshortcuts-hasdeleted` | —   | ✓ (new)                       |
 
 ### Home Window Properties (v3 only)

@@ -68,10 +68,8 @@ class SubdialogsMixin:
             return
 
         submenu_name = item.submenu or item.name
-        submenu = self.manager.config.get_menu(submenu_name)
-        if not submenu:
-            xbmcgui.Dialog().notification("No Submenu", f"No submenu defined for '{item.label}'")
-            return
+        if submenu_name not in self.manager.working:
+            self.manager._ensure_working_menu(submenu_name)
 
         self.setProperty("additionalDialog", "true")
         subdialogs_list = list(self._subdialogs.values())
@@ -169,7 +167,6 @@ class SubdialogsMixin:
         if not self.manager:
             return ""
 
-        # Handle {customWidget} or {customWidget.N} placeholder
         if menu_ref.startswith("{customWidget"):
             suffix = ""
             if "." in menu_ref:
@@ -210,7 +207,6 @@ class SubdialogsMixin:
 
             return menu_id
 
-        # Regular menu reference
         return menu_ref.replace("{item}", item.name)
 
     def _open_onclose_menu(self, menu_name: str, subdialog: SubDialog) -> None:

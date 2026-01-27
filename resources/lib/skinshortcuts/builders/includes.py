@@ -98,9 +98,10 @@ class IncludesBuilder:
         submenu_items: list[tuple[MenuItem, MenuItem, int, Menu]] = []
 
         for parent_item in parent_menu.items:
-            if parent_item.disabled or not parent_item.submenu:
+            if parent_item.disabled:
                 continue
-            submenu = self._menu_map.get(parent_item.submenu)
+            submenu_name = parent_item.submenu or parent_item.name
+            submenu = self._menu_map.get(submenu_name)
             if not submenu:
                 continue
             for idx, sub_item in enumerate(submenu.items, start=1):
@@ -254,8 +255,10 @@ class IncludesBuilder:
             self._add_property(elem, "menu", menu.name)
             self._add_property(elem, "path", item.action)
 
-            if item.submenu:
-                self._add_property(elem, "submenuVisibility", item.submenu)
+            submenu_name = item.submenu or item.name
+            submenu = self._menu_map.get(submenu_name)
+            if submenu and submenu.items:
+                self._add_property(elem, "submenuVisibility", submenu_name)
                 self._add_property(elem, "hasSubmenu", "True")
 
             all_properties = {**menu.defaults.properties, **item.properties}

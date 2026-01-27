@@ -138,7 +138,6 @@ class TemplateBuilder:
         allowing one template to generate multiple includes.
         """
         for menu in self.menus:
-            # Filter by menu if specified
             if template.menu and menu.name != template.menu:
                 continue
 
@@ -303,7 +302,6 @@ class TemplateBuilder:
             return
 
         if var_name in variable_map:
-            # Merge: append children to existing variable
             for child in var_elem:
                 variable_map[var_name].append(child)
         else:

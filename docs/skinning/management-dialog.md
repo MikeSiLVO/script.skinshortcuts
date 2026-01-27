@@ -125,9 +125,9 @@ Properties set on the dialog window for conditional visibility:
 | Property | Description |
 |----------|-------------|
 | `menuname` | Current menu ID (e.g., `mainmenu`) |
-| `allowWidgets` | `true` or `false` |
-| `allowBackgrounds` | `true` or `false` |
-| `allowSubmenus` | `true` or `false` |
+| `disableWidgets` | `true` if disabled (empty if allowed) |
+| `disableBackgrounds` | `true` if disabled (empty if allowed) |
+| `disableSubmenus` | `true` if disabled (empty if allowed) |
 | `skinshortcuts-hasdeleted` | `true` if deleted items exist |
 
 ### Subdialog Mode (Home Window)
@@ -143,7 +143,8 @@ These properties are set on the **Home window** (not the dialog) so they remain 
 
 ```xml
 <!-- Menu context properties (on dialog window) -->
-<visible>String.IsEqual(Window.Property(allowWidgets),true)</visible>
+<!-- Show widget button only if widgets are allowed (not disabled) -->
+<visible>String.IsEmpty(Window.Property(disableWidgets))</visible>
 
 <!-- Subdialog properties (on Home window) -->
 <visible>String.IsEmpty(Window(Home).Property(skinshortcuts-dialog))</visible>

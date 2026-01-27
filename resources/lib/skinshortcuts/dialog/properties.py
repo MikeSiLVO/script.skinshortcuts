@@ -484,7 +484,6 @@ class PropertiesMixin:
         """
         self._log(f"Setting custom background for {prefix}: {bg.name} -> {custom_path}")
 
-        # For browse/multi types, use the path as both value and label
         if bg.type in (BackgroundType.BROWSE, BackgroundType.MULTI):
             label = custom_label if custom_label else custom_path
             value = custom_path

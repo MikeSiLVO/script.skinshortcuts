@@ -64,7 +64,6 @@ def _parse_widget(elem, path: str, default_source: str = "") -> Widget:
 
     source = get_attr(elem, "source") or default_source
 
-    # Normalize target (e.g., "video" -> "videos")
     raw_target = get_attr(elem, "target") or "videos"
     target = TARGET_MAP.get(raw_target.lower(), raw_target)
 

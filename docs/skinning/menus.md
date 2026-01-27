@@ -329,9 +329,9 @@ Controls which features are available in the management dialog. This is a direct
 
 These set window properties that your dialog skin can use for button visibility:
 
-* `Window.Property(allowWidgets)` = `true` or `false`
-* `Window.Property(allowBackgrounds)` = `true` or `false`
-* `Window.Property(allowSubmenus)` = `true` or `false`
+* `Window.Property(disableWidgets)` = `true` if disabled, empty if allowed
+* `Window.Property(disableBackgrounds)` = `true` if disabled, empty if allowed
+* `Window.Property(disableSubmenus)` = `true` if disabled, empty if allowed
 
 > **See also:** [Management Dialog](management-dialog.md) for using these properties in your dialog skin
 
