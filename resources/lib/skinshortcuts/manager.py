@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .config import SkinConfig
 from .models import Action, Menu, MenuItem
+from .log import get_logger
 from .userdata import (
     MenuItemOverride,
     MenuOverride,
@@ -15,6 +16,8 @@ from .userdata import (
     _check_dialog_visible,
     save_userdata,
 )
+
+log = get_logger("Manager")
 
 
 class MenuManager:
@@ -488,8 +491,10 @@ class MenuManager:
         """Set a custom property on an item (stored in properties dict)."""
         item = self._get_working_item(menu_id, item_id)
         if not item:
+            log.warning(f"set_custom_property: item not found - menu={menu_id}, item={item_id}")
             return False
 
+        log.info(f"set_custom_property: menu={menu_id}, item={item_id}, prop={prop_name}, value={value[:50] if value and len(value) > 50 else value}")
         if value:
             item.properties[prop_name] = value
         elif prop_name in item.properties:
@@ -628,7 +633,10 @@ class MenuManager:
             if diff_props:
                 diff.properties = diff_props
                 has_changes = True
+                log.debug(f"_diff_item: {working.name} has property changes: {list(diff_props.keys())}")
 
+        if has_changes:
+            log.debug(f"_diff_item: {working.name} has changes")
         return diff if has_changes else None
 
     def _item_to_override(self, item: MenuItem, is_new: bool = False) -> MenuItemOverride:
