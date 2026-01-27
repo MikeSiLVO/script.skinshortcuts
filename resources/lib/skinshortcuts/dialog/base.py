@@ -385,6 +385,12 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             if submenu and submenu.items:
                 listitem.setProperty("hasSubmenu", "true")
                 listitem.setProperty("submenu", submenu_name)
+            else:
+                # User-added items don't have pre-defined submenus yet
+                menu = self.manager.config.get_menu(self.menu_id)
+                if menu and menu.allow.submenus:
+                    listitem.setProperty("hasSubmenu", "true")
+                    listitem.setProperty("submenu", submenu_name)
 
             is_modified = False
             if self.manager:
