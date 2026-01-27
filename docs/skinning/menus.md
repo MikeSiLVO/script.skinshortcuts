@@ -558,7 +558,9 @@ Define subdialogs triggered by button clicks. Used for multi-widget support.
 | `menu` | Menu name for `action="menu"`. Supports `{item}` placeholder |
 | `condition` | Condition evaluated against item properties |
 
-> **See also:** [Management Dialog](management-dialog.md#subdialogs) for implementing subdialog UI
+> **See also:**
+> - [Management Dialog](management-dialog.md#subdialogs) for implementing subdialog UI
+> - [Templates - Dynamic Widgets Pattern](templates.md#dynamic-widgets-pattern) for using subdialogs with items templates
 
 ---
 

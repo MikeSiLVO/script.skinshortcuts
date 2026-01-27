@@ -353,9 +353,9 @@ When a background is assigned to a menu item, these core properties are set:
 
 | Property | Description |
 |----------|-------------|
-| `background` | Background name |
+| `background` | Background name (or path for browse/multi types) |
 | `backgroundPath` | Image path |
-| `backgroundLabel` | Display label |
+| `backgroundLabel` | Display label (or path for browse/multi types) |
 | `backgroundType` | Background type (static, property, browse, etc.) |
 | `backgroundPlaylistType` | Playlist content type (for playlist/live-playlist types only) |
 

@@ -103,8 +103,8 @@ Set when a background is assigned to a menu item.
 
 | Property | Source | Description |
 |----------|--------|-------------|
-| `background` | Background name | Background identifier |
-| `backgroundLabel` | Background label | Display label |
+| `background` | Background name | Background identifier (path for browse/multi types) |
+| `backgroundLabel` | Background label | Display label (path for browse/multi types) |
 | `backgroundPath` | Background path | Image path or info label |
 
 ### Usage

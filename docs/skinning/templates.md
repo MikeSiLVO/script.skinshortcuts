@@ -17,6 +17,8 @@ The `templates.xml` file defines how the script generates include files. Templat
 * [Dynamic Expressions](#dynamic-expressions)
 * [Skinshortcuts Tag](#skinshortcuts-tag)
 * [Submenu Items Iteration](#submenu-items-iteration)
+  * [Dynamic Widgets Pattern](#dynamic-widgets-pattern)
+  * [Troubleshooting "No Menu Items Matched"](#troubleshooting-no-menu-items-matched)
 * [Property Groups](#property-groups)
 * [Presets](#presets)
 * [Variables](#variables)
@@ -807,6 +809,66 @@ If a submenu doesn't exist or has no items, the insert marker produces no output
 ### Disabled Items
 
 Submenu items with `<disabled>true</disabled>` are automatically skipped during iteration.
+
+### Dynamic Widgets Pattern
+
+This pattern allows unlimited, reorderable widgets per menu item using subdialogs and items templates together.
+
+**How it works:**
+
+1. User clicks a button (e.g., 406) to manage widgets for a menu item
+2. A subdialog opens with `action="menu" menu="{item}.widgets"`
+3. User adds/removes/reorders items in that submenu (each item = one widget)
+4. The items template iterates over those submenu items to generate widget controls
+
+**menus.xml configuration:**
+
+```xml
+<dialogs>
+  <subdialog buttonID="406" mode="widgets" setfocus="309">
+    <onclose action="menu" menu="{item}.widgets" />
+  </subdialog>
+</dialogs>
+```
+
+When button 406 is clicked, the dialog switches to "widgets" mode. When that mode closes, `action="menu"` opens the `{item}.widgets` submenu for editing (e.g., `movies.widgets` if the current item is "movies").
+
+**templates.xml configuration:**
+
+```xml
+<!-- Items template: iterates over each widget in the submenu -->
+<template items="widgets" source="widgets">
+  <property name="widget_id" from="index" />
+  <property name="widget_path" from="widgetPath" />
+
+  <controls>
+    <control type="group" id="$MATH[$PARENT[index] * 100 + widget_id]">
+      <visible>String.IsEqual(Container(9000).ListItem.Property(name),$PARENT[name])</visible>
+      <content>$PROPERTY[widget_path]</content>
+    </control>
+  </controls>
+</template>
+
+<!-- Regular template with insert marker -->
+<template include="Widgets">
+  <controls>
+    <skinshortcuts insert="widgets" />
+  </controls>
+</template>
+```
+
+The items template looks up `{parent_item.name}.widgets` (e.g., `movies.widgets`) and generates controls for each widget item in that submenu.
+
+### Troubleshooting "No Menu Items Matched"
+
+If your template outputs `<description>Automatically generated - no menu items matched this template</description>`, check:
+
+1. **Template condition** - If you have `<condition>someProperty</condition>`, ensure menu items have that property set
+2. **Submenu exists** - The submenu `{item}.{source}` must exist (e.g., `movies.widgets` for `source="widgets"`)
+3. **Submenu has items** - Empty submenus produce no output
+4. **Filter too restrictive** - If using `filter="..."`, some items may be excluded
+
+To iterate over all menu items without conditions, omit the `<condition>` element from your items template.
 
 ---
 
