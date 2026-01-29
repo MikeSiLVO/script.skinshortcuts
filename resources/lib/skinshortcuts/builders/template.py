@@ -283,6 +283,8 @@ class TemplateBuilder:
             output_name = self._substitute_property_refs(original_name, item, context)
 
         var_elem.set("name", output_name)
+        if "output" in var_elem.attrib:
+            del var_elem.attrib["output"]
         self._substitute_variable_content(var_elem, context, item)
 
         return var_elem

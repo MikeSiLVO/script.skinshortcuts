@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta16" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta17" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
+3.0.0~beta17
+  - Add browse-into for addon content with placeholder support
+  - Clean up orphaned submenus on save
+  - Fix position saving for items in user-created menus
+
 3.0.0~beta16
   - Fix submenu creation for new menu items
   - Rename window properties: allowWidgets/allowBackgrounds/allowSubmenus to disableWidgets/disableBackgrounds/disableSubmenus

@@ -93,9 +93,9 @@ Without `templates.xml`, the script generates basic includes with menu items as 
   <condition>...</condition>
   <property name="style" from="widgetStyle" />
   <var name="aspect">...</var>
-  <propertyGroup name="widgetProps" />
-  <preset name="aspectRatio" />
-  <variableGroup name="widgetVars" />
+  <propertyGroup content="widgetProps" />
+  <preset content="aspectRatio" />
+  <variableGroup content="widgetVars" />
   <controls>...</controls>
 </template>
 ```
@@ -893,7 +893,7 @@ Reference in template:
 
 ```xml
 <template include="MainMenu">
-  <propertyGroup name="widgetProps" />
+  <propertyGroup content="widgetProps" />
 </template>
 ```
 
@@ -901,16 +901,16 @@ Reference in template:
 
 | Attribute | Required | Description |
 |-----------|----------|-------------|
-| `name` | Yes | Name of property group to apply |
+| `content` | Yes | Name of property group to apply |
 | `suffix` | No | Suffix for property transforms (e.g., `.2`) |
 | `condition` | No | Only apply if condition matches item |
 
 ```xml
 <!-- Only apply widget props if item has a widget -->
-<propertyGroup name="widgetProps" condition="widgetPath" />
+<propertyGroup content="widgetProps" condition="widgetPath" />
 
 <!-- Apply with suffix for Widget 2 -->
-<propertyGroup name="widgetProps" suffix=".2" condition="widgetPath.2" />
+<propertyGroup content="widgetProps" suffix=".2" condition="widgetPath.2" />
 ```
 
 ### Suffix Transform
@@ -918,7 +918,7 @@ Reference in template:
 Apply suffix for widget slots:
 
 ```xml
-<propertyGroup name="widgetProps" suffix=".2" />
+<propertyGroup content="widgetProps" suffix=".2" />
 ```
 
 Transforms:
@@ -948,7 +948,7 @@ Reference:
 
 ```xml
 <template include="MainMenu">
-  <preset name="widgetLayout" />
+  <preset content="widgetLayout" />
   <controls>
     <control type="panel" layout="$PROPERTY[layout]" />
   </controls>
@@ -961,13 +961,13 @@ All matched attributes become properties.
 
 | Attribute | Required | Description |
 |-----------|----------|-------------|
-| `name` | Yes | Name of preset to apply |
+| `content` | Yes | Name of preset to apply |
 | `suffix` | No | Suffix for condition transforms (e.g., `.2`) |
 | `condition` | No | Only apply if condition matches item |
 
 ```xml
 <!-- Apply layout preset for Widget 2 properties -->
-<preset name="widgetLayout" suffix=".2" condition="widgetPath.2" />
+<preset content="widgetLayout" suffix=".2" condition="widgetPath.2" />
 ```
 
 When `suffix` is specified, preset conditions like `widgetStyle=Panel` are transformed to `widgetStyle.2=Panel`.
@@ -1010,7 +1010,7 @@ Generates per menu item:
   </variable>
 
   <variableGroup name="menuVars">
-    <variable name="ItemLabel" />
+    <variable content="ItemLabel" />
   </variableGroup>
 </variables>
 ```
@@ -1019,7 +1019,7 @@ Reference in template:
 
 ```xml
 <template include="MainMenu">
-  <variableGroup name="menuVars" />
+  <variableGroup content="menuVars" />
 </template>
 ```
 
@@ -1027,16 +1027,16 @@ Reference in template:
 
 | Attribute | Required | Description |
 |-----------|----------|-------------|
-| `name` | Yes | Name of variable group to apply |
+| `content` | Yes | Name of variable group to apply |
 | `suffix` | No | Suffix for condition transforms (e.g., `.2`) |
 | `condition` | No | Only build if condition matches item |
 
 ```xml
 <!-- Build widget variables only for items with widgets -->
-<variableGroup name="widgetVars" condition="widgetPath" />
+<variableGroup content="widgetVars" condition="widgetPath" />
 
 <!-- Build Widget 2 variables with suffix transform -->
-<variableGroup name="widgetVars" suffix=".2" condition="widgetPath.2" />
+<variableGroup content="widgetVars" suffix=".2" condition="widgetPath.2" />
 ```
 
 ### Variable Attributes
@@ -1065,7 +1065,7 @@ Use in template conditions:
 
 ```xml
 <skinshortcuts include="WidgetControls" condition="$EXP[HasWidget]" />
-<propertyGroup name="movieProps" condition="$EXP[IsMovies]" />
+<propertyGroup content="movieProps" condition="$EXP[IsMovies]" />
 ```
 
 ---
@@ -1217,7 +1217,7 @@ When `$INCLUDE[...]` appears as text content in an element (e.g., after `$PROPER
   <template include="MainMenu" idprefix="menu">
     <property name="label" from="label" />
     <property name="action" from="path" />
-    <propertyGroup name="widget" />
+    <propertyGroup content="widget" />
 
     <controls>
       <control type="button" id="$PROPERTY[id]">

@@ -437,7 +437,7 @@ Defines templates for generating skin includes. For detailed documentation, see 
       </value>
     </variable>
     <variableGroup name="menuVars">
-      <variable name="MenuLabel" />
+      <variable content="MenuLabel" />
       <variableGroup content="nestedVars" />
     </variableGroup>
   </variables>
@@ -538,8 +538,10 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `<include>` | includes | `name` | — | Include definition |
 | `<variables>` | templates/template | — | — | Variable definitions |
 | `<variable>` | variables | `name` | `condition`, `output` | Variable definition |
+| `<variable/>` | variableGroup | `content` | `condition` | Variable reference |
 | `<value>` | variable | — | `condition` | Variable value |
 | `<variableGroup>` | variables | `name` | — | Variable group definition |
+| `<variableGroup/>` | variableGroup | `content` | — | Nested group reference |
 | `<template>` | templates | — | `include`, `build`, `idprefix`, `templateonly`, `menu` | Template definition |
 | `<output>` | template | `include` | `idprefix`, `suffix` | Multi-output target |
 | `<condition>` | template | — | — | Template condition (ANDed) |
