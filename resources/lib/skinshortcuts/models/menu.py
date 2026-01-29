@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Union
 
-    GroupContent = Union["Shortcut", "ShortcutGroup", "Content"]
+    GroupContent = Union["Shortcut", "ShortcutGroup", "Content", "Input"]
 
 
 @dataclass
@@ -28,6 +28,30 @@ class IconSource:
     condition: str = ""
     visible: str = ""
     icon: str = ""
+
+
+@dataclass
+class Input:
+    """User input prompt in groupings.
+
+    When selected in the picker, prompts the user for input via keyboard
+    and returns a shortcut with the entered value.
+
+    Attributes:
+        label: Display label in picker
+        type: Input method - "text", "numeric", "ipaddress", "password"
+        for_: What the input becomes - "action", "label", "path"
+        condition: Property condition (evaluated against item properties)
+        visible: Kodi visibility condition (evaluated at runtime)
+        icon: Optional icon for picker display
+    """
+
+    label: str
+    type: str = "text"
+    for_: str = "action"
+    condition: str = ""
+    visible: str = ""
+    icon: str = "DefaultFile.png"
 
 
 @dataclass

@@ -71,7 +71,23 @@ Dynamic content reference resolved at runtime.
 |-------|------|-------------|
 | `source` | str | Content type: playlists, addons, library, sources, favourites, pvr |
 | `target` | str | Media context: videos, music, pictures |
+| `path` | str | Custom path override |
 | `folder` | str | Wrap items in subfolder |
+| `label` | str | Result label for addons placeholder |
+| `icon` | str | Icon override |
+| `condition` | str | Property condition |
+| `visible` | str | Kodi visibility condition |
+
+### Input
+
+User input prompt for custom values.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `label` | str | Display label in picker |
+| `type` | str | Input method: text, numeric, ipaddress, password |
+| `for_` | str | What value becomes: action, label, path |
+| `icon`, `condition`, `visible` | str | Display/filtering |
 
 ***
 

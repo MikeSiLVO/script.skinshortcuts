@@ -3,6 +3,13 @@ from __future__ import annotations
 
 from typing import Any
 
+INPUT_ALPHANUM: int
+INPUT_NUMERIC: int
+INPUT_DATE: int
+INPUT_TIME: int
+INPUT_IPADDRESS: int
+INPUT_PASSWORD: int
+
 def getCurrentWindowId() -> int: ...
 def getCurrentWindowDialogId() -> int: ...
 

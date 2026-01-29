@@ -12,6 +12,7 @@ from ..models.menu import (
     DefaultAction,
     IconSource,
     IncludeRef,
+    Input,
     Menu,
     MenuAllow,
     MenuConfig,
@@ -434,7 +435,7 @@ def _parse_shortcut_groupings(root, path: str) -> list[ShortcutGroup]:
 
 
 def _parse_shortcut_group(elem, path: str) -> ShortcutGroup | None:
-    """Parse a group element (supports nested groups, shortcuts, and content refs)."""
+    """Parse a group element (supports nested groups, shortcuts, content refs, and inputs)."""
     group_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
     if not group_name or not label:
@@ -442,7 +443,7 @@ def _parse_shortcut_group(elem, path: str) -> ShortcutGroup | None:
 
     condition = get_attr(elem, "condition") or ""
     icon = get_attr(elem, "icon") or ""
-    items: list[Shortcut | ShortcutGroup | Content] = []
+    items: list[Shortcut | ShortcutGroup | Content | Input] = []
 
     for child in elem:
         if child.tag == "shortcut":
@@ -457,6 +458,10 @@ def _parse_shortcut_group(elem, path: str) -> ShortcutGroup | None:
             content = parse_content(child)
             if content:
                 items.append(content)
+        elif child.tag == "input":
+            input_item = _parse_input(child)
+            if input_item:
+                items.append(input_item)
 
     visible = get_attr(elem, "visible") or ""
     return ShortcutGroup(
@@ -464,7 +469,7 @@ def _parse_shortcut_group(elem, path: str) -> ShortcutGroup | None:
     )
 
 
-def _parse_shortcut(elem, path: str) -> Shortcut | None:
+def _parse_shortcut(elem, _path: str) -> Shortcut | None:
     """Parse a shortcut element.
 
     Supports two modes:
@@ -494,6 +499,25 @@ def _parse_shortcut(elem, path: str) -> Shortcut | None:
         icon=get_attr(elem, "icon") or "DefaultShortcut.png",
         condition=get_attr(elem, "condition") or "",
         visible=get_attr(elem, "visible") or "",
+    )
+
+
+def _parse_input(elem) -> Input | None:
+    """Parse an input element.
+
+    Schema: <input label="Custom action" type="text" for="action" />
+    """
+    label = get_attr(elem, "label")
+    if not label:
+        return None
+
+    return Input(
+        label=label,
+        type=get_attr(elem, "type") or "text",
+        for_=get_attr(elem, "for") or "action",
+        condition=get_attr(elem, "condition") or "",
+        visible=get_attr(elem, "visible") or "",
+        icon=get_attr(elem, "icon") or "DefaultFile.png",
     )
 
 

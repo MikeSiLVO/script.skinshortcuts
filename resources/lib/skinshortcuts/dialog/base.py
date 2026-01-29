@@ -233,8 +233,12 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 is_custom_widget = self.dialog_mode.startswith("custom-")
 
                 if is_empty_submenu or is_custom_widget:
+                    if self.menu_id.startswith("user-"):
+                        menu_suffix = self.menu_id[5:]
+                    else:
+                        menu_suffix = self.menu_id
                     default_item = MenuItem(
-                        name=f"user-{self.menu_id[:8]}",
+                        name=f"sub-{menu_suffix[:8]}",
                         label="New Item",
                         icon="DefaultFolder.png",
                     )

@@ -39,8 +39,9 @@ Load just the shortcut groupings (for picker without full reload).
 | `_parse_defaults` | Menu-wide default properties, actions, includes |
 | `_parse_allow` | Feature toggles (widgets, backgrounds, submenus) |
 | `_parse_groupings` | `<groupings>` element with groups/shortcuts |
-| `_parse_shortcut_group` | Group with nested groups, shortcuts, content |
+| `_parse_shortcut_group` | Group with nested groups, shortcuts, content, inputs |
 | `_parse_shortcut` | Shortcut in action or browse mode |
+| `_parse_input` | User input prompt element |
 | `_parse_icons` | Icon sources (simple path or advanced with conditions) |
 | `_parse_dialogs` | Subdialog definitions |
 | `_parse_overrides` | Action replacement rules |

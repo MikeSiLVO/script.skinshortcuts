@@ -7,7 +7,7 @@
 
 ## Overview
 
-Resolves `<content>` references to shortcuts at runtime by querying Kodi JSON-RPC API and filesystem.
+Resolves `<content>` references to shortcuts at runtime by querying Kodi JSON-RPC API and filesystem. Also provides directory browsing for addon navigation.
 
 ***
 
@@ -16,6 +16,7 @@ Resolves `<content>` references to shortcuts at runtime by querying Kodi JSON-RP
 | File | Doc | Purpose |
 |------|-----|---------|
 | `content.py` | [content.md](content.md) | Content resolver |
+| `browse.py` | - | Directory browsing via Files.GetDirectory |
 
 ***
 
@@ -25,6 +26,20 @@ Resolves `<content>` references to shortcuts at runtime by querying Kodi JSON-RP
 |----------|-------------|
 | `resolve_content(content)` | Resolve Content to shortcuts |
 | `scan_playlist_files(directory)` | Scan for playlist files |
+| `get_browse_provider()` | Get BrowseProvider instance |
+
+***
+
+## BrowseProvider
+
+Lists directory contents for browse-into functionality.
+
+| Method | Description |
+|--------|-------------|
+| `list_directory(path)` | List directory contents, returns list of BrowseItem |
+| `is_browsable(path)` | Check if path can be browsed |
+
+**BrowseItem fields:** `label`, `path`, `icon`, `is_directory`, `mimetype`
 
 ***
 

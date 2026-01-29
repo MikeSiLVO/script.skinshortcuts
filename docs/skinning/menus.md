@@ -457,13 +457,48 @@ Add dynamic content from system sources:
 | Attribute | Description |
 |-----------|-------------|
 | `source` | Content type: `playlists`, `addons`, `sources`, `favourites`, `pvr`, `commands`, `settings`, `library`, `nodes` |
-| `target` | Media context: `videos`, `music`, `pictures`, `programs`, `tv`, `radio`. For `library` source, see [Library Target Values](widgets.md#library-target-values). For `nodes` source, see [Nodes Target Values](widgets.md#nodes-target-values) |
+| `target` | Media context (see [Content Target Reference](#content-target-reference) below) |
 | `folder` | Wrap items in a folder with this label |
 | `path` | Custom path override |
-| `label` | Custom label for the content group |
-| `icon` | Custom icon for the content group |
+| `label` | Label for the created menu item (used with `addons` source, see below) |
+| `icon` | Custom icon |
 | `condition` | Property condition (evaluated against item properties) |
 | `visible` | Kodi visibility condition (evaluated at runtime) |
+
+### Addon Browse Placeholder
+
+For `source="addons"`, a "Create menu item to here" option appears at the top of the picker. This lets users create a shortcut to the addon category itself (e.g., "Video add-ons") even when no addons are installed.
+
+The `label` attribute sets the menu item label when the user selects this option:
+
+```xml
+<group name="video-addons" label="$LOCALIZE[1037]" icon="DefaultAddonVideo.png">
+    <content source="addons" label="$LOCALIZE[1037]" target="videos" />
+</group>
+```
+
+| User action | Result |
+|-------------|--------|
+| Selects "Create menu item to here" | Menu item labeled "Video add-ons" ($LOCALIZE[1037]) |
+| Selects a specific addon | Menu item labeled with addon name |
+
+Without the `label` attribute, the menu item defaults to "Create menu item to here".
+
+### Content Target Reference
+
+Valid `target` values depend on the `source` attribute. Values are based on Kodi's JSON-RPC API and window names.
+
+| Source | Valid Targets | Notes |
+|--------|---------------|-------|
+| `addons` | `video`, `videos`, `audio`, `music`, `image`, `pictures`, `executable`, `programs`, `game`, `games` | JSON-RPC values (`video`, `audio`, `image`, `executable`, `game`) and window names (`videos`, `music`, `pictures`, `programs`, `games`) both accepted |
+| `sources` | `video`, `music`, `pictures`, `files`, `programs` | Matches Kodi's Files.Media values |
+| `playlists` | `video`, `music` | Matches playlist directory names |
+| `nodes` | `video`, `music` | Library node types |
+| `pvr` | `tv`, `radio` | PVR channel types |
+| `library` | See [Library Target Values](widgets.md#library-target-values) | Genre, year, studio, tag, actor queries |
+| `favourites` | (none) | No target needed |
+| `commands` | (none) | No target needed |
+| `settings` | (none) | No target needed |
 
 ### Playlist Filtering
 
@@ -482,6 +517,27 @@ When the user selects a playlist shortcut, a dialog offers action choices:
 * **Display** - Opens the playlist in the library view (ActivateWindow)
 * **Play** - Plays the playlist immediately (PlayMedia)
 * **Party Mode** - Starts party mode shuffle (music playlists only)
+
+### User Input
+
+Allow users to enter custom values via keyboard:
+
+```xml
+<input label="Custom action" type="text" for="action" />
+```
+
+| Attribute | Required | Default | Description |
+|-----------|----------|---------|-------------|
+| `label` | Yes | - | Display label in picker |
+| `type` | No | `text` | Input method: `text`, `numeric`, `ipaddress`, `password` |
+| `for` | No | `action` | What the value becomes: `action`, `label`, `path` |
+| `condition` | No | - | Property condition |
+| `visible` | No | - | Kodi visibility condition |
+| `icon` | No | `DefaultFile.png` | Icon in picker |
+
+### Browse Into Addons
+
+When a shortcut has a browsable path (`plugin://` or `addons://`), selecting it opens a directory browser instead of immediately selecting. Users can navigate into subdirectories and select "Create menu item to here" to use the current location.
 
 > **See also:** [Conditions](conditions.md) for `condition` and `visible` attribute syntax
 

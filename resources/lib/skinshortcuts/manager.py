@@ -7,6 +7,7 @@ import uuid
 from pathlib import Path
 
 from .config import SkinConfig
+from .log import get_logger
 from .models import Action, Menu, MenuItem
 from .userdata import (
     MenuItemOverride,
@@ -15,6 +16,8 @@ from .userdata import (
     _check_dialog_visible,
     save_userdata,
 )
+
+log = get_logger("MenuManager")
 
 
 class MenuManager:
@@ -174,15 +177,15 @@ class MenuManager:
         Returns:
             The newly created MenuItem
         """
-        item_name = self._generate_unique_id("user")
+        menu = self._ensure_working_menu(menu_id)
+        prefix = "sub" if menu.is_submenu else "user"
+        item_name = self._generate_unique_id(prefix)
 
         new_item = MenuItem(
             name=item_name,
             label=label or "New Item",
             actions=[Action(action="noop")],
         )
-
-        menu = self._ensure_working_menu(menu_id)
         if after_index is not None and 0 <= after_index < len(menu.items):
             menu.items.insert(after_index + 1, new_item)
         else:
@@ -539,8 +542,34 @@ class MenuManager:
         }
         self._changed = False
 
+    def _cleanup_orphaned_menus(self) -> None:
+        """Remove menus that are not in defaults and have no parent reference."""
+        default_menu_names = {m.name for m in self.config.default_menus}
+
+        referenced_menus: set[str] = set()
+        for menu in self.working.values():
+            for item in menu.items:
+                if item.submenu:
+                    referenced_menus.add(item.submenu)
+                else:
+                    referenced_menus.add(item.name)
+                for key, value in item.properties.items():
+                    if key.startswith("customWidget") and value:
+                        referenced_menus.add(value)
+
+        orphaned = [
+            menu_id for menu_id in self.working
+            if menu_id not in default_menu_names and menu_id not in referenced_menus
+        ]
+
+        for menu_id in orphaned:
+            log.debug(f"Removing orphaned menu: {menu_id}")
+            del self.working[menu_id]
+
     def _generate_userdata(self) -> UserData:
         """Generate userdata by diffing working copy against defaults."""
+        self._cleanup_orphaned_menus()
+
         userdata = UserData()
 
         default_menus = {m.name: m for m in self.config.default_menus}
@@ -558,8 +587,10 @@ class MenuManager:
         override = MenuOverride()
 
         if default is None:
-            for item in working.items:
-                override.items.append(self._item_to_override(item, is_new=True))
+            for idx, item in enumerate(working.items):
+                item_override = self._item_to_override(item, is_new=True)
+                item_override.position = idx
+                override.items.append(item_override)
             return override if override.items else None
 
         default_items = {item.name: item for item in default.items}
