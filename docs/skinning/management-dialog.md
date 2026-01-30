@@ -46,20 +46,44 @@ Create `script-skinshortcuts.xml` in your skin's XML folder:
     </control>
 
     <!-- Action buttons -->
-    <control type="button" id="301"><label>Add</label></control>
-    <control type="button" id="302"><label>Delete</label></control>
-    <control type="button" id="303"><label>Move Up</label></control>
-    <control type="button" id="304"><label>Move Down</label></control>
-    <control type="button" id="305"><label>Change Label</label></control>
-    <control type="button" id="306"><label>Change Icon</label></control>
-    <control type="button" id="307"><label>Change Action</label></control>
+    <control type="button" id="301">
+      <label>$ADDON[script.skinshortcuts 32000]</label>  <!-- Add -->
+    </control>
+    <control type="button" id="302">
+      <label>$ADDON[script.skinshortcuts 32001]</label>  <!-- Delete -->
+    </control>
+    <control type="button" id="303">
+      <label>$ADDON[script.skinshortcuts 32002]</label>  <!-- Move Up -->
+    </control>
+    <control type="button" id="304">
+      <label>$ADDON[script.skinshortcuts 32003]</label>  <!-- Move Down -->
+    </control>
+    <control type="button" id="305">
+      <label>$ADDON[script.skinshortcuts 32025]</label>  <!-- Set label -->
+    </control>
+    <control type="button" id="306">
+      <label>$LOCALIZE[19284]</label>  <!-- Choose icon -->
+    </control>
+    <control type="button" id="307">
+      <label>$ADDON[script.skinshortcuts 32027]</label>  <!-- Change action -->
+    </control>
 
     <!-- Optional buttons -->
-    <control type="button" id="311"><label>Restore Deleted</label></control>
-    <control type="button" id="312"><label>Reset to Default</label></control>
-    <control type="button" id="313"><label>Enable/Disable</label></control>
-    <control type="button" id="401"><label>Choose Shortcut</label></control>
-    <control type="button" id="405"><label>Edit Submenu</label></control>
+    <control type="button" id="311">
+      <label>$ADDON[script.skinshortcuts 32028]</label>  <!-- Restore menu items -->
+    </control>
+    <control type="button" id="312">
+      <label>$ADDON[script.skinshortcuts 32104]</label>  <!-- Reset to skin defaults -->
+    </control>
+    <control type="button" id="313">
+      <label>$ADDON[script.skinshortcuts 32117]</label>  <!-- Disable shortcut -->
+    </control>
+    <control type="button" id="401">
+      <label>$ADDON[script.skinshortcuts 32043]</label>  <!-- Choose shortcut category -->
+    </control>
+    <control type="button" id="405">
+      <label>$ADDON[script.skinshortcuts 32072]</label>  <!-- Customize Submenu -->
+    </control>
   </controls>
 </window>
 ```
