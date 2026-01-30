@@ -386,7 +386,7 @@ def _parse_allow(elem) -> MenuAllow:
     )
 
 
-def load_groupings(path: str | Path) -> list[ShortcutGroup]:
+def load_groupings(path: str | Path) -> list[Shortcut | ShortcutGroup | Content | Input]:
     """Load shortcut groupings from menus.xml file.
 
     Groupings define the available shortcuts for the picker dialog.
@@ -408,6 +408,10 @@ def load_groupings(path: str | Path) -> list[ShortcutGroup]:
               <content source="playlists" target="videos"/>
               <group name="...">...</group>  <!-- nested -->
             </group>
+            <!-- Top-level items also supported -->
+            <shortcut name="..." label="...">...</shortcut>
+            <content source="..." target="..."/>
+            <input label="..." type="text" for="action" />
           </groupings>
         </menus>
     """
@@ -419,19 +423,37 @@ def load_groupings(path: str | Path) -> list[ShortcutGroup]:
     return _parse_shortcut_groupings(root, str(path))
 
 
-def _parse_shortcut_groupings(root, path: str) -> list[ShortcutGroup]:
-    """Parse groupings from root element."""
+def _parse_shortcut_groupings(
+    root, path: str
+) -> list[Shortcut | ShortcutGroup | Content | Input]:
+    """Parse groupings from root element.
+
+    Supports all item types at the top level: groups, shortcuts, content, and inputs.
+    """
     groupings_elem = root.find("groupings")
     if groupings_elem is None:
         return []
 
-    groups = []
-    for group_elem in groupings_elem.findall("group"):
-        group = _parse_shortcut_group(group_elem, path)
-        if group:
-            groups.append(group)
+    items: list[Shortcut | ShortcutGroup | Content | Input] = []
+    for child in groupings_elem:
+        if child.tag == "group":
+            group = _parse_shortcut_group(child, path)
+            if group:
+                items.append(group)
+        elif child.tag == "shortcut":
+            shortcut = _parse_shortcut(child, path)
+            if shortcut:
+                items.append(shortcut)
+        elif child.tag == "content":
+            content = parse_content(child)
+            if content:
+                items.append(content)
+        elif child.tag == "input":
+            input_item = _parse_input(child)
+            if input_item:
+                items.append(input_item)
 
-    return groups
+    return items
 
 
 def _parse_shortcut_group(elem, path: str) -> ShortcutGroup | None:
