@@ -722,12 +722,12 @@ Remove these controls from your dialog XML.
 | `disableSubmenus`          | —   | ✓ (new) - `true` if disabled  |
 | `skinshortcuts-hasdeleted` | —   | ✓ (new)                       |
 
-### Home Window Properties (v3 only)
+### Dialog Window Properties (v3 only)
 
-| Property               | Description             |
-| ---------------------- | ----------------------- |
-| `skinshortcuts-dialog` | Current subdialog mode  |
-| `skinshortcuts-suffix` | Current property suffix |
+| Property               | Description                            |
+| ---------------------- | -------------------------------------- |
+| `skinshortcuts-dialog` | Current subdialog mode (dialog-scoped) |
+| `skinshortcuts-suffix` | Property suffix (dialog-scoped)        |
 
 ***
 

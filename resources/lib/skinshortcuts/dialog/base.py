@@ -197,14 +197,10 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 self.show_context_menu = menu_config.show_context_menu
                 self._subdialogs = {sd.button_id: sd for sd in menu_config.subdialogs}
 
-        home = xbmcgui.Window(10000)
-        if not self.is_child:
-            home.clearProperty("skinshortcuts-dialog")
-            home.clearProperty("skinshortcuts-suffix")
         if self.property_suffix:
-            home.setProperty("skinshortcuts-suffix", self.property_suffix)
+            self.setProperty("skinshortcuts-suffix", self.property_suffix)
         if self.dialog_mode:
-            home.setProperty("skinshortcuts-dialog", self.dialog_mode)
+            self.setProperty("skinshortcuts-dialog", self.dialog_mode)
 
         self._load_items()
         self._log(f"Loaded {len(self.items)} items for menu '{self.menu_id}'")

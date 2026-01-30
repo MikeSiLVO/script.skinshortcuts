@@ -291,8 +291,5 @@ class SubdialogsMixin:
         self._clear_subdialog_list()
 
         self.clearProperty("additionalDialog")
-        home = xbmcgui.Window(10000)
-        home.clearProperty("skinshortcuts-suffix")
-        home.clearProperty("skinshortcuts-dialog")
 
         self._refresh_selected_item()

@@ -602,9 +602,9 @@ Define subdialogs triggered by button clicks. Used for multi-widget support.
 | Attribute | Required | Description |
 |-----------|----------|-------------|
 | `buttonID` | Yes | Button ID that triggers this subdialog |
-| `mode` | Yes | Value set in `Window(Home).Property(skinshortcuts-dialog)` |
+| `mode` | Yes | Value set in `Window.Property(skinshortcuts-dialog)` |
 | `setfocus` | No | Control ID to focus when subdialog opens |
-| `suffix` | No | Property suffix for widget slots (e.g., `.2`). Set in `Window(Home).Property(skinshortcuts-suffix)` |
+| `suffix` | No | Property suffix for widget slots (e.g., `.2`). Set in `Window.Property(skinshortcuts-suffix)` |
 
 ### `<onclose>` Attributes
 

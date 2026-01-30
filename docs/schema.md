@@ -725,12 +725,12 @@ Clears a specific menu's user data.
 | `disableSubmenus` | `true` if submenus disabled for this menu (empty if allowed) |
 | `skinshortcuts-hasdeleted` | `true` if deleted items exist |
 
-### Home Window Properties
+### Dialog Window Properties
 
 | Property | Description |
 |----------|-------------|
-| `skinshortcuts-dialog` | Current subdialog mode |
-| `skinshortcuts-suffix` | Current property suffix (e.g., `.2`) |
+| `skinshortcuts-dialog` | Current subdialog mode (auto-clears on close) |
+| `skinshortcuts-suffix` | Current property suffix (e.g., `.2`) (auto-clears on close) |
 
 ***
 
