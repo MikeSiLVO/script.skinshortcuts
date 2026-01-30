@@ -487,7 +487,7 @@ class TemplateBuilder:
                 condition=condition,
             )
             value = self._resolve_property(modified_prop, item, context)
-            if value is not None and prop.name not in context:
+            if value is not None and (from_source or prop.name not in context):
                 context[prop.name] = value
 
         for var in prop_group.vars:
