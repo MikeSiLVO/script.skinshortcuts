@@ -221,12 +221,8 @@ class SubdialogsMixin:
 
         self._log(f"Opening onclose menu: {menu_name}")
 
-        menu = self.manager.config.get_menu(menu_name)
-        if not menu:
-            menu = self.manager.working.get(menu_name)
-        if not menu:
-            self._log(f"Menu not found: {menu_name}")
-            return
+        if menu_name not in self.manager.working:
+            self.manager._ensure_working_menu(menu_name)
 
         selected_index = self._get_selected_index()
 
