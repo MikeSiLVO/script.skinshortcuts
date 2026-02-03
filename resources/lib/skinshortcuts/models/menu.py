@@ -296,10 +296,11 @@ class Menu:
     items: list[MenuItem] = field(default_factory=list)
     defaults: MenuDefaults = field(default_factory=MenuDefaults)
     allow: MenuAllow = field(default_factory=MenuAllow)
-    container: str | None = None  # Container ID for submenu visibility
-    is_submenu: bool = False  # True if defined with <submenu> tag (not built as root include)
-    controltype: str = ""  # Output as <control type="X"> instead of <item> (e.g., "button")
-    startid: int = 1  # Starting control ID for controltype menus
+    container: str | None = None
+    is_submenu: bool = False
+    menu_type: str | None = None
+    controltype: str = ""
+    startid: int = 1
 
     def get_item(self, item_name: str) -> MenuItem | None:
         """Get item by name."""
@@ -363,9 +364,14 @@ class SubDialog:
     is spawned with the given mode. The mode is set as a window property
     to control visibility of different panels in the skin XML.
 
+    Alternatively, if `menu` is specified without `mode`, the menu is opened
+    directly without spawning an intermediate subdialog.
+
     Attributes:
         button_id: The button ID that triggers this sub-dialog
         mode: The mode name set in Window.Property(skinshortcuts-dialog)
+        menu: Menu to open directly (supports {item} placeholder). When set
+            without mode, opens the menu immediately without intermediate dialog.
         setfocus: Optional control ID to focus when the sub-dialog opens
         suffix: Property suffix for this widget slot (e.g., ".2" for widget 2).
             When set, all property reads/writes are automatically suffixed,
@@ -375,7 +381,8 @@ class SubDialog:
     """
 
     button_id: int
-    mode: str
+    mode: str = ""
+    menu: str = ""
     setfocus: int | None = None
     suffix: str = ""
     onclose: list[OnCloseAction] = field(default_factory=list)
