@@ -523,6 +523,12 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                     self.setProperty("disableBackgrounds", "true" if not allow.backgrounds else "")
                     self.setProperty("disableSubmenus", "true" if not allow.submenus else "")
 
+                    if menu.is_submenu:
+                        menu_type = menu.menu_type or "submenu"
+                    else:
+                        menu_type = ""
+                    self.setProperty("skinshortcuts-menutype", menu_type)
+
             self._update_deleted_property()
 
         except RuntimeError:
