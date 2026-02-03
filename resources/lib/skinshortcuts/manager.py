@@ -166,26 +166,40 @@ class MenuManager:
 
         return False
 
-    def add_item(self, menu_id: str, after_index: int | None = None, label: str = "") -> MenuItem:
+    def add_item(
+        self,
+        menu_id: str,
+        after_index: int | None = None,
+        label: str = "",
+        item: MenuItem | None = None,
+    ) -> MenuItem:
         """Add a new item to a menu.
 
         Args:
             menu_id: Menu to add item to
             after_index: Insert after this index (None = append)
             label: Initial label for the item
+            item: Optional pre-created MenuItem to add
 
         Returns:
-            The newly created MenuItem
+            The newly created or provided MenuItem
         """
         menu = self._ensure_working_menu(menu_id)
-        prefix = "sub" if menu.is_submenu else "user"
-        item_name = self._generate_unique_id(prefix)
 
-        new_item = MenuItem(
-            name=item_name,
-            label=label or "New Item",
-            actions=[Action(action="noop")],
-        )
+        if item:
+            new_item = item
+            if not new_item.name or self._item_name_exists(menu, new_item.name):
+                prefix = "sub" if menu.is_submenu else "user"
+                new_item.name = self._generate_unique_id(prefix)
+        else:
+            prefix = "sub" if menu.is_submenu else "user"
+            item_name = self._generate_unique_id(prefix)
+            new_item = MenuItem(
+                name=item_name,
+                label=label or "New Item",
+                actions=[Action(action="noop")],
+            )
+
         if after_index is not None and 0 <= after_index < len(menu.items):
             menu.items.insert(after_index + 1, new_item)
         else:
@@ -193,6 +207,10 @@ class MenuManager:
 
         self._changed = True
         return new_item
+
+    def _item_name_exists(self, menu: Menu, name: str) -> bool:
+        """Check if an item name already exists in a menu."""
+        return any(item.name == name for item in menu.items)
 
     def remove_item(self, menu_id: str, item_id: str) -> bool:
         """Remove an item from a menu.
