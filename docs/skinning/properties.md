@@ -88,7 +88,7 @@ Properties extend menu items beyond built-in fields (label, icon, action). Commo
 |-----------|----------|---------|-------------|
 | `name` | Yes | - | Property name (stored in item.properties) |
 | `type` | No | `options` | Property type: `options`, `toggle`, `widget`, `background` |
-| `requires` | No | - | Property name that must have a value |
+| `requires` | No | - | Property name that must have a value (see [Requires Check](#requires-check)) |
 | `templateonly` | No | `false` | If `true`, only available in templates, not in dialog |
 
 ### Property Types
@@ -99,6 +99,18 @@ Properties extend menu items beyond built-in fields (label, icon, action). Commo
 | `toggle` | Toggle between `True` and empty (cleared) |
 | `widget` | Opens widget picker |
 | `background` | Opens background picker |
+
+### Requires Check
+
+The `requires` attribute prevents a property from being set until a prerequisite property has a value. For `widget` and `background` requires checks, the script performs a smarter check:
+
+| Requires | Checks for any value in |
+|----------|-------------------------|
+| `widget` | `widget` OR `widgetPath` |
+| `widget.2` | `widget.2` OR `widgetPath.2` |
+| `background` | `background` OR `backgroundPath` |
+
+This allows widgets set via the shortcut picker (which set `widgetPath` but not `widget`) to satisfy requires checks.
 
 ---
 

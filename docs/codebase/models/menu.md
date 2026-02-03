@@ -101,7 +101,7 @@ User input prompt for custom values.
 | `MenuDefaults` | Default properties and actions for menu |
 | `MenuAllow` | Feature toggles (widgets, backgrounds, submenus) |
 | `IconSource` | Icon picker source (label, path, condition) |
-| `SubDialog` | Subdialog definition (button_id, mode, suffix, onclose) |
+| `SubDialog` | Subdialog definition (button_id, mode, menu, suffix, onclose) |
 | `OnCloseAction` | Action on subdialog close |
 | `ActionOverride` | Action replacement rule |
 | `MenuConfig` | Top-level container for all menu config |

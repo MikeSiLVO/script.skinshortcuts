@@ -602,9 +602,18 @@ Define subdialogs triggered by button clicks. Used for multi-widget support.
 | Attribute | Required | Description |
 |-----------|----------|-------------|
 | `buttonID` | Yes | Button ID that triggers this subdialog |
-| `mode` | Yes | Value set in `Window.Property(skinshortcuts-dialog)` |
+| `mode` | No | Value set in `Window.Property(skinshortcuts-dialog)`. Required unless `menu` is set |
+| `menu` | No | Menu to open directly without mode change. Supports `{item}` and `{customWidget}` placeholders |
 | `setfocus` | No | Control ID to focus when subdialog opens |
 | `suffix` | No | Property suffix for widget slots (e.g., `.2`). Set in `Window.Property(skinshortcuts-suffix)` |
+
+**Direct menu opening:** Use `menu` without `mode` to open a custom widget menu directly:
+
+```xml
+<subdialog buttonID="850" menu="{customWidget}" suffix=".2" />
+```
+
+This opens the custom widget menu for slot 2 immediately when button 850 is clicked, without changing dialog mode or spawning an intermediate subdialog.
 
 ### `<onclose>` Attributes
 

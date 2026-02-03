@@ -25,6 +25,9 @@ Spawn child dialog to edit submenu. Hides parent, spawns child with shared state
 |--------|---------|
 | `_spawn_subdialog` | Spawn child for subdialog definition |
 | `_open_subdialog` | Open subdialog with mode/suffix for widget editing |
+| `_open_onclose_menu` | Open a menu from onclose action or direct menu reference |
+
+**Direct menu opening:** If subdialog has `menu` but no `mode`, the menu opens directly without spawning an intermediate dialog. Useful for custom widget menus that don't need a mode change.
 
 **Child receives:** Same manager, schema, sources, deleted_items. Different dialog_mode and property_suffix.
 

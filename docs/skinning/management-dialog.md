@@ -255,8 +255,12 @@ In `menus.xml`:
   <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2">
     <onclose condition="widgetType.2=custom" action="menu" menu="{item}.customwidget.2" />
   </subdialog>
+  <!-- Direct menu opening (no mode change) -->
+  <subdialog buttonID="850" menu="{customWidget}" suffix=".2" />
 </dialogs>
 ```
+
+**Direct menu opening:** When `menu` is set without `mode`, the menu opens directly without changing dialog mode. Useful for custom widget editing buttons that don't need a full subdialog.
 
 ### Dialog Behavior
 
