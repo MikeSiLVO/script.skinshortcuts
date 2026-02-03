@@ -27,6 +27,8 @@ from .userdata import get_userdata_path
 
 log = get_logger("Hashing")
 
+HASH_PREFIX_LEN = 8
+
 
 def get_hash_file_path() -> str:
     """Get path to hashes file for current skin."""
@@ -155,10 +157,15 @@ def needs_rebuild(shortcuts_path: str | Path, output_paths: list[str] | None = N
 
     current = generate_config_hashes(shortcuts_path)
 
+    log.debug(f"Checking hashes for: {shortcuts_path}")
     for key, value in current.items():
-        if stored.get(key) != value:
-            log.debug(f"Rebuild needed: {key} changed")
+        stored_val = stored.get(key)
+        if stored_val != value:
+            stored_prefix = stored_val[:HASH_PREFIX_LEN] if stored_val else None
+            current_prefix = value[:HASH_PREFIX_LEN] if value else None
+            log.info(f"Rebuild needed: {key} changed ({stored_prefix}→{current_prefix})")
             return True
+        log.debug(f"  {key}: match")
 
-    log.debug("No rebuild needed")
+    log.info("No rebuild needed: all hashes match")
     return False
