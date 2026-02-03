@@ -54,7 +54,12 @@ class SubdialogsMixin:
         def clearProperty(self, key: str) -> None: ...
 
     def _edit_submenu(self) -> None:
-        """Spawn child dialog to edit submenu for selected item."""
+        """Spawn child dialog to edit submenu for selected item.
+
+        Context-aware: checks the submenu's type attribute to determine behavior.
+        - type="widgets" → widget picker mode, requires allow.widgets
+        - no type → shortcut picker mode, requires allow.submenus
+        """
         item = self._get_selected_item()
         if not item:
             return
@@ -62,17 +67,27 @@ class SubdialogsMixin:
         if not self.manager:
             return
 
-        menu = self.manager.config.get_menu(self.menu_id)
-        if menu and not menu.allow.submenus:
-            xbmcgui.Dialog().notification("Not Allowed", "Submenus not enabled for this menu")
-            return
-
         submenu_name = item.submenu or item.name
+        submenu = self.manager.config.get_menu(submenu_name)
+        is_widget_submenu = submenu and submenu.menu_type == "widgets"
+
+        menu = self.manager.config.get_menu(self.menu_id)
+        if is_widget_submenu:
+            if menu and not menu.allow.widgets:
+                xbmcgui.Dialog().notification("Not Allowed", "Widgets not enabled for this menu")
+                return
+        else:
+            if menu and not menu.allow.submenus:
+                xbmcgui.Dialog().notification("Not Allowed", "Submenus not enabled for this menu")
+                return
+
         if submenu_name not in self.manager.working:
             self.manager._ensure_working_menu(submenu_name)
 
         self.setProperty("additionalDialog", "true")
         subdialogs_list = list(self._subdialogs.values())
+
+        dialog_mode = "widgets" if is_widget_submenu else ""
 
         from . import ManagementDialog
 
@@ -87,6 +102,7 @@ class SubdialogsMixin:
             icon_sources=self.icon_sources,
             show_context_menu=self.show_context_menu,
             subdialogs=subdialogs_list,
+            dialog_mode=dialog_mode,
         )
         child.doModal()
         del child
@@ -96,18 +112,24 @@ class SubdialogsMixin:
     def _spawn_subdialog(self, subdialog: SubDialog) -> None:
         """Spawn a child dialog for a subdialog definition.
 
-        Opens the subdialog, and after it closes, evaluates any onclose actions.
-        Onclose actions can trigger follow-up dialogs based on conditions.
+        If subdialog has `menu` but no `mode`, opens the menu directly.
+        Otherwise opens the subdialog, and after it closes, evaluates onclose actions.
 
         Args:
-            subdialog: The subdialog definition containing the mode, suffix, and onclose
+            subdialog: The subdialog definition containing the mode, menu, suffix, and onclose
         """
-        self._log(f"Spawning subdialog with mode: {subdialog.mode}, suffix: {subdialog.suffix}")
-
         item = self._get_selected_item()
         if not item:
             return
 
+        if subdialog.menu and not subdialog.mode:
+            self._log(f"Direct menu open: {subdialog.menu}")
+            menu_name = self._resolve_menu_reference(subdialog.menu, item, subdialog)
+            if menu_name:
+                self._open_onclose_menu(menu_name, subdialog)
+            return
+
+        self._log(f"Spawning subdialog with mode: {subdialog.mode}, suffix: {subdialog.suffix}")
         self._open_subdialog(subdialog)
 
         if subdialog.onclose:
