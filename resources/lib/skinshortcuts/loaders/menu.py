@@ -143,14 +143,19 @@ def _parse_dialogs(root) -> list[SubDialog]:
     subdialogs = []
     for elem in dialogs_elem.findall("subdialog"):
         button_id_str = get_attr(elem, "buttonID")
-        mode = get_attr(elem, "mode")
-
-        if not button_id_str or not mode:
+        if not button_id_str:
             continue
 
         try:
             button_id = int(button_id_str)
         except ValueError:
+            continue
+
+        mode = get_attr(elem, "mode") or ""
+        menu = get_attr(elem, "menu") or ""
+        onclose_actions = _parse_onclose(elem)
+
+        if not mode and not menu and not onclose_actions:
             continue
 
         setfocus = None
@@ -159,12 +164,12 @@ def _parse_dialogs(root) -> list[SubDialog]:
             setfocus = int(setfocus_str)
 
         suffix = get_attr(elem, "suffix") or ""
-        onclose_actions = _parse_onclose(elem)
 
         subdialogs.append(
             SubDialog(
                 button_id=button_id,
                 mode=mode,
+                menu=menu,
                 setfocus=setfocus,
                 suffix=suffix,
                 onclose=onclose_actions,
@@ -225,9 +230,12 @@ def _parse_menu(elem, path: str, is_submenu: bool = False) -> Menu:
     if not menu_name:
         raise MenuConfigError(path, "Menu missing 'name' attribute")
 
+    menu_type = get_attr(elem, "type") if is_submenu else None
+    is_widget_submenu = menu_type == "widgets"
+
     items = []
     for item_elem in elem.findall("item"):
-        item = _parse_item(item_elem, menu_name, path)
+        item = _parse_item(item_elem, menu_name, path, is_widget_submenu)
         items.append(item)
 
     defaults = _parse_defaults(elem.find("defaults"))
@@ -244,12 +252,15 @@ def _parse_menu(elem, path: str, is_submenu: bool = False) -> Menu:
         allow=allow,
         container=container,
         is_submenu=is_submenu,
+        menu_type=menu_type,
         controltype=controltype,
         startid=startid,
     )
 
 
-def _parse_item(elem, menu_name: str, path: str) -> MenuItem:
+def _parse_item(
+    elem, menu_name: str, path: str, is_widget_submenu: bool = False
+) -> MenuItem:
     item_name = get_attr(elem, "name")
     if not item_name:
         raise MenuConfigError(path, f"Menu '{menu_name}' has item without 'name'")
@@ -284,6 +295,9 @@ def _parse_item(elem, menu_name: str, path: str) -> MenuItem:
         prop_name = get_attr(prop_elem, "name")
         if prop_name and prop_elem.text:
             properties[prop_name] = prop_elem.text.strip()
+
+    if is_widget_submenu and "widgetLabel" not in properties:
+        properties["widgetLabel"] = label
 
     visible_parts = [v.text.strip() for v in elem.findall("visible") if v.text]
     visible = " + ".join(visible_parts) if visible_parts else ""
