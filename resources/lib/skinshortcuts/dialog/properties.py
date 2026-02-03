@@ -216,6 +216,36 @@ class PropertiesMixin:
             self, item_props: dict[str, str], current_value: str = ""
         ) -> Background | None | Literal[False]: ...
 
+    def _check_requires(self, item: MenuItem, requires_name: str) -> bool:
+        """Check if a required property is satisfied.
+
+        For widget/background requirements, also accepts the Path variant
+        as proof the property is configured (e.g., widgetPath for widget).
+
+        Args:
+            item: The menu item to check
+            requires_name: The required property name (e.g., "widget", "widget.2")
+
+        Returns:
+            True if requirement is satisfied, False otherwise
+        """
+        if item.properties.get(requires_name, ""):
+            return True
+
+        base_name = requires_name.split(".")[0] if "." in requires_name else requires_name
+        suffix = "." + requires_name.split(".", 1)[1] if "." in requires_name else ""
+
+        if base_name == "widget":
+            path_name = f"widgetPath{suffix}"
+            if item.properties.get(path_name, ""):
+                return True
+        elif base_name == "background":
+            path_name = f"backgroundPath{suffix}"
+            if item.properties.get(path_name, ""):
+                return True
+
+        return False
+
     def _handle_property_button(self, button_id: int) -> bool:
         """Handle a property button click from the schema.
 
@@ -241,8 +271,7 @@ class PropertiesMixin:
             requires_name = requires
             if button.suffix and self.property_suffix:
                 requires_name = f"{requires}{self.property_suffix}"
-            required_value = item.properties.get(requires_name, "")
-            if not required_value:
+            if not self._check_requires(item, requires_name):
                 xbmcgui.Dialog().notification(
                     "Not Available",
                     f"Requires {requires_name} to be set first",
