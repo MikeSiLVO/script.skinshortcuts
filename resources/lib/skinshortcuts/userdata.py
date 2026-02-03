@@ -245,6 +245,7 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
             container=default_menu.container,
             allow=default_menu.allow,
             is_submenu=default_menu.is_submenu,
+            menu_type=default_menu.menu_type,
             controltype=default_menu.controltype,
             startid=default_menu.startid,
         )
@@ -281,14 +282,19 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
     final_items: list[MenuItem] = []
     unpos_iter = iter(unpositioned_items)
 
-    for i in range(len(items)):
+    if positioned_items:
+        max_pos = max(positioned_items.keys()) + 1
+    else:
+        max_pos = len(items)
+
+    for i in range(max_pos):
         if i in positioned_items:
             final_items.append(positioned_items[i])
         else:
             try:
                 final_items.append(next(unpos_iter))
             except StopIteration:
-                break
+                continue
 
     for item in unpos_iter:
         final_items.append(item)
@@ -300,6 +306,7 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
         container=default_menu.container,
         allow=default_menu.allow,
         is_submenu=default_menu.is_submenu,
+        menu_type=default_menu.menu_type,
         controltype=default_menu.controltype,
         startid=default_menu.startid,
     )
