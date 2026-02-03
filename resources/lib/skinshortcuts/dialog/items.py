@@ -42,8 +42,13 @@ class ItemsMixin:
     property_schema: PropertySchema | None
     icon_sources: list[IconSource]
     shortcuts_path: str
+    dialog_mode: str
 
     if TYPE_CHECKING:
+        from typing import Literal
+
+        from ..models import Widget, WidgetGroup
+
         def _get_selected_index(self) -> int: ...
         def _get_selected_item(self) -> MenuItem | None: ...
         def _get_selected_listitem(self) -> xbmcgui.ListItem | None: ...
@@ -54,6 +59,14 @@ class ItemsMixin:
         def _update_window_properties(self) -> None: ...
         def _suffixed_name(self, name: str) -> str: ...
         def _log(self, msg: str) -> None: ...
+        def _get_item_properties(self, item: MenuItem) -> dict[str, str]: ...
+        def _pick_widget_from_groups(
+            self,
+            items: list[WidgetGroup | Widget],
+            item_props: dict[str, str],
+            slot: str = "",
+            show_get_more: bool = True,
+        ) -> Widget | None | Literal[False]: ...
 
     def _add_item(self) -> None:
         """Add a new item after the current selection."""
@@ -61,10 +74,86 @@ class ItemsMixin:
             return
 
         index = self._get_selected_index()
-        new_item = self.manager.add_item(self.menu_id, after_index=index)
+
+        if self.dialog_mode == "widgets":
+            widget = self._pick_widget_for_add()
+            if not widget:
+                return
+            new_item = self._create_item_from_widget(widget)
+            new_item.name = self._make_unique_item_name(new_item.name)
+            self.manager.add_item(self.menu_id, after_index=index, item=new_item)
+        else:
+            new_item = self.manager.add_item(self.menu_id, after_index=index)
+
         if new_item:
             insert_pos = index + 1 if index >= 0 else 0
             self._rebuild_list(focus_index=insert_pos)
+
+    def _pick_widget_for_add(self):
+        """Pick a widget when adding to a widget submenu."""
+        from pathlib import Path
+
+        from ..loaders import load_widgets
+
+        widgets_path = Path(self.shortcuts_path) / "widgets.xml"
+        widget_config = load_widgets(widgets_path)
+
+        item = self._get_selected_item()
+        item_props = self._get_item_properties(item) if item else {}
+
+        if widget_config.groupings:
+            result = self._pick_widget_from_groups(
+                widget_config.groupings, item_props, "", widget_config.show_get_more
+            )
+            if result is False:
+                return None
+            return result
+        return None
+
+    def _create_item_from_widget(self, widget) -> MenuItem:
+        """Create a MenuItem from a Widget using the standard mapping."""
+        from ..models import Widget
+
+        if not isinstance(widget, Widget):
+            raise TypeError("Expected Widget instance")
+
+        properties: dict[str, str] = {}
+        if widget.path:
+            properties["widgetPath"] = widget.path
+        if widget.type:
+            properties["widgetType"] = widget.type
+        if widget.target:
+            properties["widgetTarget"] = widget.target
+        if widget.limit:
+            properties["widgetLimit"] = str(widget.limit)
+        if widget.source:
+            properties["widgetSource"] = widget.source
+        if widget.label:
+            properties["widgetLabel"] = widget.label
+
+        return MenuItem(
+            name=widget.name,
+            label=widget.label,
+            icon=widget.icon or "DefaultFolder.png",
+            properties=properties,
+        )
+
+    def _make_unique_item_name(self, base_name: str) -> str:
+        """Generate a unique item name by appending a counter suffix if needed.
+
+        If an item with the same name already exists in the current menu,
+        appends -2, -3, etc. until a unique name is found.
+        """
+        existing_names = {item.name for item in self.items}
+
+        if base_name not in existing_names:
+            return base_name
+
+        counter = 2
+        while f"{base_name}-{counter}" in existing_names:
+            counter += 1
+
+        return f"{base_name}-{counter}"
 
     def _delete_item(self) -> None:
         """Delete the selected item."""
@@ -135,6 +224,7 @@ class ItemsMixin:
         if not item:
             return
 
+        self._log(f"Opening icon picker, current icon: {item.icon}")
         icon = self._browse_with_sources(
             sources=self.icon_sources,
             title=xbmc.getLocalizedString(1030),  # "Choose icon"
@@ -142,10 +232,14 @@ class ItemsMixin:
             mask=".png|.jpg|.gif",
             item_properties=item.properties,
         )
+        self._log(f"Icon picker returned: {icon!r}")
         if icon and isinstance(icon, str):
+            self._log(f"Setting icon to: {icon}")
             self.manager.set_icon(self.menu_id, item.name, icon)
             item.icon = icon
             self._refresh_selected_item()
+        else:
+            self._log(f"Icon unchanged (cancelled), still: {item.icon}")
 
     def _set_action(self) -> None:
         """Set a custom action."""
