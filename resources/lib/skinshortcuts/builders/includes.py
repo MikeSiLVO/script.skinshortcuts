@@ -43,21 +43,41 @@ class IncludesBuilder:
         #
         # Submenus defined with <submenu> tag are never built as root includes,
         # even if deleted from the parent menu (they become orphaned).
+        #
+        # Menus with named submenu templates (e.g., <submenu name="powermenu">)
+        # don't get raw includes - only the template version is built.
+
+        template_menu_names: set[str] = set()
+        if self.templates:
+            for submenu_tpl in self.templates.submenus:
+                if submenu_tpl.name:
+                    template_menu_names.add(submenu_tpl.name)
 
         for menu in self.menus:
             if menu.is_submenu:
+                continue
+            if menu.name in template_menu_names:
                 continue
 
             include = self._build_menu_include(menu)
             root.append(include)
 
-            submenu_include = self._build_submenu_include(menu)
-            if submenu_include is not None:
-                root.append(submenu_include)
+            if "submenu" not in menu.template_only:
+                submenu_include = self._build_submenu_include(menu)
+                if submenu_include is not None:
+                    root.append(submenu_include)
 
             custom_widget_includes = self._build_custom_widget_includes(menu)
             for cw_include in custom_widget_includes:
                 root.append(cw_include)
+
+        for menu in self.menus:
+            if not menu.is_submenu:
+                continue
+            if not menu.items:
+                continue
+            include = self._build_menu_include(menu)
+            root.append(include)
 
         if self.templates and self.templates.templates:
             from .template import TemplateBuilder
@@ -255,10 +275,11 @@ class IncludesBuilder:
             self._add_property(elem, "menu", menu.name)
             self._add_property(elem, "path", item.action)
 
+            self._add_property(elem, "submenuVisibility", item.name)
+
             submenu_name = item.submenu or item.name
             submenu = self._menu_map.get(submenu_name)
             if submenu and submenu.items:
-                self._add_property(elem, "submenuVisibility", submenu_name)
                 self._add_property(elem, "hasSubmenu", "True")
 
             all_properties = {**menu.defaults.properties, **item.properties}

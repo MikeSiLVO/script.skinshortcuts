@@ -301,6 +301,7 @@ class Menu:
     menu_type: str | None = None
     controltype: str = ""
     startid: int = 1
+    template_only: str = ""  # "submenu"=skip combined submenu include
 
     def get_item(self, item_name: str) -> MenuItem | None:
         """Get item by name."""

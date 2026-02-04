@@ -244,6 +244,7 @@ def _parse_menu(elem, path: str, is_submenu: bool = False) -> Menu:
     controltype = get_attr(elem, "controltype") or ""
     startid_str = get_attr(elem, "id") or ""
     startid = int(startid_str) if startid_str.isdigit() else 1
+    template_only = get_attr(elem, "template_only") or ""
 
     return Menu(
         name=menu_name,
@@ -255,6 +256,7 @@ def _parse_menu(elem, path: str, is_submenu: bool = False) -> Menu:
         menu_type=menu_type,
         controltype=controltype,
         startid=startid,
+        template_only=template_only,
     )
 
 

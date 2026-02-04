@@ -248,6 +248,7 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
             menu_type=default_menu.menu_type,
             controltype=default_menu.controltype,
             startid=default_menu.startid,
+            template_only=default_menu.template_only,
         )
 
     items: list[MenuItem] = []
@@ -309,6 +310,7 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
         menu_type=default_menu.menu_type,
         controltype=default_menu.controltype,
         startid=default_menu.startid,
+        template_only=default_menu.template_only,
     )
 
 
