@@ -27,6 +27,7 @@ if TYPE_CHECKING:
         PresetGroupReference,
         PresetReference,
         PropertyGroup,
+        SubmenuTemplate,
         Template,
         TemplateOutput,
         TemplateSchema,
@@ -106,6 +107,9 @@ class TemplateBuilder:
 
                 self._build_template_into(template, output, include_map[include_name], variable_map)
 
+        for submenu_tpl in self.schema.submenus:
+            self._build_submenu_template(submenu_tpl, include_map)
+
         for var_elem in variable_map.values():
             root.append(var_elem)
 
@@ -121,6 +125,244 @@ class TemplateBuilder:
             root.append(include_elem)
 
         return root
+
+    def _build_submenu_template(
+        self,
+        submenu_tpl: SubmenuTemplate,
+        include_map: dict[str, ET.Element],
+    ) -> None:
+        """Build a submenu template.
+
+        Two modes:
+        - name="menuname": Process controls once, with items insert for iteration
+        - level=N: Process controls for each main menu item that has submenus
+        """
+        if not submenu_tpl.controls:
+            return
+
+        include_name = f"skinshortcuts-{submenu_tpl.include}"
+        if include_name not in include_map:
+            include_elem = ET.Element("include")
+            include_elem.set("name", include_name)
+            include_map[include_name] = include_elem
+        include_elem = include_map[include_name]
+
+        if submenu_tpl.name:
+            menu = self._menu_map.get(submenu_tpl.name)
+            if not menu:
+                log.debug(f"Named menu '{submenu_tpl.name}' not found for submenu template")
+                return
+            self._build_submenu_named(submenu_tpl, menu, include_elem)
+        elif submenu_tpl.level > 0:
+            self._build_submenu_level(submenu_tpl, include_elem)
+
+    def _build_submenu_named(
+        self,
+        submenu_tpl: SubmenuTemplate,
+        menu: Menu,
+        include_elem: ET.Element,
+    ) -> None:
+        """Build a named submenu template (e.g., powermenu).
+
+        Processes controls once. Any <skinshortcuts insert="X"> inside
+        triggers items iteration over the menu's items.
+        """
+        if submenu_tpl.controls is None:
+            return
+
+        context: dict[str, str] = {"menu": menu.name}
+        self._apply_submenu_transforms(submenu_tpl, context)
+
+        controls_copy = copy.deepcopy(submenu_tpl.controls)
+        for child in list(controls_copy):
+            processed = self._process_submenu_controls(child, context, menu)
+            if processed is not None:
+                if processed.tag == "_container":
+                    for grandchild in processed:
+                        include_elem.append(grandchild)
+                else:
+                    include_elem.append(processed)
+
+    def _build_submenu_level(
+        self,
+        submenu_tpl: SubmenuTemplate,
+        include_elem: ET.Element,
+    ) -> None:
+        """Build a level-based submenu template.
+
+        Iterates over main menu items and generates controls for each
+        item that has a submenu at the specified level.
+        """
+        if submenu_tpl.controls is None:
+            return
+
+        main_menu = self._menu_map.get("mainmenu")
+        if not main_menu:
+            log.debug("Main menu not found for level-based submenu template")
+            return
+
+        for idx, item in enumerate(main_menu.items, start=1):
+            if item.disabled:
+                continue
+
+            submenu_name = item.submenu or item.name
+            submenu = self._menu_map.get(submenu_name)
+            if not submenu:
+                continue
+
+            context = self._build_submenu_level_context(item, idx, submenu)
+            self._apply_submenu_transforms(submenu_tpl, context, item)
+
+            controls_copy = copy.deepcopy(submenu_tpl.controls)
+            for child in list(controls_copy):
+                processed = self._process_submenu_controls(child, context, submenu, item)
+                if processed is not None:
+                    if processed.tag == "_container":
+                        for grandchild in processed:
+                            include_elem.append(grandchild)
+                    else:
+                        include_elem.append(processed)
+
+    def _build_submenu_level_context(
+        self,
+        item: MenuItem,
+        index: int,
+        submenu: Menu,
+    ) -> dict[str, str]:
+        """Build context for a level-based submenu template."""
+        context: dict[str, str] = {**item.properties}
+        context["name"] = item.name
+        context["label"] = item.label
+        context["index"] = str(index)
+        context["menu"] = submenu.name
+        context["icon"] = item.icon
+        context["path"] = item.action
+        context["submenu"] = item.submenu or ""
+        if "submenuVisibility" not in context:
+            context["submenuVisibility"] = item.name
+        self._apply_fallbacks(item, context)
+        return context
+
+    def _apply_submenu_transforms(
+        self,
+        submenu_tpl: SubmenuTemplate,
+        context: dict[str, str],
+        parent_item: MenuItem | None = None,
+    ) -> None:
+        """Apply property/var transformations from submenu template.
+
+        For level-based submenu templates, parent_item is the main menu item
+        being processed, allowing $PARENT[] substitution in property values.
+        """
+        parent_context = dict(context)
+
+        for prop in submenu_tpl.properties:
+            if prop.from_source:
+                value = context.get(prop.from_source, "")
+            elif prop.value:
+                value = prop.value
+                if "$PARENT[" in value and parent_item is not None:
+                    value = self._substitute_parent_refs(value, parent_context, parent_item)
+            else:
+                value = ""
+            if value:
+                context[prop.name] = value
+
+        for var in submenu_tpl.vars:
+            for val in var.values:
+                if val.condition:
+                    if evaluate_condition(val.condition, context):
+                        context[var.name] = val.value
+                        break
+                else:
+                    context[var.name] = val.value
+                    break
+
+    def _process_submenu_controls(
+        self,
+        elem: ET.Element,
+        context: dict[str, str],
+        menu: Menu,
+        parent_item: MenuItem | None = None,
+    ) -> ET.Element | None:
+        """Process controls from a submenu template."""
+        result = copy.deepcopy(elem)
+
+        if result.text:
+            result.text = self._substitute_submenu_text(result.text, context)
+        if result.tail:
+            result.tail = self._substitute_submenu_text(result.tail, context)
+
+        for attr_name, attr_value in list(result.attrib.items()):
+            if attr_name.startswith("_"):
+                continue
+            result.set(attr_name, self._substitute_submenu_text(attr_value, context))
+
+        insert_attr = result.get("_skinshortcuts_insert")
+        if insert_attr or result.tag == "skinshortcuts":
+            insert_name = insert_attr or result.get("insert", "")
+            if insert_name:
+                items_def = self.schema.get_items_template(insert_name)
+                if items_def:
+                    container = ET.Element("_container")
+                    self._expand_submenu_items(items_def, menu, container, context, parent_item)
+                    return container
+            return None
+
+        for child in list(result):
+            processed = self._process_submenu_controls(child, context, menu, parent_item)
+            result.remove(child)
+            if processed is not None:
+                if processed.tag == "_container":
+                    for grandchild in processed:
+                        result.append(grandchild)
+                else:
+                    result.append(processed)
+
+        return result
+
+    def _substitute_submenu_text(self, text: str, context: dict[str, str]) -> str:
+        """Substitute $PROPERTY[...] and $EXP[...] in submenu template text."""
+        def replace_property(m: re.Match[str]) -> str:
+            return context.get(m.group(1), "")
+
+        def replace_exp(m: re.Match[str]) -> str:
+            exp_name = m.group(1)
+            expr = self.schema.get_expression(exp_name)
+            if expr:
+                return expr.value
+            return m.group(0)
+
+        text = _PROPERTY_PATTERN.sub(replace_property, text)
+        text = _EXP_PATTERN.sub(replace_exp, text)
+        text = process_math_expressions(text, context)
+        return text
+
+    def _expand_submenu_items(
+        self,
+        items_def: ItemsDefinition,
+        menu: Menu,
+        container: ET.Element,
+        parent_context: dict[str, str] | None = None,
+        parent_item: MenuItem | None = None,
+    ) -> None:
+        """Expand items iteration within a submenu template."""
+        for idx, item in enumerate(menu.items, start=1):
+            if item.disabled:
+                continue
+
+            sub_context = self._build_items_context(item, idx, menu)
+            self._apply_items_transformations_from_definition(
+                sub_context, item, items_def, parent_context, parent_item
+            )
+
+            if items_def.controls is not None:
+                for child in items_def.controls:
+                    cloned = copy.deepcopy(child)
+                    self._process_items_element(
+                        cloned, sub_context, parent_context or {}, item, parent_item
+                    )
+                    container.append(cloned)
 
     def _build_template_into(
         self,
@@ -202,6 +444,8 @@ class TemplateBuilder:
         context["icon"] = item.icon
         context["visible"] = item.visible
         context["path"] = item.action
+
+        context["submenuVisibility"] = item.name
 
         self._apply_fallbacks(item, context)
 
@@ -425,6 +669,28 @@ class TemplateBuilder:
 
         return _PROPERTY_PATTERN.sub(replace_property, text)
 
+    def _substitute_parent_refs(
+        self,
+        text: str,
+        parent_context: dict[str, str] | None,
+        parent_item: MenuItem,
+    ) -> str:
+        """Substitute $PARENT[...] in text during items template processing."""
+
+        def replace_parent(match: re.Match) -> str:
+            name = match.group(1)
+            if parent_context and name in parent_context:
+                return parent_context[name]
+            if name == "label":
+                return parent_item.label
+            if name == "name":
+                return parent_item.name
+            if name in parent_item.properties:
+                return parent_item.properties[name]
+            return ""
+
+        return _PARENT_PATTERN.sub(replace_parent, text)
+
     def _resolve_var(
         self,
         var: TemplateVar,
@@ -435,6 +701,7 @@ class TemplateBuilder:
         """Resolve a var (first matching value wins).
 
         When suffix is provided, it's applied to condition property names.
+        Substitutes $PROPERTY[...] references in the resolved value.
         """
         for val in var.values:
             if val.condition:
@@ -442,9 +709,15 @@ class TemplateBuilder:
                 if suffix:
                     condition = self._apply_suffix_to_condition(condition, suffix)
                 if self._eval_condition(condition, item, context):
-                    return val.value
+                    value = val.value
+                    if "$PROPERTY[" in value:
+                        value = self._substitute_property_refs(value, item, context)
+                    return value
             else:
-                return val.value
+                value = val.value
+                if "$PROPERTY[" in value:
+                    value = self._substitute_property_refs(value, item, context)
+                return value
         return None
 
     def _get_from_source(
@@ -962,7 +1235,7 @@ class TemplateBuilder:
                 sub_context = self._build_items_context(sub_item, sub_idx, submenu)
 
                 self._apply_items_transformations_from_definition(
-                    sub_context, sub_item, items_def
+                    sub_context, sub_item, items_def, context, item
                 )
 
                 for out_elem in output_elems:
@@ -1026,6 +1299,8 @@ class TemplateBuilder:
         sub_context: dict[str, str],
         sub_item: MenuItem,
         items_def: ItemsDefinition,
+        parent_context: dict[str, str] | None = None,
+        parent_item: MenuItem | None = None,
     ) -> None:
         """Apply property transformations from an ItemsDefinition."""
         resolved_props: set[str] = set()
@@ -1034,12 +1309,16 @@ class TemplateBuilder:
                 continue
             value = self._resolve_property(prop, sub_item, sub_context, "")
             if value is not None:
+                if "$PARENT[" in value and parent_item is not None:
+                    value = self._substitute_parent_refs(value, parent_context, parent_item)
                 sub_context[prop.name] = value
                 resolved_props.add(prop.name)
 
         for var in items_def.vars:
             value = self._resolve_var(var, sub_item, sub_context, "")
             if value is not None:
+                if "$PARENT[" in value and parent_item is not None:
+                    value = self._substitute_parent_refs(value, parent_context, parent_item)
                 sub_context[var.name] = value
 
         for ref in items_def.preset_refs:
@@ -1125,7 +1404,7 @@ class TemplateBuilder:
         sub_context: dict[str, str],
         parent_context: dict[str, str],
         sub_item: MenuItem,
-        parent_item: MenuItem,
+        parent_item: MenuItem | None,
     ) -> None:
         """Process an element within items iteration, substituting both contexts.
 
