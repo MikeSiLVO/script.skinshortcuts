@@ -277,7 +277,7 @@ class TemplateLoader:
         if not name:
             return None
 
-        value = (elem.text or "").strip()
+        value = (elem.get("value") or elem.text or "").strip()
         from_source = (elem.get("from") or "").strip()
         condition = (elem.get("condition") or "").strip()
 
