@@ -53,6 +53,34 @@ class SubdialogsMixin:
         def setProperty(self, key: str, value: str) -> None: ...
         def clearProperty(self, key: str) -> None: ...
 
+    def _run_child_dialog(self, menu_id: str, dialog_mode: str = "", **kwargs) -> None:
+        """Create, run, and clean up a child ManagementDialog."""
+        if self.manager and menu_id not in self.manager.working:
+            self.manager._ensure_working_menu(menu_id)
+
+        self.setProperty("additionalDialog", "true")
+
+        from . import ManagementDialog
+
+        child = ManagementDialog(
+            self._dialog_xml,
+            self._skin_path,
+            "Default",
+            menu_id=menu_id,
+            shortcuts_path=self.shortcuts_path,
+            manager=self.manager,
+            property_schema=self.property_schema,
+            icon_sources=self.icon_sources,
+            show_context_menu=self.show_context_menu,
+            subdialogs=list(self._subdialogs.values()),
+            dialog_mode=dialog_mode,
+            **kwargs,
+        )
+        child.doModal()
+        del child
+
+        self.clearProperty("additionalDialog")
+
     def _edit_submenu(self) -> None:
         """Spawn child dialog to edit submenu for selected item.
 
@@ -81,33 +109,7 @@ class SubdialogsMixin:
                 xbmcgui.Dialog().notification("Not Allowed", "Submenus not enabled for this menu")
                 return
 
-        if submenu_name not in self.manager.working:
-            self.manager._ensure_working_menu(submenu_name)
-
-        self.setProperty("additionalDialog", "true")
-        subdialogs_list = list(self._subdialogs.values())
-
-        dialog_mode = "widgets" if is_widget_submenu else ""
-
-        from . import ManagementDialog
-
-        child = ManagementDialog(
-            self._dialog_xml,
-            self._skin_path,
-            "Default",
-            menu_id=submenu_name,
-            shortcuts_path=self.shortcuts_path,
-            manager=self.manager,
-            property_schema=self.property_schema,
-            icon_sources=self.icon_sources,
-            show_context_menu=self.show_context_menu,
-            subdialogs=subdialogs_list,
-            dialog_mode=dialog_mode,
-        )
-        child.doModal()
-        del child
-
-        self.clearProperty("additionalDialog")
+        self._run_child_dialog(submenu_name, "widgets" if is_widget_submenu else "")
 
     def _spawn_subdialog(self, subdialog: SubDialog) -> None:
         """Spawn a child dialog for a subdialog definition.
@@ -243,35 +245,15 @@ class SubdialogsMixin:
 
         self._log(f"Opening onclose menu: {menu_name}")
 
-        if menu_name not in self.manager.working:
-            self.manager._ensure_working_menu(menu_name)
+        menu = self.manager.config.get_menu(menu_name)
+        if menu and menu.menu_type == "widgets":
+            dialog_mode = "widgets"
+        elif subdialog.mode:
+            dialog_mode = f"custom-{subdialog.mode}"
+        else:
+            dialog_mode = "customwidget"
 
-        selected_index = self._get_selected_index()
-
-        self.setProperty("additionalDialog", "true")
-        subdialogs_list = list(self._subdialogs.values())
-        dialog_mode = f"custom-{subdialog.mode}" if subdialog.mode else "customwidget"
-
-        from . import ManagementDialog
-
-        child = ManagementDialog(
-            self._dialog_xml,
-            self._skin_path,
-            "Default",
-            menu_id=menu_name,
-            shortcuts_path=self.shortcuts_path,
-            manager=self.manager,
-            property_schema=self.property_schema,
-            icon_sources=self.icon_sources,
-            show_context_menu=self.show_context_menu,
-            subdialogs=subdialogs_list,
-            dialog_mode=dialog_mode,
-            selected_index=selected_index,
-        )
-        child.doModal()
-        del child
-
-        self.clearProperty("additionalDialog")
+        self._run_child_dialog(menu_name, dialog_mode)
         self._refresh_selected_item()
 
     def _open_subdialog(self, subdialog: SubDialog) -> None:
@@ -280,34 +262,12 @@ class SubdialogsMixin:
         Args:
             subdialog: The subdialog definition
         """
-        selected_index = self._get_selected_index()
-
-        self.setProperty("additionalDialog", "true")
-        subdialogs_list = list(self._subdialogs.values())
-
-        from . import ManagementDialog
-
-        child = ManagementDialog(
-            self._dialog_xml,
-            self._skin_path,
-            "Default",
-            menu_id=self.menu_id,  # Same menu
-            shortcuts_path=self.shortcuts_path,
-            manager=self.manager,
-            property_schema=self.property_schema,
-            icon_sources=self.icon_sources,
-            show_context_menu=self.show_context_menu,
-            subdialogs=subdialogs_list,
-            dialog_mode=subdialog.mode,  # Different mode
-            property_suffix=subdialog.suffix,  # Property suffix for this widget slot
-            setfocus=subdialog.setfocus,  # Focus control
-            selected_index=selected_index,  # Preserve selection
+        self._run_child_dialog(
+            self.menu_id,
+            subdialog.mode,
+            property_suffix=subdialog.suffix,
+            setfocus=subdialog.setfocus,
+            selected_index=self._get_selected_index(),
         )
-        child.doModal()
-        del child
-
         self._clear_subdialog_list()
-
-        self.clearProperty("additionalDialog")
-
         self._refresh_selected_item()

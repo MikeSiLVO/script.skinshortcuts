@@ -164,6 +164,7 @@ class PropertiesMixin:
     manager: MenuManager | None
     property_schema: PropertySchema | None
     property_suffix: str
+    dialog_mode: str
 
     if TYPE_CHECKING:
 
@@ -345,6 +346,14 @@ class PropertiesMixin:
         else:
             self._log(f"Widget selected: {result.name}")
             self._set_widget_properties(item, prefix, result)
+
+            if self.dialog_mode == "widgets":
+                new_label = resolve_label(result.label)
+                self.manager.set_label(self.menu_id, item.name, new_label)
+                item.label = new_label
+                if result.icon:
+                    self.manager.set_icon(self.menu_id, item.name, result.icon)
+                    item.icon = result.icon
 
         self._refresh_selected_item()
 

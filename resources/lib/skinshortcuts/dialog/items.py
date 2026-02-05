@@ -75,7 +75,7 @@ class ItemsMixin:
 
         index = self._get_selected_index()
 
-        if self.dialog_mode == "widgets":
+        if self.dialog_mode in ("widgets", "customwidget"):
             widget = self._pick_widget_for_add()
             if not widget:
                 return
