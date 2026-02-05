@@ -49,12 +49,10 @@ class TemplateBuilder:
         self,
         schema: TemplateSchema,
         menus: list[Menu],
-        container: str = "9000",
         property_schema: PropertySchema | None = None,
     ):
         self.schema = schema
         self.menus = menus
-        self.container = container
         self.property_schema = property_schema
         self._menu_map: dict[str, Menu] = {m.name: m for m in menus}
         self._assigned_templates: set[str] = self._collect_assigned_templates()
@@ -1100,11 +1098,17 @@ class TemplateBuilder:
         """Recursively process an element, applying substitutions."""
         if elem.tag == "skinshortcuts":
             if elem.text and elem.text.strip() == "visibility":
-                elem.tag = "visible"
-                elem.text = (
-                    f"String.IsEqual(Container({self.container})."
-                    f"ListItem.Property(name),{item.name})"
-                )
+                if menu.container:
+                    elem.tag = "visible"
+                    elem.text = (
+                        f"String.IsEqual(Container({menu.container})."
+                        f"ListItem.Property(name),{item.name})"
+                    )
+                else:
+                    log.warning(
+                        f"<skinshortcuts>visibility in template for menu "
+                        f"'{menu.name}' but menu has no container attribute"
+                    )
             elif elem.text and elem.text.strip() == "onclick":
                 elem.set("_skinshortcuts_onclick", "true")
                 elem.text = ""
