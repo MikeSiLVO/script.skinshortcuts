@@ -35,6 +35,8 @@
 | `allow` | MenuAllow | Feature toggles (widgets, backgrounds, submenus) |
 | `container` | str | Container ID for visibility |
 | `is_submenu` | bool | True if from `<submenu>` tag |
+| `build` | str | Build mode: `"true"` (default) or `"auto"` |
+| `action` | str | Action to match for `build="auto"` |
 
 **Methods:** `get_item()`, `add_item()`, `remove_item()`, `move_item()`
 

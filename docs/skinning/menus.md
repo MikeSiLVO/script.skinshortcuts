@@ -73,6 +73,18 @@ Defines a standalone menu that generates an include.
 | `container` | No | List control ID for visibility conditions |
 | `controltype` | No | Output as `<control type="X">` instead of `<item>` (e.g., `button`) |
 | `id` | No | Starting control ID for `controltype` menus (default: 1) |
+| `build` | No | Build mode: `true` (default) or `auto`. When `auto`, only built if another menu item's action matches the `action` attribute |
+| `action` | No | Action string for `build="auto"`. Menu is built when any item in another menu has this action |
+
+**Conditional building:** Use `build="auto"` with `action` for menus that serve specific windows (e.g., hub windows). The menu include is only generated when a menu item elsewhere uses the matching action:
+
+```xml
+<menu name="movie-hub" build="auto" action="ActivateWindow(1111)">
+  <item name="recent">...</item>
+</menu>
+```
+
+If no item in any other menu has `ActivateWindow(1111)` as its action, `skinshortcuts-movie-hub` is not generated. The match is case-insensitive.
 
 **Container binding:** When `container` is set, visibility conditions are generated for submenus and widgets based on focused item position.
 
@@ -98,7 +110,7 @@ Defines a menu that is only built when referenced by a parent item.
 
 Submenus use the same structure as `<menu>`. The only difference is:
 
-* `<menu>`: Always generates an include
+* `<menu>`: Always generates an include (unless `build="auto"`)
 * `<submenu>`: Only generates when an item has `submenu="{name}"`
 
 Link a submenu to an item:
