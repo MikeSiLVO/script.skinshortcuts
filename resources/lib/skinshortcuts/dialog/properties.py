@@ -347,7 +347,7 @@ class PropertiesMixin:
             self._log(f"Widget selected: {result.name}")
             self._set_widget_properties(item, prefix, result)
 
-            if self.dialog_mode == "widgets":
+            if self.dialog_mode in ("widgets", "customwidget"):
                 new_label = resolve_label(result.label)
                 self.manager.set_label(self.menu_id, item.name, new_label)
                 item.label = new_label

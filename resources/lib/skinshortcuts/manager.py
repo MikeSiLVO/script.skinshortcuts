@@ -575,6 +575,15 @@ class MenuManager:
                     if key.startswith("customWidget") and value:
                         referenced_menus.add(value)
 
+        # Subdialog menu patterns like {item}.1 create menus named e.g. "music.1"
+        # that aren't in defaults or referenced by submenu/customWidget properties.
+        for subdialog in self.config.subdialogs:
+            if subdialog.menu and "{item}" in subdialog.menu:
+                for menu in self.working.values():
+                    for item in menu.items:
+                        resolved = subdialog.menu.replace("{item}", item.name)
+                        referenced_menus.add(resolved)
+
         orphaned = [
             menu_id for menu_id in self.working
             if menu_id not in default_menu_names and menu_id not in referenced_menus
