@@ -1516,6 +1516,7 @@ class TemplateBuilder:
         """
         if "$EXP[" in text:
             text = self._expand_expressions(text)
+            text = self._strip_nosuffix_markers(text)
 
         if parent_item is not None:
 
