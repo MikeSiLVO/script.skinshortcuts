@@ -53,12 +53,27 @@ class IncludesBuilder:
                 if submenu_tpl.name:
                     template_menu_names.add(submenu_tpl.name)
 
+        auto_menus: list[Menu] = []
+        build_menus: list[Menu] = []
+
         for menu in self.menus:
             if menu.is_submenu:
                 continue
             if menu.name in template_menu_names:
                 continue
+            if menu.build == "auto":
+                auto_menus.append(menu)
+            else:
+                build_menus.append(menu)
 
+        if auto_menus:
+            auto_names = {m.name for m in auto_menus}
+            all_actions = self._get_all_actions(auto_names)
+            build_menus.extend(
+                m for m in auto_menus if m.action and m.action.lower() in all_actions
+            )
+
+        for menu in build_menus:
             include = self._build_menu_include(menu)
             root.append(include)
 
@@ -289,6 +304,20 @@ class IncludesBuilder:
                 self._add_property(elem, key, value)
 
         return elem
+
+    def _get_all_actions(self, exclude: set[str]) -> set[str]:
+        """Collect all item actions (lowercased) from menus not in exclude set."""
+        actions: set[str] = set()
+        for menu in self.menus:
+            if menu.name in exclude:
+                continue
+            for item in menu.items:
+                if item.disabled:
+                    continue
+                for act in item.actions:
+                    if act.action:
+                        actions.add(act.action.lower())
+        return actions
 
     def _is_template_only(self, prop_name: str) -> bool:
         """Check if a property is marked as template_only in the schema.
