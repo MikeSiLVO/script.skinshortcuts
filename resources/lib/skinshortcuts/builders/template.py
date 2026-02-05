@@ -167,21 +167,9 @@ class TemplateBuilder:
         Processes controls once. Any <skinshortcuts insert="X"> inside
         triggers items iteration over the menu's items.
         """
-        if submenu_tpl.controls is None:
-            return
-
         context: dict[str, str] = {"menu": menu.name}
         self._apply_submenu_transforms(submenu_tpl, context)
-
-        controls_copy = copy.deepcopy(submenu_tpl.controls)
-        for child in list(controls_copy):
-            processed = self._process_submenu_controls(child, context, menu)
-            if processed is not None:
-                if processed.tag == "_container":
-                    for grandchild in processed:
-                        include_elem.append(grandchild)
-                else:
-                    include_elem.append(processed)
+        self._emit_submenu_controls(submenu_tpl, context, menu, include_elem)
 
     def _build_submenu_level(
         self,
@@ -193,9 +181,6 @@ class TemplateBuilder:
         Iterates over main menu items and generates controls for each
         item that has a submenu at the specified level.
         """
-        if submenu_tpl.controls is None:
-            return
-
         main_menu = self._menu_map.get("mainmenu")
         if not main_menu:
             log.debug("Main menu not found for level-based submenu template")
@@ -212,16 +197,33 @@ class TemplateBuilder:
 
             context = self._build_submenu_level_context(item, idx, submenu)
             self._apply_submenu_transforms(submenu_tpl, context, item)
+            self._emit_submenu_controls(submenu_tpl, context, submenu, include_elem, item)
 
-            controls_copy = copy.deepcopy(submenu_tpl.controls)
-            for child in list(controls_copy):
-                processed = self._process_submenu_controls(child, context, submenu, item)
-                if processed is not None:
-                    if processed.tag == "_container":
-                        for grandchild in processed:
-                            include_elem.append(grandchild)
-                    else:
-                        include_elem.append(processed)
+    def _emit_submenu_controls(
+        self,
+        submenu_tpl: SubmenuTemplate,
+        context: dict[str, str],
+        menu: Menu,
+        target: ET.Element,
+        parent_item: MenuItem | None = None,
+    ) -> None:
+        """Process submenu template controls and append to target element."""
+        if submenu_tpl.controls is None:
+            return
+        controls_copy = copy.deepcopy(submenu_tpl.controls)
+        for child in list(controls_copy):
+            processed = self._process_submenu_controls(child, context, menu, parent_item)
+            if processed is not None:
+                self._append_processed(target, processed)
+
+    @staticmethod
+    def _append_processed(parent: ET.Element, elem: ET.Element) -> None:
+        """Append a processed element, unwrapping _container wrappers."""
+        if elem.tag == "_container":
+            for child in elem:
+                parent.append(child)
+        else:
+            parent.append(elem)
 
     def _build_submenu_level_context(
         self,
@@ -313,11 +315,7 @@ class TemplateBuilder:
             processed = self._process_submenu_controls(child, context, menu, parent_item)
             result.remove(child)
             if processed is not None:
-                if processed.tag == "_container":
-                    for grandchild in processed:
-                        result.append(grandchild)
-                else:
-                    result.append(processed)
+                self._append_processed(result, processed)
 
         return result
 
@@ -708,16 +706,13 @@ class TemplateBuilder:
                 condition = self._expand_expressions(val.condition)
                 if suffix:
                     condition = self._apply_suffix_to_condition(condition, suffix)
-                if self._eval_condition(condition, item, context):
-                    value = val.value
-                    if "$PROPERTY[" in value:
-                        value = self._substitute_property_refs(value, item, context)
-                    return value
-            else:
-                value = val.value
-                if "$PROPERTY[" in value:
-                    value = self._substitute_property_refs(value, item, context)
-                return value
+                if not self._eval_condition(condition, item, context):
+                    continue
+
+            value = val.value
+            if "$PROPERTY[" in value:
+                value = self._substitute_property_refs(value, item, context)
+            return value
         return None
 
     def _get_from_source(
