@@ -388,6 +388,9 @@ class TemplateBuilder:
                 if not self._check_conditions(template.conditions, item, output.suffix):
                     continue
 
+                if not self._has_required_submenus(template, item):
+                    continue
+
                 context = self._build_context(template, output, item, idx, menu)
 
                 if template.controls is not None:
@@ -961,6 +964,46 @@ class TemplateBuilder:
             if not self._eval_condition(expanded, item, {}):
                 return False
         return True
+
+    def _has_required_submenus(self, template: Template, item: MenuItem) -> bool:
+        """Check if menu item has required submenus for template's items insertions.
+
+        Scans template controls for <skinshortcuts insert="X"/> elements.
+        For each, checks if the corresponding submenu exists and has items.
+        Returns True if no insertions required, or if all required submenus exist.
+        """
+        if template.controls is None:
+            return True
+
+        insert_names = self._find_insert_names(template.controls)
+        if not insert_names:
+            return True
+
+        for insert_name in insert_names:
+            items_def = self.schema.get_items_template(insert_name)
+            if not items_def:
+                continue
+
+            source = items_def.get_source()
+            submenu_id = f"{item.name}.{source}"
+            submenu = self._menu_map.get(submenu_id)
+
+            if submenu and submenu.items:
+                return True
+
+        return False
+
+    def _find_insert_names(self, elem: ET.Element) -> set[str]:
+        """Find all skinshortcuts insert names in an element tree."""
+        names: set[str] = set()
+
+        for child in elem.iter():
+            if child.tag == "skinshortcuts":
+                insert_attr = child.get("insert")
+                if insert_attr:
+                    names.add(insert_attr)
+
+        return names
 
     def _get_property_value(
         self,
