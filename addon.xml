@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta19" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta20" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
+3.0.0~beta20
+  - Add build="auto" attribute for conditional menu building
+  - Add type=skinstring entry point for standalone widget picker to skin strings
+  - Add submenu template processing with $PARENT[] support
+  - Add template_only attribute for menus
+  - Add widget picker for widget submenu items
+  - Add combined visibility for build="true" templates
+  - Fix template visibility using hardcoded container instead of menu container
+  - Fix nosuffix markers not stripped in template text substitution
+  - Fix $INCLUDE[] not resolved in items template path
+  - Fix build="true" templates output as single include
+  - Fix dynamically created widget menus orphaned on save
+  - Fix custom widget menus not recognized as widget type
+  - Fix widget management dialog child dialog handling
+  - Fix template property value attribute parsing
+  - Skip templates for items without required submenus
+  - Improve hash comparison logging
+  - Improve property requirement checking
+
 3.0.0~beta19
   - Fix onclose menu not opening when widget submenu doesn't exist yet
 
