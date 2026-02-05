@@ -265,6 +265,31 @@ No iteration, outputs controls once with parameter substitution:
 
 Use as `<include content="skinshortcuts-UtilityInclude"><param name="id">9001</param></include>`.
 
+Raw mode also supports `<skinshortcuts>visibility</skinshortcuts>` markers. Instead of per-item visibility, the marker generates an OR'd condition across all matching menu items — outputting controls once with combined visibility. This is useful for elements that should be visible when *any* matching item is focused:
+
+```xml
+<template include="SharedBackground" build="true" menu="mainmenu">
+  <condition>backgroundPath</condition>
+  <controls>
+    <control type="image">
+      <skinshortcuts>visibility</skinshortcuts>
+      <texture>$PROPERTY[backgroundPath]</texture>
+    </control>
+  </controls>
+</template>
+```
+
+Output (single control, not repeated per item):
+
+```xml
+<control type="image">
+  <visible>String.IsEqual(Container(9000).ListItem.Property(name),movies) | String.IsEqual(Container(9000).ListItem.Property(name),tvshows)</visible>
+  <texture>$PROPERTY[backgroundPath]</texture>
+</control>
+```
+
+If no items match the template's conditions, the visibility is set to `false`.
+
 ---
 
 ## Properties
@@ -475,7 +500,7 @@ Generate a visibility condition that matches the current menu item:
 </controls>
 ```
 
-Outputs:
+Outputs (per item in menu mode):
 
 ```xml
 <control type="image">
@@ -483,6 +508,8 @@ Outputs:
   <texture>/path/to/background.jpg</texture>
 </control>
 ```
+
+In `build="true"` (raw) mode, the same marker generates an OR'd condition across all matching items. See [Raw Mode](#raw-mode) for details.
 
 ### Include Expansion
 
@@ -590,7 +617,7 @@ This enables creating button menus where each menu item becomes an individual bu
 
 | Value | Description |
 |-------|-------------|
-| `visibility` | Generate visibility condition matching current item |
+| `visibility` | Generate visibility condition matching current item (per-item in menu mode, OR'd in raw mode) |
 | `onclick` | Generate onclick elements from item actions |
 
 ---

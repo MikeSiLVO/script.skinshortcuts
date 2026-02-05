@@ -13,13 +13,12 @@ Processes templates defined in templates.xml, iterating over menu items and gene
 
 ## TemplateBuilder Class
 
-### `__init__`(schema, menus, container="9000", property_schema=None)
+### `__init__`(schema, menus, property_schema=None)
 
 | Parameter | Description |
 |-----------|-------------|
 | `schema` | TemplateSchema from templates.xml |
 | `menus` | list[Menu] to build from |
-| `container` | Container ID for visibility conditions |
 | `property_schema` | Optional PropertySchema for fallbacks |
 
 ### build() → ET.Element
@@ -74,7 +73,7 @@ Special elements processed within `<controls>`:
 
 | Element | Output |
 |---------|--------|
-| `<skinshortcuts>visibility</skinshortcuts>` | `<visible>` condition matching current item |
+| `<skinshortcuts>visibility</skinshortcuts>` | `<visible>` condition matching current item (per-item in menu mode). In raw mode (`build="true"`), generates OR'd visibility across all matching items |
 | `<skinshortcuts>onclick</skinshortcuts>` | `<onclick>` elements from item actions (before/conditional/unconditional/after) |
 | `<skinshortcuts include="name" />` | Unwrapped include contents |
 | `<skinshortcuts include="name" wrap="true" />` | Kodi `<include>` element |
@@ -114,6 +113,8 @@ Handles `<template items="name">` elements that iterate over submenu items.
 | `_handle_skinshortcuts_include` | Process include expansions |
 | `_handle_skinshortcuts_items` | Process items iteration |
 | `_handle_skinshortcuts_onclick` | Process onclick expansions |
+| `_process_raw_markers` | Process skinshortcuts markers in raw template controls |
+| `_build_combined_visibility` | Build OR'd visibility for all matching items in raw mode |
 | `_eval_condition` | Evaluate condition against item |
 
 ***

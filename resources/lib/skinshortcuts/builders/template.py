@@ -367,11 +367,51 @@ class TemplateBuilder:
                     container.append(cloned)
 
     def _build_raw_template(self, template: Template, include: ET.Element) -> None:
-        """Output template controls once without per-item iteration (build="true")."""
+        """Output template controls once without per-item iteration (build="true").
+
+        Processes <skinshortcuts>visibility</skinshortcuts> markers as OR'd conditions
+        across all matching items in the template's target menu(s).
+        """
         if template.controls is None:
             return
         for child in template.controls:
-            include.append(copy.deepcopy(child))
+            cloned = copy.deepcopy(child)
+            self._process_raw_markers(cloned, template)
+            include.append(cloned)
+
+    def _process_raw_markers(self, elem: ET.Element, template: Template) -> None:
+        """Process <skinshortcuts> markers in raw template controls."""
+        if elem.tag == "skinshortcuts" and elem.text and elem.text.strip() == "visibility":
+            visibility = self._build_combined_visibility(template)
+            elem.tag = "visible"
+            elem.text = visibility if visibility else "false"
+            return
+
+        for child in elem:
+            self._process_raw_markers(child, template)
+
+    def _build_combined_visibility(self, template: Template) -> str:
+        """Build OR'd visibility condition for all matching items."""
+        parts: list[str] = []
+        for menu in self.menus:
+            if template.menu and menu.name != template.menu:
+                continue
+            if not menu.container:
+                log.warning(
+                    f"<skinshortcuts>visibility in build=\"true\" template for "
+                    f"menu '{menu.name}' but menu has no container attribute"
+                )
+                continue
+            for item in menu.items:
+                if item.disabled:
+                    continue
+                if not self._check_conditions(template.conditions, item):
+                    continue
+                parts.append(
+                    f"String.IsEqual(Container({menu.container})."
+                    f"ListItem.Property(name),{item.name})"
+                )
+        return " | ".join(parts)
 
     def _build_template_into(
         self,
