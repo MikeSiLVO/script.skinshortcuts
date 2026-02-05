@@ -1481,6 +1481,8 @@ class TemplateBuilder:
                 ),
             )
 
+        self._handle_include_substitution(elem)
+
         for child in elem:
             self._process_items_element(
                 child, sub_context, parent_context, sub_item, parent_item
