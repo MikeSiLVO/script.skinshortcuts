@@ -157,6 +157,33 @@ The script automatically builds includes when the management dialog closes with 
 
 ---
 
+## Widget Picker for Skin Strings
+
+To use the widget picker outside the menu property system (e.g., for standalone windows that store widget paths in skin strings):
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=skinstring&amp;skinPath=MyWidget&amp;skinLabel=MyWidget.Label&amp;skinType=MyWidget.Type&amp;skinTarget=MyWidget.Target)</onclick>
+```
+
+This opens the same widget picker used by the management dialog, but stores results directly in Kodi skin strings.
+
+**Parameters:**
+
+| Parameter | Description |
+|-----------|-------------|
+| `type=skinstring` | Open standalone widget picker |
+| `skinPath` | Skin string name for widget path |
+| `skinLabel` | Skin string name for widget label |
+| `skinType` | Skin string name for widget type |
+| `skinTarget` | Skin string name for widget target |
+| `path` | Custom shortcuts path (optional) |
+
+All parameters are optional except `type`. Selecting "None" clears the specified skin strings. Cancelling makes no changes.
+
+> **Note:** This replaces the v2 `type=shortcuts` entry point.
+
+---
+
 ## Adding Widgets
 
 To let users assign widgets to menu items:
