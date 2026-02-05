@@ -245,7 +245,7 @@ class SubdialogsMixin:
 
         self._log(f"Opening onclose menu: {menu_name}")
 
-        menu = self.manager.config.get_menu(menu_name)
+        menu = self.manager.working.get(menu_name) or self.manager.config.get_menu(menu_name)
         if menu and menu.menu_type == "widgets":
             dialog_mode = "widgets"
         elif subdialog.mode:

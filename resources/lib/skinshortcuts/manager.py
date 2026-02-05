@@ -114,7 +114,7 @@ class MenuManager:
             return ""
 
         cw_menu_id = self._generate_unique_id("custom")
-        self.working[cw_menu_id] = Menu(name=cw_menu_id, is_submenu=True)
+        self.working[cw_menu_id] = Menu(name=cw_menu_id, is_submenu=True, menu_type="widgets")
 
         prop_name = f"customWidget{suffix}"
         item.properties[prop_name] = cw_menu_id
