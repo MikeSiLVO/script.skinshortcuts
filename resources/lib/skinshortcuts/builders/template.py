@@ -14,7 +14,7 @@ from ..conditions import evaluate_condition
 from ..expressions import process_if_expressions, process_math_expressions
 from ..loaders.base import apply_suffix_to_from, apply_suffix_transform
 from ..log import get_logger
-from ..models.template import TemplateProperty
+from ..models.template import BuildMode, TemplateProperty
 
 log = get_logger("TemplateBuilder")
 
@@ -105,7 +105,13 @@ class TemplateBuilder:
                     include_elem.set("name", include_name)
                     include_map[include_name] = include_elem
 
-                self._build_template_into(template, output, include_map[include_name], variable_map)
+                include_elem = include_map[include_name]
+                if template.build == BuildMode.RAW:
+                    self._build_raw_template(template, include_elem)
+                else:
+                    self._build_template_into(
+                        template, output, include_elem, variable_map
+                    )
 
         for submenu_tpl in self.schema.submenus:
             self._build_submenu_template(submenu_tpl, include_map)
@@ -361,6 +367,13 @@ class TemplateBuilder:
                         cloned, sub_context, parent_context or {}, item, parent_item
                     )
                     container.append(cloned)
+
+    def _build_raw_template(self, template: Template, include: ET.Element) -> None:
+        """Output template controls once without per-item iteration (build="true")."""
+        if template.controls is None:
+            return
+        for child in template.controls:
+            include.append(copy.deepcopy(child))
 
     def _build_template_into(
         self,
