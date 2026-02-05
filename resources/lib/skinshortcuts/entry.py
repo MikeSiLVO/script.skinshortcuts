@@ -459,6 +459,11 @@ def main() -> None:
             property_name=args.get("property", ""),
             shortcuts_path=args.get("path"),
         )
+    elif action == "skinstring":
+        from .skinstring import pick_widget_skinstring
+
+        shortcuts_path = args.get("path") or get_skin_path()
+        pick_widget_skinstring(shortcuts_path, args)
     else:
         log.warning(f"Unknown action: {action}")
 
