@@ -322,7 +322,8 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             listitem.setArt({"thumb": item.icon, "icon": item.icon})
 
         widget_name = item.properties.get("widget", "")
-        if widget_name:
+        has_widget = bool(widget_name or item.properties.get("widgetPath"))
+        if has_widget:
             listitem.setProperty("widget", widget_name)
             listitem.setProperty("widgetLabel", item.properties.get("widgetLabel", ""))
             listitem.setProperty("widgetPath", item.properties.get("widgetPath", ""))
@@ -368,7 +369,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                     suffix = "." + prop_name.split(".", 1)[-1]
                     slot_widget = item.properties.get(f"widget{suffix}", "")
                 else:
-                    slot_widget = widget_name
+                    slot_widget = has_widget
                 if not slot_widget:
                     listitem.setProperty(prop_name, "")
                     listitem.setProperty(f"{prop_name}Label", "")
