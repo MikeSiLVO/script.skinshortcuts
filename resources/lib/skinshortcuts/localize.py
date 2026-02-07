@@ -15,6 +15,7 @@ except ImportError:
     _ADDON = None
 
 ADDON_PATTERN = re.compile(r"\$ADDON\[([^\s\]]+)\s+(\d+)\]")
+LOCALIZE_PATTERN = re.compile(r"\$LOCALIZE\[(\d+)\]")
 
 
 def LANGUAGE(string_id: int) -> str:
@@ -53,6 +54,15 @@ def resolve_label(label: str) -> str:
                 pass
         return label
 
+    if "$LOCALIZE[" in label:
+        def _resolve(match: re.Match[str]) -> str:
+            result = xbmc.getLocalizedString(int(match.group(1)))
+            if not result:
+                result = xbmc.getInfoLabel(match.group(0))
+            return result or match.group(0)
+
+        return LOCALIZE_PATTERN.sub(_resolve, label)
+
     if label.startswith("$"):
         result = xbmc.getInfoLabel(label)
         if result:
@@ -64,7 +74,9 @@ def resolve_label(label: str) -> str:
         if 32000 <= num < 33000:
             result = xbmcaddon.Addon().getLocalizedString(num)
         else:
-            result = xbmc.getInfoLabel(f"$LOCALIZE[{label}]")
+            result = xbmc.getLocalizedString(num)
+            if not result:
+                result = xbmc.getInfoLabel(f"$LOCALIZE[{label}]")
         if result:
             return result
         return label
