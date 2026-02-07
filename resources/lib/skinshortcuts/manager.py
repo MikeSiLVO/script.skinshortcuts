@@ -45,6 +45,8 @@ class MenuManager:
         self.working: dict[str, Menu] = {
             menu.name: copy.deepcopy(menu) for menu in self.config.menus
         }
+        for menu in self.working.values():
+            self.config.resolve_item_properties(menu)
 
         self._changed = False
 

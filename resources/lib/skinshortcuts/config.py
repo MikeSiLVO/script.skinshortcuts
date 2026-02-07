@@ -203,7 +203,7 @@ class SkinConfig:
             menus: List of Menu objects (typically merged with userdata)
         """
         for menu in menus:
-            self._resolve_item_properties(menu)
+            self.resolve_item_properties(menu)
 
         builder = IncludesBuilder(
             menus=menus,
@@ -214,7 +214,7 @@ class SkinConfig:
         )
         builder.write(output_path)
 
-    def _resolve_item_properties(self, menu: Menu) -> None:
+    def resolve_item_properties(self, menu: Menu) -> None:
         """Resolve background and widget names to their full properties."""
         for item in menu.items:
             bg_name = item.properties.get("background")
