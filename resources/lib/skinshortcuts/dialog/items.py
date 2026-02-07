@@ -376,7 +376,7 @@ class ItemsMixin:
                 result = xbmcgui.Dialog().browse(
                     browse_type, title, "files", mask, False, False, path
                 )
-            return result if isinstance(result, str) else None
+            return result if isinstance(result, str) and result != path else None
 
         while True:
             listitems = []
@@ -402,7 +402,7 @@ class ItemsMixin:
                     browse_type, title, "files", mask, False, False, path
                 )
 
-            if result and isinstance(result, str):
+            if result and isinstance(result, str) and result != path:
                 return result
 
     def _show_context_menu(self) -> None:
