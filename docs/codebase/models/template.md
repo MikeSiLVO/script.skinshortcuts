@@ -11,7 +11,7 @@
 |-------|-------------|
 | `MENU` | Iterate over menu items (default) |
 | `LIST` | Iterate over `<list>` items |
-| `RAW` | No iteration (parameterized include) |
+| `RAW` | No iteration (parameterized include). With properties: per-item resolve + deduplication |
 
 ***
 
@@ -48,6 +48,12 @@ Top-level container.
 | `property_groups` | list[PropertyGroupReference] | Group references |
 | `preset_refs` | list[PresetReference] | Preset references |
 | `controls` | ET.Element | Raw XML controls |
+
+**Properties:**
+
+| Property | Returns | Description |
+|----------|---------|-------------|
+| `has_transformations` | bool | True if any properties, vars, presets, or property groups defined |
 
 ### SubmenuTemplate
 

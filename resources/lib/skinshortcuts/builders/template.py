@@ -105,7 +105,9 @@ class TemplateBuilder:
 
                 include_elem = include_map[include_name]
                 if template.build == BuildMode.RAW:
-                    self._build_raw_template(template, include_elem)
+                    self._build_raw_template(
+                        template, output, include_elem, variable_map
+                    )
                 else:
                     self._build_template_into(
                         template, output, include_elem, variable_map
@@ -366,33 +368,78 @@ class TemplateBuilder:
                     )
                     container.append(cloned)
 
-    def _build_raw_template(self, template: Template, include: ET.Element) -> None:
-        """Output template controls once without per-item iteration (build="true").
+    def _build_raw_template(
+        self,
+        template: Template,
+        output: TemplateOutput,
+        include: ET.Element,
+        variable_map: dict[str, ET.Element],
+    ) -> None:
+        """Output template controls for build="true" mode.
 
-        Processes <skinshortcuts>visibility</skinshortcuts> markers as OR'd conditions
-        across all matching items in the template's target menu(s).
+        Without property definitions: outputs controls once with OR'd visibility
+        across all matching items (fast path).
+
+        With property definitions: resolves properties per item, groups items
+        with identical resolved output, and emits one control per group with
+        OR'd visibility within each group (dedup path). Mirrors v2 <other>
+        template behavior.
         """
         if template.controls is None:
             return
-        for child in template.controls:
-            cloned = copy.deepcopy(child)
-            self._process_raw_markers(cloned, template)
-            include.append(cloned)
 
-    def _process_raw_markers(self, elem: ET.Element, template: Template) -> None:
-        """Process <skinshortcuts> markers in raw template controls."""
-        if elem.tag == "skinshortcuts" and elem.text and elem.text.strip() == "visibility":
-            visibility = self._build_combined_visibility(template)
-            elem.tag = "visible"
-            elem.text = visibility if visibility else "false"
+        matching = self._collect_raw_matching_items(template)
+
+        if not template.has_transformations:
+            for child in template.controls:
+                cloned = copy.deepcopy(child)
+                self._resolve_raw_visibility(cloned, matching)
+                include.append(cloned)
             return
 
-        for child in elem:
-            self._process_raw_markers(child, template)
+        groups: dict[
+            str,
+            tuple[
+                ET.Element,
+                list[tuple[MenuItem, Menu, int]],
+                dict[str, str],
+                MenuItem,
+            ],
+        ] = {}
 
-    def _build_combined_visibility(self, template: Template) -> str:
-        """Build OR'd visibility condition for all matching items."""
-        parts: list[str] = []
+        for item, menu, idx in matching:
+            context = self._build_context(template, output, item, idx, menu)
+
+            resolved = copy.deepcopy(template.controls)
+            self._substitute_raw_controls(resolved, context, item)
+
+            key: str = ET.tostring(resolved, encoding="unicode")  # type: ignore[assignment]
+
+            if key not in groups:
+                groups[key] = (resolved, [], context, item)
+            groups[key][1].append((item, menu, idx))
+
+        for resolved_controls, items, context, representative in groups.values():
+            for child in list(resolved_controls):
+                self._resolve_raw_visibility(child, items)
+                include.append(child)
+
+            for var_def in template.variables:
+                var_elem = self._build_variable(var_def, context, representative)
+                if var_elem is not None:
+                    self._add_variable(var_elem, variable_map)
+
+            for group_ref in template.variable_groups:
+                effective_suffix = self._combine_suffixes(output.suffix, group_ref.suffix)
+                self._build_variable_group(
+                    group_ref, context, representative, variable_map, effective_suffix
+                )
+
+    def _collect_raw_matching_items(
+        self, template: Template
+    ) -> list[tuple[MenuItem, Menu, int]]:
+        """Collect menu items matching a raw template's filters."""
+        matching: list[tuple[MenuItem, Menu, int]] = []
         for menu in self.menus:
             if template.menu and menu.name != template.menu:
                 continue
@@ -402,16 +449,57 @@ class TemplateBuilder:
                     f"menu '{menu.name}' but menu has no container attribute"
                 )
                 continue
-            for item in menu.items:
+            for idx, item in enumerate(menu.items, start=1):
                 if item.disabled:
                     continue
                 if not self._check_conditions(template.conditions, item):
                     continue
-                parts.append(
-                    f"String.IsEqual(Container({menu.container})."
-                    f"ListItem.Property(name),{item.name})"
-                )
-        return " | ".join(parts)
+                matching.append((item, menu, idx))
+        return matching
+
+    def _substitute_raw_controls(
+        self,
+        elem: ET.Element,
+        context: dict[str, str],
+        item: MenuItem,
+    ) -> None:
+        """Substitute $PROPERTY/$EXP/$MATH/$IF in raw template controls.
+
+        Leaves <skinshortcuts>visibility</skinshortcuts> markers untouched
+        for post-grouping resolution.
+        """
+        for child in elem:
+            if (
+                child.tag == "skinshortcuts"
+                and child.text
+                and child.text.strip() == "visibility"
+            ):
+                continue
+            if child.text:
+                child.text = self._substitute_text(child.text, context, item)
+            if child.tail:
+                child.tail = self._substitute_text(child.tail, context, item)
+            for attr, value in list(child.attrib.items()):
+                child.set(attr, self._substitute_text(value, context, item))
+            self._substitute_raw_controls(child, context, item)
+
+    def _resolve_raw_visibility(
+        self,
+        elem: ET.Element,
+        items: list[tuple[MenuItem, Menu, int]],
+    ) -> None:
+        """Replace <skinshortcuts>visibility markers with OR'd conditions."""
+        if elem.tag == "skinshortcuts" and elem.text and elem.text.strip() == "visibility":
+            parts = [
+                f"String.IsEqual(Container({menu.container})."
+                f"ListItem.Property(name),{item.name})"
+                for item, menu, _idx in items
+            ]
+            elem.tag = "visible"
+            elem.text = " | ".join(parts) if parts else "false"
+            return
+        for child in elem:
+            self._resolve_raw_visibility(child, items)
 
     def _build_template_into(
         self,

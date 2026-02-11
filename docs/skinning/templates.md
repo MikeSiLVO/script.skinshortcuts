@@ -273,7 +273,7 @@ Raw mode also supports `<skinshortcuts>visibility</skinshortcuts>` markers. Inst
   <controls>
     <control type="image">
       <skinshortcuts>visibility</skinshortcuts>
-      <texture>$PROPERTY[backgroundPath]</texture>
+      <texture>background.jpg</texture>
     </control>
   </controls>
 </template>
@@ -284,11 +284,48 @@ Output (single control, not repeated per item):
 ```xml
 <control type="image">
   <visible>String.IsEqual(Container(9000).ListItem.Property(name),movies) | String.IsEqual(Container(9000).ListItem.Property(name),tvshows)</visible>
-  <texture>$PROPERTY[backgroundPath]</texture>
+  <texture>background.jpg</texture>
 </control>
 ```
 
 If no items match the template's conditions, the visibility is set to `false`.
+
+### Raw Mode with Properties
+
+When a `build="true"` template defines properties, vars, or presets, the builder resolves them per menu item and deduplicates the output. Items that resolve to identical controls are grouped into a single control with OR'd visibility. Items that resolve differently get separate controls.
+
+```xml
+<template include="BackgroundWidget" build="true" menu="mainmenu">
+  <property name="widgetTarget" condition="widgetTarget.backgroundWidget" from="widgetTarget.backgroundWidget" />
+  <property name="widgetPath" condition="widgetPath.backgroundWidget" from="widgetPath.backgroundWidget" />
+  <property name="widgetTarget">$INFO[Skin.String(widgetTarget)]</property>
+  <property name="widgetPath">$INFO[Skin.String(widgetPath)]</property>
+  <controls>
+    <control type="wraplist">
+      <content limit="25" target="$PROPERTY[widgetTarget]">$PROPERTY[widgetPath]</content>
+      <skinshortcuts>visibility</skinshortcuts>
+    </control>
+  </controls>
+</template>
+```
+
+If 3 items use the global skin string fallback and 1 item has a custom `backgroundWidget`, the output is 2 controls:
+
+```xml
+<!-- Items without custom background widget (deduplicated) -->
+<control type="wraplist">
+  <content limit="25" target="$INFO[Skin.String(widgetTarget)]">$INFO[Skin.String(widgetPath)]</content>
+  <visible>...item1... | ...item3... | ...item4...</visible>
+</control>
+
+<!-- Item with custom background widget -->
+<control type="wraplist">
+  <content limit="25" target="movies">plugin://some.addon/path</content>
+  <visible>...item2...</visible>
+</control>
+```
+
+Without properties defined, raw mode outputs controls once with all visibility OR'd (no per-item processing).
 
 ---
 
@@ -509,7 +546,7 @@ Outputs (per item in menu mode):
 </control>
 ```
 
-In `build="true"` (raw) mode, the same marker generates an OR'd condition across all matching items. See [Raw Mode](#raw-mode) for details.
+In `build="true"` (raw) mode, the same marker generates an OR'd condition across matching items. When properties are defined, items are grouped by resolved output and each group gets its own OR'd visibility. See [Raw Mode](#raw-mode) and [Raw Mode with Properties](#raw-mode-with-properties) for details.
 
 ### Include Expansion
 
@@ -617,7 +654,7 @@ This enables creating button menus where each menu item becomes an individual bu
 
 | Value | Description |
 |-------|-------------|
-| `visibility` | Generate visibility condition matching current item (per-item in menu mode, OR'd in raw mode) |
+| `visibility` | Generate visibility condition matching current item (per-item in menu mode, OR'd in raw mode — per-group when properties are defined) |
 | `onclick` | Generate onclick elements from item actions |
 
 ---

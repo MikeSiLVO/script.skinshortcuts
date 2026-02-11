@@ -73,7 +73,7 @@ Special elements processed within `<controls>`:
 
 | Element | Output |
 |---------|--------|
-| `<skinshortcuts>visibility</skinshortcuts>` | `<visible>` condition matching current item (per-item in menu mode). In raw mode (`build="true"`), generates OR'd visibility across all matching items |
+| `<skinshortcuts>visibility</skinshortcuts>` | `<visible>` condition matching current item (per-item in menu mode). In raw mode (`build="true"`), generates OR'd visibility across matching items (per-group when properties are defined, all items when no properties) |
 | `<skinshortcuts>onclick</skinshortcuts>` | `<onclick>` elements from item actions (before/conditional/unconditional/after) |
 | `<skinshortcuts include="name" />` | Unwrapped include contents |
 | `<skinshortcuts include="name" wrap="true" />` | Kodi `<include>` element |
@@ -113,8 +113,9 @@ Handles `<template items="name">` elements that iterate over submenu items.
 | `_handle_skinshortcuts_include` | Process include expansions |
 | `_handle_skinshortcuts_items` | Process items iteration |
 | `_handle_skinshortcuts_onclick` | Process onclick expansions |
-| `_process_raw_markers` | Process skinshortcuts markers in raw template controls |
-| `_build_combined_visibility` | Build OR'd visibility for all matching items in raw mode |
+| `_collect_raw_matching_items` | Collect menu items matching a raw template's filters |
+| `_substitute_raw_controls` | Substitute $PROPERTY/$EXP/$MATH/$IF in raw controls (preserves visibility markers) |
+| `_resolve_raw_visibility` | Replace visibility markers with OR'd conditions for an item group |
 | `_eval_condition` | Evaluate condition against item |
 
 ***

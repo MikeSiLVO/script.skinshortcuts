@@ -304,6 +304,17 @@ class Template:
     variables: list[VariableDefinition] = field(default_factory=list)  # Inline variables
     variable_groups: list[VariableGroupReference] = field(default_factory=list)  # Group refs
 
+    @property
+    def has_transformations(self) -> bool:
+        """Whether this template defines any property transformations."""
+        return bool(
+            self.properties
+            or self.vars
+            or self.preset_refs
+            or self.preset_group_refs
+            or self.property_groups
+        )
+
     def get_outputs(self) -> list[TemplateOutput]:
         """Get output configurations.
 
