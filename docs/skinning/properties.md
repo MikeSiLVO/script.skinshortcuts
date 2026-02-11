@@ -87,7 +87,7 @@ Properties extend menu items beyond built-in fields (label, icon, action). Commo
 | Attribute | Required | Default | Description |
 |-----------|----------|---------|-------------|
 | `name` | Yes | - | Property name (stored in item.properties) |
-| `type` | No | `options` | Property type: `options`, `toggle`, `widget`, `background` |
+| `type` | No | `options` | Property type: `options`, `toggle`, `text`, `number`, `widget`, `background` |
 | `requires` | No | - | Property name that must have a value (see [Requires Check](#requires-check)) |
 | `templateonly` | No | `false` | If `true`, only available in templates, not in dialog |
 
@@ -97,6 +97,8 @@ Properties extend menu items beyond built-in fields (label, icon, action). Commo
 |------|----------|
 | `options` | Select from defined options list |
 | `toggle` | Toggle between `True` and empty (cleared) |
+| `text` | Free text input via keyboard dialog |
+| `number` | Numeric input via numeric input dialog |
 | `widget` | Opens widget picker |
 | `background` | Opens background picker |
 

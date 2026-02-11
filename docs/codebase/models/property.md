@@ -33,7 +33,7 @@ Top-level container.
 | `template_only` | bool | Only used in templates |
 | `requires` | str | Property that must be set first |
 | `options` | list[SchemaOption] | Options for select type |
-| `type` | str | widget, background, toggle, or options |
+| `type` | str | widget, background, toggle, text, number, or select |
 
 ### ButtonMapping
 

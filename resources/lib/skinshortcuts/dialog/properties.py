@@ -294,6 +294,12 @@ class PropertiesMixin:
         if prop_type == "toggle":
             self._handle_toggle_property(prop, item, button, prop_name)
             return True
+        if prop_type == "text":
+            self._handle_text_property(item, button, prop_name)
+            return True
+        if prop_type == "number":
+            self._handle_number_property(item, button, prop_name)
+            return True
 
         return self._handle_options_property(prop, item, button, prop_name)
 
@@ -648,6 +654,39 @@ class PropertiesMixin:
             self._log(f"Toggling {prop_name} ON for item {item.name}")
             self._set_item_property(item, prop_name, "True", apply_suffix=False)
 
+        self._refresh_selected_item()
+
+    def _handle_text_property(self, item: MenuItem, button, prop_name: str) -> None:
+        """Handle a text-type property via keyboard input."""
+        current_value = resolve_label(item.properties.get(prop_name, ""))
+        title = resolve_label(button.title) if button.title else prop_name
+
+        keyboard = xbmc.Keyboard(current_value, title)
+        keyboard.doModal()
+        if not keyboard.isConfirmed():
+            return
+
+        new_value = keyboard.getText()
+        if new_value:
+            self._log(f"Setting text property {prop_name}={new_value} on item {item.name}")
+            self._set_item_property(item, prop_name, new_value, apply_suffix=False)
+        else:
+            self._log(f"Clearing text property {prop_name} on item {item.name}")
+            self._set_item_property(item, prop_name, None, apply_suffix=False)
+
+        self._refresh_selected_item()
+
+    def _handle_number_property(self, item: MenuItem, button, prop_name: str) -> None:
+        """Handle a number-type property via numeric input dialog."""
+        current_value = item.properties.get(prop_name, "")
+        title = resolve_label(button.title) if button.title else prop_name
+
+        result = xbmcgui.Dialog().input(title, current_value, type=xbmcgui.INPUT_NUMERIC)
+        if not result and result != "0":
+            return
+
+        self._log(f"Setting number property {prop_name}={result} on item {item.name}")
+        self._set_item_property(item, prop_name, result, apply_suffix=False)
         self._refresh_selected_item()
 
     def _handle_options_property(self, prop, item: MenuItem, button, prop_name: str) -> bool:

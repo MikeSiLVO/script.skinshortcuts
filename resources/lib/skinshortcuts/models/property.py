@@ -33,7 +33,7 @@ class ButtonMapping:
     title: str = ""
     show_none: bool = True
     show_icons: bool = True  # Show icons in select dialog (useDetails=True)
-    type: str = ""  # "widget", "background", "toggle", or "options"
+    type: str = ""  # "widget", "background", "toggle", "text", "number", or "select"
     requires: str = ""  # Property name that must have a value for button to be active
 
 
