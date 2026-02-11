@@ -345,5 +345,6 @@ def _create_item_from_override(override: MenuItemOverride) -> MenuItem:
         label=override.label or "",
         actions=override.actions or [Action(action="noop")],
         icon=override.icon or "DefaultShortcut.png",
+        disabled=override.disabled or False,
         properties=override.properties,
     )
