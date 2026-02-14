@@ -406,11 +406,16 @@ def _parse_allow(elem) -> MenuAllow:
     )
 
 
-def load_groupings(path: str | Path) -> list[Shortcut | ShortcutGroup | Content | Input]:
+def load_groupings(
+    path: str | Path, menu_id: str = ""
+) -> list[Shortcut | ShortcutGroup | Content | Input]:
     """Load shortcut groupings from menus.xml file.
 
     Groupings define the available shortcuts for the picker dialog.
     They are stored inside a <groupings> element within <menus>.
+
+    If menu_id is provided, a <groupings menu="menu_id"> element takes
+    priority over the default (unnamed) <groupings>.
 
     Note: Consider using load_menus() instead which returns full MenuConfig.
 
@@ -433,6 +438,9 @@ def load_groupings(path: str | Path) -> list[Shortcut | ShortcutGroup | Content 
             <content source="..." target="..."/>
             <input label="..." type="text" for="action" />
           </groupings>
+          <groupings menu="powermenu">
+            <!-- Completely replaces default groupings for this menu -->
+          </groupings>
         </menus>
     """
     path = Path(path)
@@ -440,17 +448,29 @@ def load_groupings(path: str | Path) -> list[Shortcut | ShortcutGroup | Content 
         return []
 
     root = parse_xml(path, "menus", MenuConfigError)
-    return _parse_shortcut_groupings(root, str(path))
+    return _parse_shortcut_groupings(root, str(path), menu_id)
 
 
 def _parse_shortcut_groupings(
-    root, path: str
+    root, path: str, menu_id: str = ""
 ) -> list[Shortcut | ShortcutGroup | Content | Input]:
     """Parse groupings from root element.
 
     Supports all item types at the top level: groups, shortcuts, content, and inputs.
+    If menu_id is provided, a menu-specific <groupings> replaces the default.
     """
-    groupings_elem = root.find("groupings")
+    default_elem = None
+    menu_elem = None
+
+    for elem in root.findall("groupings"):
+        menu_attr = get_attr(elem, "menu") or ""
+        if menu_attr and menu_id and menu_attr == menu_id:
+            menu_elem = elem
+            break
+        if not menu_attr and default_elem is None:
+            default_elem = elem
+
+    groupings_elem = menu_elem or default_elem
     if groupings_elem is None:
         return []
 

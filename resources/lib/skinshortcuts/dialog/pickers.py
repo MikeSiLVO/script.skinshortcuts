@@ -102,7 +102,7 @@ class PickersMixin:
             return
 
         menus_path = Path(self.shortcuts_path) / "menus.xml"
-        groups = load_groupings(menus_path)
+        groups = load_groupings(menus_path, self.menu_id)
 
         if not groups:
             xbmcgui.Dialog().notification(

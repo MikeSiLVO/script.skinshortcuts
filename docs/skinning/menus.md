@@ -408,6 +408,39 @@ Define shortcuts available in the picker dialog.
 </groupings>
 ```
 
+### Menu-Specific Groupings
+
+Use the `menu` attribute on `<groupings>` to define entirely different shortcut choices for a specific menu. A menu-specific `<groupings>` completely replaces the default when editing that menu.
+
+```xml
+<!-- Default groupings (used by any menu without a specific match) -->
+<groupings>
+  <group name="common" label="Common Shortcuts">
+    ...
+  </group>
+</groupings>
+
+<!-- Replaces default groupings when editing powermenu -->
+<groupings menu="powermenu">
+  <group name="power" label="Power Options">
+    ...
+  </group>
+</groupings>
+```
+
+For finer control, use `visible` on individual `<group>` elements to show/hide groups based on which menu is being edited:
+
+```xml
+<groupings>
+  <group name="common" label="Common Shortcuts">
+    ...
+  </group>
+  <group name="power-only" label="Power Options" visible="String.IsEqual(Window.Property(menuname),powermenu)">
+    ...
+  </group>
+</groupings>
+```
+
 ### `<group>` Attributes
 
 | Attribute | Required | Description |

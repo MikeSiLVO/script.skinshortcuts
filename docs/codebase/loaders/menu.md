@@ -23,9 +23,9 @@ Load complete menu configuration. Returns MenuConfig containing:
 - `action_overrides` - Action replacement rules
 - `show_context_menu` - Context menu visibility
 
-### load_groupings(path) → list[ShortcutGroup]
+### load_groupings(path, menu_id="") → list[ShortcutGroup]
 
-Load just the shortcut groupings (for picker without full reload).
+Load shortcut groupings for the picker. If `menu_id` is provided, a `<groupings menu="...">` element takes priority over the default.
 
 ***
 

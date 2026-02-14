@@ -77,6 +77,11 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
     </group>
   </groupings>
 
+  <!-- Menu-specific groupings (replaces default for this menu) -->
+  <groupings menu="powermenu">
+    ...
+  </groupings>
+
   <icons>
     <source label="Skin Icons" icon="DefaultFolder.png" condition="..." visible="...">special://skin/extras/icons/</source>
     <source label="Browse...">browse</source>

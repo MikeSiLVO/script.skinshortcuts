@@ -191,6 +191,7 @@ shortcuts/
 | N/A                                                      | `<submenu name="...">` for explicit submenu structure              |
 | N/A                                                      | `<menu name="...">` for standalone menus                           |
 | N/A                                                      | `<allow/>` (optional, all attributes default to true)              |
+| Per-menu shortcuts via `grouping="..."` attribute         | `<groupings menu="...">` for menu-specific groupings               |
 
 ### Global Overrides
 
