@@ -14,6 +14,9 @@ from __future__ import annotations
 import re
 
 from .conditions import evaluate_condition
+from .log import get_logger
+
+log = get_logger("Expressions")
 
 
 class MathEvaluator:
@@ -42,8 +45,8 @@ class MathEvaluator:
             if isinstance(result, float) and result.is_integer():
                 return str(int(result))
             return str(result)
-        except (ValueError, ZeroDivisionError):
-            # On error, return the original expression
+        except (ValueError, ZeroDivisionError) as e:
+            log.debug(f"Math eval failed for '{expr}': {e}")
             return expr
 
     def _skip_whitespace(self) -> None:
