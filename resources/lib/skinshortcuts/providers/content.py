@@ -675,24 +675,13 @@ class ContentProvider:
     def _get_video_years(self, media_type: str) -> list[ResolvedShortcut]:
         """Get years from video library."""
         if media_type == "movie":
-            result = self._jsonrpc(
-                "VideoLibrary.GetMovies", {"properties": ["year"], "limits": {"end": 0}}
-            )
+            result = self._jsonrpc("VideoLibrary.GetMovies", {"properties": ["year"]})
             items = result.get("movies", []) if result else []
             db_type = "movies"
         else:
-            result = self._jsonrpc(
-                "VideoLibrary.GetTVShows", {"properties": ["year"], "limits": {"end": 0}}
-            )
-            items = result.get("tvshows", []) if result else []
-            db_type = "tvshows"
-
-        if media_type == "movie":
-            result = self._jsonrpc("VideoLibrary.GetMovies", {"properties": ["year"]})
-            items = result.get("movies", []) if result else []
-        else:
             result = self._jsonrpc("VideoLibrary.GetTVShows", {"properties": ["year"]})
             items = result.get("tvshows", []) if result else []
+            db_type = "tvshows"
 
         years = sorted(
             {item.get("year", 0) for item in items if item.get("year", 0) > 0},
