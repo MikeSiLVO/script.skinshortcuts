@@ -257,8 +257,10 @@ class ContentProvider:
         """
         try:
             f = xbmcvfs.File(filepath)
-            content = f.read()
-            f.close()
+            try:
+                content = f.read()
+            finally:
+                f.close()
 
             import xml.etree.ElementTree as ET
 
@@ -590,8 +592,10 @@ class ContentProvider:
         """
         try:
             f = xbmcvfs.File(index_file)
-            content = f.read()
-            f.close()
+            try:
+                content = f.read()
+            finally:
+                f.close()
 
             if not content:
                 return "", "", 999
