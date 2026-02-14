@@ -1108,8 +1108,7 @@ class TemplateBuilder:
         """Check if menu item has required submenus for template's items insertions.
 
         Scans template controls for <skinshortcuts insert="X"/> elements.
-        For each, checks if the corresponding submenu exists and has items.
-        Returns True if no insertions required, or if all required submenus exist.
+        Returns True if no insertions required, or if any referenced submenu has items.
         """
         if template.controls is None:
             return True
