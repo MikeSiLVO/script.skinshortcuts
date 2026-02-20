@@ -14,6 +14,7 @@ The `widgets.xml` file defines widgets that users can assign to menu items.
 * [Conditions](#conditions)
 * [Output Properties](#output-properties)
 * [Multiple Widgets](#multiple-widgets)
+* [Standalone Widget Picker](#standalone-widget-picker)
 
 ---
 
@@ -350,6 +351,60 @@ Display additional widgets:
     $INFO[Container(9000).ListItem.Property(widgetPath.2)]
   </content>
   <visible>!String.IsEmpty(Container(9000).ListItem.Property(widgetPath.2))</visible>
+</control>
+```
+
+---
+
+## Standalone Widget Picker
+
+The widget picker can be used outside the management dialog to store a selected widget directly in Kodi skin strings. This is useful for standalone screens (e.g., hub windows) where widgets aren't tied to menu items.
+
+### RunScript Call
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=skinstring&amp;skinPath=MyWidgetPath&amp;skinLabel=MyWidgetLabel&amp;skinType=MyWidgetType&amp;skinTarget=MyWidgetTarget)</onclick>
+```
+
+This opens the same widget picker used by the management dialog, driven by the skin's `widgets.xml`.
+
+### Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `type=skinstring` | Yes | Opens the standalone widget picker |
+| `path` | No | Custom shortcuts path (defaults to skin's shortcuts folder) |
+| `skinPath` | No | Skin string name to store widget path |
+| `skinLabel` | No | Skin string name to store widget label |
+| `skinType` | No | Skin string name to store widget type |
+| `skinTarget` | No | Skin string name to store widget target |
+
+### Behavior
+
+- **Select widget:** Sets each provided skin string via `Skin.SetString()`
+- **Select "None":** Clears all provided skin strings via `Skin.Reset()`
+- **Cancel:** No changes
+
+The "None" option is always shown at the top of the picker.
+
+### Skin XML Usage
+
+```xml
+<!-- Button to pick a widget -->
+<control type="button">
+  <label>Choose Widget</label>
+  <onclick>RunScript(script.skinshortcuts,type=skinstring&amp;skinPath=HubWidget1.Path&amp;skinLabel=HubWidget1.Label&amp;skinType=HubWidget1.Type&amp;skinTarget=HubWidget1.Target)</onclick>
+</control>
+
+<!-- Display the selected widget -->
+<control type="list" id="5000">
+  <content target="$INFO[Skin.String(HubWidget1.Target)]">$INFO[Skin.String(HubWidget1.Path)]</content>
+  <visible>!String.IsEmpty(Skin.String(HubWidget1.Path))</visible>
+</control>
+
+<!-- Show selected widget name -->
+<control type="label">
+  <label>$INFO[Skin.String(HubWidget1.Label)]</label>
 </control>
 ```
 

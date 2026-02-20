@@ -652,6 +652,7 @@ Items templates iterate over submenu items. They are defined separately and refe
 | N/A                          | `type=reset&menu=X&submenus=true` (new) |
 | N/A                          | `type=viewselect` (new)                 |
 | N/A                          | `type=clear&menu=X&item=Y` (new)        |
+| `type=widgets&showNone=true`  | `type=skinstring` (see below)           |
 
 ### v2
 
