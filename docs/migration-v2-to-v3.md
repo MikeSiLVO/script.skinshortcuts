@@ -286,7 +286,7 @@ Items with `required="true"` cannot be deleted by users.
 ### v3 (widgets.xml)
 
 ```xml
-<widgets showGetMore="true">
+<widgets>
   <group name="movies" label="Movies" icon="DefaultMovies.png" visible="Library.HasContent(movies)">
     <widget name="recent-movies" label="Recently Added" type="movies" icon="DefaultRecentlyAddedMovies.png">
       <path>videodb://recentlyaddedmovies/</path>
@@ -665,6 +665,34 @@ Items templates iterate over submenu items. They are defined separately and refe
 ```xml
 <onclick>RunScript(script.skinshortcuts,type=manage,menu=mainmenu)</onclick>
 ```
+
+### Standalone Widget Picker
+
+v2's `type=widgets` (with `showNone`, `skinWidget*` params) is replaced by `type=skinstring`:
+
+**v2:**
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=widgets&amp;showNone=true&amp;skinWidgetName=MyLabel&amp;skinWidgetPath=MyPath&amp;skinWidgetType=MyType&amp;skinWidgetTarget=MyTarget)</onclick>
+```
+
+**v3:**
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=skinstring&amp;skinLabel=MyLabel&amp;skinPath=MyPath&amp;skinType=MyType&amp;skinTarget=MyTarget)</onclick>
+```
+
+| v2 Parameter | v3 Parameter |
+|--------------|--------------|
+| `type=widgets` | `type=skinstring` |
+| `showNone=true` | Always enabled |
+| `skinWidget` | Removed (widget name not stored to skin string) |
+| `skinWidgetName` | `skinLabel` |
+| `skinWidgetPath` | `skinPath` |
+| `skinWidgetType` | `skinType` |
+| `skinWidgetTarget` | `skinTarget` |
+
+See [Standalone Widget Picker](skinning/widgets.md#standalone-widget-picker) for full documentation.
 
 ***
 

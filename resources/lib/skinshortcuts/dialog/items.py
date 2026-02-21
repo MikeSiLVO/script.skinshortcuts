@@ -65,7 +65,6 @@ class ItemsMixin:
             items: list[WidgetGroup | Widget],
             item_props: dict[str, str],
             slot: str = "",
-            show_get_more: bool = True,
         ) -> Widget | None | Literal[False]: ...
 
     def _add_item(self) -> None:
@@ -103,7 +102,7 @@ class ItemsMixin:
 
         if widget_config.groupings:
             result = self._pick_widget_from_groups(
-                widget_config.groupings, item_props, "", widget_config.show_get_more
+                widget_config.groupings, item_props
             )
             if result is False:
                 return None

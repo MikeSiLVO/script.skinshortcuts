@@ -195,7 +195,6 @@ class PickersMixin:
         items: list[WidgetGroup | Widget],
         item_props: dict[str, str],
         slot: str = "",
-        show_get_more: bool = True,
     ) -> Widget | None | Literal[False]:
         """Show widget picker dialog with back navigation.
 
@@ -205,20 +204,11 @@ class PickersMixin:
             items: Widget groups and/or widgets to pick from
             item_props: Current item properties for condition evaluation
             slot: Current widget slot being edited (e.g., "widget", "widget.2")
-            show_get_more: Whether to show "Get More..." option to browse addons
 
         Returns:
             Widget if selected, None if cancelled completely, False if "None" chosen.
         """
         current_widget = item_props.get(slot, "")
-
-        custom_action = None
-        if show_get_more:
-            custom_action = (
-                "Get More...",
-                "DefaultAddonProgram.png",
-                self._browse_widget_addons,
-            )
 
         result = self._pick_from_hierarchy(
             items,
@@ -236,7 +226,6 @@ class PickersMixin:
                 label=label,
                 items=grp_items,
             ),
-            custom_action=custom_action,
         )
 
         return result
@@ -345,57 +334,6 @@ class PickersMixin:
         from ..constants import TARGET_MAP
 
         return TARGET_MAP.get(target.lower(), "videos") if target else "videos"
-
-    def _browse_widget_addons(self) -> Widget | None:
-        """Browse installed addons to select a widget path.
-
-        Opens a dialog to browse video/audio/program addons that can be
-        used as widget content sources, then asks for widget type.
-
-        Returns:
-            Widget if addon selected, None if cancelled.
-        """
-        addon_types = [
-            ("video", "Video Addons", "DefaultAddonVideo.png", "videos"),
-            ("audio", "Music Addons", "DefaultAddonMusic.png", "music"),
-            ("executable", "Program Addons", "DefaultAddonProgram.png", "programs"),
-        ]
-
-        listitems = []
-        for _type_id, label, icon, _target in addon_types:
-            listitem = xbmcgui.ListItem(label)
-            listitem.setArt({"icon": icon})
-            listitems.append(listitem)
-
-        selected = xbmcgui.Dialog().select("Browse Addons", listitems, useDetails=True)
-
-        if selected == -1:
-            return None
-
-        addon_type, _label, addon_icon, default_target = addon_types[selected]
-        start_path = f"addons://{addon_type}/"
-
-        result = self._browse_directory(start_path, addon_types[selected][1])
-        if result is None:
-            return None
-
-        path, label, _icon = result
-
-        widget_type = self._pick_widget_type(addon_type)
-        if widget_type is None:
-            return None
-
-        widget_target = self._map_widget_type_to_target(widget_type, default_target)
-
-        return Widget(
-            name=f"custom-{hash(path)}",
-            label=label,
-            path=path,
-            type=widget_type,
-            target=widget_target,
-            icon=addon_icon,
-            source="addon",
-        )
 
     def _pick_widget_type(self, addon_type: str) -> str | None:
         """Show dialog to pick widget content type.

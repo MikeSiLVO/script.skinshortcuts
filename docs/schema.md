@@ -152,7 +152,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 Defines widgets and widget picker groupings.
 
 ```xml
-<widgets showGetMore="true">
+<widgets>
   <!-- Flat widget at root level -->
   <widget name="favourites" label="Favourites" type="videos" target="videos" icon="DefaultFavourites.png" source="library" condition="..." visible="...">
     <path>favourites://</path>
@@ -186,7 +186,7 @@ Defines widgets and widget picker groupings.
 
 | Element | Parent | Required Attributes | Optional Attributes | Description |
 |---------|--------|---------------------|---------------------|-------------|
-| `<widgets>` | — | — | `showGetMore` | Root element |
+| `<widgets>` | — | — | — | Root element |
 | `<widget>` | widgets/group | `name`, `label` | `type`, `target`, `icon`, `condition`, `visible`, `source`, `slot` | Widget definition |
 | `<path>` | widget | — | — | Content path (required except type="custom") |
 | `<limit>` | widget | — | — | Item limit |

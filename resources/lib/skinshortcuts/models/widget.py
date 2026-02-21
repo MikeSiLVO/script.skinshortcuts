@@ -79,4 +79,3 @@ class WidgetConfig:
 
     widgets: list[Widget] = field(default_factory=list)
     groupings: list[WidgetGroup | Widget] = field(default_factory=list)
-    show_get_more: bool = True

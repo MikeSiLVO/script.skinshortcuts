@@ -61,9 +61,7 @@ def pick_widget_skinstring(shortcuts_path: str, params: dict[str, str]) -> None:
     picker = _StandalonePicker(shortcuts_path)
 
     if widget_config.groupings:
-        result = picker._pick_widget_from_groups(
-            widget_config.groupings, {}, show_get_more=widget_config.show_get_more
-        )
+        result = picker._pick_widget_from_groups(widget_config.groupings, {})
     elif widget_config.widgets:
         flat = [(w.name, w.label, w.icon) for w in widget_config.widgets]
         result = picker._pick_widget_flat(flat, {})

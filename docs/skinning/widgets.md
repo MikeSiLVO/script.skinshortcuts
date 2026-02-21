@@ -24,7 +24,7 @@ Widgets and groups are defined directly at the root level:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<widgets showGetMore="true">
+<widgets>
   <!-- Flat widget (appears ungrouped in picker) -->
   <widget name="favourites" label="Favourites" type="videos">
     <path>favourites://</path>

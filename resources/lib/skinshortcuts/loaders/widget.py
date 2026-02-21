@@ -8,7 +8,7 @@ from ..constants import TARGET_MAP
 from ..exceptions import WidgetConfigError
 from ..models import Content, Widget, WidgetGroup
 from ..models.widget import WidgetConfig
-from .base import get_attr, get_bool, get_int, get_text, parse_content, parse_xml
+from .base import get_attr, get_int, get_text, parse_content, parse_xml
 
 
 def load_widgets(path: str | Path) -> WidgetConfig:
@@ -26,7 +26,6 @@ def load_widgets(path: str | Path) -> WidgetConfig:
 
     root = parse_xml(path, "widgets", WidgetConfigError)
 
-    show_get_more = get_bool(root, "showGetMore", default=True)
     widgets: list[Widget] = []
     groupings: list[WidgetGroup | Widget] = []
 
@@ -43,7 +42,6 @@ def load_widgets(path: str | Path) -> WidgetConfig:
     return WidgetConfig(
         widgets=widgets,
         groupings=groupings,
-        show_get_more=show_get_more,
     )
 
 

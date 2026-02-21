@@ -197,7 +197,6 @@ class PropertiesMixin:
             items: list[WidgetGroup | Widget],
             item_props: dict[str, str],
             slot: str = "",
-            show_get_more: bool = True,
         ) -> Widget | None | Literal[False]: ...
 
         def _pick_widget_flat(
@@ -335,7 +334,7 @@ class PropertiesMixin:
 
         if widget_config.groupings:
             result = self._pick_widget_from_groups(
-                widget_config.groupings, item_props, slot, widget_config.show_get_more
+                widget_config.groupings, item_props, slot
             )
         else:
             widgets = self.manager.get_widgets()

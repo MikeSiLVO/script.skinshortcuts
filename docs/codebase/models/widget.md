@@ -39,4 +39,3 @@
 |-------|------|-------------|
 | `widgets` | list[Widget] | All defined widgets (flat) |
 | `groupings` | list | Picker structure |
-| `show_get_more` | bool | Show "Get More..." option |
