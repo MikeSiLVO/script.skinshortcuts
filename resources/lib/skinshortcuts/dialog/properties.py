@@ -597,27 +597,62 @@ class PropertiesMixin:
             ]
 
         prefix = resolve_label(label_prefix) if label_prefix else ""
+
+        while True:
+            source = self._pick_playlist_source(sources, prefix)
+            if source is None:
+                return None
+
+            result = self._pick_playlist_from_source(source, prefix, current_path)
+            if result is not None:
+                return result
+
+    def _pick_playlist_source(
+        self,
+        sources: list[PlaylistSource],
+        prefix: str,
+    ) -> PlaylistSource | None:
+        if len(sources) == 1:
+            return sources[0]
+
+        listitems = []
+        for source in sources:
+            label = resolve_label(source.label) if source.label else source.path
+            listitem = xbmcgui.ListItem(label)
+            if source.icon:
+                listitem.setArt({"icon": source.icon})
+            listitems.append(listitem)
+
+        title = f"Select {prefix}" if prefix else "Select Playlist"
+        selected = xbmcgui.Dialog().select(title, listitems, useDetails=True)
+        if selected == -1:
+            return None
+        return sources[selected]
+
+    def _pick_playlist_from_source(
+        self,
+        source: PlaylistSource,
+        prefix: str,
+        current_path: str,
+    ) -> tuple[str, str, str] | None:
         playlists = []
         preselect = -1
-        for source in sources:
-            source_playlists = scan_playlist_files(source.path)
-            for raw_label, path in source_playlists:
-                label = raw_label
-                playlist_type = ""
-                _log.debug(f"checking playlist path={path}, ends_xsp={path.endswith('.xsp')}")
-                if path.endswith(".xsp"):
-                    xsp_name, playlist_type = _parse_smart_playlist(path)
-                    _log.debug(f"parsed result name={xsp_name}, type={playlist_type}")
-                    if xsp_name:
-                        label = xsp_name
 
-                display_label = f"{prefix}: {label}" if prefix else label
-                if preselect == -1 and path == current_path:
-                    preselect = len(playlists)
-                playlists.append((display_label, path, source.icon, playlist_type))
+        for raw_label, path in scan_playlist_files(source.path):
+            label = raw_label
+            playlist_type = ""
+            if path.endswith(".xsp"):
+                xsp_name, playlist_type = _parse_smart_playlist(path)
+                if xsp_name:
+                    label = xsp_name
+
+            display_label = f"{prefix}: {label}" if prefix else label
+            if preselect == -1 and path == current_path:
+                preselect = len(playlists)
+            playlists.append((display_label, path, source.icon, playlist_type))
 
         if not playlists:
-            xbmcgui.Dialog().notification("No Playlists", "No playlists found")
+            xbmcgui.Dialog().notification("No Playlists", "No playlists found in this location")
             return None
 
         listitems = []
@@ -626,7 +661,7 @@ class PropertiesMixin:
             listitem.setArt({"icon": icon})
             listitems.append(listitem)
 
-        title = f"Select {prefix}" if prefix else "Select Playlist"
+        title = resolve_label(source.label) if source.label else "Select Playlist"
         selected = xbmcgui.Dialog().select(title, listitems, useDetails=True, preselect=preselect)
 
         if selected == -1:
