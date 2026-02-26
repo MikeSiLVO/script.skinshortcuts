@@ -598,6 +598,9 @@ class PropertiesMixin:
 
         prefix = resolve_label(label_prefix) if label_prefix else ""
 
+        if len(sources) == 1:
+            return self._pick_playlist_from_source(sources[0], prefix, current_path)
+
         while True:
             source = self._pick_playlist_source(sources, prefix)
             if source is None:
@@ -636,7 +639,6 @@ class PropertiesMixin:
         current_path: str,
     ) -> tuple[str, str, str] | None:
         playlists = []
-        preselect = -1
 
         for raw_label, path in scan_playlist_files(source.path):
             label = raw_label
@@ -647,9 +649,16 @@ class PropertiesMixin:
                     label = xsp_name
 
             display_label = f"{prefix}: {label}" if prefix else label
-            if preselect == -1 and path == current_path:
-                preselect = len(playlists)
             playlists.append((display_label, path, source.icon, playlist_type))
+
+        playlists.sort(key=lambda p: p[0].casefold())
+
+        preselect = -1
+        if current_path:
+            for i, (_label, path, _icon, _type) in enumerate(playlists):
+                if path == current_path:
+                    preselect = i
+                    break
 
         if not playlists:
             xbmcgui.Dialog().notification("No Playlists", "No playlists found in this location")
