@@ -14,6 +14,7 @@ The `widgets.xml` file defines widgets that users can assign to menu items.
 * [Conditions](#conditions)
 * [Output Properties](#output-properties)
 * [Multiple Widgets](#multiple-widgets)
+* [Widget Picker Button](#widget-picker-button)
 * [Standalone Widget Picker](#standalone-widget-picker)
 
 ---
@@ -353,6 +354,71 @@ Display additional widgets:
   <visible>!String.IsEmpty(Container(9000).ListItem.Property(widgetPath.2))</visible>
 </control>
 ```
+
+---
+
+## Widget Picker Button
+
+To add a widget picker button to the management dialog, define a `type="widget"` property in `properties.xml` and map it to a button ID.
+
+### Setup
+
+In `properties.xml`, add a property and button mapping:
+
+```xml
+<properties>
+  <property name="widget" type="widget" />
+
+  <buttons>
+    <button id="309" property="widget" />
+  </buttons>
+</properties>
+```
+
+In your management dialog XML, add a button with the matching ID:
+
+```xml
+<control type="button" id="309">
+  <label>Choose Widget</label>
+  <visible>!String.IsEqual(Window.Property(skinshortcuts-disableWidgets),true)</visible>
+</control>
+```
+
+When clicked, this opens the widget picker populated from `widgets.xml`. The selected widget auto-populates these properties on the menu item:
+
+| Property | Value |
+|----------|-------|
+| `widget` | Widget name |
+| `widgetLabel` | Display label |
+| `widgetPath` | Content path |
+| `widgetType` | Content type |
+| `widgetTarget` | Target window |
+| `widgetSource` | Source type |
+
+Selecting "None" clears all widget properties.
+
+### Multiple Widget Slots
+
+For additional widget slots, use [subdialogs](menus.md#subdialogs) with a suffix:
+
+```xml
+<!-- properties.xml -->
+<buttons suffix="true">
+  <button id="309" property="widget" />
+</buttons>
+```
+
+```xml
+<!-- menus.xml -->
+<dialogs>
+  <subdialog buttonID="800" mode="widget1" setfocus="309" />
+  <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2" />
+</dialogs>
+```
+
+The suffix transforms property names automatically — `widget` becomes `widget.2`, `widgetPath` becomes `widgetPath.2`, etc.
+
+> **See also:** [Properties](properties.md#button-mappings) for button mapping options, [Suffix Transforms](properties.md#suffix-transforms) for how suffixes work, [Multiple Widgets](#multiple-widgets) for display setup
 
 ---
 
