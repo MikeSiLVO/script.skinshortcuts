@@ -75,6 +75,7 @@ Defines a standalone menu that generates an include.
 | `id` | No | Starting control ID for `controltype` menus (default: 1) |
 | `build` | No | Build mode: `true` (default) or `auto`. When `auto`, only built if another menu item's action matches the `action` attribute |
 | `action` | No | Action string for `build="auto"`. Menu is built when any item in another menu has this action |
+| `type` | No | Menu type. `widgets` puts the dialog in [widget mode](widgets.md#widget-menus) |
 
 **Conditional building:** Use `build="auto"` with `action` for menus that serve specific windows (e.g., hub windows). The menu include is only generated when a menu item elsewhere uses the matching action:
 
@@ -108,10 +109,12 @@ Defines a menu that is only built when referenced by a parent item.
 </submenu>
 ```
 
-Submenus use the same structure as `<menu>`. The only difference is:
+Submenus use the same structure as `<menu>` (including all attributes). The only difference is:
 
 * `<menu>`: Always generates an include (unless `build="auto"`)
 * `<submenu>`: Only generates when an item has `submenu="{name}"`
+
+The `type="widgets"` attribute is commonly used on submenus for per-item widget lists. See [Widget Menus](widgets.md#widget-menus).
 
 Link a submenu to an item:
 
