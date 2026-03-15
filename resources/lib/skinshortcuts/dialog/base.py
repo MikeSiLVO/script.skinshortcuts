@@ -197,6 +197,12 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 self.show_context_menu = menu_config.show_context_menu
                 self._subdialogs = {sd.button_id: sd for sd in menu_config.subdialogs}
 
+        if not self.dialog_mode and self.manager:
+            menu = self.manager.config.get_menu(self.menu_id)
+            if menu and menu.menu_type == "widgets":
+                self.dialog_mode = "widgets"
+
+
         if self.property_suffix:
             self.setProperty("skinshortcuts-suffix", self.property_suffix)
         if self.dialog_mode:
@@ -524,8 +530,10 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                     self.setProperty("disableBackgrounds", "true" if not allow.backgrounds else "")
                     self.setProperty("disableSubmenus", "true" if not allow.submenus else "")
 
-                    if menu.is_submenu:
-                        menu_type = menu.menu_type or "submenu"
+                    if menu.menu_type:
+                        menu_type = menu.menu_type
+                    elif menu.is_submenu:
+                        menu_type = "submenu"
                     else:
                         menu_type = ""
                     self.setProperty("skinshortcuts-menutype", menu_type)

@@ -230,7 +230,7 @@ def _parse_menu(elem, path: str, is_submenu: bool = False) -> Menu:
     if not menu_name:
         raise MenuConfigError(path, "Menu missing 'name' attribute")
 
-    menu_type = get_attr(elem, "type") if is_submenu else None
+    menu_type = get_attr(elem, "type") or None
     is_widget_submenu = menu_type == "widgets"
 
     items = []
