@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from .builders import IncludesBuilder
+from .constants import USERDATA_VERSION
 from .loaders import (
     load_backgrounds,
     load_menus,
@@ -17,12 +18,19 @@ from .loaders import (
 )
 from .models import Background, Menu, Widget
 from .models.background import BackgroundConfig, BackgroundGroup
-from .models.menu import ActionOverride, SubDialog
+from .models.menu import ActionOverride, MenuConfig, SubDialog
 from .models.property import PropertySchema
 from .models.template import TemplateSchema
 from .models.views import ViewConfig
 from .models.widget import WidgetConfig
-from .userdata import UserData, _create_item_from_override, load_userdata, merge_menu
+from .userdata import (
+    UserData,
+    _create_item_from_override,
+    load_userdata,
+    merge_menu,
+    migrate_userdata,
+    save_userdata,
+)
 
 
 @dataclass
@@ -88,21 +96,64 @@ class SkinConfig:
         views = load_views(path / "views.xml")
 
         userdata = load_userdata(userdata_path) if load_user else UserData()
+
+        if load_user:
+            _run_userdata_migrations(userdata, menu_config, userdata_path)
+
+        template_map = {m.name: m for m in menu_config.menus if m.is_submenu}
+
+        referenced_templates: set[str] = set()
+        for menu in menu_config.menus:
+            if menu.is_submenu:
+                continue
+            for item in menu.items:
+                ref = item.submenu or item.name
+                if ref in template_map:
+                    referenced_templates.add(ref)
+        for menu_override in userdata.menus.values():
+            for item_override in menu_override.items:
+                if item_override.submenu and item_override.submenu in template_map:
+                    referenced_templates.add(item_override.submenu)
+
         menus = []
         skin_menu_names = set()
         for menu in menu_config.menus:
             skin_menu_names.add(menu.name)
+            if menu.is_submenu:
+                if menu.name in referenced_templates:
+                    continue
+                _apply_action_overrides(menu, menu_config.action_overrides)
+                menus.append(menu)
+                continue
             override = userdata.menus.get(menu.name)
             merged = merge_menu(menu, override)
             _apply_action_overrides(merged, menu_config.action_overrides)
             menus.append(merged)
 
+            for item in merged.items:
+                template_name = item.submenu or item.name
+                template = template_map.get(template_name)
+                if template is None:
+                    continue
+                key = f"{merged.name}/{item.name}"
+                instance_override = userdata.menus.get(key)
+                instance = merge_menu(template, instance_override)
+                instance.name = key
+                _apply_action_overrides(instance, menu_config.action_overrides)
+                menus.append(instance)
+
         for menu_name, menu_override in userdata.menus.items():
-            if menu_name not in skin_menu_names:
-                user_menu = Menu(name=menu_name, is_submenu=True)
-                for item_override in menu_override.items:
-                    user_menu.items.append(_create_item_from_override(item_override))
-                menus.append(user_menu)
+            if menu_name in skin_menu_names:
+                continue
+            # Per-item submenu entries already expanded above; skip duplicates.
+            if "/" in menu_name:
+                parent_name, _, _ = menu_name.partition("/")
+                if parent_name in skin_menu_names:
+                    continue
+            user_menu = Menu(name=menu_name, is_submenu=True)
+            for item_override in menu_override.items:
+                user_menu.items.append(_create_item_from_override(item_override))
+            menus.append(user_menu)
 
         return cls(
             menus=menus,
@@ -231,6 +282,26 @@ class SkinConfig:
                     for key, value in widget.to_properties().items():
                         if key not in item.properties:
                             item.properties[key] = value
+
+
+def _run_userdata_migrations(
+    userdata: UserData,
+    menu_config: MenuConfig,
+    userdata_path: str | None,
+) -> None:
+    """Migrate userdata in-place if the stored cursor is older than ``USERDATA_VERSION``.
+
+    No-op when already current. Cursor lives in the hash file.
+    """
+    from .hashing import read_stored_userdata_version, write_stored_userdata_version
+
+    stored_version = read_stored_userdata_version()
+    if stored_version >= USERDATA_VERSION:
+        return
+
+    migrate_userdata(userdata, menu_config, stored_version, USERDATA_VERSION)
+    save_userdata(userdata, userdata_path)
+    write_stored_userdata_version(USERDATA_VERSION)
 
 
 def _apply_action_overrides(menu: Menu, overrides: list[ActionOverride]) -> None:

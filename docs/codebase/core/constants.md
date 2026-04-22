@@ -29,6 +29,14 @@
 
 ***
 
+## Schema Versioning
+
+| Constant | Value | Purpose |
+|----------|-------|---------|
+| `USERDATA_VERSION` | `1` | Current userdata.json schema. Bump when format changes and a migrator is in `userdata.py::MIGRATIONS`. |
+
+***
+
 ## Type Sets
 
 | Set | Values |

@@ -390,11 +390,14 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 listitem.setProperty(f"{prop_name}Label", resolved_label)
 
         if self.manager:
-            submenu_name = item.submenu or item.name
-            submenu = self.manager.config.get_menu(submenu_name)
-            if submenu and submenu.items:
+            template_name = item.submenu or item.name
+            template = self.manager.config.get_default_menu(template_name)
+            instance_key = self.manager.submenu_key(self.menu_id, item.name)
+            instance = self.manager.config.get_menu(instance_key)
+            effective = instance if (instance and instance.items) else template
+            if effective and effective.items:
                 listitem.setProperty("hasSubmenu", "true")
-                listitem.setProperty("submenu", submenu_name)
+                listitem.setProperty("submenu", template_name)
 
             is_modified = False
             if self.manager:

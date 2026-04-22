@@ -95,9 +95,9 @@ class SubdialogsMixin:
         if not self.manager:
             return
 
-        submenu_name = item.submenu or item.name
-        submenu = self.manager.config.get_menu(submenu_name)
-        is_widget_submenu = submenu and submenu.menu_type == "widgets"
+        template_name = item.submenu or item.name
+        template = self.manager.config.get_default_menu(template_name)
+        is_widget_submenu = template and template.menu_type == "widgets"
 
         menu = self.manager.config.get_menu(self.menu_id)
         if is_widget_submenu:
@@ -109,7 +109,9 @@ class SubdialogsMixin:
                 xbmcgui.Dialog().notification("Not Allowed", "Submenus not enabled for this menu")
                 return
 
-        self._run_child_dialog(submenu_name, "widgets" if is_widget_submenu else "")
+        self.manager.ensure_item_submenu(self.menu_id, item)
+        submenu_id = self.manager.submenu_key(self.menu_id, item.name)
+        self._run_child_dialog(submenu_id, "widgets" if is_widget_submenu else "")
 
     def _spawn_subdialog(self, subdialog: SubDialog) -> None:
         """Spawn a child dialog for a subdialog definition.

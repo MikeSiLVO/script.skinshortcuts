@@ -24,11 +24,14 @@ Uses MD5 hashes of configuration files to detect changes and avoid unnecessary r
 | `read_stored_hashes()` | dict | Load stored hashes |
 | `write_hashes(hashes)` | bool | Save hashes |
 | `needs_rebuild(shortcuts_path, output_paths)` | bool | Check if rebuild needed |
+| `read_stored_userdata_version()` | int | Stored userdata schema cursor (0 if absent) |
+| `write_stored_userdata_version(version)` | bool | Update cursor, preserve other hash keys |
 
 ### needs_rebuild()
 
 Returns True if:
 - Any output file (includes.xml) is missing
 - No stored hashes exist
+- Stored `userdata_version` is older than `USERDATA_VERSION` (pending migration)
 - Any config file hash changed
 - Metadata changed (version, skin)

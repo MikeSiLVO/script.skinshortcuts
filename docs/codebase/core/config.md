@@ -26,6 +26,8 @@ Load configuration from shortcuts directory.
 4. templates.xml
 5. properties.xml
 6. Userdata (merges with defaults)
+7. Userdata migration if stored cursor is older than `USERDATA_VERSION` (see `constants.py`)
+8. Expand per-item submenu instances (`{parent}/{item_name}` keys) for each item linking a `<submenu>` template
 
 ### Instance Fields
 

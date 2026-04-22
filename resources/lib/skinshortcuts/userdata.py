@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -17,6 +18,7 @@ except ImportError:
 
 from .log import get_logger
 from .models import Action, Menu, MenuItem
+from .models.menu import MenuConfig
 
 log = get_logger("UserData")
 
@@ -42,6 +44,7 @@ class MenuItemOverride:
     properties: dict[str, str] = field(default_factory=dict)  # Includes widget/background
     position: int | None = None  # For reordering
     is_new: bool = False  # True if user-added item
+    submenu: str | None = None  # Submenu template reference (picker auto-attach)
 
 
 @dataclass
@@ -80,6 +83,8 @@ def _item_override_to_dict(item: MenuItemOverride) -> dict[str, Any]:
         result["position"] = item.position
     if item.is_new:
         result["is_new"] = item.is_new
+    if item.submenu is not None:
+        result["submenu"] = item.submenu
 
     return result
 
@@ -218,6 +223,85 @@ def save_userdata(userdata: UserData, path: str | None = None) -> bool:
         return False
 
 
+def migrate_0_to_1(userdata: UserData, menu_config: MenuConfig) -> UserData:
+    """Migrate shared-by-template submenu keys to per-item keys.
+
+    Before: ``userdata.menus["musicvideos"]`` shared by all items linking that template.
+    After: ``userdata.menus["mainmenu/<item_name>"]`` owned by one specific item.
+
+    Templates not referenced by any item stay under their original key
+    (covers standalone named submenus). When multiple items reference the same
+    template, userdata goes to the first referencing item; other duplicates
+    seed fresh from the template on next edit.
+    """
+    submenu_names = {m.name for m in menu_config.menus if m.is_submenu}
+
+    # User-added items with names matching a template rely on the v3-pre-migration
+    # name fallback, so they need to be treated as references too.
+    template_refs: dict[str, list[tuple[str, str]]] = {}
+    for menu in menu_config.menus:
+        if menu.is_submenu:
+            continue
+        for item in menu.items:
+            ref = item.submenu or item.name
+            if ref in submenu_names:
+                template_refs.setdefault(ref, []).append((menu.name, item.name))
+
+    for menu_id, menu_override in userdata.menus.items():
+        if menu_id in submenu_names:
+            continue
+        for item_override in menu_override.items:
+            if not item_override.is_new:
+                continue
+            if item_override.name in submenu_names:
+                template_refs.setdefault(item_override.name, []).append(
+                    (menu_id, item_override.name)
+                )
+
+    migrated = dict(userdata.menus)
+    for menu_id in list(userdata.menus.keys()):
+        if menu_id not in submenu_names:
+            continue
+        refs = template_refs.get(menu_id, [])
+        if not refs:
+            # No items reference this template: standalone submenu, leave alone.
+            continue
+        parent, item_name = refs[0]
+        new_key = f"{parent}/{item_name}"
+        if new_key == menu_id:
+            continue
+        migrated[new_key] = migrated.pop(menu_id)
+
+    userdata.menus = migrated
+    return userdata
+
+
+MIGRATIONS: dict[int, Callable[[UserData, MenuConfig], UserData]] = {
+    0: migrate_0_to_1,
+}
+
+
+def migrate_userdata(
+    userdata: UserData,
+    menu_config: MenuConfig,
+    from_version: int,
+    to_version: int,
+) -> UserData:
+    """Run the registered migration chain from from_version to to_version.
+
+    Missing migrations for intermediate versions are no-ops: the cursor
+    advances but the data is untouched.
+    """
+    current = from_version
+    while current < to_version:
+        migrator = MIGRATIONS.get(current)
+        if migrator is not None:
+            log.info(f"Migrating userdata {current} -> {current + 1}")
+            userdata = migrator(userdata, menu_config)
+        current += 1
+    return userdata
+
+
 def _check_dialog_visible(condition: str) -> bool:
     """Check if a Kodi visibility condition passes for dialog filtering.
 
@@ -332,7 +416,7 @@ def _apply_override(item: MenuItem, override: MenuItemOverride) -> MenuItem:
         required=item.required,
         protection=item.protection,
         properties={**item.properties, **override.properties},
-        submenu=item.submenu,
+        submenu=override.submenu if override.submenu is not None else item.submenu,
         original_action=item.action,  # Store original for protection matching
         includes=item.includes,
     )
@@ -347,4 +431,5 @@ def _create_item_from_override(override: MenuItemOverride) -> MenuItem:
         icon=override.icon or "DefaultShortcut.png",
         disabled=override.disabled or False,
         properties=override.properties,
+        submenu=override.submenu,
     )

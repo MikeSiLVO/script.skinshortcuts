@@ -93,6 +93,8 @@ class IncludesBuilder:
                 continue
             if not menu.items:
                 continue
+            if "/" in menu.name:
+                continue
             include = self._build_menu_include(menu)
             root.append(include)
 
@@ -137,8 +139,8 @@ class IncludesBuilder:
         for parent_item in parent_menu.items:
             if parent_item.disabled:
                 continue
-            submenu_name = parent_item.submenu or parent_item.name
-            submenu = self._menu_map.get(submenu_name)
+            submenu_key = f"{parent_menu.name}/{parent_item.name}"
+            submenu = self._menu_map.get(submenu_key)
             if not submenu:
                 continue
             for idx, sub_item in enumerate(submenu.items, start=1):
@@ -296,8 +298,8 @@ class IncludesBuilder:
 
             self._add_property(elem, "submenuVisibility", item.name)
 
-            submenu_name = item.submenu or item.name
-            submenu = self._menu_map.get(submenu_name)
+            submenu_key = f"{menu.name}/{item.name}"
+            submenu = self._menu_map.get(submenu_key)
             if submenu and submenu.items:
                 self._add_property(elem, "hasSubmenu", "True")
 

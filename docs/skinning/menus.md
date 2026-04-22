@@ -125,6 +125,23 @@ Link a submenu to an item:
 </item>
 ```
 
+### Auto-Link by Shortcut Name
+
+When a user picks a shortcut, if a `<submenu>` shares its `name`, that submenu is attached to the new item automatically. No matching `<item submenu="...">` needs to exist in `<menu>`.
+
+```xml
+<shortcut name="movies" label="$LOCALIZE[342]" icon="DefaultMovies.png">
+  <action>ActivateWindow(Videos,videodb://movies/titles/,return)</action>
+</shortcut>
+
+<submenu name="movies">
+  <item name="recent">
+    <label>$LOCALIZE[20387]</label>
+    <action>ActivateWindow(Videos,videodb://recentlyaddedmovies/,return)</action>
+  </item>
+</submenu>
+```
+
 ---
 
 ## Item Element

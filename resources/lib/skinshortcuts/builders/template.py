@@ -197,8 +197,8 @@ class TemplateBuilder:
             if item.disabled:
                 continue
 
-            submenu_name = item.submenu or item.name
-            submenu = self._menu_map.get(submenu_name)
+            submenu_key = f"{main_menu.name}/{item.name}"
+            submenu = self._menu_map.get(submenu_key)
             if not submenu:
                 continue
 

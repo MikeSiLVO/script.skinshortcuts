@@ -19,6 +19,7 @@ from .constants import (
     MENUS_FILE,
     PROPERTIES_FILE,
     TEMPLATES_FILE,
+    USERDATA_VERSION,
     VIEWS_FILE,
     WIDGETS_FILE,
 )
@@ -81,6 +82,8 @@ def generate_config_hashes(shortcuts_path: str | Path) -> dict[str, str | None]:
     if userdata_path:
         hashes["userdata"] = hash_file(userdata_path)
 
+    hashes["userdata_version"] = str(USERDATA_VERSION)
+
     if IN_KODI:
         import xbmcaddon
 
@@ -127,6 +130,28 @@ def write_hashes(hashes: dict[str, str | None]) -> bool:
         return False
 
 
+def read_stored_userdata_version() -> int:
+    """Return the stored userdata_version cursor, or 0 if missing.
+
+    Absent cursor means the userdata was last touched before userdata_version
+    tracking existed. Treat as version 0.
+    """
+    stored = read_stored_hashes()
+    value = stored.get("userdata_version")
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str) and value.isdigit():
+        return int(value)
+    return 0
+
+
+def write_stored_userdata_version(version: int) -> bool:
+    """Update the userdata_version cursor in the hash file, preserving others."""
+    hashes = read_stored_hashes()
+    hashes["userdata_version"] = str(version)
+    return write_hashes(hashes)
+
+
 def needs_rebuild(shortcuts_path: str | Path, output_paths: list[str] | None = None) -> bool:
     """Check if menu needs to be rebuilt by comparing hashes.
 
@@ -141,6 +166,10 @@ def needs_rebuild(shortcuts_path: str | Path, output_paths: list[str] | None = N
 
     if not stored:
         log.debug("Rebuild needed: no stored hashes")
+        return True
+
+    if read_stored_userdata_version() < USERDATA_VERSION:
+        log.info("Rebuild needed: userdata migration pending")
         return True
 
     if output_paths:
@@ -163,7 +192,7 @@ def needs_rebuild(shortcuts_path: str | Path, output_paths: list[str] | None = N
         if stored_val != value:
             stored_prefix = stored_val[:HASH_PREFIX_LEN] if stored_val else None
             current_prefix = value[:HASH_PREFIX_LEN] if value else None
-            log.info(f"Rebuild needed: {key} changed ({stored_prefix}→{current_prefix})")
+            log.info(f"Rebuild needed: {key} changed ({stored_prefix} -> {current_prefix})")
             return True
         log.debug(f"  {key}: match")
 

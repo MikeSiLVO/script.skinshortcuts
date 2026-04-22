@@ -55,7 +55,18 @@ All return bool. Update working copy.
 | `set_action(menu_id, item_id, action)` | Set action(s) |
 | `set_icon(menu_id, item_id, icon)` | Set icon |
 | `set_disabled(menu_id, item_id, disabled)` | Set disabled state |
+| `set_submenu(menu_id, item_id, submenu)` | Set or clear submenu template reference |
 | `set_custom_property(menu_id, item_id, name, value)` | Set custom property |
+
+### Submenu Operations
+
+Each item linked to a `<submenu>` template has its own working copy, keyed by `{parent_menu}/{item_name}` in `self.working`. Referenced templates are filtered out of `self.working` at init (they are seed sources only).
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `submenu_key(parent, item_name)` | str | Compute the per-item working key |
+| `submenu_template(item)` | str | Template name to seed from (falls back to `item.name`) |
+| `ensure_item_submenu(parent, item)` | Menu | Return the per-item submenu, seeding from template on first access |
 
 ### Custom Widget Operations
 
@@ -75,7 +86,9 @@ Custom widget menus use auto-generated IDs (`custom-{uuid}`) and are referenced 
 | `reset_menu_tree(menu_id)` | bool | Reset menu and all referenced submenus |
 | `reset_all_submenus()` | bool | Reset all menus with `is_submenu=True` |
 
-**reset_menu_tree**: Follows `item.submenu` references recursively with cycle detection.
+**reset_menu**: For per-item keys (`parent/item`), re-seeds from the item's template.
+
+**reset_menu_tree**: Recurses into per-item submenu keys with cycle detection.
 
 **reset_all_submenus**: Resets menus defined with `<submenu>` tag (not `<menu>`).
 

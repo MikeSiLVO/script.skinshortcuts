@@ -131,6 +131,12 @@ class PickersMixin:
                 self.manager.set_icon(self.menu_id, item.name, shortcut.icon)
                 item.icon = shortcut.icon
 
+            if shortcut.name:
+                template = self.manager.config.get_default_menu(shortcut.name)
+                if template and template.is_submenu:
+                    self.manager.set_submenu(self.menu_id, item.name, shortcut.name)
+                    item.submenu = shortcut.name
+
             self._refresh_selected_item()
 
     def _get_shortcut_actions(self, shortcut: Shortcut) -> list[str] | None:

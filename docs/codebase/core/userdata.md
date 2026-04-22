@@ -20,6 +20,10 @@ Stores user modifications to menus and view selections in JSON format. Provides 
 | `get_userdata_path()` | str | Path to userdata file for current skin |
 | `load_userdata(path=None)` | UserData | Load from JSON |
 | `save_userdata(userdata, path=None)` | bool | Save to JSON |
+| `migrate_userdata(userdata, menu_config, from_ver, to_ver)` | UserData | Run registered migration chain |
+| `migrate_0_to_1(userdata, menu_config)` | UserData | Move shared template-name keys to per-item keys |
+
+**`MIGRATIONS`** registry maps `from_version -> callable(userdata, menu_config) -> UserData`. `migrate_userdata` walks the chain; missing entries advance the cursor with no data change.
 
 ***
 
@@ -79,3 +83,4 @@ Merge default menu with user overrides.
 | `properties` | dict | Override properties |
 | `position` | int | Desired position (optional) |
 | `is_new` | bool | True if user-added |
+| `submenu` | str | Submenu template reference (set by picker auto-attach) |
