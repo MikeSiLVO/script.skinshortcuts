@@ -95,6 +95,8 @@ class IncludesBuilder:
                 continue
             if "/" in menu.name:
                 continue
+            if menu.name.startswith("custom-"):
+                continue
             include = self._build_menu_include(menu)
             root.append(include)
 
