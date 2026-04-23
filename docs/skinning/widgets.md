@@ -214,11 +214,12 @@ Add dynamic content from system sources:
 
 ### Nodes Source
 
-The `nodes` source provides access to library navigation nodes (the top-level library categories like Movies, TV Shows, Music Videos, etc.):
+The `nodes` source provides access to library navigation nodes. The picker shows the top-level categories (Movies, TV Shows, Music Videos, etc.) and lets the user drill into any sub-node:
 
 ```xml
 <content source="nodes" target="videos" />
 <content source="nodes" target="music" />
+<content source="nodes" target="library" />
 ```
 
 #### Nodes Target Values
@@ -227,6 +228,7 @@ The `nodes` source provides access to library navigation nodes (the top-level li
 |--------|-------------|
 | `videos` | Video library nodes (Movies, TV Shows, Music Videos, etc.) |
 | `music` | Music library nodes (Artists, Albums, Songs, etc.) |
+| `library` | Two browsable entries (Videos and Music) at the top; user drills into either |
 
 ---
 

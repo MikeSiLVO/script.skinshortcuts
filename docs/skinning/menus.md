@@ -576,7 +576,7 @@ Valid `target` values depend on the `source` attribute. Values are based on Kodi
 | `addons` | `video`, `videos`, `audio`, `music`, `image`, `pictures`, `executable`, `programs`, `game`, `games` | JSON-RPC values (`video`, `audio`, `image`, `executable`, `game`) and window names (`videos`, `music`, `pictures`, `programs`, `games`) both accepted |
 | `sources` | `video`, `music`, `pictures`, `files`, `programs` | Matches Kodi's Files.Media values |
 | `playlists` | `video`, `music` | Matches playlist directory names |
-| `nodes` | `video`, `music` | Library node types |
+| `nodes` | `video`, `music`, `library` | Library node types; `library` shows Videos and Music as two browsable entries to drill into |
 | `pvr` | `tv`, `radio` | PVR channel types |
 | `library` | See [Library Target Values](widgets.md#library-target-values) | Genre, year, studio, tag, actor queries |
 | `favourites` | (none) | No target needed |

@@ -549,7 +549,9 @@ class ContentProvider:
         """Resolve library nodes (navigation structure from XML files).
 
         Args:
-            target: Node type - "video" or "music"
+            target: Library type (``video``, ``music``, ``video_flat``).
+                    ``library`` / ``all`` / empty returns video and music
+                    as two browsable parent entries.
 
         Returns:
             List of shortcuts for top-level library navigation nodes.
@@ -559,85 +561,79 @@ class ContentProvider:
             return self._cache[cache_key]
 
         target_lower = target.lower()
-        if target_lower not in ("video", "videos", "music"):
-            return []
-
-        # Normalize for Kodi library path (uses "video" not "videos")
-        lib_type = "video" if target_lower in ("video", "videos") else "music"
-        base_path = f"special://xbmc/system/library/{lib_type}/"
-        window = "videos" if lib_type == "video" else "music"
-
-        shortcuts = []
-        try:
-            dirs, _files = xbmcvfs.listdir(base_path)
-        except Exception:
+        if target_lower in ("library", "all", ""):
+            shortcuts = [
+                ResolvedShortcut(
+                    label=xbmc.getLocalizedString(3),  # "Videos"
+                    action="ActivateWindow(videos,library://video/,return)",
+                    icon="DefaultVideo.png",
+                    browse_path="library://video/",
+                    browse_window="videos",
+                ),
+                ResolvedShortcut(
+                    label=xbmc.getLocalizedString(2),  # "Music"
+                    action="ActivateWindow(music,library://music/,return)",
+                    icon="DefaultMusicAlbums.png",
+                    browse_path="library://music/",
+                    browse_window="music",
+                ),
+            ]
             self._cache[cache_key] = shortcuts
             return shortcuts
 
-        for dirname in sorted(dirs):
-            node_path = f"{base_path}{dirname}/"
-            index_file = f"{node_path}index.xml"
-
-            label, icon, order = self._parse_library_node(index_file)
-            if label:
-                shortcuts.append(
-                    ResolvedShortcut(
-                        label=label,
-                        action=f"ActivateWindow({window},library://{target_lower}/{dirname}/,return)",
-                        icon=icon or f"Default{target_lower.capitalize()}.png",
-                        label2=str(order),
-                    )
-                )
-
-        shortcuts.sort(key=lambda s: int(s.label2) if s.label2.isdigit() else 999)
-        for shortcut in shortcuts:
-            shortcut.label2 = ""
-
+        lib_type = "video" if target_lower == "videos" else target_lower
+        shortcuts = self._collect_nodes_for_type(lib_type)
         self._cache[cache_key] = shortcuts
         return shortcuts
 
-    def _parse_library_node(self, index_file: str) -> tuple[str, str, int]:
-        """Parse a library node index.xml file.
+    def _collect_nodes_for_type(self, lib_type: str) -> list[ResolvedShortcut]:
+        """Collect top-level library nodes for a single library type.
 
-        Returns:
-            Tuple of (label, icon, order). Label is empty string on error.
+        Uses Kodi's Files.GetDirectory so user-customized nodes (via addons like
+        plugin.library.node.editor) are merged with system defaults, and hidden
+        nodes are excluded.
         """
-        try:
-            f = xbmcvfs.File(index_file)
-            try:
-                content = f.read()
-            finally:
-                f.close()
+        is_music = lib_type == "music"
+        media = "music" if is_music else "video"
+        window = "music" if is_music else "videos"
+        directory = f"library://{lib_type}/"
 
-            if not content:
-                return "", "", 999
+        result = self._jsonrpc(
+            "Files.GetDirectory",
+            {
+                "directory": directory,
+                "media": media,
+                "properties": ["title", "thumbnail", "art"],
+            },
+        )
+        if not result or "files" not in result:
+            return []
 
-            import xml.etree.ElementTree as ET
+        shortcuts: list[ResolvedShortcut] = []
+        for entry in result["files"]:
+            path = entry.get("file", "")
+            label = entry.get("label") or entry.get("title") or ""
+            if not label or not path:
+                continue
+            icon = self._normalize_image(entry.get("art", {}).get("icon", ""))
+            thumb = entry.get("thumbnail", "")
+            shortcuts.append(
+                ResolvedShortcut(
+                    label=label,
+                    action=f"ActivateWindow({window},{path},return)",
+                    icon=icon or thumb or "DefaultFolder.png",
+                    browse_path=path,
+                    browse_window=window,
+                )
+            )
+        return shortcuts
 
-            root = ET.fromstring(content)
-            if root.tag != "node":
-                return "", "", 999
-
-            label = ""
-            label_elem = root.find("label")
-            if label_elem is not None and label_elem.text:
-                label = label_elem.text
-                if not label.startswith("$"):
-                    label = f"$LOCALIZE[{label}]" if label.isdigit() else label
-
-            icon = ""
-            icon_elem = root.find("icon")
-            if icon_elem is not None and icon_elem.text:
-                icon = icon_elem.text
-
-            order = 999
-            order_attr = root.get("order")
-            if order_attr and order_attr.isdigit():
-                order = int(order_attr)
-
-            return label, icon, order
-        except Exception:
-            return "", "", 999
+    @staticmethod
+    def _normalize_image(path: str) -> str:
+        """Strip Kodi's image:// wrapper from icon paths so skins can use them directly."""
+        if path.startswith("image://") and path.endswith("/"):
+            return path[len("image://"):-1]
+        return path
 
     def _get_video_genres(self, media_type: str) -> list[ResolvedShortcut]:
         """Get video genres (movies or TV shows)."""
