@@ -24,6 +24,48 @@ log = get_logger("ContentProvider")
 PLAYLIST_EXTENSIONS = (".xsp", ".m3u", ".m3u8", ".pls")
 
 
+# Target aliases: map skinner-facing target values to the canonical form each
+# JSON-RPC endpoint expects.
+
+# Files.Media accepts: video, music, pictures, files, programs.
+_SOURCES_TARGET_ALIASES: dict[str, str] = {
+    "video": "video",
+    "videos": "video",
+    "music": "music",
+    "pictures": "pictures",
+    "picture": "pictures",
+    "files": "files",
+    "file": "files",
+    "programs": "programs",
+    "program": "programs",
+}
+
+# Addons.GetAddons content accepts: video, audio, image, executable, game.
+# Skinner-facing plural/window-name forms map to these.
+_ADDONS_TARGET_ALIASES: dict[str, str] = {
+    "video": "video",
+    "videos": "video",
+    "audio": "audio",
+    "music": "audio",
+    "image": "image",
+    "images": "image",
+    "picture": "image",
+    "pictures": "image",
+    "executable": "executable",
+    "program": "executable",
+    "programs": "executable",
+    "game": "game",
+    "games": "game",
+}
+
+# Smart-playlist directory scan filter: video or music only.
+_PLAYLIST_TARGET_ALIASES: dict[str, str] = {
+    "video": "video",
+    "videos": "video",
+    "music": "music",
+}
+
+
 @dataclass
 class ResolvedShortcut:
     """A shortcut resolved from dynamic content."""
@@ -119,14 +161,13 @@ class ContentProvider:
         if cache_key in self._cache:
             return self._cache[cache_key]
 
-        media_map = {
-            "video": "video",
-            "music": "music",
-            "pictures": "pictures",
-            "files": "files",
-            "programs": "programs",
-        }
-        media = media_map.get(target, "video")
+        media = _SOURCES_TARGET_ALIASES.get(target)
+        if media is None:
+            log.warning(
+                f"sources: unknown target '{target}'. Valid: "
+                "video/videos, music, pictures/picture, files/file, programs/program"
+            )
+            return []
 
         result = self._jsonrpc("Files.GetSources", {"media": media})
         if not result or "sources" not in result:
@@ -139,7 +180,7 @@ class ContentProvider:
             "files": "files",
             "programs": "programs",
         }
-        window = window_map.get(media, "videos")
+        window = window_map[media]
 
         shortcuts = []
         for source in result["sources"]:
@@ -151,6 +192,8 @@ class ContentProvider:
                         label=label,
                         action=f"ActivateWindow({window},{path},return)",
                         icon="DefaultFolder.png",
+                        browse_path=path,
+                        browse_window=window,
                     )
                 )
 
@@ -182,26 +225,32 @@ class ContentProvider:
         if cache_key in self._cache:
             return self._cache[cache_key]
 
+        if target:
+            normalized = _PLAYLIST_TARGET_ALIASES.get(target)
+            if normalized is None:
+                log.warning(
+                    f"playlists: unknown target '{target}'. Valid: video/videos, music"
+                )
+                return []
+        else:
+            normalized = ""
+
         if custom_path:
             paths = [custom_path]
         else:
             base = self._get_playlists_base_path()
-            if target == "video":
+            if normalized == "video":
                 paths = [f"{base}video/", f"{base}mixed/"]
-            elif target == "music":
+            elif normalized == "music":
                 paths = [f"{base}music/", f"{base}mixed/"]
             else:
                 paths = [f"{base}video/", f"{base}music/", f"{base}mixed/"]
 
-        window_map = {
-            "video": "videos",
-            "music": "music",
-        }
-        default_window = window_map.get(target, "videos")
+        default_window = "music" if normalized == "music" else "videos"
 
         shortcuts = []
         for path in paths:
-            shortcuts.extend(self._scan_playlist_directory(path, default_window, target))
+            shortcuts.extend(self._scan_playlist_directory(path, default_window, normalized))
 
         self._cache[cache_key] = shortcuts
         return shortcuts
@@ -209,10 +258,14 @@ class ContentProvider:
     def _scan_playlist_directory(
         self, directory: str, default_window: str, target: str = ""
     ) -> list[ResolvedShortcut]:
-        """Scan a directory for playlist files and convert to shortcuts."""
+        """Scan a directory for playlist files and convert to shortcuts.
+
+        `target` is the normalized form ("video", "music", or "") from
+        `_resolve_playlists`; unknown values are already rejected upstream.
+        """
         shortcuts = []
-        filter_video = target in ("video", "videos")
-        filter_music = target in ("audio", "music")
+        filter_video = target == "video"
+        filter_music = target == "music"
 
         video_types = ("movies", "tvshows", "episodes", "musicvideos")
         music_types = ("songs", "albums", "artists")
@@ -287,19 +340,13 @@ class ContentProvider:
         if cache_key in self._cache:
             return self._cache[cache_key]
 
-        content_map = {
-            "video": "video",
-            "videos": "video",
-            "audio": "audio",
-            "music": "audio",
-            "image": "image",
-            "pictures": "image",
-            "executable": "executable",
-            "programs": "executable",
-            "game": "game",
-            "games": "game",
-        }
-        content = content_map.get(target, "video")
+        content = _ADDONS_TARGET_ALIASES.get(target)
+        if content is None:
+            log.warning(
+                f"addons: unknown target '{target}'. Valid: "
+                "video/videos, audio/music, image/pictures, executable/programs, game/games"
+            )
+            return []
 
         window_map = {
             "video": "videos",

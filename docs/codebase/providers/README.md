@@ -47,9 +47,9 @@ Lists directory contents for browse-into functionality.
 
 | Source | Target | Method |
 |--------|--------|--------|
-| `sources` | video, music, pictures | Files.GetSources |
-| `playlists` | video, audio | Filesystem scan |
-| `addons` | video, audio, image, program | Addons.GetAddons |
+| `sources` | video, music, pictures, files, programs | Files.GetSources |
+| `playlists` | video, music | Filesystem scan |
+| `addons` | video, audio, image, executable, game | Addons.GetAddons |
 | `favourites` | - | Favourites.GetFavourites |
 | `pvr` | tv, radio | PVR.GetChannels |
 | `commands` | - | Static list |
