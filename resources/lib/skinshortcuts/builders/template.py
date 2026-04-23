@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 from ..conditions import evaluate_condition
 from ..constants import extract_path_from_action
 from ..expressions import process_if_expressions, process_math_expressions
-from ..loaders.base import apply_suffix_to_from, apply_suffix_transform
+from ..loaders.base import NO_SUFFIX_PROPERTIES, apply_suffix_to_from, apply_suffix_transform
 from ..log import get_logger
 from ..models.template import BuildMode, TemplateProperty
 
@@ -674,9 +674,91 @@ class TemplateBuilder:
         var_elem.set("name", output_name)
         if "output" in var_elem.attrib:
             del var_elem.attrib["output"]
+        self._expand_iterate_values(var_elem, item, context)
         self._substitute_variable_content(var_elem, context, item)
 
         return var_elem
+
+    def _expand_iterate_values(
+        self,
+        var_elem: ET.Element,
+        item: MenuItem,
+        context: dict[str, str],
+    ) -> None:
+        """Expand <value iterate="..." as="..."> into N <value> siblings.
+
+        Numeric iterate yields slots 1..N. Identifier iterate scans item.properties
+        for {id} and {id}.2..{id}.99, emitting one <value> per filled slot.
+        Loop-local $PROPERTY[{as}Index] and $PROPERTY[{as}Suffix] resolve literally;
+        other $PROPERTY[X] refs auto-gain the iteration's suffix.
+        """
+        new_children: list[ET.Element] = []
+        for child in list(var_elem):
+            if child.tag != "value" or "iterate" not in child.attrib:
+                new_children.append(child)
+                continue
+
+            iterate_expr = child.attrib.pop("iterate")
+            as_name = child.attrib.pop("as", "")
+            if not as_name:
+                log.warning(
+                    f"<value iterate='{iterate_expr}'> is missing required 'as' "
+                    "attribute; emitting value without iteration"
+                )
+                new_children.append(child)
+                continue
+
+            resolved = self._substitute_property_refs(iterate_expr, item, context).strip()
+            suffixes = self._resolve_iterate_suffixes(resolved, item)
+
+            for idx, suffix in enumerate(suffixes, start=1):
+                expanded = copy.deepcopy(child)
+                if expanded.text:
+                    expanded.text = self._apply_iterate_to_text(expanded.text, suffix, idx, as_name)
+                if "condition" in expanded.attrib:
+                    expanded.attrib["condition"] = self._apply_iterate_to_text(
+                        expanded.attrib["condition"], suffix, idx, as_name
+                    )
+                new_children.append(expanded)
+
+        for old in list(var_elem):
+            var_elem.remove(old)
+        for new_child in new_children:
+            var_elem.append(new_child)
+
+    @staticmethod
+    def _resolve_iterate_suffixes(expr: str, item: MenuItem) -> list[str]:
+        """Return suffix list for an iterate expression."""
+        if expr.isdigit():
+            n = int(expr)
+            return [""] + [f".{i}" for i in range(2, n + 1)]
+        suffixes: list[str] = []
+        if expr in item.properties:
+            suffixes.append("")
+        for i in range(2, 100):
+            if f"{expr}.{i}" in item.properties:
+                suffixes.append(f".{i}")
+        return suffixes
+
+    @staticmethod
+    def _apply_iterate_to_text(text: str, suffix: str, index: int, as_name: str) -> str:
+        """Resolve loop-locals and auto-suffix other $PROPERTY refs."""
+        if not text:
+            return text
+        index_key = f"{as_name}Index"
+        suffix_key = f"{as_name}Suffix"
+
+        def replace(match: re.Match) -> str:
+            name = match.group(1)
+            if name == index_key:
+                return str(index)
+            if name == suffix_key:
+                return suffix
+            if name in NO_SUFFIX_PROPERTIES or not suffix:
+                return match.group(0)
+            return f"$PROPERTY[{name}{suffix}]"
+
+        return _PROPERTY_PATTERN.sub(replace, text)
 
     def _add_variable(
         self,

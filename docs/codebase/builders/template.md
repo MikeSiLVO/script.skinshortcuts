@@ -110,6 +110,9 @@ Handles `<template items="name">` elements that iterate over submenu items.
 | `_substitute_text` | Substitute all dynamic expressions in text |
 | `_build_variable` | Build Kodi `<variable>` element |
 | `_build_variable_group` | Build variables from variableGroup reference |
+| `_expand_iterate_values` | Expand `<value iterate=... as=...>` into N `<value>` siblings before substitution |
+| `_resolve_iterate_suffixes` | Return suffix list for an iterate expression (numeric or family scan) |
+| `_apply_iterate_to_text` | Rewrite loop-local and auto-suffix `$PROPERTY[]` refs for one iteration |
 | `_handle_skinshortcuts_include` | Process include expansions |
 | `_handle_skinshortcuts_items` | Process items iteration |
 | `_handle_skinshortcuts_onclick` | Process onclick expansions |

@@ -1135,6 +1135,55 @@ Reference in template:
 | `condition` | Build only when condition matches item |
 | `output` | Output name pattern (supports `$PROPERTY[]`) |
 
+### Value Attributes
+
+| Attribute | Description |
+|-----------|-------------|
+| `condition` | Kodi condition; emitted as-is on the output `<value>` |
+| `iterate` | Expand this `<value>` into multiple entries (see below) |
+| `as` | Loop variable name; required when `iterate` is used |
+
+### Iterating `<value>` Entries
+
+A single `<value iterate="..." as="...">` expands into multiple `<value>` entries at build time. Useful when a variable needs one entry per numbered slot.
+
+`iterate` accepts:
+- A number (`iterate="9"`) - emits 9 entries, one per slot from 1 to 9.
+- A `$PROPERTY[]` reference resolving to a number - same as above with a dynamic count.
+- A property base name (`iterate="widgetPath"`) - scans the item for `widgetPath`, `widgetPath.2`, `widgetPath.3`, ... and emits one entry per filled slot. Gaps are preserved (e.g., if `.2` is unset but `.3` is set, only slots 1 and 3 emit).
+
+`as` names the loop variable. Inside the value text and its `condition`, two placeholders resolve per iteration:
+- `$PROPERTY[{as}Index]` - 1-based index (`1`, `2`, `3`, ...)
+- `$PROPERTY[{as}Suffix]` - the slot suffix (`""`, `".2"`, `".3"`, ...)
+
+All other `$PROPERTY[name]` references inside the value automatically gain the slot suffix. Built-in placeholders (`id`, `name`, `index`, `default`, `menu`, `idprefix`) stay unsuffixed.
+
+Example - one value per filled widget slot:
+
+```xml
+<variable name="WidgetPath" output="Widget-$PROPERTY[id]-Path">
+  <value iterate="widgetPath" as="slot"
+         condition="Container($PROPERTY[id]).HasFocus($PROPERTY[slotIndex])">
+    $PROPERTY[widgetPath]
+  </value>
+</variable>
+```
+
+For an item with `widgetPath`, `widgetPath.3` set, this emits:
+
+```xml
+<variable name="Widget-...-Path">
+  <value condition="Container(...).HasFocus(1)">[widgetPath value]</value>
+  <value condition="Container(...).HasFocus(2)">[widgetPath.3 value]</value>
+</variable>
+```
+
+Example - fixed count of slots:
+
+```xml
+<value iterate="9" as="num">$PROPERTY[widgetName]$PROPERTY[numSuffix]</value>
+```
+
 ---
 
 ## Expressions
