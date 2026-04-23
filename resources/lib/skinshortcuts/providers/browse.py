@@ -7,6 +7,7 @@ browsable (directory) vs selectable (file) items.
 from __future__ import annotations
 
 import json
+import urllib.parse
 from dataclasses import dataclass
 
 import xbmc
@@ -30,22 +31,32 @@ class BrowseItem:
 class BrowseProvider:
     """Lists directory contents via JSON-RPC."""
 
-    def list_directory(self, path: str) -> list[BrowseItem] | None:
+    def list_directory(
+        self, path: str, include_art: bool = False
+    ) -> list[BrowseItem] | None:
         """List contents of a directory.
 
         Args:
             path: The path to list (plugin://, videodb://, library://, etc.)
+            include_art: Ask Kodi for per-item `art` so BrowseItem.icon reflects
+                each item's specific icon (e.g., DefaultMusicGenres.png). Leave
+                False for large lists or plain-text display; fetching art for
+                tens of thousands of library items is prohibitively slow.
 
         Returns:
             List of BrowseItem objects, empty list for empty directories,
             or None if path is not listable (error).
         """
+        properties = ["file", "mimetype"]
+        if include_art:
+            properties.append("art")
+
         result = self._jsonrpc(
             "Files.GetDirectory",
             {
                 "directory": path,
                 "media": "files",
-                "properties": ["file", "mimetype"],
+                "properties": properties,
             },
         )
 
@@ -65,7 +76,19 @@ class BrowseProvider:
             if not file_path:
                 continue
 
-            icon = self._get_icon_for_item(file_info, filetype)
+            icon = ""
+            if include_art:
+                art = file_info.get("art", {})
+                # Prefer per-item imagery (poster/thumb) over the category default
+                # that Kodi puts in art.icon (e.g., DefaultVideo.png for movies).
+                icon = self._normalize_image(
+                    art.get("poster", "")
+                    or art.get("thumb", "")
+                    or file_info.get("thumbnail", "")
+                    or art.get("icon", "")
+                )
+            if not icon:
+                icon = self._get_icon_for_item(file_info, filetype)
 
             items.append(
                 BrowseItem(
@@ -78,6 +101,20 @@ class BrowseProvider:
             )
 
         return items
+
+    @staticmethod
+    def _normalize_image(path: str) -> str:
+        """Unwrap Kodi's image:// form to a path setArt can render.
+
+        Built-in textures (DefaultX.png) and external URLs both come wrapped;
+        the inner content is URL-encoded. setArt expects the decoded form.
+        """
+        if not path.startswith("image://"):
+            return path
+        inner = path[len("image://") :]
+        if inner.endswith("/"):
+            inner = inner[:-1]
+        return urllib.parse.unquote(inner)
 
     def is_browsable(self, path: str) -> bool:
         """Check if a path can be browsed into.

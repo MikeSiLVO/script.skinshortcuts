@@ -26,6 +26,23 @@ def _check_visible(visible: str) -> bool:
     return xbmc.getCondVisibility(visible)
 
 
+_HEAVY_PATH_SUFFIXES = ("/songs/", "/episodes/", "/discs/")
+
+
+def _is_heavy_library_path(path: str) -> bool:
+    """Detect Kodi library paths that dump tens of thousands of media rows.
+
+    These paths are unbearably slow when requesting per-item art, and the
+    resulting dialog is too dense to render cleanly. Used to skip art fetch
+    and switch to a plain list.
+    """
+    if path.startswith("library://") and (
+        path.endswith(".xml/") or path.endswith(".xml")
+    ):
+        return True
+    return path.endswith(_HEAVY_PATH_SUFFIXES)
+
+
 @runtime_checkable
 class PickerItem(Protocol):
     """Protocol for leaf items in picker hierarchy (Shortcut, Widget, Background)."""
@@ -396,9 +413,12 @@ class PickersMixin:
         }
         return type_to_target.get(widget_type, default)
 
-    def _is_browsable_widget(self, widget: Widget) -> bool:
-        """Check if a widget is explicitly opted-in for browse-into via `browse="true"`."""
-        return bool(widget.browse and widget.path and self._is_path_browsable(widget.path))
+    def _is_browsable(self, obj) -> bool:
+        """Object is opted in for browse-into via `browse` + `path`.
+
+        Works for both Widget (`browse` is bool) and Shortcut (`browse` is window name).
+        """
+        return bool(obj.browse and obj.path)
 
     def _browse_widget_path(self, widget: Widget) -> Widget | None:
         """Browse into a widget's path and let user select location.
@@ -568,7 +588,7 @@ class PickersMixin:
                 elif (
                     isinstance(vis_item, Shortcut)
                     and not vis_item.name.startswith("content-placeholder-")
-                    and self._is_browsable_shortcut(vis_item)
+                    and self._is_browsable(vis_item)
                 ):
                     label = f"{label} >"
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
@@ -614,7 +634,7 @@ class PickersMixin:
                 is_browsable_shortcut = (
                     isinstance(selected_item, Shortcut)
                     and not selected_item.name.startswith("content-placeholder-")
-                    and self._is_browsable_shortcut(selected_item)
+                    and self._is_browsable(selected_item)
                 )
                 if is_browsable_shortcut:
                     browse_info = self._get_browse_info_from_shortcut(selected_item)
@@ -629,7 +649,7 @@ class PickersMixin:
                             return result
                         continue
 
-                if isinstance(selected_item, Widget) and self._is_browsable_widget(selected_item):
+                if isinstance(selected_item, Widget) and self._is_browsable(selected_item):
                     result = self._browse_widget_path(selected_item)
                     if result is not None:
                         return result
@@ -693,7 +713,7 @@ class PickersMixin:
                 elif (
                     isinstance(vis_item, Shortcut)
                     and not vis_item.name.startswith("content-placeholder-")
-                    and self._is_browsable_shortcut(vis_item)
+                    and self._is_browsable(vis_item)
                 ):
                     label = f"{label} >"
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
@@ -724,7 +744,7 @@ class PickersMixin:
                 is_browsable_shortcut = (
                     isinstance(selected_item, Shortcut)
                     and not selected_item.name.startswith("content-placeholder-")
-                    and self._is_browsable_shortcut(selected_item)
+                    and self._is_browsable(selected_item)
                 )
                 if is_browsable_shortcut:
                     browse_info = self._get_browse_info_from_shortcut(selected_item)
@@ -739,7 +759,7 @@ class PickersMixin:
                             return result
                         continue
 
-                if isinstance(selected_item, Widget) and self._is_browsable_widget(selected_item):
+                if isinstance(selected_item, Widget) and self._is_browsable(selected_item):
                     result = self._browse_widget_path(selected_item)
                     if result is not None:
                         return result
@@ -869,9 +889,12 @@ class PickersMixin:
         browse_provider = get_browse_provider()
         current_path = path
         current_label = title
+        history: list[tuple[str, str]] = []
 
         while True:
-            items = browse_provider.list_directory(current_path)
+            detail_view = not history and not _is_heavy_library_path(current_path)
+
+            items = browse_provider.list_directory(current_path, include_art=detail_view)
             if items is None:
                 xbmcgui.Dialog().notification(
                     "Cannot Browse", "Unable to list directory contents"
@@ -880,23 +903,32 @@ class PickersMixin:
 
             dialog_title = current_label or "Browse"
 
-            listitems = []
-
-            use_location_item = xbmcgui.ListItem(LANGUAGE(32058))
-            use_location_item.setArt({"icon": "DefaultFolder.png"})
-            listitems.append(use_location_item)
-
-            for item in items:
-                label = item.label
-                if item.is_directory:
-                    label = f"{label} >"
-                listitem = xbmcgui.ListItem(label)
-                listitem.setArt({"icon": item.icon})
-                listitems.append(listitem)
-
-            selected = xbmcgui.Dialog().select(dialog_title, listitems, useDetails=True)
+            if detail_view:
+                listitems = []
+                use_location_item = xbmcgui.ListItem(LANGUAGE(32058))
+                use_location_item.setArt({"icon": "DefaultFolder.png"})
+                listitems.append(use_location_item)
+                for item in items:
+                    label = item.label
+                    if item.is_directory:
+                        label = f"{label} >"
+                    listitem = xbmcgui.ListItem(label)
+                    listitem.setArt({"icon": item.icon})
+                    listitems.append(listitem)
+                selected = xbmcgui.Dialog().select(dialog_title, listitems, useDetails=True)
+            else:
+                listitems = [LANGUAGE(32058)]
+                for item in items:
+                    label = item.label
+                    if item.is_directory:
+                        label = f"{label} >"
+                    listitems.append(label)
+                selected = xbmcgui.Dialog().select(dialog_title, listitems)
 
             if selected == -1:
+                if history:
+                    current_path, current_label = history.pop()
+                    continue
                 return None
 
             if selected == 0:
@@ -905,6 +937,7 @@ class PickersMixin:
             selected_item = items[selected - 1]
 
             if selected_item.is_directory:
+                history.append((current_path, current_label))
                 current_path = selected_item.path
                 current_label = selected_item.label
                 continue
@@ -971,31 +1004,6 @@ class PickersMixin:
                 filtered.append(item)
         return filtered
 
-    def _is_browsable_shortcut(self, shortcut: Shortcut) -> bool:
-        """Check if a shortcut is explicitly opted-in for browse-into via `browse` + `<path>`."""
-        return bool(
-            shortcut.browse and shortcut.path and self._is_path_browsable(shortcut.path)
-        )
-
-    def _is_path_browsable(self, path: str) -> bool:
-        """Check if a path can be browsed into."""
-        if not path:
-            return False
-
-        browsable_prefixes = (
-            "plugin://",
-            "addons://",
-            "videodb://",
-            "musicdb://",
-            "library://",
-            "sources://",
-            "pvr://",
-            "special://",
-            "upnp://",
-        )
-
-        return path.lower().startswith(browsable_prefixes)
-
     def _get_browse_placeholder_for_content(self, content: Content) -> Shortcut | None:
         """Create a browse placeholder shortcut for Content that resolved to empty.
 
@@ -1039,7 +1047,7 @@ class PickersMixin:
 
         Returns (path, window) if the shortcut opted in via `browse` + `<path>`, else None.
         """
-        if not (shortcut.browse and shortcut.path and self._is_path_browsable(shortcut.path)):
+        if not self._is_browsable(shortcut):
             return None
 
         from ..constants import WINDOW_MAP
