@@ -1137,11 +1137,7 @@ class TemplateBuilder:
                         break
 
     def _apply_suffix_to_condition(self, condition: str, suffix: str) -> str:
-        """Apply suffix to property names in a condition.
-
-        Preserves content within {NOSUFFIX:...} markers (from nosuffix expressions)
-        without applying suffix transformation.
-        """
+        """Apply suffix to property names in a condition."""
         nosuffix_pattern = re.compile(r"\{NOSUFFIX:([^}]+)\}")
         preserved: list[str] = []
 
@@ -1151,18 +1147,29 @@ class TemplateBuilder:
 
         condition = nosuffix_pattern.sub(extract_nosuffix, condition)
 
+        separators = {"=", "~", "|", "+", "[", "]", "!"}
+        reserved = ("index", "name", "menu", "id", "idprefix", "suffix")
+
         result = []
+        # After = or ~ we are consuming a value list; `|` continues the list,
+        # but + [ ] ! start a new condition term with a fresh property name.
+        in_value = False
         parts = re.split(r"([=~|+\[\]!])", condition)
-        for i, part in enumerate(parts):
+        for part in parts:
             part = part.strip()
             if not part:
                 continue
-            if (
-                i + 1 < len(parts)
-                and parts[i + 1] in ("=", "~")
-                and part not in ("index", "name", "menu", "id", "idprefix", "suffix")
-                and not part.startswith("__NOSUFFIX_")
-            ):
+            if part in separators:
+                if part in ("=", "~"):
+                    in_value = True
+                elif part in ("+", "[", "]", "!"):
+                    in_value = False
+                result.append(part)
+                continue
+            if part in reserved or part.startswith("__NOSUFFIX_"):
+                result.append(part)
+                continue
+            if not in_value:
                 part = f"{part}{suffix}"
             result.append(part)
 
