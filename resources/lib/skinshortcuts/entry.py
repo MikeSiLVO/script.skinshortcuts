@@ -435,22 +435,35 @@ def main() -> None:
     elif action == "reset":
         menu = args.get("menu", "")
         if menu:
+            import xbmcgui
+            include_subs = args.get("submenus", "").lower() == "true"
+            prompt_msg = (
+                f"Reset '{menu}' and its submenus to skin defaults?"
+                if include_subs
+                else f"Reset '{menu}' to skin defaults?"
+            )
+            if xbmcgui.Dialog().yesno(xbmc.getLocalizedString(186), prompt_msg):
+                from .manager import MenuManager
+                shortcuts_path = args.get("path") or get_skin_path()
+                manager = MenuManager(shortcuts_path)
+                if include_subs:
+                    manager.reset_menu_tree(menu)
+                else:
+                    manager.reset_menu(menu)
+                manager.save()
+                build_includes(shortcuts_path, force=True)
+    elif action == "resetsubmenus":
+        import xbmcgui
+        if xbmcgui.Dialog().yesno(
+            xbmc.getLocalizedString(186),
+            "Reset all submenus to skin defaults?",
+        ):
             from .manager import MenuManager
             shortcuts_path = args.get("path") or get_skin_path()
             manager = MenuManager(shortcuts_path)
-            if args.get("submenus", "").lower() == "true":
-                manager.reset_menu_tree(menu)
-            else:
-                manager.reset_menu(menu)
+            manager.reset_all_submenus()
             manager.save()
             build_includes(shortcuts_path, force=True)
-    elif action == "resetsubmenus":
-        from .manager import MenuManager
-        shortcuts_path = args.get("path") or get_skin_path()
-        manager = MenuManager(shortcuts_path)
-        manager.reset_all_submenus()
-        manager.save()
-        build_includes(shortcuts_path, force=True)
     elif action == "clear":
         clear_custom_widget(
             menu=args.get("menu", ""),

@@ -372,7 +372,7 @@ Prompts for confirmation, resets all view selections to defaults but preserves m
 <onclick>RunScript(script.skinshortcuts,type=reset,menu=mainmenu)</onclick>
 ```
 
-Resets a specific menu to skin defaults. Does not prompt for confirmation.
+Prompts for confirmation, then resets a specific menu to skin defaults.
 
 | Parameter | Description |
 |-----------|-------------|
@@ -387,7 +387,7 @@ Resets a specific menu to skin defaults. Does not prompt for confirmation.
 <onclick>RunScript(script.skinshortcuts,type=reset,menu=mainmenu,submenus=true)</onclick>
 ```
 
-Resets a menu and all submenus referenced by item `submenu` properties (recursive).
+Prompts for confirmation, then resets a menu and all submenus referenced by item `submenu` properties (recursive).
 
 ### Reset All Submenus
 
@@ -395,7 +395,7 @@ Resets a menu and all submenus referenced by item `submenu` properties (recursiv
 <onclick>RunScript(script.skinshortcuts,type=resetsubmenus)</onclick>
 ```
 
-Resets all submenus (menus defined with `<submenu>` tag) without affecting top-level menus.
+Prompts for confirmation, then resets all submenus (menus defined with `<submenu>` tag) without affecting top-level menus.
 
 ### Clear Custom Widget
 
