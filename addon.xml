@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta28" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.0~beta29" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
+3.0.0~beta29
+  - Add per-item submenus: each menu item has its own submenu storage with auto-link by shortcut name
+  - Add nodes content source for library navigation hierarchy
+  - Add per-item template variable iteration via value iterate=... as=...
+  - Allow content at widgets.xml root
+  - shortcut accepts visible child element to set picked item visibility
+  - Sources content resolves as browseable in picker
+  - Normalize content target aliases (video/videos, programs/program, etc.)
+  - Browse dialog: back navigation, per-item art, heavy-path detection
+  - Suffix bare property names in template conditions
+  - Prompt before single-menu/submenu resets
+  - Clear customWidget when changing widget slot
+
 3.0.0~beta28
   - BREAKING: Picker browse is opt-in. Add browse="..." on shortcut or browse="true" on widget with a path element
   - Add value attribute to toggle properties (multiple buttons can share one property)
