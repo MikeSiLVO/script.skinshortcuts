@@ -638,7 +638,7 @@ A shortcut is only browsable in the picker when it explicitly opts in via the `b
 </shortcut>
 ```
 
-Shortcuts that specify only `<action>` (even an `ActivateWindow` to a browsable path) are fire-and-forget, so no browse-into is offered. Dynamic `<content source="addons">` resolves plugin-source addons as browsable automatically; `RunAddon` executables stay single-click.
+Shortcuts that specify only `<action>` (even an `ActivateWindow` to a browsable path) are fire-and-forget, so no browse-into is offered. Dynamic `<content source="addons">` resolves plugin-source addons as browsable automatically (`RunAddon` executables stay single-click), and `<content source="sources">` resolves user-defined media sources as browsable.
 
 > **See also:** [Conditions](conditions.md) for `condition` and `visible` attribute syntax
 

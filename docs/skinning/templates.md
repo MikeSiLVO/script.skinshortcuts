@@ -148,7 +148,7 @@ A single template can generate multiple outputs with different ID prefixes and s
 When `suffix=".2"` is specified on an output:
 
 1. **Property reads** are transformed: `from="widgetPath"` → `from="widgetPath.2"`
-2. **Conditions** are transformed: `condition="widgetType=movies"` → `condition="widgetType.2=movies"`
+2. **Conditions** are transformed: property names get suffixed whether they appear with a value (`condition="widgetType=movies"` → `condition="widgetType.2=movies"`) or as bare presence checks (`condition="widgetPath"` → `condition="widgetPath.2"`)
 3. **The `suffix` built-in property** is set and available in conditions
 
 ### The `suffix` Built-in Property
