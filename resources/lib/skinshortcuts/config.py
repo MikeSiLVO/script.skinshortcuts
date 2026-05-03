@@ -139,6 +139,7 @@ class SkinConfig:
                 instance_override = userdata.menus.get(key)
                 instance = merge_menu(template, instance_override)
                 instance.name = key
+                instance.template_origin = template_name
                 _apply_action_overrides(instance, menu_config.action_overrides)
                 menus.append(instance)
 

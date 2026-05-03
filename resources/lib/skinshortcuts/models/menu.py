@@ -325,6 +325,7 @@ class Menu:
     template_only: str = ""  # "submenu"=skip combined submenu include
     build: str = "true"
     action: str = ""
+    template_origin: str = ""  # For per-item submenu instances: the template they were seeded from
 
     def get_item(self, item_name: str) -> MenuItem | None:
         """Get item by name."""

@@ -88,17 +88,22 @@ class IncludesBuilder:
             for cw_include in custom_widget_includes:
                 root.append(cw_include)
 
+        emitted_submenu_names: set[str] = set()
         for menu in self.menus:
             if not menu.is_submenu:
                 continue
             if not menu.items:
                 continue
-            if "/" in menu.name:
-                continue
             if menu.name.startswith("custom-"):
                 continue
-            include = self._build_menu_include(menu)
+            include_name = menu.template_origin or menu.name
+            if "/" in include_name:
+                continue
+            if include_name in emitted_submenu_names:
+                continue
+            include = self._build_menu_include(menu, name_override=include_name)
             root.append(include)
+            emitted_submenu_names.add(include_name)
 
         if self.templates and self.templates.templates:
             from .template import TemplateBuilder
@@ -121,9 +126,9 @@ class IncludesBuilder:
 
         return root
 
-    def _build_menu_include(self, menu: Menu) -> ET.Element:
+    def _build_menu_include(self, menu: Menu, name_override: str | None = None) -> ET.Element:
         include = ET.Element("include")
-        include.set("name", f"skinshortcuts-{menu.name}")
+        include.set("name", f"skinshortcuts-{name_override or menu.name}")
 
         start = menu.startid if menu.controltype else 1
         for idx, item in enumerate(menu.items, start=start):
@@ -293,7 +298,7 @@ class IncludesBuilder:
         if not menu.controltype:
             self._add_property(elem, "id", str(idx))
             self._add_property(elem, "name", item.name)
-            self._add_property(elem, "menu", menu.name)
+            self._add_property(elem, "menu", menu.template_origin or menu.name)
             self._add_property(elem, "action", item.action)
             path = extract_path_from_action(item.action) if item.action else ""
             self._add_property(elem, "path", path)
