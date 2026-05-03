@@ -133,6 +133,7 @@ from ..localize import resolve_label
 from ..models import (
     Background,
     BackgroundType,
+    Content,
     MenuItem,
     PlaylistSource,
     Widget,
@@ -194,7 +195,7 @@ class PropertiesMixin:
 
         def _pick_widget_from_groups(
             self,
-            items: list[WidgetGroup | Widget],
+            items: list[WidgetGroup | Widget | Content],
             item_props: dict[str, str],
             slot: str = "",
         ) -> Widget | None | Literal[False]: ...

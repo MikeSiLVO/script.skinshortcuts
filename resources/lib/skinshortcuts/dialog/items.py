@@ -47,7 +47,7 @@ class ItemsMixin:
     if TYPE_CHECKING:
         from typing import Literal
 
-        from ..models import Widget, WidgetGroup
+        from ..models import Content, Widget, WidgetGroup
 
         def _get_selected_index(self) -> int: ...
         def _get_selected_item(self) -> MenuItem | None: ...
@@ -62,7 +62,7 @@ class ItemsMixin:
         def _get_item_properties(self, item: MenuItem) -> dict[str, str]: ...
         def _pick_widget_from_groups(
             self,
-            items: list[WidgetGroup | Widget],
+            items: list[WidgetGroup | Widget | Content],
             item_props: dict[str, str],
             slot: str = "",
         ) -> Widget | None | Literal[False]: ...
