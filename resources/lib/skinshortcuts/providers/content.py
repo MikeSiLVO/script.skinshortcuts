@@ -7,6 +7,7 @@ Kodi's JSON-RPC API and filesystem.
 from __future__ import annotations
 
 import json
+import urllib.parse
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -156,18 +157,21 @@ class ContentProvider:
         self._cache.clear()
 
     def _resolve_sources(self, target: str) -> list[ResolvedShortcut]:
-        """Resolve media sources."""
+        """Resolve media sources. Empty target defaults to video for backward compat."""
         cache_key = f"sources_{target}"
         if cache_key in self._cache:
             return self._cache[cache_key]
 
-        media = _SOURCES_TARGET_ALIASES.get(target)
-        if media is None:
-            log.warning(
-                f"sources: unknown target '{target}'. Valid: "
-                "video/videos, music, pictures/picture, files/file, programs/program"
-            )
-            return []
+        if not target:
+            media = "video"
+        else:
+            media = _SOURCES_TARGET_ALIASES.get(target)
+            if media is None:
+                log.warning(
+                    f"sources: unknown target '{target}'. Valid: "
+                    "video/videos, music, pictures/picture, files/file, programs/program"
+                )
+                return []
 
         result = self._jsonrpc("Files.GetSources", {"media": media})
         if not result or "sources" not in result:
@@ -335,18 +339,21 @@ class ContentProvider:
         return playlist_type
 
     def _resolve_addons(self, target: str) -> list[ResolvedShortcut]:
-        """Resolve installed addons by content type."""
+        """Resolve installed addons by content type. Empty target defaults to video."""
         cache_key = f"addons_{target}"
         if cache_key in self._cache:
             return self._cache[cache_key]
 
-        content = _ADDONS_TARGET_ALIASES.get(target)
-        if content is None:
-            log.warning(
-                f"addons: unknown target '{target}'. Valid: "
-                "video/videos, audio/music, image/pictures, executable/programs, game/games"
-            )
-            return []
+        if not target:
+            content = "video"
+        else:
+            content = _ADDONS_TARGET_ALIASES.get(target)
+            if content is None:
+                log.warning(
+                    f"addons: unknown target '{target}'. Valid: "
+                    "video/videos, audio/music, image/pictures, executable/programs, game/games"
+                )
+                return []
 
         window_map = {
             "video": "videos",
@@ -677,10 +684,17 @@ class ContentProvider:
 
     @staticmethod
     def _normalize_image(path: str) -> str:
-        """Strip Kodi's image:// wrapper from icon paths so skins can use them directly."""
-        if path.startswith("image://") and path.endswith("/"):
-            return path[len("image://"):-1]
-        return path
+        """Unwrap Kodi's image:// form to a path setArt can render.
+
+        Built-in textures (DefaultX.png) and external URLs both come wrapped;
+        the inner content is URL-encoded. setArt expects the decoded form.
+        """
+        if not path.startswith("image://"):
+            return path
+        inner = path[len("image://"):]
+        if inner.endswith("/"):
+            inner = inner[:-1]
+        return urllib.parse.unquote(inner)
 
     def _get_video_genres(self, media_type: str) -> list[ResolvedShortcut]:
         """Get video genres (movies or TV shows)."""
