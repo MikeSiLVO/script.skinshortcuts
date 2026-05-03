@@ -174,7 +174,9 @@ class Shortcut:
                 When set, path is opened via ActivateWindow({browse}, {path}, return)
         type: Category/type label (e.g., "Movies", shown as secondary info)
         icon: Icon path
-        condition: Visibility condition
+        condition: Property condition (evaluated against item properties)
+        visible: Kodi visibility condition for the picker (hides shortcut from picker)
+        item_visible: Visibility condition baked into the resulting menu item when picked
     """
 
     name: str
@@ -187,6 +189,7 @@ class Shortcut:
     icon: str = "DefaultShortcut.png"
     condition: str = ""
     visible: str = ""
+    item_visible: str = ""
     action_play: str = ""
     action_party: str = ""
 

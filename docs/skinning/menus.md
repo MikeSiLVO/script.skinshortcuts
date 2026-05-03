@@ -480,7 +480,7 @@ For finer control, use `visible` on individual `<group>` elements to show/hide g
 | `icon` | No | Icon (default: `DefaultShortcut.png`) |
 | `type` | No | Category label shown as secondary text |
 | `condition` | No | Property condition |
-| `visible` | No | Kodi visibility condition |
+| `visible` | No | Hides the shortcut from the picker when this Kodi condition is false |
 | `browse` | No | Target window for browse mode (`videos`, `music`, `pictures`, `programs`) |
 
 ### `<shortcut>` Child Elements
@@ -489,6 +489,16 @@ For finer control, use `visible` on individual `<group>` elements to show/hide g
 |---------|-------------|
 | `<action>` | Action string (for action mode). Multiple allowed. Supports `primary="true"` to set which action is used for display properties (defaults to the last action) |
 | `<path>` | Content path (for browse mode) |
+| `<visible>` | Kodi visibility condition baked into the resulting menu item when this shortcut is picked. Multiple elements are joined with ` + ` |
+
+The attribute and child element are independent: the attribute gates picker visibility, the child element travels with the picked item. A shortcut can use either, both, or neither.
+
+```xml
+<shortcut name="cancel-alarm" label="$LOCALIZE[20151]" icon="...">
+  <action>CancelAlarm(shutdowntimer)</action>
+  <visible>System.HasAlarm(shutdowntimer)</visible>
+</shortcut>
+```
 
 ### Shortcut Modes
 

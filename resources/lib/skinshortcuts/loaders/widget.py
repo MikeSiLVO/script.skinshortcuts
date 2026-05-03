@@ -14,8 +14,9 @@ from .base import get_attr, get_int, get_text, parse_content, parse_xml
 def load_widgets(path: str | Path) -> WidgetConfig:
     """Load widget configuration from XML file.
 
-    Parses <widget> and <group> elements directly from root <widgets> element.
-    Widgets at root level appear flat in picker, groups create nested navigation.
+    Parses <widget>, <group>, and <content> elements directly from the root
+    <widgets> element. Widgets at root level appear flat in picker, groups
+    create nested navigation, and root-level <content> resolves dynamically.
 
     Returns:
         WidgetConfig containing widgets, groupings, and settings.
@@ -27,7 +28,7 @@ def load_widgets(path: str | Path) -> WidgetConfig:
     root = parse_xml(path, "widgets", WidgetConfigError)
 
     widgets: list[Widget] = []
-    groupings: list[WidgetGroup | Widget] = []
+    groupings: list[WidgetGroup | Widget | Content] = []
 
     for child in root:
         if child.tag == "widget":
@@ -38,6 +39,10 @@ def load_widgets(path: str | Path) -> WidgetConfig:
             group = _parse_widget_group(child, str(path))
             if group:
                 groupings.append(group)
+        elif child.tag == "content":
+            content = parse_content(child)
+            if content:
+                groupings.append(content)
 
     return WidgetConfig(
         widgets=widgets,

@@ -45,6 +45,7 @@ class MenuItemOverride:
     position: int | None = None  # For reordering
     is_new: bool = False  # True if user-added item
     submenu: str | None = None  # Submenu template reference (picker auto-attach)
+    visible: str | None = None  # Runtime visibility condition (baked from picked shortcut)
 
 
 @dataclass
@@ -85,6 +86,8 @@ def _item_override_to_dict(item: MenuItemOverride) -> dict[str, Any]:
         result["is_new"] = item.is_new
     if item.submenu is not None:
         result["submenu"] = item.submenu
+    if item.visible is not None:
+        result["visible"] = item.visible
 
     return result
 
@@ -411,7 +414,7 @@ def _apply_override(item: MenuItem, override: MenuItemOverride) -> MenuItem:
         label2=item.label2,
         icon=override.icon if override.icon is not None else item.icon,
         thumb=item.thumb,
-        visible=item.visible,
+        visible=override.visible if override.visible is not None else item.visible,
         disabled=override.disabled if override.disabled is not None else item.disabled,
         required=item.required,
         protection=item.protection,
@@ -429,6 +432,7 @@ def _create_item_from_override(override: MenuItemOverride) -> MenuItem:
         label=override.label or "",
         actions=override.actions or [Action(action="noop")],
         icon=override.icon or "DefaultShortcut.png",
+        visible=override.visible or "",
         disabled=override.disabled or False,
         properties=override.properties,
         submenu=override.submenu,

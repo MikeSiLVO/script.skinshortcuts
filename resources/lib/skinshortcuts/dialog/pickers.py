@@ -148,6 +148,10 @@ class PickersMixin:
                 self.manager.set_icon(self.menu_id, item.name, shortcut.icon)
                 item.icon = shortcut.icon
 
+            if shortcut.item_visible:
+                self.manager.set_visible(self.menu_id, item.name, shortcut.item_visible)
+                item.visible = shortcut.item_visible
+
             if shortcut.name:
                 template = self.manager.config.get_default_menu(shortcut.name)
                 if template and template.is_submenu:
@@ -219,16 +223,16 @@ class PickersMixin:
 
     def _pick_widget_from_groups(
         self,
-        items: list[WidgetGroup | Widget],
+        items: list[WidgetGroup | Widget | Content],
         item_props: dict[str, str],
         slot: str = "",
     ) -> Widget | None | Literal[False]:
         """Show widget picker dialog with back navigation.
 
-        Handles both standalone widgets and groups at the top level.
+        Handles standalone widgets, groups, and dynamic content at the top level.
 
         Args:
-            items: Widget groups and/or widgets to pick from
+            items: Widget groups, widgets, and/or content references to pick from
             item_props: Current item properties for condition evaluation
             slot: Current widget slot being edited (e.g., "widget", "widget.2")
 

@@ -171,8 +171,13 @@ Organize widgets into categories for the picker dialog:
   <widget name="favourites" label="Favourites" type="videos">
     <path>favourites://</path>
   </widget>
+
+  <!-- Dynamic content at root -->
+  <content source="playlists" target="videos" folder="Video Playlists" />
 </widgets>
 ```
+
+Top-level `<widgets>` accepts `<widget>`, `<group>`, and `<content>`. Use `folder="..."` on a `<content>` to wrap its resolved entries in a picker folder.
 
 ### `<group>` Attributes
 

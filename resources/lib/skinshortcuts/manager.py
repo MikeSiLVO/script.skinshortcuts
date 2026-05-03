@@ -580,6 +580,10 @@ class MenuManager:
         """Set the disabled state for an item."""
         return self._set_item_property(menu_id, item_id, "disabled", disabled)
 
+    def set_visible(self, menu_id: str, item_id: str, visible: str) -> bool:
+        """Set the runtime visibility condition for an item."""
+        return self._set_item_property(menu_id, item_id, "visible", visible)
+
     def set_custom_property(
         self, menu_id: str, item_id: str, prop_name: str, value: str | None
     ) -> bool:
@@ -784,6 +788,10 @@ class MenuManager:
             diff.submenu = working.submenu or ""
             has_changes = True
 
+        if working.visible != default.visible:
+            diff.visible = working.visible
+            has_changes = True
+
         return diff if has_changes else None
 
     def _item_to_override(self, item: MenuItem, is_new: bool = False) -> MenuItemOverride:
@@ -797,4 +805,5 @@ class MenuManager:
             properties=item.properties.copy() if item.properties else {},
             is_new=is_new,
             submenu=item.submenu,
+            visible=item.visible if item.visible else None,
         )

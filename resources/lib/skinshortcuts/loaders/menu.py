@@ -537,6 +537,10 @@ def _parse_shortcut(elem, _path: str) -> Shortcut | None:
     Supports two modes:
     1. Action mode: <action>ActivateWindow(...)</action>
     2. Browse mode: browse="videos" with <path>videodb://...</path>
+
+    The visible="..." attribute hides the shortcut from the picker. A
+    <visible> child element is baked into the resulting menu item when the
+    shortcut is picked. Multiple <visible> children are joined with " + ".
     """
     shortcut_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
@@ -560,6 +564,9 @@ def _parse_shortcut(elem, _path: str) -> Shortcut | None:
     if not actions and not (browse and shortcut_path):
         return None
 
+    visible_parts = [v.text.strip() for v in elem.findall("visible") if v.text]
+    item_visible = " + ".join(visible_parts) if visible_parts else ""
+
     return Shortcut(
         name=shortcut_name,
         label=label,
@@ -571,6 +578,7 @@ def _parse_shortcut(elem, _path: str) -> Shortcut | None:
         icon=get_attr(elem, "icon") or "DefaultShortcut.png",
         condition=get_attr(elem, "condition") or "",
         visible=get_attr(elem, "visible") or "",
+        item_visible=item_visible,
     )
 
 

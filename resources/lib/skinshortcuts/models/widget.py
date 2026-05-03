@@ -74,9 +74,9 @@ class WidgetGroup:
 class WidgetConfig:
     """Widget configuration including widgets, groupings, and settings.
 
-    Groupings can contain both WidgetGroup (folders) and standalone Widget items
-    at the top level for flexibility.
+    Groupings can contain WidgetGroup (folders), standalone Widget items, and
+    Content references at the top level.
     """
 
     widgets: list[Widget] = field(default_factory=list)
-    groupings: list[WidgetGroup | Widget] = field(default_factory=list)
+    groupings: list[WidgetGroupContent] = field(default_factory=list)
