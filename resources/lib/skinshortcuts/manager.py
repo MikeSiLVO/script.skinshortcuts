@@ -140,6 +140,16 @@ class MenuManager:
                 self.working[key] = Menu(name=key, is_submenu=True)
         return self.working[key]
 
+    def drop_per_item_submenu(self, parent_menu_name: str, item_name: str) -> None:
+        """Discard the per-item submenu so the next access reseeds from the template.
+
+        Needed when the item's shortcut or submenu reference changes.
+        """
+        key = self.submenu_key(parent_menu_name, item_name)
+        if key in self.working:
+            del self.working[key]
+            self._changed = True
+
     def _generate_unique_id(self, prefix: str = "user") -> str:
         """Generate a unique ID that doesn't exist in any menu or as a menu name."""
         existing_items = {item.name for menu in self.working.values() for item in menu.items}

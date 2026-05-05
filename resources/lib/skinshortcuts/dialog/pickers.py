@@ -152,11 +152,17 @@ class PickersMixin:
                 self.manager.set_visible(self.menu_id, item.name, shortcut.item_visible)
                 item.visible = shortcut.item_visible
 
+            previous_submenu = item.submenu
+            new_submenu: str | None = None
             if shortcut.name:
                 template = self.manager.config.get_default_menu(shortcut.name)
                 if template and template.is_submenu:
-                    self.manager.set_submenu(self.menu_id, item.name, shortcut.name)
-                    item.submenu = shortcut.name
+                    new_submenu = shortcut.name
+
+            if new_submenu != previous_submenu:
+                self.manager.set_submenu(self.menu_id, item.name, new_submenu)
+                item.submenu = new_submenu
+                self.manager.drop_per_item_submenu(self.menu_id, item.name)
 
             self._refresh_selected_item()
 
