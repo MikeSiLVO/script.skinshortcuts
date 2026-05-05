@@ -537,7 +537,9 @@ class TemplateBuilder:
                 context = self._build_context(template, output, item, idx, menu)
 
                 if template.controls is not None:
-                    controls = self._process_controls(template.controls, context, item, menu)
+                    controls = self._process_controls(
+                        template.controls, context, item, menu, variable_map, output.suffix
+                    )
                     if controls is not None:
                         for child in controls:
                             include.append(child)
@@ -1291,10 +1293,12 @@ class TemplateBuilder:
         context: dict[str, str],
         item: MenuItem,
         menu: Menu,
+        variable_map: dict[str, ET.Element] | None = None,
+        output_suffix: str = "",
     ) -> ET.Element | None:
         """Process controls XML, applying substitutions."""
         result = copy.deepcopy(controls)
-        self._process_element(result, context, item, menu)
+        self._process_element(result, context, item, menu, variable_map, output_suffix)
         self._remove_empty_elements(result)
 
         return result
@@ -1315,6 +1319,8 @@ class TemplateBuilder:
         context: dict[str, str],
         item: MenuItem,
         menu: Menu,
+        variable_map: dict[str, ET.Element] | None = None,
+        output_suffix: str = "",
     ) -> None:
         """Recursively process an element, applying substitutions."""
         if elem.tag == "skinshortcuts":
@@ -1371,12 +1377,14 @@ class TemplateBuilder:
 
         children_to_remove = []
         for child in elem:
-            self._process_element(child, context, item, menu)
+            self._process_element(child, context, item, menu, variable_map, output_suffix)
             if child.get("_skinshortcuts_remove"):
                 children_to_remove.append(child)
 
         self._handle_skinshortcuts_include(elem, context, item, menu)
-        self._handle_skinshortcuts_items(elem, context, item, menu)
+        self._handle_skinshortcuts_items(
+            elem, context, item, menu, variable_map, output_suffix
+        )
         self._handle_skinshortcuts_onclick(elem, item, menu)
 
         for child in children_to_remove:
@@ -1450,6 +1458,8 @@ class TemplateBuilder:
         context: dict[str, str],
         item: MenuItem,
         _menu: Menu,
+        variable_map: dict[str, ET.Element] | None = None,
+        output_suffix: str = "",
     ) -> None:
         """Handle <skinshortcuts insert="X" /> submenu iteration.
 
@@ -1513,6 +1523,13 @@ class TemplateBuilder:
                 self._apply_items_transformations_from_definition(
                     sub_context, sub_item, items_def, context, item
                 )
+
+                if variable_map is not None:
+                    for group_ref in items_def.variable_groups:
+                        effective_suffix = self._combine_suffixes(output_suffix, group_ref.suffix)
+                        self._build_variable_group(
+                            group_ref, sub_context, sub_item, variable_map, effective_suffix
+                        )
 
                 for out_elem in output_elems:
                     cloned = copy.deepcopy(out_elem)

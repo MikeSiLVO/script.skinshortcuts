@@ -267,6 +267,7 @@ class ItemsDefinition:
     vars: list[TemplateVar] = field(default_factory=list)
     preset_refs: list[PresetReference] = field(default_factory=list)
     property_groups: list[PropertyGroupReference] = field(default_factory=list)
+    variable_groups: list[VariableGroupReference] = field(default_factory=list)
     controls: ET.Element | None = None
 
     def get_source(self) -> str:

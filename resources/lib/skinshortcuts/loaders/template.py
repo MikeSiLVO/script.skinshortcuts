@@ -507,6 +507,7 @@ class TemplateLoader:
         vars_list = []
         preset_refs = []
         property_groups = []
+        variable_groups = []
 
         for child in elem:
             if child.tag == "property":
@@ -525,6 +526,10 @@ class TemplateLoader:
                 ref = self._parse_property_group_ref(child)
                 if ref:
                     property_groups.append(ref)
+            elif child.tag == "variableGroup":
+                ref = self._parse_variable_group_ref(child)
+                if ref:
+                    variable_groups.append(ref)
 
         controls = elem.find("controls")
 
@@ -537,6 +542,7 @@ class TemplateLoader:
             vars=vars_list,
             preset_refs=preset_refs,
             property_groups=property_groups,
+            variable_groups=variable_groups,
             controls=copy.deepcopy(controls) if controls is not None else None,
         )
 
