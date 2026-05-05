@@ -661,9 +661,7 @@ class MenuManager:
         referenced_menus: set[str] = set()
         for menu in self.working.values():
             for item in menu.items:
-                template_name = self.submenu_template(item)
-                if template_name and self.config.get_default_menu(template_name):
-                    referenced_menus.add(self.submenu_key(menu.name, item.name))
+                referenced_menus.add(self.submenu_key(menu.name, item.name))
                 for key, value in item.properties.items():
                     if key.startswith("customWidget") and value:
                         referenced_menus.add(value)

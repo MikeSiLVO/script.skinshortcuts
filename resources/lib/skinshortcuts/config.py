@@ -133,13 +133,19 @@ class SkinConfig:
             for item in merged.items:
                 template_name = item.submenu or item.name
                 template = template_map.get(template_name)
-                if template is None:
-                    continue
                 key = f"{merged.name}/{item.name}"
                 instance_override = userdata.menus.get(key)
-                instance = merge_menu(template, instance_override)
-                instance.name = key
-                instance.template_origin = template_name
+                if template is None:
+                    # No template means item owns its submenu without seed defaults.
+                    if instance_override is None:
+                        continue
+                    instance = Menu(name=key, is_submenu=True)
+                    for item_override in instance_override.items:
+                        instance.items.append(_create_item_from_override(item_override))
+                else:
+                    instance = merge_menu(template, instance_override)
+                    instance.name = key
+                    instance.template_origin = template_name
                 _apply_action_overrides(instance, menu_config.action_overrides)
                 menus.append(instance)
 
