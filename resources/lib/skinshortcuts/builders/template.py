@@ -1409,7 +1409,9 @@ class TemplateBuilder:
             if child.get("_skinshortcuts_remove"):
                 children_to_remove.append(child)
 
-        self._handle_skinshortcuts_include(elem, context, item, menu)
+        self._handle_skinshortcuts_include(
+            elem, context, item, menu, variable_map, output_suffix
+        )
         self._handle_skinshortcuts_items(
             elem, context, item, menu, variable_map, output_suffix
         )
@@ -1440,6 +1442,8 @@ class TemplateBuilder:
         context: dict[str, str],
         item: MenuItem,
         menu: Menu,
+        variable_map: dict[str, ET.Element] | None = None,
+        output_suffix: str = "",
     ) -> None:
         """Handle <skinshortcuts include="..."/> element replacements.
 
@@ -1459,7 +1463,9 @@ class TemplateBuilder:
         for i, child, include_name, wrap in reversed(children_to_replace):
             include_def = self.schema.get_include(include_name)
             if include_def and include_def.controls is not None:
-                expanded = self._process_controls(include_def.controls, context, item, menu)
+                expanded = self._process_controls(
+                    include_def.controls, context, item, menu, variable_map, output_suffix
+                )
                 if expanded is not None:
                     tail = child.tail
                     elem.remove(child)
