@@ -156,7 +156,7 @@ class ViewExpressionBuilder:
         """Get plugin-specific view overrides, filtering invalid selections."""
         valid_views = set(content.views)
         overrides = {}
-        for plugin_id, view_id in self.userdata.get_plugin_overrides(content.name).items():
+        for plugin_id, view_id in self.userdata.get_addon_overrides(content.name).items():
             if view_id in valid_views:
                 overrides[plugin_id] = view_id
         return overrides
