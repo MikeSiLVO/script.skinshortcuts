@@ -229,7 +229,14 @@ class SubdialogsMixin:
 
             return menu_id
 
-        return menu_ref.replace("{item}", item.name)
+        resolved = menu_ref.replace("{item}", item.name)
+
+        # flat ref aliases the per-item submenu; route there or edits fork to a shadow copy
+        if resolved == (item.submenu or item.name):
+            self.manager.ensure_item_submenu(self.menu_id, item)
+            return self.manager.submenu_key(self.menu_id, item.name)
+
+        return resolved
 
     def _open_onclose_menu(self, menu_name: str, subdialog: SubDialog) -> None:
         """Open a menu from an onclose action.
