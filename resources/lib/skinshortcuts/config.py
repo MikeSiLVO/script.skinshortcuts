@@ -43,6 +43,8 @@ class SkinConfig:
     templates: TemplateSchema = field(default_factory=TemplateSchema)
     property_schema: PropertySchema = field(default_factory=PropertySchema)
     subdialogs: list[SubDialog] = field(default_factory=list)
+    # transitional: legacy submenu key count from pre-32 userdata, drop a few betas after 32
+    legacy_userdata_keys: int = 0
 
     @property
     def widgets(self) -> list[Widget]:
@@ -111,8 +113,11 @@ class SkinConfig:
 
         menus = []
         skin_menu_names = set()
+        top_level_names: set[str] = set()
         for menu in menu_config.menus:
             skin_menu_names.add(menu.name)
+            if not menu.is_submenu:
+                top_level_names.add(menu.name)
             if menu.is_submenu:
                 if menu.name in referenced_templates:
                     continue
@@ -146,6 +151,35 @@ class SkinConfig:
                 _apply_action_overrides(instance, menu_config.action_overrides)
                 menus.append(instance)
 
+        # legacy = won't render until rewritten to per-item form
+        item_names_in_top_level: set[str] = set()
+        for top_menu in menu_config.menus:
+            if top_menu.is_submenu:
+                continue
+            for item in top_menu.items:
+                item_names_in_top_level.add(item.name)
+        for top_name in top_level_names:
+            top_override = userdata.menus.get(top_name)
+            if not top_override:
+                continue
+            for item in top_override.items:
+                if item.name:
+                    item_names_in_top_level.add(item.name)
+
+        legacy_keys = 0
+        for menu_name, menu_override in userdata.menus.items():
+            if not menu_override.items:
+                continue
+            if menu_name in top_level_names:
+                continue
+            if "/" in menu_name:
+                continue
+            if menu_name in referenced_templates:
+                legacy_keys += 1
+                continue
+            if menu_name not in skin_menu_names and menu_name in item_names_in_top_level:
+                legacy_keys += 1
+
         for menu_name, menu_override in userdata.menus.items():
             if menu_name in skin_menu_names:
                 continue
@@ -169,6 +203,7 @@ class SkinConfig:
             templates=templates,
             property_schema=property_schema,
             subdialogs=menu_config.subdialogs,
+            legacy_userdata_keys=legacy_keys,
         )
 
     def get_widget(self, widget_name: str) -> Widget | None:

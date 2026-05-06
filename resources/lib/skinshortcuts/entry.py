@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import shutil
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -65,6 +66,35 @@ def get_output_paths() -> list[str]:
         return []
 
 
+def _backup_legacy_userdata() -> None:
+    # transitional: back up pre-migration userdata so users on beta 28-31 can run
+    # the external migrator after upgrading. Remove a few betas after 32 ships.
+    if not IN_KODI:
+        return
+    src_path = get_userdata_path()
+    if not src_path:
+        return
+    src = Path(src_path)
+    if not src.is_file():
+        return
+    backup_dir = src.parent / "backups"
+    dest = backup_dir / src.name
+    try:
+        if dest.exists():
+            return
+        backup_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy(src, dest)
+    except OSError as e:
+        log.error(f"Failed to write legacy userdata snapshot: {e}")
+        return
+    log.info(f"Wrote legacy userdata backup: {dest}")
+    xbmcgui.Dialog().ok(
+        "Skin Shortcuts",
+        "Legacy submenu data detected and backed up.\n\n"
+        "More info: https://github.com/MikeSiLVO/skinshortcuts-migrator",
+    )
+
+
 def build_includes(
     shortcuts_path: str | None = None,
     output_path: str | None = None,
@@ -123,6 +153,9 @@ def build_includes(
             f"Loaded {len(config.menus)} menus, "
             f"{len(config.widgets)} widgets, {len(config.backgrounds)} backgrounds"
         )
+
+        if config.legacy_userdata_keys > 0:
+            _backup_legacy_userdata()
 
         if not config.menus and not config.view_config.content_rules:
             log.error("No menus or view rules found in config")
