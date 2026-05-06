@@ -116,8 +116,11 @@ class SkinConfig:
             if menu.is_submenu:
                 if menu.name in referenced_templates:
                     continue
-                _apply_action_overrides(menu, menu_config.action_overrides)
-                menus.append(menu)
+                # source="N" lookups read flat keys; merge user customizations there too
+                override = userdata.menus.get(menu.name)
+                merged = merge_menu(menu, override) if override else menu
+                _apply_action_overrides(merged, menu_config.action_overrides)
+                menus.append(merged)
                 continue
             override = userdata.menus.get(menu.name)
             merged = merge_menu(menu, override)
