@@ -66,9 +66,9 @@ class PickerGroup(Protocol):
     items: list
 
 
-from ..constants import extract_path_from_action
+from ..constants import ADDONS_SOURCE_MAP, extract_path_from_action
 from ..loaders import evaluate_condition, load_groupings
-from ..localize import resolve_label
+from ..localize import LANGUAGE, resolve_label
 from ..models import (
     Action,
     Background,
@@ -85,6 +85,47 @@ from ..providers import ContentProvider, get_browse_provider
 
 if TYPE_CHECKING:
     from ..manager import MenuManager
+
+
+def _browse_placeholder_for_content(
+    content: Content, *, as_widget: bool = False
+) -> Shortcut | Widget | None:
+    """Create a "Create menu item to here" placeholder for an addons content section.
+
+    Returns a Shortcut (shortcut picker) or Widget (widget picker) pointing at
+    addons://sources/<type>/, so users can commit a menu item or widget to the
+    addon category root even when no addons of that type are installed.
+    """
+    if content.source.lower() != "addons":
+        return None
+
+    target = content.target.lower() if content.target else "video"
+    if target not in ADDONS_SOURCE_MAP:
+        return None
+
+    path, window = ADDONS_SOURCE_MAP[target]
+    name = f"content-placeholder-{content.source}-{target}"
+    icon = content.icon if content.icon else "DefaultFolder.png"
+
+    if as_widget:
+        label = resolve_label(content.label) if content.label else LANGUAGE(32058)
+        return Widget(
+            name=name,
+            label=label,
+            path=path,
+            type=target,
+            target=window,
+            icon=icon,
+            source="addon",
+        )
+
+    return Shortcut(
+        name=name,
+        label=LANGUAGE(32058),
+        actions=[f"ActivateWindow({window},{path},return)"],
+        icon=icon,
+        type=content.label if content.label else "",
+    )
 
 
 class PickersMixin:
@@ -178,8 +219,6 @@ class PickersMixin:
 
     def _choose_playlist_action(self, shortcut: Shortcut) -> str | None:
         """Show dialog asking what to do with a playlist shortcut."""
-        from ..localize import LANGUAGE
-
         if shortcut.action_party:
             result = xbmcgui.Dialog().yesnocustom(  # type: ignore[attr-defined]
                 LANGUAGE(32040),
@@ -591,13 +630,20 @@ class PickersMixin:
                 listitems.append(none_item)
 
             for vis_item in visible_items:
-                label = resolve_label(vis_item.label)
+                is_placeholder = (
+                    isinstance(vis_item, (Shortcut, Widget))
+                    and vis_item.name.startswith("content-placeholder-")
+                )
+                if is_placeholder:
+                    label = LANGUAGE(32058)
+                else:
+                    label = resolve_label(vis_item.label)
                 if isinstance(vis_item, group_types):
                     label = f"{label} >"
                     icon = vis_item.icon if vis_item.icon else default_group_icon
                 elif (
-                    isinstance(vis_item, Shortcut)
-                    and not vis_item.name.startswith("content-placeholder-")
+                    isinstance(vis_item, (Shortcut, Widget))
+                    and not is_placeholder
                     and self._is_browsable(vis_item)
                 ):
                     label = f"{label} >"
@@ -706,7 +752,7 @@ class PickersMixin:
             len(visible_items) == 1
             and isinstance(visible_items[0], leaf_types)
             and not (
-                isinstance(visible_items[0], Shortcut)
+                isinstance(visible_items[0], (Shortcut, Widget))
                 and visible_items[0].name.startswith("content-placeholder-")
             )
         ):
@@ -716,13 +762,20 @@ class PickersMixin:
         while True:
             listitems = []
             for vis_item in visible_items:
-                label = resolve_label(vis_item.label)
+                is_placeholder = (
+                    isinstance(vis_item, (Shortcut, Widget))
+                    and vis_item.name.startswith("content-placeholder-")
+                )
+                if is_placeholder:
+                    label = LANGUAGE(32058)
+                else:
+                    label = resolve_label(vis_item.label)
                 if isinstance(vis_item, group_types):
                     label = f"{label} >"
                     icon = vis_item.icon if vis_item.icon else default_group_icon
                 elif (
-                    isinstance(vis_item, Shortcut)
-                    and not vis_item.name.startswith("content-placeholder-")
+                    isinstance(vis_item, (Shortcut, Widget))
+                    and not is_placeholder
                     and self._is_browsable(vis_item)
                 ):
                     label = f"{label} >"
@@ -811,9 +864,11 @@ class PickersMixin:
                     continue
                 if content_resolver:
                     resolved = content_resolver(item)
-                    browse_shortcut = self._get_browse_placeholder_for_content(item)
-                    if browse_shortcut:
-                        visible_items.append(browse_shortcut)
+                    placeholder = _browse_placeholder_for_content(
+                        item, as_widget=Widget in leaf_types
+                    )
+                    if placeholder:
+                        visible_items.append(placeholder)
                     if item.folder and resolved and create_folder_group:
                         folder = create_folder_group(item.folder, resolved)
                         visible_items.append(folder)
@@ -894,8 +949,6 @@ class PickersMixin:
         Returns:
             Tuple of (path, label, icon) for selected location, or None if cancelled
         """
-        from ..localize import LANGUAGE
-
         browse_provider = get_browse_provider()
         current_path = path
         current_label = title
@@ -1013,44 +1066,6 @@ class PickersMixin:
             else:
                 filtered.append(item)
         return filtered
-
-    def _get_browse_placeholder_for_content(self, content: Content) -> Shortcut | None:
-        """Create a browse placeholder shortcut for Content that resolved to empty.
-
-        Returns a browsable shortcut if the content source supports browsing,
-        allowing the user to navigate to the location even when empty.
-        """
-        from ..localize import LANGUAGE
-
-        if content.source.lower() != "addons":
-            return None
-
-        target_map = {
-            "video": ("addons://sources/video/", "videos"),
-            "videos": ("addons://sources/video/", "videos"),
-            "audio": ("addons://sources/audio/", "music"),
-            "music": ("addons://sources/audio/", "music"),
-            "image": ("addons://sources/image/", "pictures"),
-            "pictures": ("addons://sources/image/", "pictures"),
-            "executable": ("addons://sources/executable/", "programs"),
-            "programs": ("addons://sources/executable/", "programs"),
-            "game": ("addons://sources/game/", "games"),
-            "games": ("addons://sources/game/", "games"),
-        }
-
-        target = content.target.lower() if content.target else "video"
-        if target not in target_map:
-            return None
-
-        path, window = target_map[target]
-
-        return Shortcut(
-            name=f"content-placeholder-{content.source}-{target}",
-            label=LANGUAGE(32058),
-            actions=[f"ActivateWindow({window},{path},return)"],
-            icon=content.icon if content.icon else "DefaultFolder.png",
-            type=content.label if content.label else "",
-        )
 
     def _get_browse_info_from_shortcut(self, shortcut: Shortcut) -> tuple[str, str] | None:
         """Extract browsable path and target window from a shortcut.

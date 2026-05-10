@@ -71,6 +71,31 @@ WINDOW_MAP: dict[str, str] = {
     "liveradio": "RadioChannels",
 }
 
+TARGET_MAP: dict[str, str] = {
+    "video": "videos",
+    "videos": "videos",
+    "music": "music",
+    "audio": "music",
+    "pictures": "pictures",
+    "images": "pictures",
+    "programs": "programs",
+    "executable": "programs",
+}
+
+ADDONS_SOURCE_MAP: dict[str, tuple[str, str]] = {
+    "video": ("addons://sources/video/", "videos"),
+    "videos": ("addons://sources/video/", "videos"),
+    "audio": ("addons://sources/audio/", "music"),
+    "music": ("addons://sources/audio/", "music"),
+    "image": ("addons://sources/image/", "pictures"),
+    "pictures": ("addons://sources/image/", "pictures"),
+    "executable": ("addons://sources/executable/", "programs"),
+    "programs": ("addons://sources/executable/", "programs"),
+    "game": ("addons://sources/game/", "games"),
+    "games": ("addons://sources/game/", "games"),
+}
+
+
 def extract_path_from_action(action: str) -> str:
     """Extract the bare content path from a full action string."""
     lower = action.lower()
@@ -85,15 +110,3 @@ def extract_path_from_action(action: str) -> str:
         addon_id = action[9:-1]
         return f"plugin://{addon_id}/"
     return action
-
-
-TARGET_MAP: dict[str, str] = {
-    "video": "videos",
-    "videos": "videos",
-    "music": "music",
-    "audio": "music",
-    "pictures": "pictures",
-    "images": "pictures",
-    "programs": "programs",
-    "executable": "programs",
-}
