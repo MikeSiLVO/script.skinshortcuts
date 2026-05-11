@@ -108,7 +108,7 @@ def _browse_placeholder_for_content(
     icon = content.icon if content.icon else "DefaultFolder.png"
 
     if as_widget:
-        label = resolve_label(content.label) if content.label else LANGUAGE(32058)
+        label = content.label if content.label else LANGUAGE(32058)
         return Widget(
             name=name,
             label=label,

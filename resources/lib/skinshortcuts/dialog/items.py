@@ -128,7 +128,7 @@ class ItemsMixin:
         if widget.source:
             properties["widgetSource"] = widget.source
         if widget.label:
-            properties["widgetLabel"] = widget.label
+            properties["widgetLabel"] = resolve_label(widget.label)
 
         return MenuItem(
             name=widget.name,
@@ -164,7 +164,7 @@ class ItemsMixin:
             return
 
         if item.required:
-            xbmcgui.Dialog().ok("Cannot Delete", f"'{item.label}' is required.")
+            xbmcgui.Dialog().ok("Cannot Delete", f"'{resolve_label(item.label)}' is required.")
             return
 
         if item.protection and item.protection.protects_delete():
@@ -210,6 +210,8 @@ class ItemsMixin:
         keyboard.doModal()
         if keyboard.isConfirmed():
             new_label = keyboard.getText()
+            if new_label == current_label:
+                return
             self.manager.set_label(self.menu_id, item.name, new_label)
             item.label = new_label
             self._refresh_selected_item()
@@ -274,7 +276,7 @@ class ItemsMixin:
             return
 
         if item.required and not item.disabled:
-            xbmcgui.Dialog().ok("Cannot Disable", f"'{item.label}' is required.")
+            xbmcgui.Dialog().ok("Cannot Disable", f"'{resolve_label(item.label)}' is required.")
             return
 
         if not item.disabled and item.protection and item.protection.protects_disable():

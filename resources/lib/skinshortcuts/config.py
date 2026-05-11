@@ -15,6 +15,7 @@ from .loaders import (
     load_views,
     load_widgets,
 )
+from .localize import resolve_label
 from .models import Background, Menu, Widget
 from .models.background import BackgroundConfig, BackgroundGroup
 from .models.menu import ActionOverride, SubDialog
@@ -311,14 +312,17 @@ class SkinConfig:
             if bg_name and "backgroundLabel" not in item.properties:
                 bg = self.get_background(bg_name)
                 if bg:
-                    item.properties["backgroundLabel"] = bg.label
+                    item.properties["backgroundLabel"] = resolve_label(bg.label)
                     item.properties["backgroundPath"] = bg.path
 
             widget_name = item.properties.get("widget")
             if widget_name and "widgetLabel" not in item.properties:
                 widget = self.get_widget(widget_name)
                 if widget:
-                    for key, value in widget.to_properties().items():
+                    props = widget.to_properties()
+                    if "widgetLabel" in props:
+                        props["widgetLabel"] = resolve_label(props["widgetLabel"])
+                    for key, value in props.items():
                         if key not in item.properties:
                             item.properties[key] = value
 

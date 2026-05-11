@@ -481,7 +481,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         """
         props = dict(item.properties)
         props["name"] = item.name
-        props["label"] = item.label
+        props["label"] = resolve_label(item.label)
 
         return props
 
