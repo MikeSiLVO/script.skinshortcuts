@@ -748,16 +748,6 @@ class PickersMixin:
             xbmcgui.Dialog().notification("No Items", "No items available in this group")
             return None
 
-        if (
-            len(visible_items) == 1
-            and isinstance(visible_items[0], leaf_types)
-            and not (
-                isinstance(visible_items[0], (Shortcut, Widget))
-                and visible_items[0].name.startswith("content-placeholder-")
-            )
-        ):
-            return visible_items[0]
-
         preselect = -1
         while True:
             listitems = []
