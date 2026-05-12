@@ -123,7 +123,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 | `<property>` | item | `name` | — | Custom property |
 | `<protect>` | item | — | `type`, `heading`, `message` | Protection rule |
 | `<groupings>` | menus | — | — | Shortcut picker structure |
-| `<group>` | groupings/group | `name`, `label` | `condition`, `visible`, `icon` | Shortcut group |
+| `<group>` | groupings/group | `name`, `label` (unless `flat="true"`) | `condition`, `visible`, `icon`, `flat` | Shortcut group |
 | `<shortcut>` | group | `name`, `label` | `icon`, `type`, `condition`, `visible`, `path`, `browse` | Shortcut option |
 | `<action>` | shortcut | — | `primary` | Shortcut action (multiple allowed) |
 | `<path>` | shortcut | — | — | Browse path (for browse mode) |
@@ -193,7 +193,7 @@ Defines widgets and widget picker groupings.
 | `<limit>` | widget | — | — | Item limit |
 | `<sortby>` | widget | — | — | Sort field |
 | `<sortorder>` | widget | — | — | Sort direction (`ascending`/`descending`) |
-| `<group>` | widgets/group | `name`, `label` | `condition`, `visible`, `icon`, `source` | Widget group |
+| `<group>` | widgets/group | `name`, `label` (unless `flat="true"`) | `condition`, `visible`, `icon`, `source`, `flat` | Widget group |
 | `<content>` | group | `source` | `target`, `path`, `condition`, `visible`, `icon`, `label`, `folder` | Dynamic content |
 
 ### Widget Types
@@ -279,7 +279,7 @@ Defines background options and groupings.
 | `<path>` | background | — | — | Image path or info label |
 | `<icon>` | background | — | — | Icon for picker |
 | `<source>` | background | — | `label`, `condition`, `visible`, `icon` | Browse/playlist source |
-| `<group>` | backgrounds/group | `name`, `label` | `condition`, `visible`, `icon` | Background group |
+| `<group>` | backgrounds/group | `name`, `label` (unless `flat="true"`) | `condition`, `visible`, `icon`, `flat` | Background group |
 | `<content>` | group | `source` | `target`, etc. | Dynamic content |
 
 ### Background Types

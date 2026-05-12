@@ -880,6 +880,17 @@ class PickersMixin:
                 condition = getattr(item, "condition", "")
                 if condition and not evaluate_condition(condition, item_props):
                     continue
+                if isinstance(item, group_types) and getattr(item, "flat", False):
+                    expanded = self._filter_picker_items(
+                        item.items,
+                        item_props,
+                        leaf_types,
+                        group_types,
+                        content_resolver,
+                        create_folder_group,
+                    )
+                    visible_items.extend(expanded)
+                    continue
                 visible_items.append(item)
 
         return visible_items

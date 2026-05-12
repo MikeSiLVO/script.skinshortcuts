@@ -62,3 +62,12 @@ def get_logger(component: str = "") -> Logger:
     if component not in _loggers:
         _loggers[component] = Logger(component)
     return _loggers[component]
+
+
+def notify(heading: str, message: str) -> None:
+    """Fire a Kodi notification. No-op outside Kodi so loaders stay testable."""
+    if not IN_KODI:
+        return
+    import xbmcgui
+
+    xbmcgui.Dialog().notification(heading, message)

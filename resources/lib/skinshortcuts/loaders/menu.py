@@ -24,7 +24,10 @@ from ..models.menu import (
     ShortcutGroup,
     SubDialog,
 )
+from ..log import get_logger, notify
 from .base import get_attr, get_text, parse_content, parse_xml
+
+log = get_logger("MenuLoader")
 
 
 def load_menus(path: str | Path) -> MenuConfig:
@@ -500,7 +503,15 @@ def _parse_shortcut_group(elem, path: str) -> ShortcutGroup | None:
     """Parse a group element (supports nested groups, shortcuts, content refs, and inputs)."""
     group_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
-    if not group_name or not label:
+    flat = (get_attr(elem, "flat") or "").lower() == "true"
+
+    if not group_name:
+        log.warning(f"Shortcut group in {path} missing 'name' attribute")
+        notify("Shortcut Group Error", "Group missing 'name' (see log)")
+        return None
+    if not label and not flat:
+        log.warning(f"Shortcut group '{group_name}' in {path} missing 'label' (required when not flat)")
+        notify("Shortcut Group Error", f"'{group_name}' missing label")
         return None
 
     condition = get_attr(elem, "condition") or ""
@@ -527,7 +538,13 @@ def _parse_shortcut_group(elem, path: str) -> ShortcutGroup | None:
 
     visible = get_attr(elem, "visible") or ""
     return ShortcutGroup(
-        name=group_name, label=label, condition=condition, visible=visible, icon=icon, items=items
+        name=group_name,
+        label=label,
+        condition=condition,
+        visible=visible,
+        icon=icon,
+        items=items,
+        flat=flat,
     )
 
 

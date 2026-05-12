@@ -6,9 +6,12 @@ from pathlib import Path
 
 from ..constants import TARGET_MAP
 from ..exceptions import WidgetConfigError
+from ..log import get_logger, notify
 from ..models import Content, Widget, WidgetGroup
 from ..models.widget import WidgetConfig
 from .base import get_attr, get_int, get_text, parse_content, parse_xml
+
+log = get_logger("WidgetLoader")
 
 
 def load_widgets(path: str | Path) -> WidgetConfig:
@@ -94,7 +97,15 @@ def _parse_widget_group(elem, path: str, default_source: str = "") -> WidgetGrou
     """Parse a widget group element (supports nested groups, widgets, and content)."""
     group_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
-    if not group_name or not label:
+    flat = (get_attr(elem, "flat") or "").lower() == "true"
+
+    if not group_name:
+        log.warning(f"Widget group in {path} missing 'name' attribute")
+        notify("Widget Group Error", "Group missing 'name' (see log)")
+        return None
+    if not label and not flat:
+        log.warning(f"Widget group '{group_name}' in {path} missing 'label' (required when not flat)")
+        notify("Widget Group Error", f"'{group_name}' missing label")
         return None
 
     condition = get_attr(elem, "condition") or ""
@@ -117,5 +128,11 @@ def _parse_widget_group(elem, path: str, default_source: str = "") -> WidgetGrou
     visible = get_attr(elem, "visible") or ""
     icon = get_attr(elem, "icon") or ""
     return WidgetGroup(
-        name=group_name, label=label, condition=condition, visible=visible, icon=icon, items=items
+        name=group_name,
+        label=label,
+        condition=condition,
+        visible=visible,
+        icon=icon,
+        items=items,
+        flat=flat,
     )

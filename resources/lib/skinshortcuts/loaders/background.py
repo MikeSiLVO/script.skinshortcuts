@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from ..exceptions import BackgroundConfigError
+from ..log import get_logger, notify
 from ..models.background import (
     Background,
     BackgroundConfig,
@@ -14,6 +15,8 @@ from ..models.background import (
     PlaylistSource,
 )
 from .base import get_attr, get_text, parse_content, parse_xml
+
+log = get_logger("BackgroundLoader")
 
 TYPE_MAP = {
     "static": BackgroundType.STATIC,
@@ -124,7 +127,15 @@ def _parse_background_group(elem, path: str) -> BackgroundGroup | None:
     """Parse a background group element (supports nested groups, backgrounds, and content)."""
     group_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
-    if not group_name or not label:
+    flat = (get_attr(elem, "flat") or "").lower() == "true"
+
+    if not group_name:
+        log.warning(f"Background group in {path} missing 'name' attribute")
+        notify("Background Group Error", "Group missing 'name' (see log)")
+        return None
+    if not label and not flat:
+        log.warning(f"Background group '{group_name}' in {path} missing 'label' (required when not flat)")
+        notify("Background Group Error", f"'{group_name}' missing label")
         return None
 
     condition = get_attr(elem, "condition") or ""
@@ -152,4 +163,5 @@ def _parse_background_group(elem, path: str) -> BackgroundGroup | None:
         visible=visible,
         icon=icon,
         items=items,
+        flat=flat,
     )

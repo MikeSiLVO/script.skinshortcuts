@@ -68,6 +68,7 @@ class WidgetGroup:
     visible: str = ""  # Kodi visibility condition (evaluated at runtime)
     icon: str = ""  # Optional icon for group display
     items: list[WidgetGroupContent] = field(default_factory=list)
+    flat: bool = False  # No folder header; children render at parent level
 
 
 @dataclass

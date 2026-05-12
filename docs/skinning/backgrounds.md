@@ -97,16 +97,19 @@ Organize backgrounds into categories for the picker dialog:
 | Attribute | Required | Description |
 |-----------|----------|-------------|
 | `name` | Yes | Unique identifier |
-| `label` | Yes | Display label |
+| `label` | Yes (unless `flat="true"`) | Display label for the folder header |
 | `icon` | No | Icon for picker display (default: `DefaultFolder.png`) |
 | `condition` | No | Property condition (evaluated against item properties) |
 | `visible` | No | Kodi visibility condition (evaluated at runtime) |
+| `flat` | No | When `true`, children appear inline at parent level instead of inside a folder |
 
 Groups can contain:
 
 * `<background>` - Background definitions
 * `<group>` - Nested groups
 * `<content>` - Dynamic content (same as widgets/menus)
+
+A group with `flat="true"` has no folder header; its children render at the parent level when the group's `condition` and `visible` both pass. `label` and `icon` are unused in this mode.
 
 ---
 

@@ -184,16 +184,44 @@ Top-level `<widgets>` accepts `<widget>`, `<group>`, and `<content>`. Use `folde
 | Attribute | Required | Description |
 |-----------|----------|-------------|
 | `name` | Yes | Unique identifier |
-| `label` | Yes | Display label |
+| `label` | Yes (unless `flat="true"`) | Display label for the folder header |
 | `icon` | No | Icon for picker display (default: `DefaultFolder.png`) |
 | `condition` | No | Property condition (evaluated against item properties) |
 | `visible` | No | Kodi visibility condition (evaluated at runtime) |
+| `flat` | No | When `true`, children appear inline at parent level instead of inside a folder |
 
 Groups can contain:
 
 * `<widget>` - Widget definitions
 * `<group>` - Nested groups
 * `<content>` - Dynamic content
+
+### Flat Groups
+
+A group with `flat="true"` does not render as a folder. Its children appear at the parent level when the group's `condition` and `visible` both pass. This lets a single picker invocation expose different widget sets without per-widget visibility conditions.
+
+```xml
+<widgets>
+  <group name="home-widgets" flat="true" condition="widgetSlot=home">
+    <widget name="recent-movies" label="Recent Movies" type="movies">
+      <path>videodb://recentlyaddedmovies/</path>
+    </widget>
+    <widget name="watchlist" label="Watchlist" type="movies">
+      <path>plugin://plugin.video.themoviedb.helper/?info=watchlist</path>
+    </widget>
+  </group>
+
+  <group name="hub-widgets" flat="true" condition="widgetSlot=hubs">
+    <widget name="genres" label="Genres" type="moviegenres">
+      <path>videodb://movies/genres/</path>
+    </widget>
+  </group>
+</widgets>
+```
+
+Pair flat groups with a window property the skin sets before opening the picker. The condition references that property; only the matching group's widgets appear at the top level.
+
+`label` and `icon` are unused when `flat="true"` and may be omitted.
 
 ---
 

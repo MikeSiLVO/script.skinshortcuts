@@ -466,10 +466,30 @@ For finer control, use `visible` on individual `<group>` elements to show/hide g
 | Attribute | Required | Description |
 |-----------|----------|-------------|
 | `name` | Yes | Unique identifier |
-| `label` | Yes | Display label |
+| `label` | Yes (unless `flat="true"`) | Display label for the folder header |
 | `icon` | No | Group icon |
 | `condition` | No | Property condition (evaluated against item properties) |
 | `visible` | No | Kodi visibility condition (evaluated at runtime) |
+| `flat` | No | When `true`, children appear inline at parent level instead of inside a folder |
+
+### Flat Groups
+
+A group with `flat="true"` has no folder header. Its children render at the parent level when the group's `condition` and `visible` both pass. Useful when one set of shortcuts should appear in some contexts and another set in others, without putting visibility conditions on every shortcut.
+
+```xml
+<groupings>
+  <group name="power-shortcuts" flat="true" visible="String.IsEqual(Window.Property(menuname),powermenu)">
+    <shortcut name="shutdown" label="$LOCALIZE[13005]" icon="DefaultShortcut.png">
+      <action>ShutDown()</action>
+    </shortcut>
+    <shortcut name="reboot" label="$LOCALIZE[13013]" icon="DefaultShortcut.png">
+      <action>Reboot</action>
+    </shortcut>
+  </group>
+</groupings>
+```
+
+`label` and `icon` are unused when `flat="true"` and may be omitted.
 
 ### `<shortcut>` Attributes
 
