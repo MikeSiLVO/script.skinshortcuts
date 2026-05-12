@@ -966,37 +966,44 @@ class PickersMixin:
         history: list[tuple[str, str]] = []
 
         while True:
-            detail_view = not history and not _is_heavy_library_path(current_path)
+            detail_view = not _is_heavy_library_path(current_path)
 
-            items = browse_provider.list_directory(current_path, include_art=detail_view)
-            if items is None:
-                xbmcgui.Dialog().notification(
-                    "Cannot Browse", "Unable to list directory contents"
-                )
-                return None
+            xbmc.executebuiltin("ActivateWindow(busydialognocancel)")
+            try:
+                items = browse_provider.list_directory(current_path, include_art=detail_view)
+                if items is None:
+                    xbmcgui.Dialog().notification(
+                        "Cannot Browse", "Unable to list directory contents"
+                    )
+                    return None
 
-            dialog_title = current_label or "Browse"
+                dialog_title = current_label or "Browse"
+
+                if detail_view:
+                    listitems = []
+                    use_location_item = xbmcgui.ListItem(LANGUAGE(32058))
+                    use_location_item.setArt({"icon": "DefaultFolder.png"})
+                    listitems.append(use_location_item)
+                    for item in items:
+                        label = item.label
+                        if item.is_directory:
+                            label = f"{label} >"
+                        listitem = xbmcgui.ListItem(label)
+                        listitem.setArt({"icon": item.icon})
+                        listitems.append(listitem)
+                else:
+                    listitems = [LANGUAGE(32058)]
+                    for item in items:
+                        label = item.label
+                        if item.is_directory:
+                            label = f"{label} >"
+                        listitems.append(label)
+            finally:
+                xbmc.executebuiltin("Dialog.Close(busydialognocancel)")
 
             if detail_view:
-                listitems = []
-                use_location_item = xbmcgui.ListItem(LANGUAGE(32058))
-                use_location_item.setArt({"icon": "DefaultFolder.png"})
-                listitems.append(use_location_item)
-                for item in items:
-                    label = item.label
-                    if item.is_directory:
-                        label = f"{label} >"
-                    listitem = xbmcgui.ListItem(label)
-                    listitem.setArt({"icon": item.icon})
-                    listitems.append(listitem)
                 selected = xbmcgui.Dialog().select(dialog_title, listitems, useDetails=True)
             else:
-                listitems = [LANGUAGE(32058)]
-                for item in items:
-                    label = item.label
-                    if item.is_directory:
-                        label = f"{label} >"
-                    listitems.append(label)
                 selected = xbmcgui.Dialog().select(dialog_title, listitems)
 
             if selected == -1:
