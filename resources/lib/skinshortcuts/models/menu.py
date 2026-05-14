@@ -439,4 +439,5 @@ class MenuConfig:
     icon_sources: list[IconSource] = field(default_factory=list)
     subdialogs: list[SubDialog] = field(default_factory=list)
     action_overrides: list[ActionOverride] = field(default_factory=list)
+    icon_overrides: dict[str, str] = field(default_factory=dict)  # DefaultX.png -> override path
     show_context_menu: bool = True  # Whether to show context menu on items

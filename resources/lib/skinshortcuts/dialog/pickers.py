@@ -150,6 +150,12 @@ class PickersMixin:
         def _refresh_selected_item(self) -> None: ...
         def _log(self, msg: str) -> None: ...
 
+    def _icon_overrides(self) -> dict[str, str]:
+        """Icon override map from the active skin config, empty if none loaded."""
+        if self.manager and self.manager.config:
+            return self.manager.config.icon_overrides
+        return {}
+
     def _choose_shortcut(self) -> None:
         """Choose a shortcut from groupings."""
         if not self.manager:
@@ -352,7 +358,7 @@ class PickersMixin:
 
     def _resolve_content_to_widgets(self, content: Content) -> list[Widget]:
         """Resolve a Content reference to a list of Widget objects for the picker."""
-        provider = ContentProvider()
+        provider = ContentProvider(icon_overrides=self._icon_overrides())
         resolved = provider.resolve(content)
 
         source = content.source.rstrip("s") if content.source.endswith("s") else content.source
@@ -376,7 +382,7 @@ class PickersMixin:
 
     def _resolve_content_to_shortcuts(self, content: Content) -> list[Shortcut]:
         """Resolve a Content reference to a list of Shortcut objects for the picker."""
-        provider = ContentProvider()
+        provider = ContentProvider(icon_overrides=self._icon_overrides())
         resolved = provider.resolve(content)
 
         shortcuts = []
@@ -951,6 +957,7 @@ class PickersMixin:
             Tuple of (path, label, icon) for selected location, or None if cancelled
         """
         browse_provider = get_browse_provider()
+        browse_provider.set_icon_overrides(self._icon_overrides())
         current_path = path
         current_label = title
         history: list[tuple[str, str]] = []

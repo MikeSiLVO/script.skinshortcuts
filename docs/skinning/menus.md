@@ -768,6 +768,47 @@ The element text is the replacement action.
 
 ---
 
+## Icon Overrides
+
+Substitute Kodi's generic `Default*.png` icons (e.g., `DefaultFolder.png`, `DefaultMovies.png`) with skin-specific replacements. Useful when your skin has a curated icon set under `extras/icons/` and you want script-generated entries to use them instead of Kodi's defaults.
+
+```xml
+<overrides>
+  <icons>
+    <source>special://skin/extras/icons/</source>
+    <icon replace="DefaultFolder.png">files.png</icon>
+  </icons>
+</overrides>
+```
+
+Resolution:
+
+1. The active `<source>` is the first one whose `visible` condition passes (or the first source without a `visible` attribute). Sources must be declared explicitly in the override block - the root `<icons>` picker source is not reused automatically, since a skin's icon picker folder is usually a flat collection of icons rather than a substitution map.
+2. **Convention scan**: any `Default*.png` file found in the active source is automatically registered as an override pointing at itself. Drop replacement icons into your icons folder with matching filenames to skip listing them individually.
+3. **Explicit overrides**: `<icon replace="X">Y</icon>` declarations win over convention. The replacement path Y is resolved relative to the active source unless it's absolute (starts with `special://` or `/`). With no `<source>` declared, relative Y values are dropped and logged.
+
+### Conditional Sources
+
+Use multiple `<source>` children to switch override sets based on skin state:
+
+```xml
+<overrides>
+  <icons>
+    <source visible="Skin.HasSetting(theme.dark)">special://skin/extras/icons-dark/</source>
+    <source>special://skin/extras/icons-light/</source>
+    <icon replace="DefaultFolder.png">files.png</icon>
+  </icons>
+</overrides>
+```
+
+The condition is evaluated at config load. If the user changes the skin setting at runtime, run a rebuild to pick up the new overrides.
+
+### Scope
+
+Overrides apply only to icons the script generates as a default (when no `icon=` attribute is set on a shortcut, when content sources stamp generic icons, when the browse picker falls back to a type-aware default). Icons the skinner declares explicitly via `icon="..."` attributes stay literal - a skinner who writes `icon="DefaultFolder.png"` is treated as deliberately choosing that icon.
+
+---
+
 ## Context Menu
 
 Enable or disable context menu on items:

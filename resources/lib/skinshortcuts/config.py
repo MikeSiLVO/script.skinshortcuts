@@ -44,6 +44,7 @@ class SkinConfig:
     templates: TemplateSchema = field(default_factory=TemplateSchema)
     property_schema: PropertySchema = field(default_factory=PropertySchema)
     subdialogs: list[SubDialog] = field(default_factory=list)
+    icon_overrides: dict[str, str] = field(default_factory=dict)
     # transitional: legacy submenu key count from pre-32 userdata, drop a few betas after 32
     legacy_userdata_keys: int = 0
 
@@ -90,7 +91,9 @@ class SkinConfig:
 
         menu_config = load_menus(path / "menus.xml")
         widgets = load_widgets(path / "widgets.xml")
-        backgrounds = load_backgrounds(path / "backgrounds.xml")
+        backgrounds = load_backgrounds(
+            path / "backgrounds.xml", icon_overrides=menu_config.icon_overrides
+        )
         templates = load_templates(path / "templates.xml")
         property_schema = load_properties(path / "properties.xml")
         views = load_views(path / "views.xml")
@@ -204,6 +207,7 @@ class SkinConfig:
             templates=templates,
             property_schema=property_schema,
             subdialogs=menu_config.subdialogs,
+            icon_overrides=menu_config.icon_overrides,
             legacy_userdata_keys=legacy_keys,
         )
 

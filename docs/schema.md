@@ -108,34 +108,37 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 |---------|--------|---------------------|---------------------|-------------|
 | `<menu>` | menus | `name` | `container` | Main menu definition |
 | `<submenu>` | menus | `name` | `container` | Submenu definition (built when referenced) |
-| `<allow>` | menu/submenu | — | `widgets`, `backgrounds`, `submenus` | Feature toggles for dialog |
-| `<defaults>` | menu/submenu | — | `widget`, `background` | Default settings for items |
-| `<action>` | defaults | — | `when`, `condition` | Default action (before/after) |
-| `<property>` | defaults | `name` | — | Default property value |
+| `<allow>` | menu/submenu | - | `widgets`, `backgrounds`, `submenus` | Feature toggles for dialog |
+| `<defaults>` | menu/submenu | - | `widget`, `background` | Default settings for items |
+| `<action>` | defaults | - | `when`, `condition` | Default action (before/after) |
+| `<property>` | defaults | `name` | - | Default property value |
 | `<item>` | menu/submenu | `name` | `submenu`, `widget`, `background`, `required`, `visible` | Menu item |
-| `<label>` | item | — | — | Display text |
-| `<label2>` | item | — | — | Secondary label |
-| `<action>` | item | — | `condition` | Action to execute (multiple allowed) |
-| `<icon>` | item | — | — | Icon path |
-| `<thumb>` | item | — | — | Thumbnail path |
-| `<visible>` | item | — | — | Visibility condition for output |
-| `<disabled>` | item | — | — | If "true", item not selectable |
-| `<property>` | item | `name` | — | Custom property |
-| `<protect>` | item | — | `type`, `heading`, `message` | Protection rule |
-| `<groupings>` | menus | — | — | Shortcut picker structure |
+| `<label>` | item | - | - | Display text |
+| `<label2>` | item | - | - | Secondary label |
+| `<action>` | item | - | `condition` | Action to execute (multiple allowed) |
+| `<icon>` | item | - | - | Icon path |
+| `<thumb>` | item | - | - | Thumbnail path |
+| `<visible>` | item | - | - | Visibility condition for output |
+| `<disabled>` | item | - | - | If "true", item not selectable |
+| `<property>` | item | `name` | - | Custom property |
+| `<protect>` | item | - | `type`, `heading`, `message` | Protection rule |
+| `<groupings>` | menus | - | - | Shortcut picker structure |
 | `<group>` | groupings/group | `name`, `label` (unless `flat="true"`) | `condition`, `visible`, `icon`, `flat` | Shortcut group |
 | `<shortcut>` | group | `name`, `label` | `icon`, `type`, `condition`, `visible`, `path`, `browse` | Shortcut option |
-| `<action>` | shortcut | — | `primary` | Shortcut action (multiple allowed) |
-| `<path>` | shortcut | — | — | Browse path (for browse mode) |
+| `<action>` | shortcut | - | `primary` | Shortcut action (multiple allowed) |
+| `<path>` | shortcut | - | - | Browse path (for browse mode) |
 | `<content>` | group | `source` | `target`, `path`, `condition`, `visible`, `icon`, `label`, `folder` | Dynamic content |
-| `<icons>` | menus | — | — | Icon browser sources |
-| `<source>` | icons | — | `label`, `condition`, `visible`, `icon` | Icon source path |
-| `<overrides>` | menus | — | — | Action overrides |
-| `<action>` | overrides | `replace` | — | Replacement action |
-| `<dialogs>` | menus | — | — | Subdialog definitions |
+| `<icons>` | menus | - | - | Icon browser sources |
+| `<source>` | icons | - | `label`, `condition`, `visible`, `icon` | Icon source path |
+| `<overrides>` | menus | - | - | Action and icon overrides |
+| `<action>` | overrides | `replace` | - | Replacement action |
+| `<icons>` | overrides | - | - | Icon override block (groups `<source>` and `<icon>` overrides) |
+| `<source>` | overrides/icons | - | `visible` | Override source path; first matching used |
+| `<icon>` | overrides/icons | `replace` | - | Replacement icon path (relative to active source) |
+| `<dialogs>` | menus | - | - | Subdialog definitions |
 | `<subdialog>` | dialogs | `buttonID`, `mode` | `setfocus`, `suffix` | Subdialog mapping |
 | `<onclose>` | subdialog | `action` | `menu`, `condition` | Action when subdialog closes |
-| `<contextmenu>` | menus | — | — | Enable/disable context menu |
+| `<contextmenu>` | menus | - | - | Enable/disable context menu |
 
 ### Protect Types
 
@@ -187,12 +190,12 @@ Defines widgets and widget picker groupings.
 
 | Element | Parent | Required Attributes | Optional Attributes | Description |
 |---------|--------|---------------------|---------------------|-------------|
-| `<widgets>` | — | — | — | Root element |
+| `<widgets>` | - | - | - | Root element |
 | `<widget>` | widgets/group | `name`, `label` | `type`, `target`, `icon`, `condition`, `visible`, `source`, `slot`, `browse` | Widget definition |
-| `<path>` | widget | — | — | Content path (required except type="custom") |
-| `<limit>` | widget | — | — | Item limit |
-| `<sortby>` | widget | — | — | Sort field |
-| `<sortorder>` | widget | — | — | Sort direction (`ascending`/`descending`) |
+| `<path>` | widget | - | - | Content path (required except type="custom") |
+| `<limit>` | widget | - | - | Item limit |
+| `<sortby>` | widget | - | - | Sort field |
+| `<sortorder>` | widget | - | - | Sort direction (`ascending`/`descending`) |
 | `<group>` | widgets/group | `name`, `label` (unless `flat="true"`) | `condition`, `visible`, `icon`, `source`, `flat` | Widget group |
 | `<content>` | group | `source` | `target`, `path`, `condition`, `visible`, `icon`, `label`, `folder` | Dynamic content |
 
@@ -274,11 +277,11 @@ Defines background options and groupings.
 
 | Element | Parent | Required Attributes | Optional Attributes | Description |
 |---------|--------|---------------------|---------------------|-------------|
-| `<backgrounds>` | — | — | — | Root element |
+| `<backgrounds>` | - | - | - | Root element |
 | `<background>` | backgrounds/group | `name`, `label` | `type`, `condition`, `visible` | Background definition |
-| `<path>` | background | — | — | Image path or info label |
-| `<icon>` | background | — | — | Icon for picker |
-| `<source>` | background | — | `label`, `condition`, `visible`, `icon` | Browse/playlist source |
+| `<path>` | background | - | - | Image path or info label |
+| `<icon>` | background | - | - | Icon for picker |
+| `<source>` | background | - | `label`, `condition`, `visible`, `icon` | Browse/playlist source |
 | `<group>` | backgrounds/group | `name`, `label` (unless `flat="true"`) | `condition`, `visible`, `icon`, `flat` | Background group |
 | `<content>` | group | `source` | `target`, etc. | Dynamic content |
 
@@ -367,21 +370,21 @@ Defines property schemas, button mappings, and fallback values.
 
 | Element | Parent | Required Attributes | Optional Attributes | Description |
 |---------|--------|---------------------|---------------------|-------------|
-| `<properties>` | — | — | — | Root element |
-| `<includes>` | properties | — | — | Reusable definitions |
-| `<include>` | includes | `name` | — | Include definition |
+| `<properties>` | - | - | - | Root element |
+| `<includes>` | properties | - | - | Reusable definitions |
+| `<include>` | includes | `name` | - | Include definition |
 | `<include/>` | options/fallback | `content` | `suffix` | Include reference |
 | `<property>` | properties | `name` | `type`, `value`, `requires`, `templateonly` | Property definition |
-| `<options>` | property | — | — | Option container |
+| `<options>` | property | - | - | Option container |
 | `<option>` | options/include | `value`, `label` | `condition` | Option value |
-| `<icon>` | option | — | `condition` | Option icon (multiple allowed) |
-| `<buttons>` | properties | — | `suffix` | Button mappings |
-| `<group>` | buttons | — | `suffix` | Button group |
+| `<icon>` | option | - | `condition` | Option icon (multiple allowed) |
+| `<buttons>` | properties | - | `suffix` | Button mappings |
+| `<group>` | buttons | - | `suffix` | Button group |
 | `<button>` | buttons/group | `id`, `property` | `title`, `suffix`, `showNone`, `showIcons`, `type`, `requires` | Button mapping |
-| `<fallbacks>` | properties | — | — | Fallback definitions |
-| `<fallback>` | fallbacks | `property` | — | Fallback for property |
-| `<when>` | fallback | `condition` | — | Conditional fallback |
-| `<default>` | fallback | — | — | Default fallback |
+| `<fallbacks>` | properties | - | - | Fallback definitions |
+| `<fallback>` | fallbacks | `property` | - | Fallback for property |
+| `<when>` | fallback | `condition` | - | Conditional fallback |
+| `<default>` | fallback | - | - | Default fallback |
 
 ### Property Types
 
@@ -533,37 +536,37 @@ Defines templates for generating skin includes. For detailed documentation, see 
 
 | Element | Parent | Required Attributes | Optional Attributes | Description |
 |---------|--------|---------------------|---------------------|-------------|
-| `<templates>` | — | — | — | Root element |
-| `<expressions>` | templates | — | — | Named expression definitions |
+| `<templates>` | - | - | - | Root element |
+| `<expressions>` | templates | - | - | Named expression definitions |
 | `<expression>` | expressions | `name` | `nosuffix` | Reusable expression |
-| `<presets>` | templates | — | — | Preset lookup tables |
-| `<preset>` | presets | `name` | — | Preset with conditional values |
-| `<values>` | preset | — | `condition`, *attributes* | Preset row with attribute values |
-| `<propertyGroups>` | templates | — | — | Reusable property groups |
-| `<propertyGroup>` | propertyGroups | `name` | — | Property group definition |
-| `<includes>` | templates | — | — | Reusable control snippets |
-| `<include>` | includes | `name` | — | Include definition |
-| `<variables>` | templates/template | — | — | Variable definitions |
+| `<presets>` | templates | - | - | Preset lookup tables |
+| `<preset>` | presets | `name` | - | Preset with conditional values |
+| `<values>` | preset | - | `condition`, *attributes* | Preset row with attribute values |
+| `<propertyGroups>` | templates | - | - | Reusable property groups |
+| `<propertyGroup>` | propertyGroups | `name` | - | Property group definition |
+| `<includes>` | templates | - | - | Reusable control snippets |
+| `<include>` | includes | `name` | - | Include definition |
+| `<variables>` | templates/template | - | - | Variable definitions |
 | `<variable>` | variables | `name` | `condition`, `output` | Variable definition |
 | `<variable/>` | variableGroup | `content` | `condition` | Variable reference |
-| `<value>` | variable | — | `condition` | Variable value |
-| `<variableGroup>` | variables | `name` | — | Variable group definition |
-| `<variableGroup/>` | variableGroup | `content` | — | Nested group reference |
-| `<template>` | templates | — | `include`, `build`, `idprefix`, `templateonly`, `menu` | Template definition |
+| `<value>` | variable | - | `condition` | Variable value |
+| `<variableGroup>` | variables | `name` | - | Variable group definition |
+| `<variableGroup/>` | variableGroup | `content` | - | Nested group reference |
+| `<template>` | templates | - | `include`, `build`, `idprefix`, `templateonly`, `menu` | Template definition |
 | `<output>` | template | `include` | `idprefix`, `suffix` | Multi-output target |
-| `<condition>` | template | — | — | Template condition (ANDed) |
+| `<condition>` | template | - | - | Template condition (ANDed) |
 | `<property>` | template/propertyGroup | `name` | `from`, `condition` | Property definition |
-| `<var>` | template/propertyGroup/items | `name` | — | Conditional variable |
-| `<value>` | var | — | `condition` | Var value (first match wins) |
+| `<var>` | template/propertyGroup/items | `name` | - | Conditional variable |
+| `<value>` | var | - | `condition` | Var value (first match wins) |
 | `<preset/>` | template/propertyGroup/items | `content` | `condition`, `suffix` | Apply preset reference |
 | `<propertyGroup/>` | template/propertyGroup/items | `content` | `condition`, `suffix` | Apply property group |
 | `<variableGroup/>` | template | `content` | `condition`, `suffix` | Apply variable group |
-| `<list>` | template | — | — | List items (build="list") |
-| `<item>` | list | — | *attributes* | List item |
+| `<list>` | template | - | - | List items (build="list") |
+| `<item>` | list | - | *attributes* | List item |
 | `<param>` | template | `name` | `default` | Parameter (build="true") |
-| `<controls>` | template/submenu | — | — | Control container |
-| `<skinshortcuts>` | controls | — | `include`, `condition`, `wrap`, `items`, `filter` | Special tag |
-| `<submenu>` | templates | — | `include`, `level`, `name` | Submenu template |
+| `<controls>` | template/submenu | - | - | Control container |
+| `<skinshortcuts>` | controls | - | `include`, `condition`, `wrap`, `items`, `filter` | Special tag |
+| `<submenu>` | templates | - | `include`, `level`, `name` | Submenu template |
 
 ### Skinshortcuts Tag
 
@@ -633,15 +636,15 @@ Property conditions used in `condition` attributes (evaluated against item prope
 
 | Symbol | Keyword | Description | Example |
 |--------|---------|-------------|---------|
-| *(none)* | — | Has value (truthy) | `widgetPath` |
+| *(none)* | - | Has value (truthy) | `widgetPath` |
 | `=` | `EQUALS` | Equals | `widgetType=movies` |
 | `~` | `CONTAINS` | Contains | `widgetPath~skin.helper` |
 | `!` | `NOT` | Negation | `!widgetType=weather` |
-| — | `EMPTY` | Is empty | `widgetPath EMPTY` |
-| — | `IN` | Value in list | `widgetType IN movies,episodes` |
+| - | `EMPTY` | Is empty | `widgetPath EMPTY` |
+| - | `IN` | Value in list | `widgetType IN movies,episodes` |
 | `\|` | `OR` | Logical OR | `widgetType=movies \| tvshows` |
 | `+` | `AND` | Logical AND | `widget=library + widgetType=movies` |
-| `[...]` | — | Grouping | `![widgetType=weather \| system]` |
+| `[...]` | - | Grouping | `![widgetType=weather \| system]` |
 
 ### Compact OR Syntax
 

@@ -112,8 +112,9 @@ def scan_playlist_files(directory: str) -> list[tuple[str, str]]:
 class ContentProvider:
     """Resolves dynamic content references to shortcuts."""
 
-    def __init__(self) -> None:
+    def __init__(self, icon_overrides: dict[str, str] | None = None) -> None:
         self._cache: dict[str, list[ResolvedShortcut]] = {}
+        self._icon_overrides = icon_overrides or {}
 
     def resolve(self, content: Content) -> list[ResolvedShortcut]:
         """Resolve a content reference to a list of shortcuts.
@@ -132,25 +133,30 @@ class ContentProvider:
         target = content.target.lower() if content.target else ""
 
         if source == "sources":
-            return self._resolve_sources(target)
-        if source == "playlists":
-            return self._resolve_playlists(target, content.path)
-        if source == "addons":
-            return self._resolve_addons(target)
-        if source == "favourites":
-            return self._resolve_favourites()
-        if source == "pvr":
-            return self._resolve_pvr(target)
-        if source == "commands":
-            return self._resolve_commands()
-        if source == "settings":
-            return self._resolve_settings()
-        if source == "library":
-            return self._resolve_library(target)
-        if source == "nodes":
-            return self._resolve_nodes(target)
+            result = self._resolve_sources(target)
+        elif source == "playlists":
+            result = self._resolve_playlists(target, content.path)
+        elif source == "addons":
+            result = self._resolve_addons(target)
+        elif source == "favourites":
+            result = self._resolve_favourites()
+        elif source == "pvr":
+            result = self._resolve_pvr(target)
+        elif source == "commands":
+            result = self._resolve_commands()
+        elif source == "settings":
+            result = self._resolve_settings()
+        elif source == "library":
+            result = self._resolve_library(target)
+        elif source == "nodes":
+            result = self._resolve_nodes(target)
+        else:
+            return []
 
-        return []
+        if self._icon_overrides:
+            for r in result:
+                r.icon = self._icon_overrides.get(r.icon, r.icon)
+        return result
 
     def clear_cache(self) -> None:
         """Clear the content cache."""

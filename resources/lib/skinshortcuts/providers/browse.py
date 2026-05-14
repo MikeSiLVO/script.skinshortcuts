@@ -30,6 +30,13 @@ class BrowseItem:
 class BrowseProvider:
     """Lists directory contents via JSON-RPC."""
 
+    def __init__(self, icon_overrides: dict[str, str] | None = None) -> None:
+        self._icon_overrides = icon_overrides or {}
+
+    def set_icon_overrides(self, overrides: dict[str, str]) -> None:
+        """Refresh the override map; setter exists for the module-level singleton."""
+        self._icon_overrides = overrides or {}
+
     def list_directory(
         self, path: str, include_art: bool = False
     ) -> list[BrowseItem] | None:
@@ -87,6 +94,8 @@ class BrowseProvider:
                 )
             if not icon:
                 icon = self._get_icon_for_item(file_info, filetype)
+                if self._icon_overrides:
+                    icon = self._icon_overrides.get(icon, icon)
 
             items.append(
                 BrowseItem(

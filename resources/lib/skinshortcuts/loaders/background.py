@@ -36,7 +36,9 @@ OPTIONAL_PATH_TYPES = {
 }
 
 
-def load_backgrounds(path: str | Path) -> BackgroundConfig:
+def load_backgrounds(
+    path: str | Path, icon_overrides: dict[str, str] | None = None
+) -> BackgroundConfig:
     """Load background configuration from XML file.
 
     Parses <background> and <group> elements directly from root <backgrounds> element.
@@ -45,6 +47,7 @@ def load_backgrounds(path: str | Path) -> BackgroundConfig:
     Returns:
         BackgroundConfig containing backgrounds, groupings, and settings.
     """
+    overrides = icon_overrides or {}
     path = Path(path)
     if not path.exists():
         return BackgroundConfig()
@@ -56,7 +59,7 @@ def load_backgrounds(path: str | Path) -> BackgroundConfig:
 
     for child in root:
         if child.tag == "background":
-            bg = _parse_background(child, str(path))
+            bg = _parse_background(child, str(path), overrides)
             backgrounds.append(bg)
             groupings.append(bg)
         elif child.tag == "group":
@@ -70,7 +73,9 @@ def load_backgrounds(path: str | Path) -> BackgroundConfig:
     )
 
 
-def _parse_background(elem, path: str) -> Background:
+def _parse_background(
+    elem, path: str, icon_overrides: dict[str, str] | None = None
+) -> Background:
     bg_name = get_attr(elem, "name")
     if not bg_name:
         raise BackgroundConfigError(path, "Background missing 'name' attribute")
@@ -104,10 +109,12 @@ def _parse_background(elem, path: str) -> Background:
                 icon=get_attr(source_elem, "icon") or "",
             ))
         else:
+            overrides = icon_overrides or {}
+            explicit_icon = get_attr(source_elem, "icon")
             sources.append(PlaylistSource(
                 label=source_label,
                 path=source_path,
-                icon=get_attr(source_elem, "icon", "DefaultPlaylist.png"),
+                icon=explicit_icon or overrides.get("DefaultPlaylist.png", "DefaultPlaylist.png"),
             ))
 
     return Background(
