@@ -226,12 +226,19 @@ class ItemsMixin:
             return
 
         self._log(f"Opening icon picker, current icon: {item.icon}")
+        # <icons>path</icons> simple mode is parsed as one unlabeled source; treat as direct browse start
+        sources = self.icon_sources
+        default_path = ""
+        if len(sources) == 1 and not sources[0].label:
+            default_path = sources[0].path
+            sources = []
         icon = self._browse_with_sources(
-            sources=self.icon_sources,
+            sources=sources,
             title=xbmc.getLocalizedString(1030),  # "Choose icon"
             browse_type=2,  # Image file
             mask=".png|.jpg|.gif",
             item_properties=item.properties,
+            default_path=default_path,
         )
         self._log(f"Icon picker returned: {icon!r}")
         if icon and isinstance(icon, str):
@@ -346,6 +353,7 @@ class ItemsMixin:
         browse_type: int,
         mask: str = "",
         item_properties: dict[str, str] | None = None,
+        default_path: str = "",
     ) -> str | None:
         """Browse for a file using configured sources.
 
@@ -355,6 +363,7 @@ class ItemsMixin:
             browse_type: Kodi browse type (0=folder, 2=image file)
             mask: File mask for filtering (e.g., ".png|.jpg")
             item_properties: Current item properties for condition evaluation
+            default_path: Starting path when sources is empty (direct browse mode)
 
         Returns:
             Selected path, or None if cancelled
@@ -373,18 +382,13 @@ class ItemsMixin:
             visible_sources.append(source)
 
         if not visible_sources:
+            if default_path:
+                result = xbmcgui.Dialog().browse(
+                    browse_type, title, "files", mask, False, False, default_path
+                )
+                return result if isinstance(result, str) and result != default_path else None
             result = xbmcgui.Dialog().browse(browse_type, title, "files", mask)
             return result if isinstance(result, str) else None
-
-        if len(visible_sources) == 1 and not visible_sources[0].label:
-            path = visible_sources[0].path
-            if path.lower() == "browse":
-                result = xbmcgui.Dialog().browse(browse_type, title, "files", mask)
-            else:
-                result = xbmcgui.Dialog().browse(
-                    browse_type, title, "files", mask, False, False, path
-                )
-            return result if isinstance(result, str) and result != path else None
 
         while True:
             listitems = []

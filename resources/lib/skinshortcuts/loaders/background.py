@@ -91,6 +91,13 @@ def _parse_background(
     if not bg_path and bg_type not in OPTIONAL_PATH_TYPES:
         raise BackgroundConfigError(path, f"Background '{bg_name}' missing <path>")
 
+    if bg_path and bg_type in (BackgroundType.BROWSE, BackgroundType.MULTI) and elem.find("source") is not None:
+        log.warning(
+            f"Background '{bg_name}' in {path} has both <path> and <source>; ignoring <path>"
+        )
+        notify("Background Config", f"'{bg_name}' has both <path> and <source>")
+        bg_path = ""
+
     sources = []
     browse_sources = []
 

@@ -170,15 +170,29 @@ Uses a Kodi info label that resolves to an image path:
 
 ## Browse
 
-User browses for a single image file:
+User browses for a single image file. Three forms control whether a source picker appears before the file browser:
 
 ```xml
+<!-- Direct browse, no starting path -->
+<background name="custom-image" label="Custom Image" type="browse">
+  <icon>DefaultPicture.png</icon>
+</background>
+
+<!-- Direct browse, starts at given path -->
+<background name="custom-image" label="Custom Image" type="browse">
+  <icon>DefaultPicture.png</icon>
+  <path>special://skin/backgrounds/</path>
+</background>
+
+<!-- Source picker shown -->
 <background name="custom-image" label="Custom Image" type="browse">
   <icon>DefaultPicture.png</icon>
   <source label="Skin Backgrounds">special://skin/backgrounds/</source>
   <source label="Browse...">browse</source>
 </background>
 ```
+
+`<path>` and `<source>` are mutually exclusive on browse/multi backgrounds.
 
 ### Sources
 
@@ -198,7 +212,7 @@ Provide starting locations for the file browser:
 | `condition` | Property condition (evaluated against item properties) |
 | `visible` | Kodi visibility condition (evaluated at runtime) |
 
-Use `browse` as the path for free file browser access.
+Use `browse` as the path for free file browser access. Any `<source>` element triggers the source picker, even when only one source is visible.
 
 ---
 
@@ -207,6 +221,18 @@ Use `browse` as the path for free file browser access.
 User browses for a folder (for slideshows):
 
 ```xml
+<!-- Direct folder browse, no starting path -->
+<background name="custom-folder" label="Image Folder" type="multi">
+  <icon>DefaultFolder.png</icon>
+</background>
+
+<!-- Direct folder browse, starts at given path -->
+<background name="custom-folder" label="Image Folder" type="multi">
+  <icon>DefaultFolder.png</icon>
+  <path>special://profile/backgrounds/</path>
+</background>
+
+<!-- Source picker shown -->
 <background name="custom-folder" label="Image Folder" type="multi">
   <icon>DefaultFolder.png</icon>
   <source label="My Backgrounds">special://profile/backgrounds/</source>

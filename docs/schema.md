@@ -279,9 +279,9 @@ Defines background options and groupings.
 |---------|--------|---------------------|---------------------|-------------|
 | `<backgrounds>` | - | - | - | Root element |
 | `<background>` | backgrounds/group | `name`, `label` | `type`, `condition`, `visible` | Background definition |
-| `<path>` | background | - | - | Image path or info label |
+| `<path>` | background | - | - | Image path, info label, live keyword, or browse start path (browse/multi). Mutually exclusive with `<source>` on browse/multi |
 | `<icon>` | background | - | - | Icon for picker |
-| `<source>` | background | - | `label`, `condition`, `visible`, `icon` | Browse/playlist source |
+| `<source>` | background | - | `label`, `condition`, `visible`, `icon` | Browse/playlist source. Any `<source>` element shows the source picker |
 | `<group>` | backgrounds/group | `name`, `label` (unless `flat="true"`) | `condition`, `visible`, `icon`, `flat` | Background group |
 | `<content>` | group | `source` | `target`, etc. | Dynamic content |
 

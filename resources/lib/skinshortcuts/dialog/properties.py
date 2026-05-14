@@ -191,6 +191,7 @@ class PropertiesMixin:
             browse_type: int,
             mask: str = "",
             item_properties: dict[str, str] | None = None,
+            default_path: str = "",
         ) -> str | None: ...
 
         def _pick_widget_from_groups(
@@ -459,6 +460,7 @@ class PropertiesMixin:
                     browse_type=2,  # Image file
                     mask=".jpg|.png|.gif",
                     item_properties=item.properties,
+                    default_path=bg.path,
                 )
                 if path:
                     self._set_background_properties_custom(item, prefix, bg, path)
@@ -472,6 +474,7 @@ class PropertiesMixin:
                     title=resolve_label(bg.label),
                     browse_type=0,  # Folder
                     item_properties=item.properties,
+                    default_path=bg.path,
                 )
                 if path:
                     self._set_background_properties_custom(item, prefix, bg, path)
