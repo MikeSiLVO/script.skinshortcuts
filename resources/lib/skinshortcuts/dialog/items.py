@@ -214,6 +214,11 @@ class ItemsMixin:
                 return
             self.manager.set_label(self.menu_id, item.name, new_label)
             item.label = new_label
+            # widgetLabel is seeded from label for widget submenus; sync on edit so list 211 and widget output match
+            menu = self.manager.config.get_menu(self.menu_id)
+            if menu and menu.menu_type == "widgets":
+                self.manager.set_custom_property(self.menu_id, item.name, "widgetLabel", new_label)
+                item.properties["widgetLabel"] = new_label
             self._refresh_selected_item()
 
     def _set_icon(self) -> None:
