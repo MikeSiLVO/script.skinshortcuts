@@ -412,6 +412,35 @@ Prompts for confirmation, then resets all submenus (menus defined with `<submenu
 | `suffix` | Widget slot suffix (e.g., `.2` for second slot) |
 | `property` | Property prefix to clear (e.g., `widget`) |
 
+### Window Property Pass-Through
+
+Any script invocation accepts paired `prop=NAME,value=VALUE` arguments. Each pair is set on the Home window when the script starts and cleared when it exits. Useful for driving picker visibility conditions (e.g., flat groups) without manual `SetProperty`/`ClearProperty` calls in skin XML.
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=skinstring,prop=widgetContext,value=spotlight,skinPath=home.widget.path,skinLabel=home.widget.label)</onclick>
+```
+
+While the script runs, `Window(Home).Property(widgetContext)` reads as `spotlight`. After the picker closes (or the script errors out), the property is cleared automatically. Conditions like `String.IsEqual(Window(Home).Property(widgetContext),spotlight)` on widgets, groups, or backgrounds will match while the picker is open.
+
+Multiple pairs are supported - the parser zips them in order:
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=manage,menu=mainmenu,prop=widgetContext,value=spotlight,prop=widgetSlot,value=1)</onclick>
+```
+
+A `prop=` without a matching `value=` defaults to `true` (useful for boolean flags that conditions check via `Skin.HasSetting`-style truthiness):
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=manage,menu=mainmenu,prop=spotlightContext)</onclick>
+```
+
+| Argument | Behavior |
+|----------|----------|
+| `prop=<name>` paired with `value=<value>` | Set `<name>=<value>` on Home for the script's lifetime; cleared on exit |
+| `prop=<name>` alone | Set `<name>=true` on Home for the script's lifetime; cleared on exit |
+
+Values containing `&` need URL escaping (`%26`) because the arg string is parsed as a query string.
+
 ---
 
 ## Dialog Flow

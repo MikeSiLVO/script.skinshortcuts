@@ -417,17 +417,53 @@ def main() -> None:
     """Main entry point for RunScript."""
     log.info("Skin Shortcuts started")
 
-    args = {}
+    args: dict[str, str] = {}
+    prop_names: list[str] = []
+    prop_values: list[str] = []
+
+    def _store(key: str, value: str) -> None:
+        # prop/value are repeatable and pair by order across the arg list
+        if key == "prop":
+            prop_names.append(value)
+        elif key == "value":
+            prop_values.append(value)
+        else:
+            args[key] = value
+
     if len(sys.argv) > 1:
         if "&" in sys.argv[1] or len(sys.argv) == 2:
             query = sys.argv[1].lstrip("?")
-            args = {k: v[0] for k, v in parse_qs(query).items()}
+            for k, values in parse_qs(query).items():
+                if k in ("prop", "value"):
+                    for v in values:
+                        _store(k, v)
+                else:
+                    _store(k, values[0])
         else:
             for arg in sys.argv[1:]:
                 if "=" in arg:
                     key, value = arg.split("=", 1)
-                    args[key] = value
+                    _store(key, value)
 
+    # Pair props with values by position; unpaired prop defaults to "true" (boolean flag)
+    window_props = {
+        name: prop_values[i] if i < len(prop_values) else "true"
+        for i, name in enumerate(prop_names)
+    }
+    home = xbmcgui.Window(10000) if IN_KODI and window_props else None
+    if home is not None:
+        for name, value in window_props.items():
+            home.setProperty(name, value)
+
+    try:
+        _dispatch(args)
+    finally:
+        if home is not None:
+            for name in window_props:
+                home.clearProperty(name)
+
+
+def _dispatch(args: dict[str, str]) -> None:
     action = args.get("type", "buildxml")
 
     if action == "buildxml":

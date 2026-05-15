@@ -491,6 +491,8 @@ A group with `flat="true"` has no folder header. Its children render at the pare
 
 `label` and `icon` are unused when `flat="true"` and may be omitted.
 
+For pickers invoked directly via `RunScript`, paired `prop=NAME,value=VALUE` arguments set a window property for the picker's lifetime and clear it on close - useful for driving flat group visibility from a specific button context. See [Window Property Pass-Through](management-dialog.md#window-property-pass-through).
+
 ### `<shortcut>` Attributes
 
 | Attribute | Required | Description |

@@ -109,7 +109,7 @@ Groups can contain:
 * `<group>` - Nested groups
 * `<content>` - Dynamic content (same as widgets/menus)
 
-A group with `flat="true"` has no folder header; its children render at the parent level when the group's `condition` and `visible` both pass. `label` and `icon` are unused in this mode.
+A group with `flat="true"` has no folder header; its children render at the parent level when the group's `condition` and `visible` both pass. `label` and `icon` are unused in this mode. See [Window Property Pass-Through](management-dialog.md#window-property-pass-through) for setting a window property for the picker's lifetime to drive a flat group's `visible` check.
 
 ---
 

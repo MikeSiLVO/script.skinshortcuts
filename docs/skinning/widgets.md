@@ -202,7 +202,7 @@ A group with `flat="true"` does not render as a folder. Its children appear at t
 
 ```xml
 <widgets>
-  <group name="home-widgets" flat="true" condition="widgetSlot=home">
+  <group name="spotlight" flat="true" visible="String.IsEqual(Window(Home).Property(widgetContext),spotlight)">
     <widget name="recent-movies" label="Recent Movies" type="movies">
       <path>videodb://recentlyaddedmovies/</path>
     </widget>
@@ -211,7 +211,7 @@ A group with `flat="true"` does not render as a folder. Its children appear at t
     </widget>
   </group>
 
-  <group name="hub-widgets" flat="true" condition="widgetSlot=hubs">
+  <group name="fallback" flat="true" visible="String.IsEqual(Window(Home).Property(widgetContext),fallback)">
     <widget name="genres" label="Genres" type="moviegenres">
       <path>videodb://movies/genres/</path>
     </widget>
@@ -219,7 +219,13 @@ A group with `flat="true"` does not render as a folder. Its children appear at t
 </widgets>
 ```
 
-Pair flat groups with a window property the skin sets before opening the picker. The condition references that property; only the matching group's widgets appear at the top level.
+Pair flat groups with a window property the picker is invoked with. The condition references that property; only the matching group's widgets appear at the top level. Pass the property using paired `prop=NAME,value=VALUE` args in the script call (see [Window Property Pass-Through](management-dialog.md#window-property-pass-through)):
+
+```xml
+<onclick>RunScript(script.skinshortcuts,type=skinstring,prop=widgetContext,value=spotlight,skinPath=home.widget.path,skinLabel=home.widget.label,skinType=home.widget.type,skinTarget=home.widget.target)</onclick>
+```
+
+The script sets `widgetContext=spotlight` on Home for the picker's lifetime and clears it on close, so the matching flat group's widgets show and the property doesn't leak.
 
 `label` and `icon` are unused when `flat="true"` and may be omitted.
 
