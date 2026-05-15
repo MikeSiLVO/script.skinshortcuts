@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout Add-on
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install dependencies
         run: |
@@ -55,7 +55,7 @@ jobs:
           echo "filename=$filename" >> $GITHUB_OUTPUT
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: v${{ steps.addon-info.outputs.version }}
           body: ${{ steps.addon-info.outputs.changelog }}
