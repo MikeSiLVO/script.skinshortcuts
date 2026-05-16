@@ -116,6 +116,14 @@ Submenus use the same structure as `<menu>` (including all attributes). The only
 
 The `type="widgets"` attribute is commonly used on submenus for per-item widget lists. See [Widget Menus](widgets.md#widget-menus).
 
+### Attributes
+
+In addition to the attributes shared with `<menu>`:
+
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `standalone` | `true` | When `false`, the per-template `skinshortcuts-{name}` include is not emitted. Submenu items still appear in the combined `skinshortcuts-{menu}-submenu` include. Use this when your skin only consumes submenus through the combined include and you want a cleaner generated output. |
+
 Link a submenu to an item:
 
 ```xml

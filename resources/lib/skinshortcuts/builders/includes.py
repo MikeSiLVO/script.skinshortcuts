@@ -98,6 +98,8 @@ class IncludesBuilder:
                 continue
             if not menu.template_origin:
                 continue
+            if not menu.standalone:
+                continue
             include_name = menu.template_origin
             if "/" in include_name:
                 continue

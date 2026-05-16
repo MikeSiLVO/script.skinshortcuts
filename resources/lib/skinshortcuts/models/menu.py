@@ -327,6 +327,7 @@ class Menu:
     build: str = "true"
     action: str = ""
     template_origin: str = ""  # For per-item submenu instances: the template they were seeded from
+    standalone: bool = True  # <submenu>: emit skinshortcuts-{name} per-template include
 
     def get_item(self, item_name: str) -> MenuItem | None:
         """Get item by name."""
