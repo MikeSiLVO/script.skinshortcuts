@@ -398,11 +398,14 @@ class PickersMixin:
         """Show dialog to pick widget content type.
 
         Args:
-            addon_type: The addon category (video, audio, executable)
+            addon_type: The addon category (video, audio, executable, pictures)
 
         Returns:
             Selected widget type string, or None if cancelled.
         """
+        if addon_type == "pictures":
+            return "pictures"
+
         if addon_type == "video":
             types = [
                 ("movies", "Movies", "DefaultMovies.png"),
@@ -452,6 +455,7 @@ class PickersMixin:
             "music": "music",
             "programs": "programs",
             "files": "files",
+            "pictures": "pictures",
         }
         return type_to_target.get(widget_type, default)
 
@@ -482,6 +486,8 @@ class PickersMixin:
             addon_type = "audio"
         elif widget.target == "programs":
             addon_type = "executable"
+        elif widget.target == "pictures":
+            addon_type = "pictures"
 
         widget_type = self._pick_widget_type(addon_type)
         if widget_type is None:
