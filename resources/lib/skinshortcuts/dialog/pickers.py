@@ -313,16 +313,17 @@ class PickersMixin:
         """
         current_widget = item_props.get(slot, "") if item_props else ""
         preselect = -1
+        overrides = self._icon_overrides()
 
         listitems = []
         none_item = xbmcgui.ListItem("None")
-        none_item.setArt({"icon": "DefaultAddonNone.png"})
+        none_item.setArt({"icon": overrides.get("DefaultAddonNone.png", "DefaultAddonNone.png")})
         listitems.append(none_item)
 
         for i, w in enumerate(widgets):
             listitem = xbmcgui.ListItem(resolve_label(w[1]))
             icon = w[2] if len(w) > 2 and w[2] else "DefaultAddonNone.png"
-            listitem.setArt({"icon": icon})
+            listitem.setArt({"icon": overrides.get(icon, icon)})
             listitems.append(listitem)
             if preselect == -1 and w[0] == current_widget:
                 preselect = i + 1  # +1 for "None" option
@@ -423,10 +424,11 @@ class PickersMixin:
                 ("files", "Files", "DefaultFile.png"),
             ]
 
+        overrides = self._icon_overrides()
         listitems = []
         for _type_id, label, icon in types:
             listitem = xbmcgui.ListItem(label)
-            listitem.setArt({"icon": icon})
+            listitem.setArt({"icon": overrides.get(icon, icon)})
             listitems.append(listitem)
 
         selected = xbmcgui.Dialog().select("Select Widget Type", listitems, useDetails=True)
@@ -526,16 +528,20 @@ class PickersMixin:
                 preselect = i + offset
                 break
 
+        overrides = self._icon_overrides()
+        none_icon = overrides.get("DefaultAddonNone.png", "DefaultAddonNone.png")
+
         while True:
             listitems = []
             if show_none:
                 none_item = xbmcgui.ListItem("None")
-                none_item.setArt({"icon": "DefaultAddonNone.png"})
+                none_item.setArt({"icon": none_icon})
                 listitems.append(none_item)
 
             for _item_id, label, icon in items:
+                resolved = icon or "DefaultAddonNone.png"
                 listitem = xbmcgui.ListItem(resolve_label(label))
-                listitem.setArt({"icon": icon or "DefaultAddonNone.png"})
+                listitem.setArt({"icon": overrides.get(resolved, resolved)})
                 listitems.append(listitem)
 
             selected = xbmcgui.Dialog().select(
@@ -613,11 +619,13 @@ class PickersMixin:
                 preselect = i + offset
                 break
 
+        overrides = self._icon_overrides()
+
         while True:
             listitems = []
             if show_none:
                 none_item = xbmcgui.ListItem("None")
-                none_item.setArt({"icon": "DefaultAddonNone.png"})
+                none_item.setArt({"icon": overrides.get("DefaultAddonNone.png", "DefaultAddonNone.png")})
                 listitems.append(none_item)
 
             for vis_item in visible_items:
@@ -642,13 +650,13 @@ class PickersMixin:
                 else:
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 listitem = xbmcgui.ListItem(label)
-                listitem.setArt({"icon": icon})
+                listitem.setArt({"icon": overrides.get(icon, icon)})
                 listitems.append(listitem)
 
             if custom_action:
                 action_label, action_icon, _callback = custom_action
                 action_item = xbmcgui.ListItem(action_label)
-                action_item.setArt({"icon": action_icon})
+                action_item.setArt({"icon": overrides.get(action_icon, action_icon)})
                 listitems.append(action_item)
 
             selected = xbmcgui.Dialog().select(
@@ -739,6 +747,7 @@ class PickersMixin:
             xbmcgui.Dialog().notification("No Items", "No items available in this group")
             return None
 
+        overrides = self._icon_overrides()
         preselect = -1
         while True:
             listitems = []
@@ -764,7 +773,7 @@ class PickersMixin:
                 else:
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 listitem = xbmcgui.ListItem(label)
-                listitem.setArt({"icon": icon})
+                listitem.setArt({"icon": overrides.get(icon, icon)})
                 listitems.append(listitem)
 
             title = resolve_label(group.label)
@@ -947,6 +956,9 @@ class PickersMixin:
         current_label = title
         history: list[tuple[str, str]] = []
 
+        overrides = self._icon_overrides()
+        folder_icon = overrides.get("DefaultFolder.png", "DefaultFolder.png")
+
         while True:
             xbmc.executebuiltin("ActivateWindow(busydialognocancel)")
             try:
@@ -961,7 +973,7 @@ class PickersMixin:
 
                 listitems = []
                 use_location_item = xbmcgui.ListItem(LANGUAGE(32058))
-                use_location_item.setArt({"icon": "DefaultFolder.png"})
+                use_location_item.setArt({"icon": folder_icon})
                 listitems.append(use_location_item)
                 for item in items:
                     label = item.label
@@ -982,7 +994,7 @@ class PickersMixin:
                 return None
 
             if selected == 0:
-                return (current_path, current_label or "Location", "DefaultFolder.png")
+                return (current_path, current_label or "Location", folder_icon)
 
             selected_item = items[selected - 1]
 
