@@ -414,7 +414,7 @@ Prompts for confirmation, then resets all submenus (menus defined with `<submenu
 
 ### Window Property Pass-Through
 
-Any script invocation accepts paired `prop=NAME,value=VALUE` arguments. Each pair is set on the Home window when the script starts and cleared when it exits. Useful for driving picker visibility conditions (e.g., flat groups) without manual `SetProperty`/`ClearProperty` calls in skin XML.
+Paired `prop=NAME,value=VALUE` arguments work with any entry type (`type=manage`, `type=skinstring`, or any other). Each pair is set on the Home window when the script starts and cleared when it exits. Useful for driving picker visibility conditions (e.g., flat groups) without manual `SetProperty`/`ClearProperty` calls in skin XML.
 
 ```xml
 <onclick>RunScript(script.skinshortcuts,type=skinstring,prop=widgetContext,value=spotlight,skinPath=home.widget.path,skinLabel=home.widget.label)</onclick>
