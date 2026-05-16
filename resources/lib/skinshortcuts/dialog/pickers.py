@@ -26,21 +26,6 @@ def _check_visible(visible: str) -> bool:
     return xbmc.getCondVisibility(visible)
 
 
-_HEAVY_PATH_SUFFIXES = ("/songs/", "/episodes/", "/discs/")
-
-
-def _is_heavy_library_path(path: str) -> bool:
-    """Detect Kodi library paths that dump tens of thousands of media rows.
-
-    These paths are unbearably slow when requesting per-item art, and the
-    resulting dialog is too dense to render cleanly. Used to skip art fetch
-    and switch to a plain list.
-    """
-    if path.startswith("library://") and (
-        path.endswith(".xml/") or path.endswith(".xml")
-    ):
-        return True
-    return path.endswith(_HEAVY_PATH_SUFFIXES)
 
 
 @runtime_checkable
@@ -963,11 +948,9 @@ class PickersMixin:
         history: list[tuple[str, str]] = []
 
         while True:
-            detail_view = not _is_heavy_library_path(current_path)
-
             xbmc.executebuiltin("ActivateWindow(busydialognocancel)")
             try:
-                items = browse_provider.list_directory(current_path, include_art=detail_view)
+                items = browse_provider.list_directory(current_path, include_art=True)
                 if items is None:
                     xbmcgui.Dialog().notification(
                         "Cannot Browse", "Unable to list directory contents"
@@ -976,32 +959,21 @@ class PickersMixin:
 
                 dialog_title = current_label or "Browse"
 
-                if detail_view:
-                    listitems = []
-                    use_location_item = xbmcgui.ListItem(LANGUAGE(32058))
-                    use_location_item.setArt({"icon": "DefaultFolder.png"})
-                    listitems.append(use_location_item)
-                    for item in items:
-                        label = item.label
-                        if item.is_directory:
-                            label = f"{label} >"
-                        listitem = xbmcgui.ListItem(label)
-                        listitem.setArt({"icon": item.icon})
-                        listitems.append(listitem)
-                else:
-                    listitems = [LANGUAGE(32058)]
-                    for item in items:
-                        label = item.label
-                        if item.is_directory:
-                            label = f"{label} >"
-                        listitems.append(label)
+                listitems = []
+                use_location_item = xbmcgui.ListItem(LANGUAGE(32058))
+                use_location_item.setArt({"icon": "DefaultFolder.png"})
+                listitems.append(use_location_item)
+                for item in items:
+                    label = item.label
+                    if item.is_directory:
+                        label = f"{label} >"
+                    listitem = xbmcgui.ListItem(label)
+                    listitem.setArt({"icon": item.icon})
+                    listitems.append(listitem)
             finally:
                 xbmc.executebuiltin("Dialog.Close(busydialognocancel)")
 
-            if detail_view:
-                selected = xbmcgui.Dialog().select(dialog_title, listitems, useDetails=True)
-            else:
-                selected = xbmcgui.Dialog().select(dialog_title, listitems)
+            selected = xbmcgui.Dialog().select(dialog_title, listitems, useDetails=True)
 
             if selected == -1:
                 if history:
