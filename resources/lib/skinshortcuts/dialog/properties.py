@@ -13,6 +13,7 @@ _log = get_logger("Properties")
 try:
     import xbmc
     import xbmcgui
+    import xbmcvfs
 
     IN_KODI = True
 except ImportError:
@@ -606,6 +607,11 @@ class PropertiesMixin:
             ]
 
         prefix = resolve_label(label_prefix) if label_prefix else ""
+
+        sources = [s for s in sources if xbmcvfs.exists(s.path)]
+        if not sources:
+            xbmcgui.Dialog().notification("No Playlists", "No playlist locations found")
+            return None
 
         if len(sources) == 1:
             return self._pick_playlist_from_source(sources[0], prefix, current_path)
