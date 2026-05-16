@@ -35,6 +35,12 @@
 | `allow` | MenuAllow | Feature toggles (widgets, backgrounds, submenus) |
 | `container` | str | Container ID for visibility |
 | `is_submenu` | bool | True if from `<submenu>` tag |
+| `menu_type` | str \| None | `"widgets"` for widget submenus |
+| `controltype` | str | Output as `<control type="X">` instead of `<item>` |
+| `startid` | int | Starting control ID for `controltype` menus |
+| `template_only` | str | Contains `"submenu"` to skip combined submenu include |
+| `template_origin` | str | For per-item submenu instances: the template they were seeded from |
+| `standalone` | bool | When False (from `<submenu standalone="false">`), skip the per-template `skinshortcuts-{name}` include |
 | `build` | str | Build mode: `"true"` (default) or `"auto"` |
 | `action` | str | Action to match for `build="auto"` |
 

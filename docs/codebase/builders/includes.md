@@ -29,6 +29,8 @@ Build the includes XML tree. For each root menu:
 3. Custom widget includes (`skinshortcuts-{item}-customwidget{n}`)
 4. Template includes (if templates defined)
 
+Per-template submenu includes (`skinshortcuts-{template_origin}`) are emitted from per-item submenu instances where `template_origin` is set. Skipped when `menu.standalone` is False (from `<submenu standalone="false">`).
+
 ### write(path, indent=True)
 
 Write includes XML to file.

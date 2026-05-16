@@ -107,7 +107,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 | Element | Parent | Required Attributes | Optional Attributes | Description |
 |---------|--------|---------------------|---------------------|-------------|
 | `<menu>` | menus | `name` | `container` | Main menu definition |
-| `<submenu>` | menus | `name` | `container` | Submenu definition (built when referenced) |
+| `<submenu>` | menus | `name` | `container`, `standalone` | Submenu definition (built when referenced). `standalone="false"` skips the per-template `skinshortcuts-{name}` include |
 | `<allow>` | menu/submenu | - | `widgets`, `backgrounds`, `submenus` | Feature toggles for dialog |
 | `<defaults>` | menu/submenu | - | `widget`, `background` | Default settings for items |
 | `<action>` | defaults | - | `when`, `condition` | Default action (before/after) |
