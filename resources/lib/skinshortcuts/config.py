@@ -107,9 +107,8 @@ class SkinConfig:
             if menu.is_submenu:
                 continue
             for item in menu.items:
-                ref = item.submenu or item.name
-                if ref in template_map:
-                    referenced_templates.add(ref)
+                if item.submenu and item.submenu in template_map:
+                    referenced_templates.add(item.submenu)
         for menu_override in userdata.menus.values():
             for item_override in menu_override.items:
                 if item_override.submenu and item_override.submenu in template_map:
@@ -137,8 +136,8 @@ class SkinConfig:
             menus.append(merged)
 
             for item in merged.items:
-                template_name = item.submenu or item.name
-                template = template_map.get(template_name)
+                template_name = item.submenu or ""
+                template = template_map.get(template_name) if template_name else None
                 key = f"{merged.name}/{item.name}"
                 instance_override = userdata.menus.get(key)
                 if template is None:

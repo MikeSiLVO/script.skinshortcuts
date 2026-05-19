@@ -65,9 +65,8 @@ class MenuManager:
         referenced: set[str] = set()
         for menu in self.config.default_menus:
             for item in menu.items:
-                ref = item.submenu or item.name
-                if ref:
-                    referenced.add(ref)
+                if item.submenu:
+                    referenced.add(item.submenu)
         for menu_override in self.config.userdata.menus.values():
             for item_override in menu_override.items:
                 if item_override.submenu:
@@ -122,8 +121,8 @@ class MenuManager:
 
     @staticmethod
     def submenu_template(item: MenuItem) -> str:
-        """Template name to seed this item's submenu from (falls back to item name)."""
-        return item.submenu or item.name
+        """Template name to seed this item's submenu from. Empty if no explicit binding."""
+        return item.submenu or ""
 
     def ensure_item_submenu(self, parent_menu_name: str, item: MenuItem) -> Menu:
         """Return the per-item submenu, seeding from template on first access."""

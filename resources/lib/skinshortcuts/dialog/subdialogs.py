@@ -95,8 +95,9 @@ class SubdialogsMixin:
         if not self.manager:
             return
 
-        template_name = item.submenu or item.name
-        template = self.manager.config.get_default_menu(template_name)
+        template = (
+            self.manager.config.get_default_menu(item.submenu) if item.submenu else None
+        )
         is_widget_submenu = template and template.menu_type == "widgets"
 
         menu = self.manager.config.get_menu(self.menu_id)
@@ -232,7 +233,7 @@ class SubdialogsMixin:
         resolved = menu_ref.replace("{item}", item.name)
 
         # flat ref aliases the per-item submenu; route there or edits fork to a shadow copy
-        if resolved == (item.submenu or item.name):
+        if item.submenu and resolved == item.submenu:
             self.manager.ensure_item_submenu(self.menu_id, item)
             return self.manager.submenu_key(self.menu_id, item.name)
 
