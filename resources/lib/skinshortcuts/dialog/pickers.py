@@ -1066,6 +1066,7 @@ class PickersMixin:
                         condition=item.condition,
                         visible=item.visible,
                         items=filtered_children,
+                        flat=item.flat,
                     )
                     filtered.append(filtered_group)
             else:
