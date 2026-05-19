@@ -13,6 +13,7 @@ except ImportError:
     IN_KODI = False
 
 from .dialog.pickers import PickersMixin
+from .loaders.menu import load_menus
 from .loaders.widget import load_widgets
 from .localize import resolve_label
 from .log import get_logger
@@ -24,11 +25,17 @@ log = get_logger("SkinString")
 class _StandalonePicker(PickersMixin):
     """Minimal adapter for PickersMixin outside the management dialog."""
 
-    def __init__(self, shortcuts_path: str) -> None:
+    def __init__(
+        self, shortcuts_path: str, icon_overrides: dict[str, str] | None = None
+    ) -> None:
         self.shortcuts_path = shortcuts_path
         self.manager = None  # type: ignore[assignment]
         self.menu_id = ""
         self.items: list[MenuItem] = []
+        self._overrides = icon_overrides or {}
+
+    def _icon_overrides(self) -> dict[str, str]:
+        return self._overrides
 
     def _get_selected_item(self) -> MenuItem | None:
         return None
@@ -58,7 +65,8 @@ def pick_widget_skinstring(shortcuts_path: str, params: dict[str, str]) -> None:
         return
 
     widget_config = load_widgets(Path(shortcuts_path) / "widgets.xml")
-    picker = _StandalonePicker(shortcuts_path)
+    menu_config = load_menus(Path(shortcuts_path) / "menus.xml")
+    picker = _StandalonePicker(shortcuts_path, menu_config.icon_overrides)
 
     if widget_config.groupings:
         result = picker._pick_widget_from_groups(widget_config.groupings, {})
