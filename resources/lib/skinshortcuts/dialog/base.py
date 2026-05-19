@@ -238,16 +238,20 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             self.items = self.manager.get_menu_items(self.menu_id)
 
             if not self.items:
-                    if self.menu_id.startswith("user-"):
-                        menu_suffix = self.menu_id[5:]
-                    else:
-                        menu_suffix = self.menu_id
-                    default_item = MenuItem(
-                        name=f"sub-{menu_suffix[:8]}",
-                        label="New Item",
-                        icon="DefaultFolder.png",
-                    )
-                    self.items.append(default_item)
+                self._inject_empty_placeholder()
+
+    def _inject_empty_placeholder(self) -> None:
+        """Add a placeholder so an empty list still shows something to click."""
+        if self.menu_id.startswith("user-"):
+            menu_suffix = self.menu_id[5:]
+        else:
+            menu_suffix = self.menu_id
+        placeholder = MenuItem(
+            name=f"sub-{menu_suffix[:8]}",
+            label="New Item",
+            is_placeholder=True,
+        )
+        self.items.append(placeholder)
 
     def _display_items(self) -> None:
         """Display items in the list control. Called once during onInit."""

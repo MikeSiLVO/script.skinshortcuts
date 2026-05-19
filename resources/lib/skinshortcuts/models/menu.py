@@ -253,6 +253,7 @@ class MenuItem:
     submenu: str | None = None
     original_action: str = ""  # Set from defaults, not saved to userdata
     includes: list[IncludeRef] = field(default_factory=list)
+    is_placeholder: bool = False  # empty placeholder, dropped from save until edited
 
     @property
     def action(self) -> str:

@@ -179,6 +179,7 @@ class MenuManager:
 
         prop_name = f"customWidget{suffix}"
         item.properties[prop_name] = cw_menu_id
+        item.is_placeholder = False
         self._changed = True
 
         return cw_menu_id
@@ -222,6 +223,7 @@ class MenuManager:
             if cw_menu_id in self.working:
                 self.working[cw_menu_id].items.clear()
             del item.properties[prop_name]
+            item.is_placeholder = False
             self._changed = True
             return True
 
@@ -259,6 +261,7 @@ class MenuManager:
                 name=item_name,
                 label=label or "New Item",
                 actions=[Action(action="noop")],
+                is_placeholder=not label,
             )
 
         if after_index is not None and 0 <= after_index < len(menu.items):
@@ -606,6 +609,7 @@ class MenuManager:
         elif prop_name in item.properties:
             del item.properties[prop_name]
 
+        item.is_placeholder = False
         self._changed = True
         return True
 
@@ -622,6 +626,7 @@ class MenuManager:
         else:
             setattr(item, prop, value)
 
+        item.is_placeholder = False
         self._changed = True
         return True
 
@@ -719,13 +724,15 @@ class MenuManager:
 
         if default is None:
             for idx, item in enumerate(working.items):
+                if item.is_placeholder:
+                    continue
                 item_override = self._item_to_override(item, is_new=True)
                 item_override.position = idx
                 override.items.append(item_override)
             return override if override.items else None
 
         default_items = {item.name: item for item in default.items}
-        working_items = {item.name: item for item in working.items}
+        working_items = {item.name: item for item in working.items if not item.is_placeholder}
 
         for name, default_item in default_items.items():
             if name not in working_items:
@@ -737,6 +744,8 @@ class MenuManager:
                 override.removed.append(name)
 
         for idx, working_item in enumerate(working.items):
+            if working_item.is_placeholder:
+                continue
             default_item = default_items.get(working_item.name)
 
             if default_item is None:
