@@ -310,6 +310,8 @@ class MenuManager:
         """
         menu = self._ensure_working_menu(menu_id)
 
+        menu.items[:] = [i for i in menu.items if not (i.is_placeholder and not i.actions)]
+
         restored = copy.deepcopy(item)
         menu.items.append(restored)
         self._changed = True
@@ -326,6 +328,8 @@ class MenuManager:
             True if item was reset
         """
         default_menu = self.config.get_default_menu(menu_id)
+        if default_menu is None and "/" in menu_id:
+            default_menu = self._template_for_submenu_key(menu_id)
         if not default_menu:
             return False
 
@@ -458,6 +462,8 @@ class MenuManager:
             return False
 
         default_menu = self.config.get_default_menu(menu_id)
+        if default_menu is None and "/" in menu_id:
+            default_menu = self._template_for_submenu_key(menu_id)
         if not default_menu:
             return False
 
@@ -491,6 +497,8 @@ class MenuManager:
             List of MenuItems that can be restored
         """
         default_menu = self.config.get_default_menu(menu_id)
+        if default_menu is None and "/" in menu_id:
+            default_menu = self._template_for_submenu_key(menu_id)
         if not default_menu:
             return []
 
