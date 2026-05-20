@@ -168,10 +168,10 @@ Presets can provide different values per widget slot:
 ```xml
 <presets>
   <preset name="layoutDimensions">
-    <!-- Widget 2 (suffix=.2) - positioned higher -->
+    <!-- Widget 2 (suffix=.2) -->
     <values condition="suffix=.2 + widgetArt=Poster" top="70" />
     <values condition="suffix=.2" top="112" />
-    <!-- Widget 1 (default) - positioned lower -->
+    <!-- Widget 1 (default) -->
     <values condition="widgetArt=Poster" top="424" />
     <values top="471" />
   </preset>
@@ -265,7 +265,7 @@ No iteration, outputs controls once with parameter substitution:
 
 Use as `<include content="skinshortcuts-UtilityInclude"><param name="id">9001</param></include>`.
 
-Raw mode also supports `<skinshortcuts>visibility</skinshortcuts>` markers. Instead of per-item visibility, the marker generates an OR'd condition across all matching menu items — outputting controls once with combined visibility. This is useful for elements that should be visible when *any* matching item is focused:
+Raw mode also supports `<skinshortcuts>visibility</skinshortcuts>` markers. Instead of per-item visibility, the marker generates an OR'd condition across all matching menu items, outputting controls once with combined visibility. This is useful for elements that should be visible when *any* matching item is focused:
 
 ```xml
 <template include="SharedBackground" build="true" menu="mainmenu">
@@ -670,7 +670,7 @@ This enables creating button menus where each menu item becomes an individual bu
 
 | Value | Description |
 |-------|-------------|
-| `visibility` | Generate visibility condition matching current item (per-item in menu mode, OR'd in raw mode — per-group when properties are defined) |
+| `visibility` | Generate visibility condition matching current item (per-item in menu mode, OR'd in raw mode; per-group when properties are defined) |
 | `onclick` | Generate onclick elements from item actions |
 
 ---

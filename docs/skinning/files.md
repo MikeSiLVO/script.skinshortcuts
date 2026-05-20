@@ -193,18 +193,4 @@ Or programmatically:
 
 ---
 
-## File Loading Order
-
-1. Load `menus.xml` - menu structure, groupings, subdialogs
-2. Load `widgets.xml` - widget definitions and groupings
-3. Load `backgrounds.xml` - background options
-4. Load `properties.xml` - property schemas
-5. Load `views.xml` - view locking rules
-6. Load userdata JSON - merge user customizations
-7. Load `templates.xml` - for include generation
-
-Configuration files are in the skin's `shortcuts/` folder. Userdata is skin-specific and stored separately.
-
----
-
 [↑ Top](#file-overview) · [Skinning Docs](index.md)

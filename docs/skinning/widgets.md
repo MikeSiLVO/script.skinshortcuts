@@ -442,7 +442,7 @@ Open it directly:
 <onclick>RunScript(script.skinshortcuts,type=manage&amp;menu=globalwidgets)</onclick>
 ```
 
-The generated include `skinshortcuts-globalwidgets` contains each item with its widget properties, usable like any other menu include.
+The generated include `skinshortcuts-globalwidgets` contains each item with its widget properties.
 
 ### Per-Item Widget Submenu
 
@@ -474,7 +474,6 @@ In widget mode (`type="widgets"`):
 
 - **Add** opens the widget picker (from `widgets.xml`) instead of the shortcut picker
 - **Item label and icon** are set from the selected widget
-- All other operations (delete, move, properties) work as normal
 - The window property `skinshortcuts-menutype` is set to `widgets`
 
 > **See also:** [Widget Picker Button](#widget-picker-button) for adding a widget picker to individual items, [Dynamic Widgets Pattern](templates.md#dynamic-widgets-pattern) for template iteration
@@ -540,7 +539,7 @@ For additional widget slots, use [subdialogs](menus.md#subdialogs) with a suffix
 </dialogs>
 ```
 
-The suffix transforms property names automatically — `widget` becomes `widget.2`, `widgetPath` becomes `widgetPath.2`, etc.
+The suffix transforms property names automatically: `widget` becomes `widget.2`, `widgetPath` becomes `widgetPath.2`, etc.
 
 > **See also:** [Properties](properties.md#button-mappings) for button mapping options, [Suffix Transforms](properties.md#suffix-transforms) for how suffixes work, [Multiple Widgets](#multiple-widgets) for display setup
 

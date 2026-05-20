@@ -91,7 +91,7 @@ If no item in any other menu has `ActivateWindow(1111)` as its action, `skinshor
 
 **Control type menus:** When `controltype="button"`, items are output as `<control type="button">` elements instead of `<item>` elements. Use this for menus displayed in grouplists where you need individual button controls. Properties are not included in control output.
 
-**Control IDs:** Use `id` to set the starting control ID for `controltype` menus. For example, `id="8000"` outputs controls with IDs 8000, 8001, 8002, etc. This avoids conflicts with other controls in the window. Ignored for regular item menus.
+**Control IDs:** Use `id` to set the starting control ID for `controltype` menus. For example, `id="8000"` outputs controls with IDs 8000, 8001, 8002, etc. Ignored for regular item menus.
 
 ---
 
@@ -390,7 +390,7 @@ Protect items from accidental changes.
 </item>
 ```
 
-Items with `required="true"` cannot be deleted or disabled. If a user previously deleted a required item, it will be automatically restored when the skinner adds the `required` attribute.
+Items with `required="true"` cannot be deleted or disabled. Adding `required` to a deleted item also restores it.
 
 ### Confirmation Dialog
 
@@ -499,7 +499,7 @@ A group with `flat="true"` has no folder header. Its children render at the pare
 
 `label` and `icon` are unused when `flat="true"` and may be omitted.
 
-For pickers invoked directly via `RunScript`, paired `prop=NAME,value=VALUE` arguments set a window property for the picker's lifetime and clear it on close - useful for driving flat group visibility from a specific button context. See [Window Property Pass-Through](management-dialog.md#window-property-pass-through).
+For pickers invoked directly via `RunScript`, paired `prop=NAME,value=VALUE` arguments set a window property for the picker's lifetime and clear it on close; useful for driving flat group visibility from a specific button context. See [Window Property Pass-Through](management-dialog.md#window-property-pass-through).
 
 ### `<shortcut>` Attributes
 
@@ -521,7 +521,7 @@ For pickers invoked directly via `RunScript`, paired `prop=NAME,value=VALUE` arg
 | `<path>` | Content path (for browse mode) |
 | `<visible>` | Kodi visibility condition baked into the resulting menu item when this shortcut is picked. Multiple elements are joined with ` + ` |
 
-The attribute and child element are independent: the attribute gates picker visibility, the child element travels with the picked item. A shortcut can use either, both, or neither.
+The attribute and child element are independent: the attribute gates picker visibility, the child element travels with the picked item.
 
 ```xml
 <shortcut name="cancel-alarm" label="$LOCALIZE[20151]" icon="...">
@@ -793,7 +793,7 @@ Substitute Kodi's generic `Default*.png` icons (e.g., `DefaultFolder.png`, `Defa
 
 Resolution:
 
-1. The active `<source>` is the first one whose `visible` condition passes (or the first source without a `visible` attribute). Sources must be declared explicitly in the override block - the root `<icons>` picker source is not reused automatically, since a skin's icon picker folder is usually a flat collection of icons rather than a substitution map.
+1. The active `<source>` is the first one whose `visible` condition passes (or the first source without a `visible` attribute). Sources must be declared explicitly in the override block; the root `<icons>` picker source is not reused automatically, since a skin's icon picker folder is usually a flat collection of icons rather than a substitution map.
 2. **Convention scan**: any `Default*.png` file found in the active source is automatically registered as an override pointing at itself. Drop replacement icons into your icons folder with matching filenames to skip listing them individually.
 3. **Explicit overrides**: `<icon replace="X">Y</icon>` declarations win over convention. The replacement path Y is resolved relative to the active source unless it's absolute (starts with `special://` or `/`). With no `<source>` declared, relative Y values are dropped and logged.
 
@@ -815,7 +815,7 @@ The condition is evaluated at config load. If the user changes the skin setting 
 
 ### Scope
 
-Overrides apply only to icons the script generates as a default (when no `icon=` attribute is set on a shortcut, when content sources stamp generic icons, when the browse picker falls back to a type-aware default). Icons the skinner declares explicitly via `icon="..."` attributes stay literal - a skinner who writes `icon="DefaultFolder.png"` is treated as deliberately choosing that icon.
+Overrides apply only to icons the script generates as a default (when no `icon=` attribute is set on a shortcut, when content sources stamp generic icons, when the browse picker falls back to a type-aware default). Icons declared explicitly via `icon="..."` stay literal: `icon="DefaultFolder.png"` is taken as a deliberate choice.
 
 ---
 

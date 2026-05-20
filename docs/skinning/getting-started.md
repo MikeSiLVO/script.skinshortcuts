@@ -76,8 +76,6 @@ Create `shortcuts/menus.xml`:
 </menus>
 ```
 
-This defines a menu named `mainmenu` with three items.
-
 > **See also:** [Menu Configuration](menus.md) for full element reference
 
 ---
@@ -179,8 +177,6 @@ This opens the same widget picker used by the management dialog, but stores resu
 | `path` | Custom shortcuts path (optional) |
 
 All parameters are optional except `type`. Selecting "None" clears the specified skin strings. Cancelling makes no changes.
-
-> **Note:** This replaces the v2 `type=shortcuts` entry point.
 
 ---
 

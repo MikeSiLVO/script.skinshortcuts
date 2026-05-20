@@ -299,8 +299,6 @@ Dynamic content from a user-selected playlist:
 </background>
 ```
 
-Combines playlist selection with dynamic content extraction.
-
 ---
 
 ## Sources

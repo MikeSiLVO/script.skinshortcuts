@@ -113,7 +113,7 @@ The `requires` attribute prevents a property from being set until a prerequisite
 | `widget.2` | `widget.2` OR `widgetPath.2` |
 | `background` | `background` OR `backgroundPath` |
 
-This allows widgets set via the shortcut picker (which set `widgetPath` but not `widget`) to satisfy requires checks.
+Widgets set via the shortcut picker (which set `widgetPath` but not `widget`) still satisfy requires checks.
 
 ---
 

@@ -746,11 +746,11 @@ Remove these controls from your dialog XML.
 | -------------------------- | --- | ----------------------------- |
 | `groupname`                | ✓   | Renamed to `menuname`         |
 | `groupDisplayName`         | ✓   | Removed                       |
-| `menuname`                 | —   | ✓ (new, replaces `groupname`) |
-| `disableWidgets`           | —   | ✓ (new) - `true` if disabled  |
-| `disableBackgrounds`       | —   | ✓ (new) - `true` if disabled  |
-| `disableSubmenus`          | —   | ✓ (new) - `true` if disabled  |
-| `skinshortcuts-hasdeleted` | —   | ✓ (new)                       |
+| `menuname`                 | -   | ✓ (new, replaces `groupname`) |
+| `disableWidgets`           | -   | ✓ (new, `true` if disabled)   |
+| `disableBackgrounds`       | -   | ✓ (new, `true` if disabled)   |
+| `disableSubmenus`          | -   | ✓ (new, `true` if disabled)   |
+| `skinshortcuts-hasdeleted` | -   | ✓ (new)                       |
 
 ### Dialog Window Properties (v3 only)
 

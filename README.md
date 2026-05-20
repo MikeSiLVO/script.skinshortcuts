@@ -172,7 +172,7 @@ userdata/addon_data/script.skinshortcuts/
 └─────────────────┘     └──────────────────┘     └─────────────────────────────┘
 ```
 
-The script merges skin defaults with user customizations and outputs includes that your skin references. When users modify menus, only their changes are stored - the rest comes from your defaults.
+The script merges skin defaults with user customizations and outputs includes that your skin references. When users modify menus, only their changes are stored.
 
 ---
 

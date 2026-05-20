@@ -134,7 +134,7 @@ All property buttons (widget, background, custom options) are configured in `pro
 | `350-399` | Custom property buttons |
 | `800+` | Subdialog triggers (via `menus.xml`) |
 
-These are not built-in - you must define button mappings in your `properties.xml`.
+These aren't built-in. Define button mappings in your `properties.xml`.
 
 > **See also:** [Properties](properties.md#button-mappings) for configuring property buttons
 
@@ -166,11 +166,11 @@ These properties are set on **both the dialog window and the Home window**. Read
 ### Usage
 
 ```xml
-<!-- Menu context properties (dialog window only — read with Window.Property) -->
+<!-- Menu context properties (dialog window only; read with Window.Property) -->
 <!-- Show widget button only if widgets are allowed (not disabled) -->
 <visible>String.IsEmpty(Window.Property(disableWidgets))</visible>
 
-<!-- Subdialog properties (set on both — Window(home) recommended for cross-window visibility) -->
+<!-- Subdialog properties (set on both; Window(home) recommended for cross-window visibility) -->
 <visible>String.IsEmpty(Window(home).Property(skinshortcuts-dialog))</visible>
 <visible>String.IsEqual(Window(home).Property(skinshortcuts-dialog),widget1)</visible>
 <visible>String.IsEqual(Window(home).Property(skinshortcuts-suffix),.2)</visible>
@@ -422,7 +422,7 @@ Paired `prop=NAME,value=VALUE` arguments work with any entry type (`type=manage`
 
 While the script runs, `Window(Home).Property(widgetContext)` reads as `spotlight`. After the picker closes (or the script errors out), the property is cleared automatically. Conditions like `String.IsEqual(Window(Home).Property(widgetContext),spotlight)` on widgets, groups, or backgrounds will match while the picker is open.
 
-Multiple pairs are supported - the parser zips them in order:
+Multiple pairs are applied in order:
 
 ```xml
 <onclick>RunScript(script.skinshortcuts,type=manage,menu=mainmenu,prop=widgetContext,value=spotlight,prop=widgetSlot,value=1)</onclick>
