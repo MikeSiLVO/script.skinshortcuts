@@ -339,11 +339,6 @@ class ContentProvider:
         except Exception:
             return "unknown", ""
 
-    def _get_smart_playlist_type(self, filepath: str) -> str:
-        """Get the type of a smart playlist (.xsp file)."""
-        playlist_type, _ = self._parse_smart_playlist(filepath)
-        return playlist_type
-
     def _resolve_addons(self, target: str) -> list[ResolvedShortcut]:
         """Resolve installed addons by content type. Empty target defaults to video."""
         cache_key = f"addons_{target}"

@@ -113,8 +113,10 @@ def _parse_smart_playlist(filepath: str) -> tuple[str, str]:
             return "", ""
 
         f = xbmcvfs.File(real_path)
-        content = f.read()
-        f.close()
+        try:
+            content = f.read()
+        finally:
+            f.close()
 
         root = ET.fromstring(content)
         name_elem = root.find("name")
