@@ -35,7 +35,7 @@ from ..models.template import (
     VariableGroupReference,
     VariableReference,
 )
-from .base import apply_suffix_to_from, apply_suffix_transform
+from .base import apply_suffix_to_from, apply_suffix_transform, get_bool
 
 
 class TemplateLoader:
@@ -116,7 +116,7 @@ class TemplateLoader:
             if not name:
                 continue
             value = (elem.text or "").strip()
-            nosuffix = (elem.get("nosuffix") or "").strip().lower() == "true"
+            nosuffix = get_bool(elem, "nosuffix")
             self._expressions[name] = Expression(value=value, nosuffix=nosuffix)
 
     def _parse_presets_section(self, root: ET.Element) -> None:

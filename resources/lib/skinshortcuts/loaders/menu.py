@@ -25,7 +25,7 @@ from ..models.menu import (
     SubDialog,
 )
 from ..log import get_logger, notify
-from .base import get_attr, get_text, parse_content, parse_xml
+from .base import get_attr, get_bool, get_text, parse_content, parse_xml
 
 log = get_logger("MenuLoader")
 
@@ -434,7 +434,7 @@ def _parse_item(
         visible=visible,
         dialog_visible=dialog_visible,
         disabled=get_text(elem, "disabled", "false").lower() == "true",
-        required=get_attr(elem, "required", "false").lower() == "true",
+        required=get_bool(elem, "required"),
         protection=protection,
         properties=properties,
         submenu=get_attr(elem, "submenu"),
@@ -607,7 +607,7 @@ def _parse_shortcut_group(
     overrides = icon_overrides or {}
     group_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
-    flat = (get_attr(elem, "flat") or "").lower() == "true"
+    flat = get_bool(elem, "flat")
 
     if not group_name:
         log.warning(f"Shortcut group in {path} missing 'name' attribute")
@@ -680,7 +680,7 @@ def _parse_shortcut(
         if not action_text:
             continue
         actions.append(action_text)
-        if (a.get("primary") or "").lower() == "true":
+        if get_bool(a, "primary"):
             primary_action = action_text
 
     shortcut_path = get_text(elem, "path") or ""

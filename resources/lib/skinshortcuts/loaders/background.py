@@ -14,7 +14,7 @@ from ..models.background import (
     BrowseSource,
     PlaylistSource,
 )
-from .base import get_attr, get_text, parse_content, parse_xml
+from .base import get_attr, get_bool, get_text, parse_content, parse_xml
 
 log = get_logger("BackgroundLoader")
 
@@ -141,7 +141,7 @@ def _parse_background_group(elem, path: str) -> BackgroundGroup | None:
     """Parse a background group element (supports nested groups, backgrounds, and content)."""
     group_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
-    flat = (get_attr(elem, "flat") or "").lower() == "true"
+    flat = get_bool(elem, "flat")
 
     if not group_name:
         log.warning(f"Background group in {path} missing 'name' attribute")

@@ -18,7 +18,7 @@ from ..models.property import (
     SchemaOption,
     SchemaProperty,
 )
-from .base import apply_suffix_transform
+from .base import apply_suffix_transform, get_bool
 
 
 class PropertyLoader:
@@ -65,7 +65,7 @@ class PropertyLoader:
         buttons = {}
         buttons_elem = root.find("buttons")
         if buttons_elem is not None:
-            default_suffix = (buttons_elem.get("suffix") or "").lower() == "true"
+            default_suffix = get_bool(buttons_elem, "suffix")
             for child in buttons_elem:
                 if child.tag == "button":
                     btn = self._parse_button(child, default_suffix)
@@ -139,7 +139,7 @@ class PropertyLoader:
         if not name:
             raise PropertyConfigError(str(self.path), "Property missing name attribute")
 
-        template_only = (elem.get("templateonly") or "").lower() == "true"
+        template_only = get_bool(elem, "templateonly")
         prop_type = (elem.get("type") or "").strip()  # "widget", "background", "toggle"
 
         requires = (elem.get("requires") or "").strip()
