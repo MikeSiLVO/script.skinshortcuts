@@ -39,7 +39,3 @@ class TemplateConfigError(ConfigError):
 
 class ViewConfigError(ConfigError):
     """Error in views.xml."""
-
-
-class TemplateError(SkinShortcutsError):
-    """Error processing template."""

@@ -11,7 +11,6 @@ class BuildMode(Enum):
     """Template build mode."""
 
     MENU = "menu"  # Iterate menu items (default)
-    LIST = "list"  # Iterate <list> items
     RAW = "true"  # Raw output, no iteration
 
 
@@ -163,13 +162,6 @@ class IncludeDefinition:
 
 
 @dataclass
-class ListItem:
-    """Item in a <list> for build="list" templates."""
-
-    attributes: dict[str, str] = field(default_factory=dict)
-
-
-@dataclass
 class VariableDefinition:
     """Kodi variable definition.
 
@@ -279,8 +271,7 @@ class ItemsDefinition:
 class Template:
     """Main template definition.
 
-    Iterates menu items (default), list items (build="list"),
-    or outputs raw (build="true").
+    Iterates menu items (default) or outputs raw (build="true").
 
     Supports multiple outputs via the `outputs` list. When outputs is empty,
     falls back to single output using `include` and `id_prefix` attributes.
@@ -300,7 +291,6 @@ class Template:
     property_groups: list[PropertyGroupReference] = field(default_factory=list)
     preset_refs: list[PresetReference] = field(default_factory=list)  # Direct preset lookups
     preset_group_refs: list[PresetGroupReference] = field(default_factory=list)
-    list_items: list[ListItem] = field(default_factory=list)  # For build="list"
     controls: ET.Element | None = None  # Raw XML for controls output
     variables: list[VariableDefinition] = field(default_factory=list)  # Inline variables
     variable_groups: list[VariableGroupReference] = field(default_factory=list)  # Group refs

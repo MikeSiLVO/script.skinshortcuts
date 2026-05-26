@@ -127,13 +127,6 @@ class UserData:
             self.views[source] = {}
         self.views[source][content] = view_id
 
-    def clear_view(self, source: str, content: str) -> None:
-        """Clear user's view selection for a source and content type."""
-        if source in self.views:
-            self.views[source].pop(content, None)
-            if not self.views[source]:
-                del self.views[source]
-
     def clear_all_views(self) -> None:
         """Clear all view selections."""
         self.views.clear()

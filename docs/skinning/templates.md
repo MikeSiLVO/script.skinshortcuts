@@ -77,7 +77,7 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 
   <!-- Template definitions -->
   <template include="MainMenu">...</template>
-  <template include="Widgets" build="list">...</template>
+  <template include="Widgets" build="true">...</template>
 
   <!-- Submenu templates -->
   <submenu include="Submenu" level="1">...</submenu>
@@ -105,7 +105,7 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 | Attribute | Required | Default | Description |
 |-----------|----------|---------|-------------|
 | `include` | Yes | - | Output include name (`skinshortcuts-template-{include}`) |
-| `build` | No | `menu` | Build mode: `menu`, `list`, or `true` |
+| `build` | No | `menu` | Build mode: `menu` or `true` |
 | `idprefix` | No | - | Prefix for computed control IDs |
 | `templateonly` | No | - | Skip include generation: `true` (always) or `auto` (if unassigned) |
 
@@ -229,26 +229,6 @@ Iterates over menu items:
 ```
 
 Generates one copy of `<controls>` per menu item, with `$PROPERTY[name]` replaced by item values.
-
-### List Mode
-
-Iterates over explicit list items:
-
-```xml
-<template include="WidgetSlots" build="list">
-  <list>
-    <item slot="" label="Widget 1" />
-    <item slot=".2" label="Widget 2" />
-    <item slot=".3" label="Widget 3" />
-  </list>
-  <property name="slotSuffix" from="slot" />
-  <controls>
-    <control type="group">
-      <visible>!String.IsEmpty(ListItem.Property(widgetPath$PROPERTY[slotSuffix]))</visible>
-    </control>
-  </controls>
-</template>
-```
 
 ### Raw Mode
 

@@ -15,7 +15,6 @@ from ..models.template import (
     Expression,
     IncludeDefinition,
     ItemsDefinition,
-    ListItem,
     Preset,
     PresetGroup,
     PresetGroupChild,
@@ -349,9 +348,7 @@ class TemplateLoader:
             )
 
         build_str = (elem.get("build") or "").strip().lower()
-        if build_str == "list":
-            build = BuildMode.LIST
-        elif build_str == "true":
+        if build_str == "true":
             build = BuildMode.RAW
         else:
             build = BuildMode.MENU
@@ -412,12 +409,6 @@ class TemplateLoader:
                 if var_def:
                     variables.append(var_def)
 
-        list_items = []
-        list_elem = elem.find("list")
-        if list_elem is not None:
-            for item_elem in list_elem.findall("item"):
-                list_items.append(ListItem(attributes=dict(item_elem.attrib)))
-
         controls = elem.find("controls")
 
         return Template(
@@ -434,7 +425,6 @@ class TemplateLoader:
             property_groups=property_groups,
             preset_refs=preset_refs,
             preset_group_refs=preset_group_refs,
-            list_items=list_items,
             controls=copy.deepcopy(controls) if controls is not None else None,
             variables=variables,
             variable_groups=variable_groups,

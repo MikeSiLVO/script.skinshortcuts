@@ -506,16 +506,6 @@ Defines templates for generating skin includes. For detailed documentation, see 
     <controls>...</controls>
   </template>
 
-  <!-- List mode template -->
-  <template include="WidgetSlots" build="list">
-    <list>
-      <item slot="" label="Widget 1" />
-      <item slot=".2" label="Widget 2" />
-    </list>
-    <property name="suffix" from="slot" />
-    <controls>...</controls>
-  </template>
-
   <!-- Raw mode template -->
   <template include="UtilityInclude" build="true">
     <param name="id" default="9000" />
@@ -561,8 +551,6 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `<preset/>` | template/propertyGroup/items | `content` | `condition`, `suffix` | Apply preset reference |
 | `<propertyGroup/>` | template/propertyGroup/items | `content` | `condition`, `suffix` | Apply property group |
 | `<variableGroup/>` | template | `content` | `condition`, `suffix` | Apply variable group |
-| `<list>` | template | - | - | List items (build="list") |
-| `<item>` | list | - | *attributes* | List item |
 | `<param>` | template | `name` | `default` | Parameter (build="true") |
 | `<controls>` | template/submenu | - | - | Control container |
 | `<skinshortcuts>` | controls | - | `include`, `condition`, `wrap`, `items`, `filter` | Special tag |
@@ -609,7 +597,6 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | Mode | Attribute | Description |
 |------|-----------|-------------|
 | Menu | `build="menu"` (default) | Iterate over menu items |
-| List | `build="list"` | Iterate over explicit `<list><item>` |
 | Raw | `build="true"` | No iteration, output controls once |
 
 ### Built-in Properties

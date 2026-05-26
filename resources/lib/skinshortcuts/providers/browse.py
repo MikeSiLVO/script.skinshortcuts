@@ -109,31 +109,6 @@ class BrowseProvider:
 
         return items
 
-    def is_browsable(self, path: str) -> bool:
-        """Check if a path can be browsed into.
-
-        Returns True if the path is a directory that can be listed.
-        """
-        if not path:
-            return False
-
-        browsable_prefixes = (
-            "plugin://",
-            "videodb://",
-            "musicdb://",
-            "library://",
-            "addons://",
-            "sources://",
-            "pvr://",
-            "special://",
-            "upnp://",
-        )
-
-        if path.startswith(browsable_prefixes):
-            return True
-
-        return path.endswith("/")
-
     _TYPE_DEFAULTS: dict[str, str] = {
         "movie": "DefaultMovies.png",
         "tvshow": "DefaultTVShows.png",

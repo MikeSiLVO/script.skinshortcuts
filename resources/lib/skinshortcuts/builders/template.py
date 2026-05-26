@@ -1267,17 +1267,6 @@ class TemplateBuilder:
 
         return names
 
-    def _get_property_value(
-        self,
-        prop_name: str,
-        item: MenuItem,
-        context: dict[str, str],
-    ) -> str:
-        """Get a property value, checking context first then item properties."""
-        if prop_name in context:
-            return context[prop_name]
-        return item.properties.get(prop_name, "")
-
     def _eval_condition(
         self,
         condition: str,
@@ -1692,45 +1681,6 @@ class TemplateBuilder:
         self._apply_fallbacks(sub_item, context)
 
         return context
-
-    def _apply_items_transformations(
-        self,
-        context: dict[str, str],
-        sub_item: MenuItem,
-        vars_list: list[TemplateVar],
-        preset_refs: list[tuple[str, str]],
-        prop_group_refs: list[tuple[str, str]],
-    ) -> None:
-        """Apply var/preset/propertyGroup transformations to submenu item context."""
-        for var in vars_list:
-            value = self._resolve_var(var, sub_item, context)
-            if value is not None:
-                context[var.name] = value
-
-        for name, condition in preset_refs:
-            if condition and not self._eval_condition(condition, sub_item, context):
-                continue
-            preset = self.schema.get_preset(name)
-            if preset:
-                for row in preset.rows:
-                    if row.condition:
-                        if self._eval_condition(row.condition, sub_item, context):
-                            for attr_name, attr_value in row.values.items():
-                                if attr_name not in context:
-                                    context[attr_name] = attr_value
-                            break
-                    else:
-                        for attr_name, attr_value in row.values.items():
-                            if attr_name not in context:
-                                context[attr_name] = attr_value
-                        break
-
-        for name, condition in prop_group_refs:
-            if condition and not self._eval_condition(condition, sub_item, context):
-                continue
-            prop_group = self.schema.get_property_group(name)
-            if prop_group:
-                self._apply_property_group(prop_group, sub_item, context)
 
     def _process_items_element(
         self,

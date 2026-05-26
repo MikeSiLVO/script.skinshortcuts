@@ -102,14 +102,6 @@ def get_int(elem: ET.Element, child: str, default: int | None = None) -> int | N
         return default
 
 
-def get_bool(elem: ET.Element, attr: str, default: bool = False) -> bool:
-    """Get boolean from attribute value."""
-    value = elem.get(attr)
-    if value is None:
-        return default
-    return value.lower() == "true"
-
-
 def parse_content(elem: ET.Element):
     """Parse a content reference element.
 

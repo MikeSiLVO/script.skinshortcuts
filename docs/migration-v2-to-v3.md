@@ -633,7 +633,6 @@ Items templates iterate over submenu items. They are defined separately and refe
 | Mode                     | Usage                                                   |
 | ------------------------ | ------------------------------------------------------- |
 | `build="menu"` (default) | Iterate over menu items                                 |
-| `build="list"`           | Iterate over explicit `<list><item>` elements           |
 | `build="true"`           | No iteration, output controls once (with `$PARAM[...]`) |
 
 ***

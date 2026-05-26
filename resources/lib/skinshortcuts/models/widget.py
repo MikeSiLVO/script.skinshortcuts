@@ -30,17 +30,10 @@ class Widget:
     icon: str = ""
     condition: str = ""  # Property condition (evaluated against item properties)
     visible: str = ""  # Kodi visibility condition (evaluated at runtime)
-    sort_by: str = ""
-    sort_order: str = ""
     limit: int | None = None
     source: str = ""  # Widget source type (library, playlist, addon, etc.)
     slot: str = ""  # For type="custom": which widget slot (e.g., "widget", "widget.2")
     browse: bool = False  # Opt-in: allow browse-into during picker
-
-    @property
-    def is_custom(self) -> bool:
-        """Return True if this is a custom widget (user-defined item list)."""
-        return self.type == "custom"
 
     def to_properties(self, prefix: str = "widget") -> dict[str, str]:
         """Convert to property dictionary for skin access.

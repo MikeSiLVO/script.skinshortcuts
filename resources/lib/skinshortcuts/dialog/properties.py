@@ -208,15 +208,6 @@ class PropertiesMixin:
             self, widgets: list, item_props: dict[str, str] | None = None, slot: str = ""
         ) -> Widget | None | Literal[False]: ...
 
-        def _nested_picker(
-            self,
-            title: str,
-            items: list[tuple[str, str, str]],
-            on_select,
-            show_none: bool = True,
-            current_value: str = "",
-        ): ...
-
         def _pick_background(
             self, item_props: dict[str, str], current_value: str = ""
         ) -> Background | None | Literal[False]: ...

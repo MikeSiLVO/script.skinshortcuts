@@ -55,11 +55,6 @@ def hash_file(path: str | Path) -> str | None:
         return None
 
 
-def hash_string(value: str) -> str:
-    """Generate MD5 hash for a string."""
-    return hashlib.md5(value.encode()).hexdigest()
-
-
 def generate_config_hashes(shortcuts_path: str | Path) -> dict[str, str | None]:
     """Generate hashes for all config files in shortcuts folder."""
     path = Path(shortcuts_path)

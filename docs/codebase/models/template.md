@@ -10,7 +10,6 @@
 | Value | Description |
 |-------|-------------|
 | `MENU` | Iterate over menu items (default) |
-| `LIST` | Iterate over `<list>` items |
 | `RAW` | No iteration (parameterized include). With properties: per-item resolve + deduplication |
 
 ***
