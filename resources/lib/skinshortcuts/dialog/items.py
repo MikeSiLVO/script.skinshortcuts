@@ -126,6 +126,10 @@ class ItemsMixin:
             properties["widgetTarget"] = widget.target
         if widget.limit:
             properties["widgetLimit"] = str(widget.limit)
+        if widget.sort_by:
+            properties["widgetSortBy"] = widget.sort_by
+        if widget.sort_order:
+            properties["widgetSortOrder"] = widget.sort_order
         if widget.source:
             properties["widgetSource"] = widget.source
         if widget.label:

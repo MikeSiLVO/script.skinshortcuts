@@ -31,6 +31,8 @@ class Widget:
     condition: str = ""  # Property condition (evaluated against item properties)
     visible: str = ""  # Kodi visibility condition (evaluated at runtime)
     limit: int | None = None
+    sort_by: str = ""
+    sort_order: str = ""
     source: str = ""  # Widget source type (library, playlist, addon, etc.)
     slot: str = ""  # For type="custom": which widget slot (e.g., "widget", "widget.2")
     browse: bool = False  # Opt-in: allow browse-into during picker
