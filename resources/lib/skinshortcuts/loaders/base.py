@@ -5,11 +5,8 @@ from __future__ import annotations
 import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import TypeVar
 
 from ..exceptions import ConfigError
-
-T = TypeVar("T")
 
 NO_SUFFIX_PROPERTIES = frozenset({
     "name",
