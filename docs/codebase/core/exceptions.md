@@ -16,7 +16,6 @@ SkinShortcutsError
 │   ├── PropertyConfigError
 │   ├── TemplateConfigError
 │   └── ViewConfigError
-└── TemplateError (template processing errors)
 ```
 
 ### ConfigError

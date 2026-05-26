@@ -22,8 +22,6 @@
 | `slot` | str | For custom widgets: property slot |
 | `browse` | bool | Opt-in: allow browse-into during picker |
 
-**Properties:** `is_custom` - True if type=="custom"
-
 **Methods:** `to_properties(prefix)` - Convert to property dict (widget, widgetLabel, widgetPath, widgetTarget, widgetSource)
 
 ### WidgetGroup

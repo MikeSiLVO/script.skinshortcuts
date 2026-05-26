@@ -133,7 +133,7 @@ ManagementDialog.onClick()
     ├── _choose_shortcut() → _pick_from_groups()
     ├── _handle_property_button()
     │   ├── _handle_widget_property() → _pick_widget_from_groups()
-    │   ├── _handle_background_property() → _nested_picker()
+    │   ├── _handle_background_property() → _pick_background()
     │   └── _handle_options_property()
     ├── _edit_submenu() → spawn child dialog
     └── _spawn_subdialog() → _handle_onclose()

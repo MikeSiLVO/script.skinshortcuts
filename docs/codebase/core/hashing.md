@@ -19,7 +19,6 @@ Uses MD5 hashes of configuration files to detect changes and avoid unnecessary r
 |----------|---------|-------------|
 | `get_hash_file_path()` | str | Path to hash file for current skin |
 | `hash_file(path)` | str | MD5 hash of file |
-| `hash_string(value)` | str | MD5 hash of string |
 | `generate_config_hashes(shortcuts_path)` | dict | Hashes for all config files + metadata |
 | `read_stored_hashes()` | dict | Load stored hashes |
 | `write_hashes(hashes)` | bool | Save hashes |

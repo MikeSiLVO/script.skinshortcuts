@@ -50,9 +50,7 @@ PickersMixin provides picker dialogs for selecting shortcuts and widgets with hi
 | Method | Purpose |
 |--------|---------|
 | `_browse_path` | Browse directory with "Create menu item to here" option |
-| `_is_browsable_shortcut` | Shortcut opted-in via `browse` + `<path>` |
-| `_is_browsable_widget` | Widget opted-in via `browse="true"` |
-| `_is_path_browsable` | Check if path can be browsed (plugin://, addons://) |
+| `_is_browsable` | Object opted-in via `browse` + `<path>` (Widget bool, Shortcut window name) |
 | `_get_browse_info_from_shortcut` | Extract path and window from opted-in shortcut |
 | `_get_browse_placeholder_for_content` | Create placeholder shortcut for addon content |
 
@@ -71,4 +69,3 @@ This allows users to create shortcuts to addon categories even when empty, with 
 | Method | Purpose |
 |--------|---------|
 | `_map_target_to_window` | Map content target to window |
-| `_nested_picker` | Generic picker with back navigation |

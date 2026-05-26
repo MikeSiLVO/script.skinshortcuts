@@ -56,7 +56,6 @@ Merge default menu with user overrides.
 |--------|-------------|
 | `get_view(source, content)` | Get selected view ID |
 | `set_view(source, content, view_id)` | Set view selection |
-| `clear_view(source, content)` | Clear view selection |
 | `clear_all_views()` | Clear all view selections |
 | `get_addon_overrides(content)` | Get addon-specific view overrides for content type |
 

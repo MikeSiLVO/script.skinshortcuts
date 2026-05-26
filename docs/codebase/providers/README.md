@@ -37,7 +37,6 @@ Lists directory contents for browse-into functionality.
 | Method | Description |
 |--------|-------------|
 | `list_directory(path)` | List directory contents, returns list of BrowseItem |
-| `is_browsable(path)` | Check if path can be browsed |
 
 **BrowseItem fields:** `label`, `path`, `icon`, `is_directory`, `mimetype`
 
