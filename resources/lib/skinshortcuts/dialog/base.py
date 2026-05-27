@@ -7,13 +7,12 @@ from typing import TYPE_CHECKING
 
 try:
     import xbmcgui
-    import xbmcvfs
 
     IN_KODI = True
 except ImportError:
     IN_KODI = False
 
-from ..constants import extract_path_from_action
+from ..constants import extract_path_from_action, get_shortcuts_path
 from ..loaders import evaluate_condition, load_menus, load_properties
 from ..loaders.base import apply_suffix_transform
 from ..localize import resolve_label
@@ -45,14 +44,6 @@ CONTROL_EDIT_SUBMENU = 405
 
 ACTION_CANCEL = (9, 10, 92, 216, 247, 257, 275, 61467, 61448)
 ACTION_CONTEXT = (117,)
-
-
-def get_shortcuts_path() -> str:
-    """Get path to current skin's shortcuts folder."""
-    if not IN_KODI:
-        return ""
-    skin_path = xbmcvfs.translatePath("special://skin/")
-    return str(Path(skin_path) / "shortcuts")
 
 
 class DialogBaseMixin(xbmcgui.WindowXMLDialog):

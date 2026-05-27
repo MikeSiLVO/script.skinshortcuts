@@ -2,6 +2,13 @@
 
 from __future__ import annotations
 
+try:
+    import xbmcvfs
+
+    IN_KODI = True
+except ImportError:
+    IN_KODI = False
+
 MENUS_FILE = "menus.xml"
 WIDGETS_FILE = "widgets.xml"
 BACKGROUNDS_FILE = "backgrounds.xml"
@@ -94,6 +101,13 @@ ADDONS_SOURCE_MAP: dict[str, tuple[str, str]] = {
     "game": ("addons://sources/game/", "games"),
     "games": ("addons://sources/game/", "games"),
 }
+
+
+def get_shortcuts_path() -> str:
+    """Path to the current skin's shortcuts folder."""
+    if not IN_KODI:
+        return ""
+    return xbmcvfs.translatePath("special://skin/shortcuts/")
 
 
 def extract_path_from_action(action: str) -> str:
