@@ -12,6 +12,7 @@ except ImportError:
     IN_KODI = False
 
 from ..loaders import evaluate_condition
+from ..localize import LANGUAGE
 from ..models import MenuItem
 
 if TYPE_CHECKING:
@@ -103,11 +104,11 @@ class SubdialogsMixin:
         menu = self.manager.config.get_menu(self.menu_id)
         if is_widget_submenu:
             if menu and not menu.allow.widgets:
-                xbmcgui.Dialog().notification("Not Allowed", "Widgets not enabled for this menu")
+                xbmcgui.Dialog().notification(LANGUAGE(32143), LANGUAGE(32144))
                 return
         else:
             if menu and not menu.allow.submenus:
-                xbmcgui.Dialog().notification("Not Allowed", "Submenus not enabled for this menu")
+                xbmcgui.Dialog().notification(LANGUAGE(32143), LANGUAGE(32145))
                 return
 
         self.manager.ensure_item_submenu(self.menu_id, item)

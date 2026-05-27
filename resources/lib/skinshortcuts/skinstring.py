@@ -15,7 +15,7 @@ except ImportError:
 from .dialog.pickers import PickersMixin
 from .loaders.menu import load_menus
 from .loaders.widget import load_widgets
-from .localize import resolve_label
+from .localize import LANGUAGE, resolve_label
 from .log import get_logger
 from .models import MenuItem
 
@@ -74,7 +74,7 @@ def pick_widget_skinstring(shortcuts_path: str, params: dict[str, str]) -> None:
         flat = [(w.name, w.label, w.icon) for w in widget_config.widgets]
         result = picker._pick_widget_flat(flat, {})
     else:
-        xbmcgui.Dialog().notification("No Widgets", "No widgets defined in skin")
+        xbmcgui.Dialog().notification(LANGUAGE(32147), LANGUAGE(32148))
         return
 
     if result is None:

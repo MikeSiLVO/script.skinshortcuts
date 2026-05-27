@@ -259,7 +259,7 @@ class MenuManager:
             item_name = self._generate_unique_id(prefix)
             new_item = MenuItem(
                 name=item_name,
-                label=label or "New Item",
+                label=label or "$ADDON[script.skinshortcuts 32129]",
                 actions=[Action(action="noop")],
                 is_placeholder=not label,
             )

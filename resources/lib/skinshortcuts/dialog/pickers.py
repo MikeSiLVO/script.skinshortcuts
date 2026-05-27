@@ -155,8 +155,8 @@ class PickersMixin:
 
         if not groups:
             xbmcgui.Dialog().notification(
-                "No Shortcuts",
-                "No shortcut groupings defined in skin",
+                LANGUAGE(32179),
+                LANGUAGE(32180),
             )
             return
 
@@ -241,7 +241,7 @@ class PickersMixin:
         result = self._pick_from_hierarchy(
             groups,
             item_props,
-            title="Choose Category",
+            title=LANGUAGE(32043),
             leaf_types=(Shortcut,),
             group_types=(ShortcutGroup,),
             default_leaf_icon="DefaultShortcut.png",
@@ -281,7 +281,7 @@ class PickersMixin:
         result = self._pick_from_hierarchy(
             items,
             item_props,
-            title="Select Widget",
+            title=LANGUAGE(32044),
             leaf_types=(Widget,),
             group_types=(WidgetGroup,),
             default_leaf_icon="DefaultAddonNone.png",
@@ -316,7 +316,7 @@ class PickersMixin:
         overrides = self._icon_overrides()
 
         listitems = []
-        none_item = xbmcgui.ListItem("None")
+        none_item = xbmcgui.ListItem(xbmc.getLocalizedString(231))
         none_item.setArt({"icon": overrides.get("DefaultAddonNone.png", "DefaultAddonNone.png")})
         listitems.append(none_item)
 
@@ -329,7 +329,7 @@ class PickersMixin:
                 preselect = i + 1  # +1 for "None" option
 
         selected = xbmcgui.Dialog().select(
-            "Select Widget", listitems, useDetails=True, preselect=preselect
+            LANGUAGE(32044), listitems, useDetails=True, preselect=preselect
         )
 
         if selected == -1:
@@ -408,23 +408,23 @@ class PickersMixin:
 
         if addon_type == "video":
             types = [
-                ("movies", "Movies", "DefaultMovies.png"),
-                ("tvshows", "TV Shows", "DefaultTVShows.png"),
-                ("episodes", "Episodes", "DefaultTVShows.png"),
-                ("musicvideos", "Music Videos", "DefaultMusicVideos.png"),
-                ("videos", "Videos", "DefaultVideo.png"),
+                ("movies", xbmc.getLocalizedString(342), "DefaultMovies.png"),
+                ("tvshows", xbmc.getLocalizedString(20343), "DefaultTVShows.png"),
+                ("episodes", xbmc.getLocalizedString(20360), "DefaultTVShows.png"),
+                ("musicvideos", xbmc.getLocalizedString(20389), "DefaultMusicVideos.png"),
+                ("videos", xbmc.getLocalizedString(3), "DefaultVideo.png"),
             ]
         elif addon_type == "audio":
             types = [
-                ("songs", "Songs", "DefaultMusicSongs.png"),
-                ("albums", "Albums", "DefaultMusicAlbums.png"),
-                ("artists", "Artists", "DefaultMusicArtists.png"),
-                ("music", "Music", "DefaultAudio.png"),
+                ("songs", xbmc.getLocalizedString(134), "DefaultMusicSongs.png"),
+                ("albums", xbmc.getLocalizedString(132), "DefaultMusicAlbums.png"),
+                ("artists", xbmc.getLocalizedString(133), "DefaultMusicArtists.png"),
+                ("music", xbmc.getLocalizedString(2), "DefaultAudio.png"),
             ]
         else:
             types = [
-                ("programs", "Programs", "DefaultAddonProgram.png"),
-                ("files", "Files", "DefaultFile.png"),
+                ("programs", xbmc.getLocalizedString(350), "DefaultAddonProgram.png"),
+                ("files", xbmc.getLocalizedString(744), "DefaultFile.png"),
             ]
 
         overrides = self._icon_overrides()
@@ -434,7 +434,7 @@ class PickersMixin:
             listitem.setArt({"icon": overrides.get(icon, icon)})
             listitems.append(listitem)
 
-        selected = xbmcgui.Dialog().select("Select Widget Type", listitems, useDetails=True)
+        selected = xbmcgui.Dialog().select(LANGUAGE(32140), listitems, useDetails=True)
 
         if selected == -1:
             return None
@@ -510,7 +510,7 @@ class PickersMixin:
         items: list,
         item_props: dict[str, str],
         *,
-        title: str = "Select",
+        title: str = "",
         leaf_types: tuple = (Shortcut,),
         group_types: tuple = (ShortcutGroup,),
         default_leaf_icon: str = "DefaultShortcut.png",
@@ -550,7 +550,7 @@ class PickersMixin:
         )
 
         if not visible_items:
-            xbmcgui.Dialog().notification("No Items", "No items available")
+            xbmcgui.Dialog().notification(LANGUAGE(32141), LANGUAGE(32064))
             return None
 
         preselect = -1
@@ -566,7 +566,7 @@ class PickersMixin:
         while True:
             listitems = []
             if show_none:
-                none_item = xbmcgui.ListItem("None")
+                none_item = xbmcgui.ListItem(xbmc.getLocalizedString(231))
                 none_item.setArt({"icon": overrides.get("DefaultAddonNone.png", "DefaultAddonNone.png")})
                 listitems.append(none_item)
 
@@ -602,7 +602,7 @@ class PickersMixin:
                 listitems.append(action_item)
 
             selected = xbmcgui.Dialog().select(
-                title, listitems, useDetails=True, preselect=preselect
+                title or LANGUAGE(32181), listitems, useDetails=True, preselect=preselect
             )
 
             if selected == -1:
@@ -686,7 +686,7 @@ class PickersMixin:
         )
 
         if not visible_items:
-            xbmcgui.Dialog().notification("No Items", "No items available in this group")
+            xbmcgui.Dialog().notification(LANGUAGE(32141), LANGUAGE(32142))
             return None
 
         overrides = self._icon_overrides()
@@ -907,11 +907,11 @@ class PickersMixin:
                 items = browse_provider.list_directory(current_path, include_art=True)
                 if items is None:
                     xbmcgui.Dialog().notification(
-                        "Cannot Browse", "Unable to list directory contents"
+                        LANGUAGE(32149), LANGUAGE(32150)
                     )
                     return None
 
-                dialog_title = current_label or "Browse"
+                dialog_title = current_label or LANGUAGE(32151)
 
                 listitems = []
                 use_location_item = xbmcgui.ListItem(LANGUAGE(32058))
@@ -936,7 +936,7 @@ class PickersMixin:
                 return None
 
             if selected == 0:
-                return (current_path, current_label or "Location", folder_icon)
+                return (current_path, current_label or LANGUAGE(32182), folder_icon)
 
             selected_item = items[selected - 1]
 
@@ -1035,13 +1035,13 @@ class PickersMixin:
 
         groupings = self.manager.config.background_groupings
         if not groupings:
-            xbmcgui.Dialog().notification("No Backgrounds", "No backgrounds defined")
+            xbmcgui.Dialog().notification(LANGUAGE(32152), LANGUAGE(32153))
             return None
 
         return self._pick_from_hierarchy(
             groupings,
             item_props,
-            title="Select Background",
+            title=LANGUAGE(32045),
             leaf_types=(Background,),
             group_types=(BackgroundGroup,),
             default_leaf_icon="DefaultPicture.png",

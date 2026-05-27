@@ -13,7 +13,7 @@ try:
 except ImportError:
     IN_KODI = False
 
-from ..localize import resolve_label
+from ..localize import LANGUAGE, resolve_label
 from ..models import Action, BrowseSource, IconSource, MenuItem
 
 if TYPE_CHECKING:
@@ -169,13 +169,13 @@ class ItemsMixin:
             return
 
         if item.required:
-            xbmcgui.Dialog().ok("Cannot Delete", f"'{resolve_label(item.label)}' is required.")
+            xbmcgui.Dialog().ok(LANGUAGE(32130), LANGUAGE(32174) % resolve_label(item.label))
             return
 
         if item.protection and item.protection.protects_delete():
-            heading = resolve_label(item.protection.heading) or "Delete Item"
+            heading = resolve_label(item.protection.heading) or LANGUAGE(32131)
             label = resolve_label(item.label)
-            message = resolve_label(item.protection.message) or f"Delete '{label}'?"
+            message = resolve_label(item.protection.message) or LANGUAGE(32175) % label
             if not xbmcgui.Dialog().yesno(heading, message):
                 return
 
@@ -273,9 +273,9 @@ class ItemsMixin:
             return
 
         if item.protection and item.protection.protects_action():
-            heading = resolve_label(item.protection.heading) or "Modify Action"
+            heading = resolve_label(item.protection.heading) or LANGUAGE(32132)
             label = resolve_label(item.label)
-            message = resolve_label(item.protection.message) or f"Modify '{label}'?"
+            message = resolve_label(item.protection.message) or LANGUAGE(32176) % label
             if not xbmcgui.Dialog().yesno(heading, message):
                 return
 
@@ -297,13 +297,13 @@ class ItemsMixin:
             return
 
         if item.required and not item.disabled:
-            xbmcgui.Dialog().ok("Cannot Disable", f"'{resolve_label(item.label)}' is required.")
+            xbmcgui.Dialog().ok(LANGUAGE(32133), LANGUAGE(32174) % resolve_label(item.label))
             return
 
         if not item.disabled and item.protection and item.protection.protects_disable():
-            heading = resolve_label(item.protection.heading) or "Disable Item"
+            heading = resolve_label(item.protection.heading) or LANGUAGE(32134)
             label = resolve_label(item.label)
-            message = resolve_label(item.protection.message) or f"Disable '{label}'?"
+            message = resolve_label(item.protection.message) or LANGUAGE(32177) % label
             if not xbmcgui.Dialog().yesno(heading, message):
                 return
 
@@ -318,11 +318,11 @@ class ItemsMixin:
 
         removed = self.manager.get_removed_items(self.menu_id)
         if not removed:
-            xbmcgui.Dialog().notification("No Deleted Items", "No items to restore")
+            xbmcgui.Dialog().notification(LANGUAGE(32135), LANGUAGE(32136))
             return
 
         labels = [resolve_label(item.label) for item in removed]
-        selected = xbmcgui.Dialog().select("Restore Deleted Item", labels)
+        selected = xbmcgui.Dialog().select(LANGUAGE(32137), labels)
 
         if selected < 0:
             return
@@ -350,7 +350,7 @@ class ItemsMixin:
             return
 
         display_label = resolve_label(item.label)
-        if not xbmcgui.Dialog().yesno("Reset Item", f"Reset '{display_label}' to defaults?"):
+        if not xbmcgui.Dialog().yesno(LANGUAGE(32138), LANGUAGE(32178) % display_label):
             return
 
         if not self.manager.reset_item(self.menu_id, item.name):
@@ -438,11 +438,11 @@ class ItemsMixin:
             return
 
         options = [
-            ("Edit Label", self._set_label),
-            ("Edit Action", self._set_action),
-            ("Change Icon", self._set_icon),
-            ("Edit Submenu", self._edit_submenu),
-            ("Delete", self._delete_item),
+            (LANGUAGE(32171), self._set_label),
+            (LANGUAGE(32172), self._set_action),
+            (LANGUAGE(32173), self._set_icon),
+            (LANGUAGE(32139), self._edit_submenu),
+            (xbmc.getLocalizedString(117), self._delete_item),
         ]
 
         labels = [opt[0] for opt in options]

@@ -248,7 +248,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             menu_suffix = self.menu_id
         placeholder = MenuItem(
             name=f"sub-{menu_suffix[:8]}",
-            label="New Item",
+            label="$ADDON[script.skinshortcuts 32129]",
             is_placeholder=True,
         )
         self.items.append(placeholder)
