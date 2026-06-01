@@ -109,6 +109,16 @@ def scan_playlist_files(directory: str) -> list[tuple[str, str]]:
     return playlists
 
 
+def _collection(result: dict | None, key: str) -> list:
+    """Return result[key] as a list.
+
+    Kodi could return null, missing, or empty.
+    """
+    if not result:
+        return []
+    return result.get(key) or []
+
+
 class ContentProvider:
     """Resolves dynamic content references to shortcuts."""
 
@@ -180,7 +190,8 @@ class ContentProvider:
                 return []
 
         result = self._jsonrpc("Files.GetSources", {"media": media})
-        if not result or "sources" not in result:
+        sources = _collection(result, "sources")
+        if not sources:
             return []
 
         window_map = {
@@ -193,7 +204,7 @@ class ContentProvider:
         window = window_map[media]
 
         shortcuts = []
-        for source in result["sources"]:
+        for source in sources:
             path = source.get("file", "")
             label = source.get("label", "")
             if path and label:
@@ -372,11 +383,12 @@ class ContentProvider:
                 "properties": ["name", "thumbnail"],
             },
         )
-        if not result or "addons" not in result:
+        addons = _collection(result, "addons")
+        if not addons:
             return []
 
         shortcuts = []
-        for addon in result["addons"]:
+        for addon in addons:
             addon_id = addon.get("addonid", "")
             name = addon.get("name", addon_id)
             thumb = addon.get("thumbnail", "")
@@ -417,11 +429,12 @@ class ContentProvider:
             "Favourites.GetFavourites",
             {"properties": ["thumbnail", "window", "windowparameter", "path"]},
         )
-        if not result or "favourites" not in result:
+        favourites = _collection(result, "favourites")
+        if not favourites:
             return []
 
         shortcuts = []
-        for fav in result["favourites"]:
+        for fav in favourites:
             title = fav.get("title", "")
             fav_type = fav.get("type", "")
             thumb = fav.get("thumbnail", "")
@@ -484,11 +497,12 @@ class ContentProvider:
                 "properties": ["thumbnail", "channelnumber"],
             },
         )
-        if not result or "channels" not in result:
+        channels = _collection(result, "channels")
+        if not channels:
             return []
 
         shortcuts = []
-        for channel in result["channels"]:
+        for channel in channels:
             channel_id = channel.get("channelid", 0)
             label = channel.get("label", "")
             thumb = channel.get("thumbnail", "")
@@ -661,11 +675,12 @@ class ContentProvider:
                 "properties": ["title", "thumbnail", "art"],
             },
         )
-        if not result or "files" not in result:
+        files = _collection(result, "files")
+        if not files:
             return []
 
         shortcuts: list[ResolvedShortcut] = []
-        for entry in result["files"]:
+        for entry in files:
             path = entry.get("file", "")
             label = entry.get("label") or entry.get("title") or ""
             if not label or not path:
@@ -702,14 +717,15 @@ class ContentProvider:
         result = self._jsonrpc(
             "VideoLibrary.GetGenres", {"type": media_type, "properties": ["thumbnail"]}
         )
-        if not result or "genres" not in result:
+        genres = _collection(result, "genres")
+        if not genres:
             return []
 
         window = "videos"
         db_type = "movies" if media_type == "movie" else "tvshows"
 
         shortcuts = []
-        for genre in result["genres"]:
+        for genre in genres:
             label = genre.get("label", "")
             thumb = genre.get("thumbnail", "")
             genre_id = genre.get("genreid", 0)
@@ -727,11 +743,12 @@ class ContentProvider:
     def _get_music_genres(self) -> list[ResolvedShortcut]:
         """Get music genres."""
         result = self._jsonrpc("AudioLibrary.GetGenres", {"properties": ["thumbnail"]})
-        if not result or "genres" not in result:
+        genres = _collection(result, "genres")
+        if not genres:
             return []
 
         shortcuts = []
-        for genre in result["genres"]:
+        for genre in genres:
             label = genre.get("label", "")
             thumb = genre.get("thumbnail", "")
             genre_id = genre.get("genreid", 0)
@@ -750,11 +767,11 @@ class ContentProvider:
         """Get years from video library."""
         if media_type == "movie":
             result = self._jsonrpc("VideoLibrary.GetMovies", {"properties": ["year"]})
-            items = result.get("movies", []) if result else []
+            items = _collection(result, "movies")
             db_type = "movies"
         else:
             result = self._jsonrpc("VideoLibrary.GetTVShows", {"properties": ["year"]})
-            items = result.get("tvshows", []) if result else []
+            items = _collection(result, "tvshows")
             db_type = "tvshows"
 
         years = sorted(
@@ -780,11 +797,11 @@ class ContentProvider:
         """Get video library property values (studios, tags)."""
         if media_type == "movie":
             result = self._jsonrpc("VideoLibrary.GetMovies", {"properties": [prop]})
-            items = result.get("movies", []) if result else []
+            items = _collection(result, "movies")
             db_type = "movies"
         else:
             result = self._jsonrpc("VideoLibrary.GetTVShows", {"properties": [prop]})
-            items = result.get("tvshows", []) if result else []
+            items = _collection(result, "tvshows")
             db_type = "tvshows"
 
         values: set[str] = set()
@@ -813,18 +830,18 @@ class ContentProvider:
             result = self._jsonrpc(
                 "VideoLibrary.GetMovies", {"properties": ["cast"], "limits": {"end": 100}}
             )
-            items = result.get("movies", []) if result else []
+            items = _collection(result, "movies")
             db_type = "movies"
         else:
             result = self._jsonrpc(
                 "VideoLibrary.GetTVShows", {"properties": ["cast"], "limits": {"end": 100}}
             )
-            items = result.get("tvshows", []) if result else []
+            items = _collection(result, "tvshows")
             db_type = "tvshows"
 
         actors: dict[str, str] = {}
         for item in items:
-            for actor in item.get("cast", []):
+            for actor in _collection(item, "cast"):
                 name = actor.get("name", "")
                 if name and name not in actors:
                     actors[name] = actor.get("thumbnail", "")
@@ -851,19 +868,19 @@ class ContentProvider:
             result = self._jsonrpc(
                 "VideoLibrary.GetMovies", {"properties": ["director"]}
             )
-            items = result.get("movies", []) if result else []
+            items = _collection(result, "movies")
             db_type = "movies"
         else:
             result = self._jsonrpc(
                 "VideoLibrary.GetEpisodes",
                 {"properties": ["director"], "limits": {"end": 500}},
             )
-            items = result.get("episodes", []) if result else []
+            items = _collection(result, "episodes")
             db_type = "tvshows"
 
         directors: set[str] = set()
         for item in items:
-            for director in item.get("director", []):
+            for director in _collection(item, "director"):
                 if director:
                     directors.add(director)
 
@@ -884,11 +901,12 @@ class ContentProvider:
         result = self._jsonrpc(
             "AudioLibrary.GetArtists", {"properties": ["thumbnail"], "limits": {"end": 100}}
         )
-        if not result or "artists" not in result:
+        artists = _collection(result, "artists")
+        if not artists:
             return []
 
         shortcuts = []
-        for artist in result["artists"]:
+        for artist in artists:
             label = artist.get("label", "")
             artist_id = artist.get("artistid", 0)
             thumb = artist.get("thumbnail", "")
@@ -909,15 +927,16 @@ class ContentProvider:
             "AudioLibrary.GetAlbums",
             {"properties": ["thumbnail", "artist"], "limits": {"end": 100}},
         )
-        if not result or "albums" not in result:
+        albums = _collection(result, "albums")
+        if not albums:
             return []
 
         shortcuts = []
-        for album in result["albums"]:
+        for album in albums:
             label = album.get("label", "")
             album_id = album.get("albumid", 0)
             thumb = album.get("thumbnail", "")
-            artists = album.get("artist", [])
+            artists = _collection(album, "artist")
             artist_str = ", ".join(artists) if artists else ""
             if label and album_id:
                 path = f"musicdb://albums/{album_id}/"
