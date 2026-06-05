@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -64,6 +64,14 @@ def _menu_override_to_dict(override: MenuOverride) -> dict[str, Any]:
     return result
 
 
+def _action_to_dict(action: Action) -> dict[str, Any]:
+    """Serialize an action, omitting an empty condition (treated as unconditional)."""
+    result: dict[str, Any] = {"action": action.action}
+    if action.condition:
+        result["condition"] = action.condition
+    return result
+
+
 def _item_override_to_dict(item: MenuItemOverride) -> dict[str, Any]:
     """Convert MenuItemOverride to dict, omitting None/empty values."""
     result: dict[str, Any] = {"name": item.name}
@@ -71,7 +79,7 @@ def _item_override_to_dict(item: MenuItemOverride) -> dict[str, Any]:
     if item.label is not None:
         result["label"] = item.label
     if item.actions is not None:
-        result["actions"] = [asdict(a) for a in item.actions]
+        result["actions"] = [_action_to_dict(a) for a in item.actions]
     if item.icon is not None:
         result["icon"] = item.icon
     if item.disabled is not None:
