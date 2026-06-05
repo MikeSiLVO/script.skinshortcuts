@@ -122,6 +122,11 @@ def build_includes(
             f"Loaded {len(config.menus)} menus, "
             f"{len(config.widgets)} widgets, {len(config.backgrounds)} backgrounds"
         )
+        for menu in config.menus:
+            log.debug(
+                f"Loaded {len(menu.items)} items for menu '{menu.name}': "
+                f"{[item.name for item in menu.items]}"
+            )
 
         if not config.menus and not config.view_config.content_rules:
             log.error("No menus or view rules found in config")
