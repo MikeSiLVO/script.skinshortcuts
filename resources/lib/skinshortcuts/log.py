@@ -16,7 +16,13 @@ except ImportError:
     IN_KODI = False
 
 PREFIX = "script.skinshortcuts:"
-BETA = True
+
+if IN_KODI:
+    import xbmcaddon
+
+    DEBUG = xbmcaddon.Addon().getSettingBool("debug")
+else:
+    DEBUG = False
 
 
 class Logger:
@@ -34,8 +40,8 @@ class Logger:
         formatted = self._format(msg)
         if IN_KODI:
             if level is None:
-                level = xbmc.LOGDEBUG if BETA else xbmc.LOGINFO
-            if BETA and level == xbmc.LOGDEBUG:
+                level = xbmc.LOGINFO
+            if DEBUG and level == xbmc.LOGDEBUG:
                 level = xbmc.LOGINFO
             xbmc.log(formatted, level)
         else:

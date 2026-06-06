@@ -5,7 +5,7 @@
             <group id="1">
                 <setting id="debug" type="boolean" label="32122" help="">
                     <level>0</level>
-                    <default>true</default>
+                    <default>false</default>
                     <control type="toggle"/>
                 </setting>
             </group>
