@@ -16,7 +16,7 @@
         <platform>all</platform>
         <license>GPL-2.0-only</license>
         <forum>https://forum.kodi.tv/showthread.php?tid=383314</forum>
-        <source>https://github.com/mikesilvo164/script.skinshortcuts</source>
+        <source>https://github.com/MikeSiLVO/script.skinshortcuts</source>
         <assets>
             <icon>resources/media/icon.png</icon>
             <fanart>resources/media/fanart.jpg</fanart>
