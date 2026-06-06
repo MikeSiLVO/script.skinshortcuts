@@ -140,7 +140,7 @@ def _browse_main_menu(config: ViewConfig, userdata: UserData) -> bool:
                 changed = True
         elif selected < 2 + len(plugin_overrides):
             plugin_id = sorted(plugin_overrides)[selected - 2]
-            if _confirm_reset(f"Reset views for {plugin_id}?"):
+            if _confirm_reset(LANGUAGE(32198) % plugin_id):
                 _clear_plugin_views(userdata, plugin_id)
                 changed = True
         elif selected == 2 + len(plugin_overrides):
@@ -313,12 +313,12 @@ def _pick_view_for_content(
 
         item = xbmcgui.ListItem(label)
         if view.id == default_view:
-            item.setLabel2("default")
+            item.setLabel2(xbmc.getLocalizedString(571))
         icon = view.icon or "DefaultFolder.png"
         item.setArt({"icon": icon, "thumb": icon})
         items.append(item)
 
-    title = f"{resolve_label(content.label)} - Select View"
+    title = LANGUAGE(32199) % resolve_label(content.label)
     selected = xbmcgui.Dialog().select(title, items, useDetails=True, preselect=preselect)
 
     if selected == -1:

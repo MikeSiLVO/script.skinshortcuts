@@ -279,7 +279,7 @@ class ItemsMixin:
             if not xbmcgui.Dialog().yesno(heading, message):
                 return
 
-        keyboard = xbmc.Keyboard(item.action or "", "Enter action")
+        keyboard = xbmc.Keyboard(item.action or "", LANGUAGE(32197))
         keyboard.doModal()
         if keyboard.isConfirmed():
             action = keyboard.getText()

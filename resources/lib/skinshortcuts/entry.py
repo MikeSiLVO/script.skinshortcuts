@@ -19,6 +19,7 @@ except ImportError:
 from .config import SkinConfig
 from .constants import INCLUDES_FILE, MENUS_FILE, VIEWS_FILE, get_shortcuts_path
 from .hashing import generate_config_hashes, hash_file, needs_rebuild, write_hashes
+from .localize import LANGUAGE
 from .log import get_logger, notify
 from .userdata import get_userdata_path
 
@@ -64,7 +65,7 @@ def _skin_supported(shortcuts_path: str, *, menus_only: bool = False) -> bool:
     path = Path(shortcuts_path)
     if (path / MENUS_FILE).exists() or (not menus_only and (path / VIEWS_FILE).exists()):
         return True
-    notify("Skin Shortcuts", "This skin has not been updated; menu editing unavailable")
+    notify("Skin Shortcuts", LANGUAGE(32190))
     return False
 
 
@@ -252,7 +253,7 @@ def reset_all_menus(shortcuts_path: str | None = None) -> bool:
 
     if not xbmcgui.Dialog().yesno(
         xbmc.getLocalizedString(186),  # "Reset"
-        "Reset all menus to skin defaults?[CR]All customizations will be removed.",
+        LANGUAGE(32191),
     ):
         return False
 
@@ -330,7 +331,7 @@ def reset_views(shortcuts_path: str | None = None) -> bool:
 
     if not xbmcgui.Dialog().yesno(
         xbmc.getLocalizedString(186),  # "Reset"
-        "Reset all view selections to skin defaults?",
+        LANGUAGE(32192),
     ):
         return False
 
@@ -365,7 +366,7 @@ def reset_menus(shortcuts_path: str | None = None) -> bool:
 
     if not xbmcgui.Dialog().yesno(
         xbmc.getLocalizedString(186),  # "Reset"
-        "Reset all menus to skin defaults?[CR]View selections will be preserved.",
+        LANGUAGE(32193),
     ):
         return False
 
@@ -483,9 +484,9 @@ def _dispatch(args: dict[str, str]) -> None:
             import xbmcgui
             include_subs = args.get("submenus", "").lower() == "true"
             prompt_msg = (
-                f"Reset '{menu}' and its submenus to skin defaults?"
+                LANGUAGE(32194) % menu
                 if include_subs
-                else f"Reset '{menu}' to skin defaults?"
+                else LANGUAGE(32195) % menu
             )
             if xbmcgui.Dialog().yesno(xbmc.getLocalizedString(186), prompt_msg):
                 from .manager import MenuManager
@@ -501,7 +502,7 @@ def _dispatch(args: dict[str, str]) -> None:
         import xbmcgui
         if xbmcgui.Dialog().yesno(
             xbmc.getLocalizedString(186),
-            "Reset all submenus to skin defaults?",
+            LANGUAGE(32196),
         ):
             from .manager import MenuManager
             shortcuts_path = args.get("path") or get_shortcuts_path()
