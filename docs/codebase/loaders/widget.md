@@ -17,7 +17,7 @@ Parses widgets.xml containing widget definitions and groups for the picker dialo
 
 Load complete widget configuration. Returns WidgetConfig containing:
 - `widgets` - Flat list of root-level Widget objects
-- `groupings` - Widgets and groups for picker navigation
+- `groupings` - Widgets, groups, and root-level content references for picker navigation
 
 ***
 

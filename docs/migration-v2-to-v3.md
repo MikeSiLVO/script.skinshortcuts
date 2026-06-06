@@ -32,6 +32,8 @@ This guide covers all changes needed to migrate a v2 skin to v3.
 * v2 user data (XML files) cannot be migrated automatically
 * v2 template syntax is different from v3
 
+Until a v3 `shortcuts/menus.xml` (or `views.xml`) exists, the script treats the skin as not-yet-migrated: `type=manage` and `type=buildxml` both abort and show the notification "This skin has not been updated; menu editing unavailable". This is expected - create `menus.xml` first.
+
 ### What Users Lose
 
 * All existing menu customizations (users must reconfigure menus)
@@ -46,6 +48,16 @@ This guide covers all changes needed to migrate a v2 skin to v3.
 3. Update RunScript calls
 4. Rewrite `templates.xml` if using custom templates (different syntax)
 5. Update skin XML references to generated includes (if names changed)
+
+### Generated Include Names
+
+| Output           | v3 include name                        | Example                          |
+| ---------------- | -------------------------------------- | -------------------------------- |
+| Main menu        | `skinshortcuts-{menu}`                 | `skinshortcuts-mainmenu`         |
+| Combined submenu | `skinshortcuts-{menu}-submenu`         | `skinshortcuts-mainmenu-submenu` |
+| Custom widget    | `skinshortcuts-{item}-customwidget{n}` | `skinshortcuts-movies-customwidget` |
+| Template output  | `skinshortcuts-template-{include}`     | `skinshortcuts-template-Widgets` |
+| Submenu template | `skinshortcuts-{include}`              | `skinshortcuts-Submenu`          |
 
 ***
 
@@ -66,7 +78,8 @@ shortcuts/
 ├── widgets.xml      (optional)
 ├── backgrounds.xml  (optional)
 ├── properties.xml   (optional)
-└── templates.xml    (optional)
+├── templates.xml    (optional)
+└── views.xml        (optional)
 ```
 
 ### User Data Location
@@ -715,14 +728,14 @@ See [Standalone Widget Picker](skinning/widgets.md#standalone-widget-picker) for
 
 ### Changed in v3
 
-| ID  | v2 Function                         | v3 Function            |
-| --- | ----------------------------------- | ---------------------- |
-| 309 | Widget picker (deprecated, use 312) | Via subdialog system   |
-| 310 | Background picker                   | Via subdialog system   |
-| 311 | Thumbnail selector                  | Restore deleted item   |
-| 312 | Widget picker                       | Reset item to defaults |
+| ID  | v2 Function                         | v3 Function                          |
+| --- | ----------------------------------- | ------------------------------------ |
+| 309 | Widget picker (deprecated, use 312) | Via properties.xml button mapping    |
+| 310 | Background picker                   | Via properties.xml button mapping    |
+| 311 | Thumbnail selector                  | Restore deleted item                 |
+| 312 | Widget picker                       | Reset item to defaults               |
 
-Widget and background pickers in v3 are configured via `<subdialog>` elements in menus.xml, not hardcoded IDs.
+Widget and background pickers in v3 are configured via button mappings in properties.xml, not hardcoded IDs. Additional widget slots use `<subdialog>` elements in menus.xml.
 
 ### Removed in v3
 
@@ -757,15 +770,17 @@ Remove these controls from your dialog XML.
 | ---------------------- | -------------------------------------- |
 | `skinshortcuts-dialog` | Current subdialog mode (set on both dialog and Home windows; use `Window(home).Property` for cross-window visibility) |
 | `skinshortcuts-suffix` | Property suffix (set on both dialog and Home windows; use `Window(home).Property` for cross-window visibility) |
+| `skinshortcuts-menutype` | Menu type: the menu's `type` (e.g. `widgets`), `submenu` for submenu menus, or empty for a plain main menu |
 
 ***
 
 ## Property Name Changes
 
-| v2           | v3            |
-| ------------ | ------------- |
-| `widgetName` | `widgetLabel` |
-| All others   | Unchanged     |
+| v2               | v3                |
+| ---------------- | ----------------- |
+| `widgetName`     | `widgetLabel`     |
+| `backgroundName` | `backgroundLabel` |
+| All others       | Unchanged         |
 
 ***
 
@@ -788,7 +803,7 @@ Remove these controls from your dialog XML.
         {
           "name": "movies",
           "label": "Movies",
-          "actions": [{"action": "ActivateWindow(Videos,videodb://movies/)", "condition": ""}],
+          "actions": [{"action": "ActivateWindow(Videos,videodb://movies/)"}],
           "icon": "DefaultMovies.png",
           "properties": {
             "widget": "recent-movies",
@@ -830,7 +845,8 @@ User data is stored in:
   - [ ] Remove control 404 (set custom property)
   - [ ] Update control 311 (now restores deleted items, not thumbnail selector)
   - [ ] Update control 312 (now resets item, not widget picker)
-  - [ ] Configure widget/background pickers via `<subdialog>` in menus.xml
+  - [ ] Map widget/background picker buttons in properties.xml
+  - [ ] Set up `<subdialog>` elements in menus.xml if using multiple widget slots
 
 - [ ] Update RunScript calls
   
@@ -862,6 +878,12 @@ User data is stored in:
   - [ ] Set up expressions, presets, property groups
   - [ ] Configure multi-output if needed
 
+- [ ] Create `shortcuts/views.xml` (if locking views)
+
+  - [ ] Define `<view>` entries
+  - [ ] Define content-type `<rules>`
+  - [ ] Wire up `type=viewselect` / `type=resetviews` buttons
+
 ### Testing
 
 - [ ] Test menu management dialog opens
@@ -878,9 +900,14 @@ User data is stored in:
 ## Related Documentation
 
 * [Schema Reference](schema.md) - Complete XML element reference
+* [Getting Started](skinning/getting-started.md) - End-to-end v3 integration walkthrough
+* [File Overview](skinning/files.md) - Config files, generated include naming, userdata location
 * [Menus](skinning/menus.md) - Menu configuration details
 * [Widgets](skinning/widgets.md) - Widget configuration details
 * [Backgrounds](skinning/backgrounds.md) - Background configuration details
 * [Properties](skinning/properties.md) - Property configuration details
 * [Templates](skinning/templates.md) - Template system details
 * [Conditions](skinning/conditions.md) - Condition syntax reference
+* [Management Dialog](skinning/management-dialog.md) - Control IDs, window properties, subdialogs
+* [Built-in Properties](skinning/builtin-properties.md) - ListItem property reference for generated includes
+* [Views](skinning/views.md) - View locking configuration

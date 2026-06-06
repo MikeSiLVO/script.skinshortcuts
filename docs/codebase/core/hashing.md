@@ -9,7 +9,7 @@
 
 Uses MD5 hashes of configuration files to detect changes and avoid unnecessary rebuilds.
 
-**Storage:** `special://profile/addon_data/script.skinshortcuts/{skin_dir}.hash`
+**Storage:** `special://profile/addon_data/script.skinshortcuts/{skin_dir}.hashes`
 
 ***
 
@@ -28,6 +28,7 @@ Uses MD5 hashes of configuration files to detect changes and avoid unnecessary r
 
 Returns True if:
 - Any output file (includes.xml) is missing
+- An existing includes.xml has been modified (its stored per-output hash no longer matches)
 - No stored hashes exist
 - Any config file hash changed (including `userdata`)
-- Metadata changed (version, skin)
+- Metadata changed (script_version, skin_dir, kodi_version)

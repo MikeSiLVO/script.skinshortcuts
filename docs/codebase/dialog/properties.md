@@ -40,7 +40,7 @@ Route property button click to appropriate handler based on property type from s
 | `_set_background_properties_custom` | Set with user-browsed path + playlist type |
 | `_clear_background_properties` | Clear all background properties for prefix |
 
-**Background types:** STATIC (predefined), BROWSE (single image), MULTI (folder), PLAYLIST/LIVE_PLAYLIST (playlist picker)
+**Background types:** STATIC/PROPERTY/LIVE (set directly, no extra browse step), BROWSE (single image), MULTI (folder), PLAYLIST/LIVE_PLAYLIST (playlist picker)
 
 ***
 

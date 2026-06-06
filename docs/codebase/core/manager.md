@@ -32,6 +32,8 @@ Initialize manager. Loads config and creates working copy.
 | `get_menu_ids()` | list[str] | All menu names |
 | `get_all_menus()` | list[Menu] | All menus from working copy |
 | `get_menu_items(menu_id)` | list[MenuItem] | Items for a menu |
+| `get_widgets()` | list[tuple[str,str]] | Available widgets as (name, label) |
+| `get_backgrounds()` | list[tuple[str,str]] | Available backgrounds as (name, label) |
 
 ### Item Operations
 
@@ -44,6 +46,7 @@ Initialize manager. Loads config and creates working copy.
 | `move_item(menu_id, item_id, direction)` | bool | Move up (-1) or down (+1) |
 | `is_item_modified(menu_id, item_id)` | bool | Check if differs from default |
 | `get_removed_items(menu_id)` | list[MenuItem] | Restorable items |
+| `has_removed_items(menu_id)` | bool | Whether menu has restorable removed items |
 
 ### Property Setters
 
@@ -56,6 +59,9 @@ All return bool. Update working copy.
 | `set_icon(menu_id, item_id, icon)` | Set icon |
 | `set_disabled(menu_id, item_id, disabled)` | Set disabled state |
 | `set_submenu(menu_id, item_id, submenu)` | Set or clear submenu template reference |
+| `set_visible(menu_id, item_id, visible)` | Set runtime visibility condition (used by shortcut picker) |
+| `set_widget(menu_id, item_id, widget)` | Set widget property (delegates to set_custom_property) |
+| `set_background(menu_id, item_id, background)` | Set background property (delegates to set_custom_property) |
 | `set_custom_property(menu_id, item_id, name, value)` | Set custom property |
 
 ### Submenu Operations
@@ -65,8 +71,9 @@ Each item linked to a `<submenu>` template has its own working copy, keyed by `{
 | Method | Returns | Description |
 |--------|---------|-------------|
 | `submenu_key(parent, item_name)` | str | Compute the per-item working key |
-| `submenu_template(item)` | str | Template name to seed from (falls back to `item.name`) |
+| `submenu_template(item)` | str | Template name to seed from (`item.submenu`, or empty string if unbound) |
 | `ensure_item_submenu(parent, item)` | Menu | Return the per-item submenu, seeding from template on first access |
+| `drop_per_item_submenu(parent, item_name)` | None | Discard per-item submenu so next access reseeds from template |
 
 ### Custom Widget Operations
 

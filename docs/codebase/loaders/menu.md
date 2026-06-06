@@ -21,6 +21,7 @@ Load complete menu configuration. Returns MenuConfig containing:
 - `icon_sources` - Icon picker sources
 - `subdialogs` - Subdialog definitions
 - `action_overrides` - Action replacement rules
+- `icon_overrides` - DefaultX.png -> override-path map from `<overrides><icons>`
 - `show_context_menu` - Context menu visibility
 
 ### load_groupings(path, menu_id="") → list[ShortcutGroup]
@@ -38,13 +39,16 @@ Load shortcut groupings for the picker. If `menu_id` is provided, a `<groupings 
 | `_parse_item` | Menu item with label, actions, properties, protection, includes |
 | `_parse_defaults` | Menu-wide default properties, actions, includes |
 | `_parse_allow` | Feature toggles (widgets, backgrounds, submenus) |
-| `_parse_groupings` | `<groupings>` element with groups/shortcuts |
+| `_parse_shortcut_groupings` | `<groupings>` element with groups/shortcuts/content/inputs |
 | `_parse_shortcut_group` | Group with nested groups, shortcuts, content, inputs |
 | `_parse_shortcut` | Shortcut in action or browse mode |
 | `_parse_input` | User input prompt element |
 | `_parse_icons` | Icon sources (simple path or advanced with conditions) |
 | `_parse_dialogs` | Subdialog definitions |
+| `_parse_onclose` | `<onclose>` actions inside a `<subdialog>` |
 | `_parse_overrides` | Action replacement rules |
+| `_parse_icon_overrides` | `<overrides><icons>` icon substitution map |
+| `_parse_context_menu` | `<contextmenu>` show/hide setting |
 
 ***
 

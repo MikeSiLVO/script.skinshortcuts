@@ -21,6 +21,7 @@ The `templates.xml` file defines how the script generates include files. Templat
   * [Troubleshooting "No Menu Items Matched"](#troubleshooting-no-menu-items-matched)
 * [Property Groups](#property-groups)
 * [Presets](#presets)
+* [Preset Groups](#preset-groups)
 * [Variables](#variables)
 * [Expressions](#expressions)
 * [Includes](#includes)
@@ -107,6 +108,7 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 | `include` | Yes | - | Output include name (`skinshortcuts-template-{include}`) |
 | `build` | No | `menu` | Build mode: `menu` or `true` |
 | `idprefix` | No | - | Prefix for computed control IDs |
+| `menu` | No | (all menus) | Restrict the template to a single menu by name (e.g. `mainmenu`). When omitted, the template runs against every menu. |
 | `templateonly` | No | - | Skip include generation: `true` (always) or `auto` (if unassigned) |
 
 ---
@@ -245,6 +247,8 @@ No iteration, outputs controls once with parameter substitution:
 
 Use as `<include content="skinshortcuts-UtilityInclude"><param name="id">9001</param></include>`.
 
+`$PARAM` is native Kodi include-parameter syntax, not a script feature; the script passes it through untouched. The template's `<param name="id" default="9000" />` declaration is not carried into the generated include, so the default is lost: always pass the param from the consuming include.
+
 Raw mode also supports `<skinshortcuts>visibility</skinshortcuts>` markers. Instead of per-item visibility, the marker generates an OR'd condition across all matching menu items, outputting controls once with combined visibility. This is useful for elements that should be visible when *any* matching item is focused:
 
 ```xml
@@ -371,7 +375,6 @@ Standard item properties are also available:
 | `label` | Item label |
 | `label2` | Secondary label |
 | `icon` | Item icon |
-| `thumb` | Item thumbnail |
 | `action` | Full action string |
 | `path` | Bare content path |
 | `visible` | Visibility condition |
@@ -416,7 +419,7 @@ XML content output per item:
 |-------------|-------------|
 | `$PROPERTY[name]` | Property or var value |
 | `$EXP[name]` | Expression value (expanded in conditions) |
-| `$PARAM[name]` | Parameter (raw mode only) |
+| `$PARAM[name]` | Native Kodi include parameter (raw mode); resolved by Kodi, not the script, and the `<param>` default is not emitted |
 
 Note: Vars defined with `<var>` are resolved during context building and accessible via `$PROPERTY[name]`.
 
@@ -476,7 +479,7 @@ $IF[cond1 THEN val1 ELIF cond2 THEN val2 ELSE val3]
 <layout>$IF[widgetType=movies THEN poster ELIF widgetType=albums THEN square ELSE landscape]</layout>
 
 <!-- Using keyword operators -->
-<visible>$IF[widgetPath NOT EMPTY THEN true ELSE false]</visible>
+<visible>$IF[NOT widgetPath EMPTY THEN true ELSE false]</visible>
 <target>$IF[widgetType IN movies,episodes,tvshows THEN videos ELSE music]</target>
 ```
 
@@ -509,10 +512,13 @@ Expressions can be nested:
 ### Order of Processing
 
 In template text substitution:
-1. `$MATH[...]` - arithmetic expressions
-2. `$IF[...]` - conditional expressions
-3. `$PROPERTY[...]` - property substitution
-4. `$INCLUDE[...]` - include conversion
+1. `$EXP[...]` - expression references
+2. `$PARENT[...]` - parent item properties (items templates only)
+3. `$PROPERTY[...]` - property substitution (resolved before `$MATH`/`$IF` so their inner refs are filled)
+4. `$MATH[...]` - arithmetic expressions
+5. `$IF[...]` - conditional expressions
+
+`$INCLUDE[...]` conversion happens separately after substitution.
 
 ---
 
@@ -1034,6 +1040,50 @@ When `suffix` is specified, preset conditions like `widgetStyle=Panel` are trans
 
 ---
 
+## Preset Groups
+
+Preset groups select between presets or inline values based on conditions. Children are evaluated in document order and the first matching condition wins.
+
+```xml
+<presetGroups>
+  <presetGroup name="widgetSet">
+    <preset content="posterLayout" condition="widgetArt=Poster" />
+    <values condition="widgetType=movies" layout="wide" columns="4" />
+    <preset content="defaultLayout" />
+  </presetGroup>
+</presetGroups>
+```
+
+Each `<presetGroup>` child is one of:
+
+* `<preset content="name" condition="..." />` - apply a named preset when the condition matches
+* `<values attr="val" ... condition="..." />` - apply inline attribute values when the condition matches
+
+A child with no `condition` always matches and acts as the default. The first child whose condition passes is applied; remaining children are ignored.
+
+Reference a preset group from a template, items template, or output:
+
+```xml
+<template include="MainMenu">
+  <presetGroup content="widgetSet" />
+</template>
+```
+
+### Preset Group Reference Attributes
+
+| Attribute | Required | Description |
+|-----------|----------|-------------|
+| `content` | Yes | Name of preset group to apply |
+| `suffix` | No | Suffix for condition transforms (e.g., `.2`) |
+| `condition` | No | Only apply if condition matches item |
+
+```xml
+<!-- Apply preset group for Widget 2 -->
+<presetGroup content="widgetSet" suffix=".2" condition="widgetPath.2" />
+```
+
+---
+
 ## Variables
 
 Generate Kodi `<variable>` elements:
@@ -1185,6 +1235,14 @@ Use in template conditions:
 <propertyGroup content="movieProps" condition="$EXP[IsMovies]" />
 ```
 
+### The `nosuffix` Attribute
+
+By default, property names inside an expression are suffix-transformed under a suffixed output or reference (e.g. in a `suffix=".2"` output, `widgetArt` becomes `widgetArt.2`). Set `nosuffix="true"` to keep the expression fixed so its property names are never suffixed:
+
+```xml
+<expression name="GlobalToggle" nosuffix="true">someGlobalProp</expression>
+```
+
 ---
 
 ## Includes
@@ -1235,8 +1293,8 @@ Template for submenu generation:
 | Attribute | Description |
 |-----------|-------------|
 | `include` | Output include name pattern |
-| `level` | Submenu depth (1 = direct child, 2 = grandchild, etc.) |
-| `name` | Match specific submenu name (empty = all) |
+| `level` | Any value > 0 enables iteration over main menu items' direct submenus (looked up as `mainmenu/{item.name}`). The numeric value is not a depth selector; values above 1 behave the same as 1. |
+| `name` | Match a single menu by exact name. When empty, the `level` attribute (>0) drives iteration over main menu items' submenus instead; with empty name and level 0, the submenu template produces no output. |
 
 ---
 
@@ -1347,7 +1405,7 @@ When `$INCLUDE[...]` appears as text content in an element (e.g., after `$PROPER
         <visible>$EXP[HasWidget]</visible>
         <content target="$PROPERTY[target]">$PROPERTY[path]</content>
         <itemlayout>
-          <include>skinshortcuts-WidgetItem-$VAR[layout]</include>
+          <include>skinshortcuts-WidgetItem-$PROPERTY[layout]</include>
         </itemlayout>
       </control>
     </controls>

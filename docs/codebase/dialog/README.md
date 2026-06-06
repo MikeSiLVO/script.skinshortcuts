@@ -44,6 +44,7 @@ ManagementDialog
 | ID | Purpose |
 |----|---------|
 | 211 | Menu items list |
+| 212 | Subdialog context list (single item) |
 | 301-307 | Add, Delete, Move Up/Down, Set Label/Icon/Action |
 | 311-313 | Restore Deleted, Reset Item, Toggle Disabled |
 | 401 | Choose Shortcut |
@@ -60,7 +61,10 @@ Properties set on items in list control 211:
 | `name` | Item's internal name |
 | `action` | Full action string |
 | `path` | Bare content path |
-| `widget`, `widgetLabel`, `widgetPath`, `widgetType`, `widgetTarget` | Widget properties |
+| `originalAction` | Action as originally defined (before overrides) |
+| `skinshortcuts-isRequired` | "True" if item is required |
+| `skinshortcuts-isProtected` | "True" if item has protection |
+| `widget`, `widgetLabel`, `widgetPath`, `widgetType`, `widgetTarget`, `widgetSource` | Widget properties |
 | `background`, `backgroundLabel`, `backgroundPath` | Background properties |
 | `hasSubmenu`, `submenu` | Submenu info |
 | `isResettable` | True if modified from defaults |

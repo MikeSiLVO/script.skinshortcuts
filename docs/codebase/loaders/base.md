@@ -23,7 +23,7 @@ Skips NO_SUFFIX_PROPERTIES and preserves values after operators.
 
 ### apply_suffix_to_from(from_value, suffix) → str
 
-Transform `from` attribute values. Handles bracket syntax: `"preset[attr]"` → `"preset.2[attr]"`
+Transform `from` attribute values by appending the suffix to the whole value. E.g. `"widgetPath"` + `".2"` → `"widgetPath.2"`. Returns the value unchanged when it is in NO_SUFFIX_PROPERTIES. No bracket/subscript parsing is performed.
 
 ***
 

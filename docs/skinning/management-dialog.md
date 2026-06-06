@@ -152,7 +152,9 @@ Properties set on the dialog window for conditional visibility:
 | `disableWidgets` | `true` if disabled (empty if allowed) |
 | `disableBackgrounds` | `true` if disabled (empty if allowed) |
 | `disableSubmenus` | `true` if disabled (empty if allowed) |
+| `skinshortcuts-menutype` | Menu type: `widgets` for a widget menu, `submenu` for a submenu, empty for a normal menu |
 | `skinshortcuts-hasdeleted` | `true` if deleted items exist |
+| `additionalDialog` | `true` while a child management dialog is stacked on top of this one (submenu editing or a subdialog/onclose mode); empty once the child closes |
 
 ### Subdialog Mode
 
@@ -191,6 +193,7 @@ Properties available on items in the menu list (control 211):
 | `ListItem.Icon` | Icon path |
 | `ListItem.Property(name)` | Item identifier |
 | `ListItem.Property(action)` | Full action string |
+| `ListItem.Property(originalAction)` | Original action string before any override is applied |
 | `ListItem.Property(path)` | Bare content path |
 | `ListItem.Property(skinshortcuts-disabled)` | `True` or `False` |
 
@@ -203,6 +206,7 @@ Properties available on items in the menu list (control 211):
 | `ListItem.Property(widgetPath)` | Widget content path |
 | `ListItem.Property(widgetType)` | Widget content type |
 | `ListItem.Property(widgetTarget)` | Widget target window |
+| `ListItem.Property(widgetSource)` | Widget source type (e.g., `library`, `playlist`, `addon`) |
 
 ### Background Properties
 
@@ -325,7 +329,7 @@ Execute actions when subdialog closes:
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `type` | Yes | `manage` |
-| `menu` | Yes | Menu ID to edit |
+| `menu` | No | Menu ID to edit (defaults to `mainmenu`) |
 | `path` | No | Custom shortcuts path |
 
 ### Build Includes

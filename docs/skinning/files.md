@@ -123,8 +123,11 @@ skin.name/
 
 | Pattern | Example |
 |---------|---------|
-| `skinshortcuts-{menu}` | `skinshortcuts-mainmenu` |
-| Template `include` attribute | `skinshortcuts-Widgets` |
+| Menu: `skinshortcuts-{menu}` | `skinshortcuts-mainmenu` |
+| Combined submenu: `skinshortcuts-{menu}-submenu` | `skinshortcuts-mainmenu-submenu` |
+| Custom widget: `skinshortcuts-{item}-customwidget{n}` | `skinshortcuts-movies-customwidget`, `skinshortcuts-movies-customwidget2` |
+| Template: `skinshortcuts-template-{include}` | `skinshortcuts-template-Widgets` |
+| Submenu template: `skinshortcuts-{include}` | `skinshortcuts-Submenu` |
 
 ### Using Includes
 
@@ -148,8 +151,11 @@ User customizations are stored in Kodi's addon_data folder.
 userdata/
 └── addon_data/
     └── script.skinshortcuts/
-        └── skin.name.userdata.json
+        ├── skin.name.userdata.json
+        └── skin.name.hashes        # internal rebuild cache (config + userdata hashes)
 ```
+
+The `.hashes` file is managed by the script and rewritten on every build; do not edit it. A `type=buildxml,force=true` rebuild bypasses the cache and rebuilds even when the hashes match.
 
 ### Format
 

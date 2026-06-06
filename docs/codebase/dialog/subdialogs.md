@@ -29,7 +29,7 @@ Spawn child dialog to edit submenu. Hides parent, spawns child with shared state
 
 **Direct menu opening:** If subdialog has `menu` but no `mode`, the menu opens directly without spawning an intermediate dialog. Useful for custom widget menus that don't need a mode change.
 
-**Child receives:** Same manager, schema, sources, deleted_items. Different dialog_mode and property_suffix.
+**Child receives:** Same manager, schema, icon_sources, show_context_menu, subdialogs. Different dialog_mode and property_suffix. Deleted/removed items are tracked inside the shared manager, not passed separately.
 
 ### Onclose Handling
 
@@ -51,6 +51,6 @@ Spawn child dialog to edit submenu. Hides parent, spawns child with shared state
 Child dialogs share these objects with parent:
 - `manager` - Changes accumulate
 - `property_schema` - No reload needed
-- `icon_sources`, `subdialogs`, `deleted_items`
+- `icon_sources`, `show_context_menu`, `subdialogs`
 
 Only root dialog saves on close.

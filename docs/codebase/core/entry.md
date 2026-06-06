@@ -86,5 +86,5 @@ Uses `_StandalonePicker`, a minimal adapter around `PickersMixin` that provides 
 
 | Function | Description |
 |----------|-------------|
-| `get_skin_path()` | Get `special://skin/shortcuts/` path |
+| `get_shortcuts_path()` (in constants.py) | Get `special://skin/shortcuts/` path |
 | `get_output_paths()` | Get resolution folder paths from addon.xml |

@@ -179,7 +179,7 @@ The script generates expressions in the includes file.
 | Expression | Description |
 |------------|-------------|
 | `{prefix}{ViewId}` | True when this view should be visible |
-| `{prefix}{ViewId}_Include` | True if view is used by any content rule |
+| `{prefix}{ViewId}_Include` | True if this view is the currently effective view (selected or default) for any content source, or a plugin override target. Views only listed in a rule's `<views>` but not currently selected evaluate to False. |
 
 ### Plugin Override Expressions
 
@@ -189,6 +189,8 @@ Generated only when plugin-specific overrides exist:
 |------------|-------------|
 | `{prefix}{Content}_HasPluginOverride` | True if current plugin has a custom view |
 | `{prefix}{Content}_IsGenericPlugin` | True if plugin without custom override |
+
+`{Content}` is the content rule's name with the first character uppercased and any character that is not a letter, digit or underscore replaced by `_`. For example content name="movies" produces `ShortcutView_Movies_HasPluginOverride`, and name="videodb-versions" produces `ShortcutView_Videodb_versions_HasPluginOverride`.
 
 ---
 

@@ -1,6 +1,6 @@
 # Skin Shortcuts v3 - Codebase Documentation Index
 
-**Version:** 3.0.0-dev
+**Version:** 3.0.0
 
 **Quick Start:** See [OVERVIEW.md](OVERVIEW.md)
 
@@ -22,6 +22,8 @@
 | manager.py | [manager.md](core/manager.md) | Menu manager API |
 | config.py | [config.md](core/config.md) | Config loader |
 | entry.py | [entry.md](core/entry.md) | Entry point |
+| skinstring.py | [entry.md](core/entry.md) | Skin-string widget picker |
+| log.py | [log.md](core/log.md) | Logging and notifications |
 
 ### Dialog Package (`dialog/`)
 
@@ -76,6 +78,7 @@
 |------|-----|---------|
 | Overview | [README.md](providers/README.md) | Package overview |
 | content.py | [content.md](providers/content.md) | Dynamic content resolver |
+| browse.py | [browse.md](providers/browse.md) | Directory browsing via Files.GetDirectory |
 
 ***
 

@@ -31,6 +31,7 @@
 | `name`, `label` | str | Identifier and display |
 | `icon`, `condition`, `visible` | str | Display/filtering |
 | `items` | list | Child Widgets, WidgetGroups, or Content |
+| `flat` | bool | No folder header; children render at parent level (default: False) |
 
 ### WidgetConfig
 

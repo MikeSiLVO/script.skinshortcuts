@@ -52,7 +52,10 @@ Write includes XML to file.
   <property name="id">1</property>
   <property name="name">movies</property>
   <property name="menu">mainmenu</property>
-  <property name="path">ActivateWindow(...)</property>
+  <property name="action">ActivateWindow(...)</property>
+  <property name="path">bare/content/path/</property>
+  <property name="submenuVisibility">movies</property>
+  <property name="hasSubmenu">True</property>
   ...custom properties...
 </item>
 ```

@@ -123,6 +123,7 @@ In addition to the attributes shared with `<menu>`:
 | Attribute | Default | Description |
 |-----------|---------|-------------|
 | `standalone` | `true` | When `false`, the per-template `skinshortcuts-{name}` include is not emitted. Submenu items still appear in the combined `skinshortcuts-{menu}-submenu` include. Use this when your skin only consumes submenus through the combined include and you want a cleaner generated output. |
+| `template_only` | (unset) | When set to `submenu`, the combined `skinshortcuts-{menu}-submenu` include is not generated for this menu. Distinct from `standalone`, which controls the per-template `skinshortcuts-{name}` include. |
 
 Link a submenu to an item:
 
@@ -175,7 +176,7 @@ Defines a menu item.
 | `name` | Yes | - | Unique item identifier |
 | `submenu` | No | - | Submenu name to link |
 | `required` | No | `false` | If `true`, cannot be deleted |
-| `visible` | No | - | Kodi condition for dialog visibility filtering (hides item in management dialog) |
+| `visible` | No | - | Kodi condition evaluated at config load (build time, inside Kodi). When it fails the item is omitted from both the management dialog and the generated include |
 | `widget` | No | - | Shorthand for `<property name="widget">` |
 | `background` | No | - | Shorthand for `<property name="background">` |
 
@@ -197,7 +198,7 @@ Defines a menu item.
 
 | Attribute/Element | Where Applied | Purpose |
 |-------------------|---------------|---------|
-| `visible="..."` (attribute on `<item>`) | Management dialog | Hides item from dialog when condition fails (e.g., hide playdisc when no disc drive) |
+| `visible="..."` (attribute on `<item>`) | Config load (build time) | Omits the item from both the dialog and the generated include when the condition fails (e.g., hide playdisc when no disc drive) |
 | `<visible>` (child element) | Generated include | Output as `<visible>` in the include file |
 
 ### Multiple Visibility Conditions
@@ -256,7 +257,7 @@ Use the `condition` attribute for fallback behavior:
 </item>
 ```
 
-The first matching action executes. Unconditional actions always match.
+Each action is emitted as a separate `<onclick>` carrying its condition; Kodi runs every onclick whose condition passes, in output order (conditional actions first, then unconditional). For true fallback behavior, gate the primary action with a complementary condition so only one onclick fires.
 
 ---
 
@@ -281,7 +282,7 @@ Menu-level defaults apply to all items in the menu.
 |---------|-------------|
 | `<action>` | Default actions for all items |
 | `<property>` | Default property values |
-| `<skinshortcuts>` | Include reference (for controltype menus) |
+| `<skinshortcuts>` | Include reference inserted into item output (works for both regular item menus and controltype menus) |
 
 The `<defaults>` element also supports `widget` and `background` attributes as shorthand:
 
@@ -307,7 +308,7 @@ The `<defaults>` element also supports `widget` and `background` attributes as s
 
 ### Include References
 
-For `controltype` menus, insert include references into the output:
+Insert include references into the output (works for both regular item menus and controltype menus):
 
 ```xml
 <defaults>
@@ -733,7 +734,7 @@ Define subdialogs triggered by button clicks. Used for multi-widget support.
 | Attribute | Required | Description |
 |-----------|----------|-------------|
 | `buttonID` | Yes | Button ID that triggers this subdialog |
-| `mode` | No | Value set in `Window.Property(skinshortcuts-dialog)`. Required unless `menu` is set |
+| `mode` | No | Value set in `Window.Property(skinshortcuts-dialog)`. Required unless `menu` is set or at least one `<onclose>` action is present |
 | `menu` | No | Menu to open directly without mode change. Supports `{item}` and `{customWidget}` placeholders |
 | `setfocus` | No | Control ID to focus when subdialog opens |
 | `suffix` | No | Property suffix for widget slots (e.g., `.2`). Set in `Window.Property(skinshortcuts-suffix)` |
@@ -751,7 +752,7 @@ This opens the custom widget menu for slot 2 immediately when button 850 is clic
 | Attribute | Description |
 |-----------|-------------|
 | `action` | Action type: `menu` |
-| `menu` | Menu name for `action="menu"`. Supports `{item}` placeholder |
+| `menu` | Menu name for `action="menu"`. Supports `{item}` and `{customWidget}` / `{customWidget.N}` placeholders |
 | `condition` | Condition evaluated against item properties |
 
 > **See also:**
@@ -827,7 +828,7 @@ Enable or disable context menu on items:
 <contextmenu>true</contextmenu>
 ```
 
-Default: `true`. Set to `false`, `no`, or `0` to disable.
+Default `true` when the `<contextmenu>` element is absent. When the element is present, set its text to `false`, `no`, `0`, or leave it empty to disable.
 
 ---
 

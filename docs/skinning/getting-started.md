@@ -13,7 +13,6 @@ This guide walks through integrating Skin Shortcuts into your skin.
 * [Displaying the Menu](#displaying-the-menu)
 * [Building Includes](#building-includes)
 * [Adding Widgets](#adding-widgets)
-* [Next Steps](#next-steps)
 
 ---
 
@@ -96,7 +95,7 @@ Add a button to open the management dialog:
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `type` | Yes | `manage` to open the management dialog |
-| `menu` | Yes | Menu name to edit (e.g., `mainmenu`) |
+| `menu` | No | Menu name to edit (e.g., `mainmenu`); defaults to `mainmenu` |
 | `path` | No | Custom shortcuts path (defaults to `special://skin/shortcuts/`) |
 
 > **See also:** [Management Dialog](management-dialog.md) for dialog controls and properties

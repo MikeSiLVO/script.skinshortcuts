@@ -14,7 +14,9 @@
 | `name` | str | Unique identifier |
 | `label` | str | Display label |
 | `actions` | list[Action] | Actions to execute |
+| `label2` | str | Secondary label (label2 element) |
 | `icon` | str | Icon path |
+| `thumb` | str | Thumb path |
 | `visible` | str | Kodi condition for includes.xml `<visible>` |
 | `dialog_visible` | str | Kodi condition to filter in management dialog |
 | `disabled` | bool | Grayed out state |
@@ -22,6 +24,9 @@
 | `protection` | Protection | Protection rules |
 | `properties` | dict | Custom properties (widget, background, etc) |
 | `submenu` | str | Submenu reference |
+| `original_action` | str | Set from defaults, not saved to userdata |
+| `includes` | list[IncludeRef] | Include references for controltype output (before/after onclick) |
+| `is_placeholder` | bool | Empty placeholder, dropped from save until edited |
 
 **Properties:** `action` getter/setter for last unconditional action (the destination action for display)
 
@@ -60,6 +65,7 @@
 | `path`, `browse` | str | Path and target for browse mode |
 | `type` | str | Category label (label2) |
 | `icon`, `condition`, `visible` | str | Display/filtering |
+| `item_visible` | str | Visibility condition baked into the resulting menu item when picked (vs `visible` which only hides from picker) |
 | `action_play`, `action_party` | str | Playlist alternatives |
 
 **Properties:** `action` - Returns `primary_action` if set, otherwise last action in list
@@ -112,7 +118,7 @@ User input prompt for custom values.
 | `MenuDefaults` | Default properties and actions for menu |
 | `MenuAllow` | Feature toggles (widgets, backgrounds, submenus) |
 | `IconSource` | Icon picker source (label, path, condition) |
-| `SubDialog` | Subdialog definition (button_id, mode, menu, suffix, onclose) |
+| `SubDialog` | Subdialog definition (button_id, mode, menu, setfocus, suffix, onclose) |
 | `OnCloseAction` | Action on subdialog close |
 | `ActionOverride` | Action replacement rule |
 | `MenuConfig` | Top-level container for all menu config |

@@ -22,9 +22,10 @@ Top-level container.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `expressions` | dict[str,str] | Named expressions |
+| `expressions` | dict[str, Expression] | Named expressions (value + nosuffix flag) |
 | `property_groups` | dict | PropertyGroup definitions |
 | `presets` | dict | Preset lookup tables |
+| `preset_groups` | dict | PresetGroup definitions (conditional preset selection) |
 | `includes` | dict | IncludeDefinition for control reuse |
 | `variable_definitions` | dict | Kodi variable definitions |
 | `variable_groups` | dict | Variable group definitions |
@@ -36,23 +37,28 @@ Top-level container.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `include` | str | Output include name |
+| `include` | str | Output include name (legacy single-output; superseded by `outputs`) |
 | `build` | BuildMode | Build mode |
-| `id_prefix` | str | For computed control IDs |
+| `id_prefix` | str | For computed control IDs (legacy single-output; superseded by `outputs`) |
 | `template_only` | str | "true"=never build, "auto"=skip if unassigned |
 | `menu` | str | Filter to specific menu |
+| `outputs` | list[TemplateOutput] | Multi-output configs; when empty, falls back to legacy include/id_prefix |
 | `conditions` | list[str] | Build conditions (ANDed) |
+| `params` | list[TemplateParam] | Declared parameters for build="true" includes (parsed; not yet consumed by builders) |
 | `properties` | list[TemplateProperty] | Properties to set |
 | `vars` | list[TemplateVar] | Variables to resolve |
 | `property_groups` | list[PropertyGroupReference] | Group references |
 | `preset_refs` | list[PresetReference] | Preset references |
+| `preset_group_refs` | list[PresetGroupReference] | PresetGroup references |
+| `variables` | list[VariableDefinition] | Inline variable definitions |
+| `variable_groups` | list[VariableGroupReference] | Variable group references |
 | `controls` | ET.Element | Raw XML controls |
 
 **Properties:**
 
 | Property | Returns | Description |
 |----------|---------|-------------|
-| `has_transformations` | bool | True if any properties, vars, presets, or property groups defined |
+| `has_transformations` | bool | True if any properties, vars, preset refs, preset group refs, or property groups defined |
 
 ### SubmenuTemplate
 
@@ -101,6 +107,6 @@ For `<template items="...">` submenu iteration.
 | `source` | str | Submenu suffix |
 | `condition` | str | Parent item condition |
 | `filter` | str | Submenu item filter |
-| `properties`, `vars`, `preset_refs`, `property_groups`, `controls` | | Transformations |
+| `properties`, `vars`, `preset_refs`, `property_groups`, `variable_groups`, `controls` | | Transformations |
 
 See [skinning/templates.md](../../skinning/templates.md) for XML documentation.

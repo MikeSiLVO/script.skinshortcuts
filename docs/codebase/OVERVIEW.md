@@ -106,9 +106,9 @@ Only root dialog saves on close.
 | Type | Path |
 |------|------|
 | Skin config | `special://skin/shortcuts/` |
-| User data | `special://profile/addon_data/script.skinshortcuts/{skin_id}.json` |
+| User data | `special://profile/addon_data/script.skinshortcuts/{skin_dir}.userdata.json` |
 | Output | `special://skin/{resolution}/script-skinshortcuts-includes.xml` |
-| Hashes | `special://profile/addon_data/script.skinshortcuts/{skin_id}.hash` |
+| Hashes | `special://profile/addon_data/script.skinshortcuts/{skin_id}.hashes` |
 
 ***
 

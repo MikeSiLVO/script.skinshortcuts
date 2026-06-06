@@ -17,6 +17,7 @@ Located in the skin's `shortcuts/` folder:
 | `backgrounds.xml` | Background options and groupings for background picker |
 | `properties.xml` | Property definitions, options, fallbacks, button mappings |
 | `templates.xml` | Template definitions for generating skin includes |
+| `views.xml` | View definitions and per-content view-selection rules |
 
 ### Output File (Generated)
 
@@ -106,8 +107,8 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 
 | Element | Parent | Required Attributes | Optional Attributes | Description |
 |---------|--------|---------------------|---------------------|-------------|
-| `<menu>` | menus | `name` | `container` | Main menu definition |
-| `<submenu>` | menus | `name` | `container`, `standalone` | Submenu definition (built when referenced). `standalone="false"` skips the per-template `skinshortcuts-{name}` include |
+| `<menu>` | menus | `name` | `container`, `type`, `controltype`, `id`, `build`, `template_only`, `action` | Main menu definition. `type="widgets"` marks a widget submenu; `controltype` wraps items in `<control type="...">`; `id` sets the start control ID (requires `controltype`); `build="auto"` only emits the menu if its action is assigned; `template_only="submenu"` skips the combined submenu include |
+| `<submenu>` | menus | `name` | `container`, `standalone`, `type`, `controltype`, `id`, `build`, `template_only`, `action` | Submenu definition (built when referenced). `standalone="false"` skips the per-template `skinshortcuts-{name}` include. `type="widgets"` marks a widget submenu; `controltype` wraps items in `<control type="...">`; `id` sets the start control ID (requires `controltype`); `build="auto"` only emits the menu if its action is assigned; `template_only="submenu"` skips the combined submenu include |
 | `<allow>` | menu/submenu | - | `widgets`, `backgrounds`, `submenus` | Feature toggles for dialog |
 | `<defaults>` | menu/submenu | - | `widget`, `background` | Default settings for items |
 | `<action>` | defaults | - | `when`, `condition` | Default action (before/after) |
@@ -128,6 +129,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 | `<action>` | shortcut | - | `primary` | Shortcut action (multiple allowed) |
 | `<path>` | shortcut | - | - | Browse path (for browse mode) |
 | `<content>` | group | `source` | `target`, `path`, `condition`, `visible`, `icon`, `label`, `folder` | Dynamic content |
+| `<input>` | groupings/group | `label` | `type`, `for`, `condition`, `visible`, `icon` | Keyboard prompt option; `type` is `text` (default), `numeric`, `ipaddress`, or `password`; `for` is `action` (default), `label`, or `path` |
 | `<icons>` | menus | - | - | Icon browser sources |
 | `<source>` | icons | - | `label`, `condition`, `visible`, `icon` | Icon source path |
 | `<overrides>` | menus | - | - | Action and icon overrides |
@@ -136,7 +138,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 | `<source>` | overrides/icons | - | `visible` | Override source path; first matching used |
 | `<icon>` | overrides/icons | `replace` | - | Replacement icon path (relative to active source) |
 | `<dialogs>` | menus | - | - | Subdialog definitions |
-| `<subdialog>` | dialogs | `buttonID`, `mode` | `setfocus`, `suffix` | Subdialog mapping |
+| `<subdialog>` | dialogs | `buttonID` | `mode`, `menu`, `setfocus`, `suffix` | Subdialog mapping; requires at least one of `mode`, `menu`, or an `<onclose>`. `menu` (without `mode`) opens that menu directly |
 | `<onclose>` | subdialog | `action` | `menu`, `condition` | Action when subdialog closes |
 | `<contextmenu>` | menus | - | - | Enable/disable context menu |
 
@@ -281,7 +283,7 @@ Defines background options and groupings.
 | `<background>` | backgrounds/group | `name`, `label` | `type`, `condition`, `visible` | Background definition |
 | `<path>` | background | - | - | Image path, info label, live keyword, or browse start path (browse/multi). Mutually exclusive with `<source>` on browse/multi |
 | `<icon>` | background | - | - | Icon for picker |
-| `<source>` | background | - | `label`, `condition`, `visible`, `icon` | Browse/playlist source. Any `<source>` element shows the source picker |
+| `<source>` | background | - | `label`, `condition`, `visible`, `icon` | Browse/playlist source. Any `<source>` element shows the source picker. `condition` and `visible` apply only to browse/multi sources; playlist and live-playlist sources read only `label`, `icon`, and the path text |
 | `<group>` | backgrounds/group | `name`, `label` (unless `flat="true"`) | `condition`, `visible`, `icon`, `flat` | Background group |
 | `<content>` | group | `source` | `target`, etc. | Dynamic content |
 
@@ -394,6 +396,8 @@ Defines property schemas, button mappings, and fallback values.
 | `toggle` | Toggle between a value and empty. Defaults to `True`, use `value` attribute for a custom value |
 | `widget` | Opens widget picker |
 | `background` | Opens background picker |
+| `text` | Prompts for free-text input via keyboard |
+| `number` | Prompts for a numeric value |
 
 ***
 
@@ -474,21 +478,8 @@ Defines templates for generating skin includes. For detailed documentation, see 
         <skinshortcuts include="OptionalContent" condition="widgetPath" wrap="true" />
       </control>
 
-      <!-- Submenu items iteration -->
-      <skinshortcuts items="widgets" condition="widgetType=custom" filter="widgetArt=Poster">
-        <var name="widgetInclude">
-          <value condition="widgetArt=Poster">Widget_Poster</value>
-          <value>Widget_Default</value>
-        </var>
-        <preset content="WidgetDimensions" />
-        <propertyGroup content="widgetProps" />
-        <control type="group" id="$MATH[$PARENT[index] * 1000 + 600 + $PROPERTY[index]]">
-          <include content="$PROPERTY[widgetInclude]">
-            <param name="path">$PROPERTY[widgetPath]</param>
-            <param name="limit">$IF[$PROPERTY[widgetLimit] THEN $PROPERTY[widgetLimit] ELSE 25]</param>
-          </include>
-        </control>
-      </skinshortcuts>
+      <!-- Submenu items iteration: marker references the <template items="widgets"> below -->
+      <skinshortcuts insert="widgets" />
     </controls>
 
     <variables>
@@ -496,6 +487,25 @@ Defines templates for generating skin includes. For detailed documentation, see 
         <value condition="...">$INFO[...]</value>
       </variable>
     </variables>
+  </template>
+
+  <!-- Items template: iteration body inserted at <skinshortcuts insert="widgets" /> markers -->
+  <template items="widgets" source="widgets" filter="widgetArt=Poster">
+    <condition>widgetType=custom</condition>
+    <var name="widgetInclude">
+      <value condition="widgetArt=Poster">Widget_Poster</value>
+      <value>Widget_Default</value>
+    </var>
+    <preset content="WidgetDimensions" />
+    <propertyGroup content="widgetProps" />
+    <controls>
+      <control type="group" id="$MATH[$PARENT[index] * 1000 + 600 + $PROPERTY[index]]">
+        <include content="$PROPERTY[widgetInclude]">
+          <param name="path">$PROPERTY[widgetPath]</param>
+          <param name="limit">$IF[$PROPERTY[widgetLimit] THEN $PROPERTY[widgetLimit] ELSE 25]</param>
+        </include>
+      </control>
+    </controls>
   </template>
 
   <!-- Template with multiple outputs -->
@@ -532,6 +542,10 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `<presets>` | templates | - | - | Preset lookup tables |
 | `<preset>` | presets | `name` | - | Preset with conditional values |
 | `<values>` | preset | - | `condition`, *attributes* | Preset row with attribute values |
+| `<presetGroups>` | templates | - | - | Conditional preset selection groups |
+| `<presetGroup>` | presetGroups | `name` | - | Preset group; first matching child wins (document order) |
+| `<preset/>` | presetGroup | `content` | `condition` | Preset reference child |
+| `<values>` | presetGroup | - | `condition`, *attributes* | Inline values child |
 | `<propertyGroups>` | templates | - | - | Reusable property groups |
 | `<propertyGroup>` | propertyGroups | `name` | - | Property group definition |
 | `<includes>` | templates | - | - | Reusable control snippets |
@@ -543,17 +557,19 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `<variableGroup>` | variables | `name` | - | Variable group definition |
 | `<variableGroup/>` | variableGroup | `content` | - | Nested group reference |
 | `<template>` | templates | - | `include`, `build`, `idprefix`, `templateonly`, `menu` | Template definition |
+| `<template items="...">` | templates | `items` | `source`, `filter` | Items-template variant: iteration body inserted at `<skinshortcuts insert="..."/>` markers; `source` selects the `{item}.source` submenu (defaults to the `items` value), `filter` is a per-subitem condition |
 | `<output>` | template | `include` | `idprefix`, `suffix` | Multi-output target |
 | `<condition>` | template | - | - | Template condition (ANDed) |
-| `<property>` | template/propertyGroup | `name` | `from`, `condition` | Property definition |
-| `<var>` | template/propertyGroup/items | `name` | - | Conditional variable |
+| `<property>` | template/propertyGroup/submenu | `name` | `from`, `condition` | Property definition |
+| `<var>` | template/propertyGroup/items/submenu | `name` | - | Conditional variable |
 | `<value>` | var | - | `condition` | Var value (first match wins) |
 | `<preset/>` | template/propertyGroup/items | `content` | `condition`, `suffix` | Apply preset reference |
+| `<presetGroup/>` | template/propertyGroup/items | `content` | `condition`, `suffix` | Apply a presetGroup reference |
 | `<propertyGroup/>` | template/propertyGroup/items | `content` | `condition`, `suffix` | Apply property group |
 | `<variableGroup/>` | template | `content` | `condition`, `suffix` | Apply variable group |
 | `<param>` | template | `name` | `default` | Parameter (build="true") |
 | `<controls>` | template/submenu | - | - | Control container |
-| `<skinshortcuts>` | controls | - | `include`, `condition`, `wrap`, `items`, `filter` | Special tag |
+| `<skinshortcuts>` | controls | - | `include`, `condition`, `wrap`, `insert` | Special tag |
 | `<submenu>` | templates | - | `include`, `level`, `name` | Submenu template |
 
 ### Skinshortcuts Tag
@@ -564,9 +580,7 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `<skinshortcuts include="name" />` | Expand include (unwrapped) |
 | `<skinshortcuts include="name" wrap="true" />` | Output as Kodi `<include>` |
 | `<skinshortcuts include="name" condition="prop" />` | Conditional include |
-| `<skinshortcuts items="widgets" />` | Iterate submenu items |
-| `<skinshortcuts items="widgets" filter="widgetArt=Poster" />` | Filtered iteration |
-| `<skinshortcuts items="widgets" condition="widgetType=custom" />` | Conditional iteration |
+| `<skinshortcuts insert="widgets" />` | Insert iteration over a submenu, expanding the matching `<template items="widgets">` body once per submenu item (filter/condition are set on that `<template items>` definition, not here) |
 
 ### Dynamic Expressions
 
@@ -576,7 +590,7 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `$PARENT[name]` | Parent item property (items iteration) | `$PARENT[label]` |
 | `$EXP[name]` | Expression value | `$EXP[HasWidget]` |
 | `$MATH[expr]` | Arithmetic expression | `$MATH[index * 1000 + 100]` |
-| `$IF[cond THEN val ELSE val]` | Conditional value | `$IF[widgetLimit THEN $PROPERTY[widgetLimit] ELSE 25]` |
+| `$IF[cond THEN val (ELIF cond THEN val)* ELSE val]` | Conditional value (ELIF chains supported) | `$IF[widgetLimit THEN $PROPERTY[widgetLimit] ELSE 25]` |
 | `$INCLUDE[name]` | Converted to `<include>` | `$INCLUDE[skinshortcuts-template-Widgets]` |
 | `$PARAM[name]` | Parameter (raw mode) | `$PARAM[id]` |
 

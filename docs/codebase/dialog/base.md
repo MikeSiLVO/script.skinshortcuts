@@ -16,6 +16,7 @@ DialogBaseMixin provides foundation for the management dialog: initialization, l
 | Constant | ID | Purpose |
 |----------|-----|---------|
 | `CONTROL_LIST` | 211 | Menu items list |
+| `CONTROL_SUBDIALOG_LIST` | 212 | Single-item subdialog context list (mirrors selected item) |
 | `CONTROL_ADD` | 301 | Add item |
 | `CONTROL_DELETE` | 302 | Delete item |
 | `CONTROL_MOVE_UP` | 303 | Move up |
@@ -36,10 +37,15 @@ DialogBaseMixin provides foundation for the management dialog: initialization, l
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `menu_id` | str | Menu to edit (default "mainmenu") |
+| `shortcuts_path` | str | Path to shortcuts folder (auto-detected if omitted) |
 | `manager` | MenuManager | Shared manager for child dialogs |
 | `property_schema` | PropertySchema | Shared schema |
+| `icon_sources` | list[IconSource] | Shared icon sources for child dialogs |
+| `show_context_menu` | bool | Shared context-menu enable flag |
+| `subdialogs` | list[SubDialog] | Shared subdialog definitions |
 | `dialog_mode` | str | Mode for Home window property |
 | `property_suffix` | str | Suffix for widget slots |
+| `setfocus` | int | Control ID to focus on open |
 | `selected_index` | int | Item to select on open |
 
 ***

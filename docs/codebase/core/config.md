@@ -25,8 +25,9 @@ Load configuration from shortcuts directory.
 3. backgrounds.xml
 4. templates.xml
 5. properties.xml
-6. Userdata (merges with defaults)
-7. Expand per-item submenu instances (`{parent}/{item_name}` keys) for each item linking a `<submenu>` template
+6. views.xml
+7. Userdata (merges with defaults)
+8. Expand per-item submenu instances (`{parent}/{item_name}` keys) for each item linking a `<submenu>` template
 
 ### Instance Fields
 
@@ -34,10 +35,11 @@ Load configuration from shortcuts directory.
 |-------|------|-------------|
 | `menus` | list[Menu] | All menus (merged with userdata) |
 | `default_menus` | list[Menu] | Original skin defaults (immutable) |
-| `backgrounds` | list[Background] | All backgrounds |
+| `userdata` | UserData | Loaded user customizations |
 | `templates` | TemplateSchema | Template configuration |
 | `property_schema` | PropertySchema | Property schema |
 | `subdialogs` | list[SubDialog] | Subdialog definitions |
+| `icon_overrides` | dict[str, str] | Icon override map |
 
 ### Instance Methods
 
@@ -56,3 +58,4 @@ Load configuration from shortcuts directory.
 |----------|---------|-------------|
 | `widgets` | list[Widget] | All widgets |
 | `widget_groupings` | list | Widget picker groupings |
+| `backgrounds` | list[Background] | All backgrounds |

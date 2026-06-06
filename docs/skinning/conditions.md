@@ -25,7 +25,7 @@ Skin Shortcuts uses two types of conditions:
 
 | Type | Attribute | Evaluated Against | When Evaluated |
 |------|-----------|-------------------|----------------|
-| Property | `condition` | Item properties dict | During dialog/picker operations |
+| Property | `condition` | Item properties dict | At build time (template/fallback conditions) and during dialog/picker operations (item/group/widget/background/option/source filtering) |
 | Kodi | `visible` | Kodi runtime state | Via `xbmc.getCondVisibility()` |
 
 ### Property Conditions
@@ -109,6 +109,8 @@ propertyName
 <skinshortcuts include="HorizontalNavigation2" condition="suffix" />
 ```
 
+A bare presence check is truthy when the property has a non-empty value, with one exception: a value of `true`/`false` (case-insensitive) is interpreted as a boolean, so a property whose value is the literal string `false` evaluates falsy even though it is non-empty (and `true` evaluates truthy). All other non-empty values are truthy.
+
 ### Property Empty (Falsy)
 
 Check if property is empty or not set:
@@ -155,11 +157,15 @@ propertyName~value
 <shortcut condition="widgetPath~videodb://">
 ```
 
+Avoid values that contain a whole-word, uppercase operator keyword (AND, OR, NOT, EQUALS, CONTAINS) bounded by non-word characters such as `.`, `/`, or spaces. Keyword-to-symbol conversion is applied to the whole condition string before parsing, so such values get corrupted (for example `widgetPath=plugin.AND.test` becomes `widgetPath=plugin.+.test` and never matches). Lowercase forms and keywords joined to other characters by letters, digits, or underscores (for example `plugin_AND_test`) are unaffected.
+
 ---
 
 ## Operators
 
 Operators can be written as symbols or keywords. Use whichever style you prefer.
+
+Keyword operators (EQUALS, CONTAINS, EMPTY, IN, AND, OR, NOT) must be written in uppercase. Lowercase forms (and, or, equals, etc.) are not recognized and the condition silently evaluates to false.
 
 ### Comparison Operators
 

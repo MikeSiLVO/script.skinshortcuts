@@ -45,3 +45,4 @@
 |------|---------|
 | `WINDOW_MAP` | Content type → Kodi window name |
 | `TARGET_MAP` | Content target → canonical form |
+| `ADDONS_SOURCE_MAP` | Content target → (addons:// sources path, canonical target) |

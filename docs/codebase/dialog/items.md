@@ -40,9 +40,9 @@ Unified property setter. Updates manager and local item state.
 
 ### Browse Methods
 
-#### `_browse_with_sources`(sources, title, browse_type, mask) → str | None
+#### `_browse_with_sources`(sources, title, browse_type, mask="", item_properties=None, default_path="") → str | None
 
-Browse for file using configured sources. Handles single/multiple sources and "browse" path.
+Browse for file using configured sources. Handles single/multiple sources and "browse" path. `item_properties` is used to evaluate source `condition` attributes against the current item; `default_path` is the starting path for direct browse mode when no sources remain after filtering.
 
 ### Context Menu
 

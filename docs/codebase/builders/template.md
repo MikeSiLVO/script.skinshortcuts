@@ -63,7 +63,8 @@ Property context built in order (later overrides earlier):
 5. Template properties
 6. Template vars (first matching condition wins)
 7. Preset references
-8. Property group references
+8. Preset group references (presetGroup - first matching condition selects a preset or inline values)
+9. Property group references
 
 ***
 
@@ -105,6 +106,8 @@ Handles `<template items="name">` elements that iterate over submenu items.
 | `_resolve_var` | Resolve var (first matching condition) |
 | `_apply_property_group` | Apply property group with suffix transforms |
 | `_apply_preset` | Apply preset values as properties |
+| `_apply_preset_group` | Apply presetGroup (first matching condition selects a preset or inline values) |
+| `_get_preset_values` | Get first matching values row from a preset |
 | `_process_controls` | Process controls XML with substitutions |
 | `_remove_empty_elements` | Remove leaf elements with no text/attributes |
 | `_substitute_text` | Substitute all dynamic expressions in text |
@@ -129,4 +132,4 @@ When suffix is specified (e.g., `.2` for widget slot 2):
 
 - `from="widgetPath"` → `from="widgetPath.2"`
 - `condition="widgetType=movies"` → `condition="widgetType.2=movies"`
-- Built-ins (`index`, `name`, `menu`, `id`, `idprefix`) are never suffixed
+- Built-ins are excluded from suffixing, via two lists: `NO_SUFFIX_PROPERTIES` (`name`, `default`, `menu`, `index`, `id`, `idprefix`) for from/condition attribute transforms (loaders/base.py), and the `reserved` tuple (`index`, `name`, `menu`, `id`, `idprefix`, `suffix`) for template condition suffixing (`_apply_suffix_to_condition`)

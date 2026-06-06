@@ -1,10 +1,10 @@
-<img src="https://raw.githubusercontent.com/mikesilvo164/script.skinshortcuts/master/resources/media/icon.png" width="256" height="256" alt="Skin Shortcuts">
+<img src="https://raw.githubusercontent.com/MikeSiLVO/script.skinshortcuts/main/resources/media/icon.png" width="256" height="256" alt="Skin Shortcuts">
 
 # Skin Shortcuts
 
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fmikesilvo164%2Fscript.skinshortcuts%2Fbadge&logo=none)](https://actions-badge.atrox.dev/mikesilvo164/script.skinshortcuts/goto)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FMikeSiLVO%2Fscript.skinshortcuts%2Fbadge&logo=none)](https://actions-badge.atrox.dev/MikeSiLVO/script.skinshortcuts/goto)
 ![License](https://img.shields.io/badge/license-GPL--2.0--only-success.svg)
-![Kodi Version](https://img.shields.io/badge/kodi-matrix%2B-success.svg)
+![Kodi Version](https://img.shields.io/badge/kodi-piers%2B-success.svg)
 
 Skin Shortcuts enables user-customizable menus for Kodi skins. Users can add, remove, reorder menu items, assign widgets, backgrounds, and more through a management dialog that you design.
 

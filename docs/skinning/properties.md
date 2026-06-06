@@ -90,7 +90,7 @@ Properties extend menu items beyond built-in fields (label, icon, action). Commo
 | `type` | No | `options` | Property type: `options`, `toggle`, `text`, `number`, `widget`, `background` |
 | `value` | No | - | For `toggle` type: custom value to toggle instead of `True` |
 | `requires` | No | - | Property name that must have a value (see [Requires Check](#requires-check)) |
-| `templateonly` | No | `false` | If `true`, only available in templates, not in dialog |
+| `templateonly` | No | `false` | If `true`, the property is not written as a `<property>` element on the menu item in includes.xml. It is still editable in the dialog and still available to templates (which read item properties directly). Use this for values consumed only by templates that should not appear as listitem properties. |
 
 ### Property Types
 
@@ -233,6 +233,8 @@ Default values when property is not set:
 * `<default>` - Use if no conditions match
 
 Rules are evaluated in order. First match wins.
+
+A `<fallback>` may contain `<include content="name" />` to pull in shared `<when>`/`<default>` rules defined in `<includes>`. Includes inside a fallback are expanded in place before the rules are evaluated.
 
 > **See also:** [Conditions](conditions.md) for condition syntax
 

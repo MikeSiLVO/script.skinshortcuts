@@ -66,7 +66,7 @@ Widgets and groups are defined directly at the root level:
 | `source` | No | - | Source type: `library`, `playlist`, `addon`. Inherited from parent group if not set |
 | `condition` | No | - | Property condition (evaluated against item properties) |
 | `visible` | No | - | Kodi visibility condition (evaluated at runtime) |
-| `slot` | No | - | For `type="custom"`: widget property slot |
+| `slot` | No | - | Restricts this widget to a specific widget slot (e.g. `widget`, `widget.2`); the widget appears in the picker only when that slot is being edited. Applies to all widget types. A widget with no slot shows for every slot. |
 | `browse` | No | `false` | `true` to allow browse-into during picker (see [Browse Into](#browse-into)) |
 
 ### Child Elements
@@ -361,6 +361,11 @@ When a widget is assigned to a menu item, these core properties are set:
 | `widgetTarget` | Target window |
 | `widgetType` | Content type (e.g., `movies`, `episodes`, `albums`) |
 | `widgetSource` | Source type (e.g., `library`, `playlist`, `addon`) |
+| `widgetLimit` | Maximum item count (from `<limit>`) |
+| `widgetSortBy` | Sort field (from `<sortby>`) |
+| `widgetSortOrder` | Sort direction (from `<sortorder>`) |
+
+`widgetLimit`, `widgetSortBy`, and `widgetSortOrder` are set only when adding a widget in a `type="widgets"` menu, where the widget's `<limit>`/`<sortby>`/`<sortorder>` are carried onto the item.
 
 Additional skin-specific properties can be configured via [properties.xml](properties.md).
 
@@ -503,7 +508,7 @@ In your management dialog XML, add a button with the matching ID:
 ```xml
 <control type="button" id="309">
   <label>Choose Widget</label>
-  <visible>!String.IsEqual(Window.Property(skinshortcuts-disableWidgets),true)</visible>
+  <visible>String.IsEmpty(Window.Property(disableWidgets))</visible>
 </control>
 ```
 

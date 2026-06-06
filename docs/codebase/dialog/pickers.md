@@ -19,15 +19,15 @@ PickersMixin provides picker dialogs for selecting shortcuts and widgets with hi
 |--------|---------|
 | `_choose_shortcut` | Choose shortcut from groupings, apply all actions to item |
 | `_get_shortcut_actions` | Get all actions from shortcut (handles browse/playlist modes) |
-| `_pick_from_groups` | Show group picker with back navigation |
-| `_pick_from_group_items` | Pick from items within a group |
+| `_pick_shortcut` | Pick a shortcut via the generic hierarchy picker |
+| `_pick_from_hierarchy` | Generic top-level hierarchy picker with back navigation |
+| `_pick_from_hierarchy_group` | Pick from items within a group (recurses) |
 
 ### Widget Picker
 
 | Method | Purpose |
 |--------|---------|
 | `_pick_widget_from_groups` | Show widget picker, returns Widget/None/False |
-| `_pick_widget_from_group_items` | Pick from widget group items |
 | `_pick_widget_flat` | Pick from flat widget list |
 
 **Returns:** Widget if selected, None if cancelled, False if "None" chosen (clear widget)
@@ -52,11 +52,11 @@ PickersMixin provides picker dialogs for selecting shortcuts and widgets with hi
 | `_browse_path` | Browse directory with "Create menu item to here" option |
 | `_is_browsable` | Object opted-in via `browse` + `<path>` (Widget bool, Shortcut window name) |
 | `_get_browse_info_from_shortcut` | Extract path and window from opted-in shortcut |
-| `_get_browse_placeholder_for_content` | Create placeholder shortcut for addon content |
+| `_browse_placeholder_for_content` | Module-level helper: create placeholder for addon content (returns a Shortcut, or a Widget when `as_widget=True`) |
 
 ### Addon Placeholder Behavior
 
-For `source="addons"` content, `_get_browse_placeholder_for_content` creates a placeholder shortcut that:
+For `source="addons"` content, the module-level helper `_browse_placeholder_for_content` creates a placeholder shortcut that:
 
 1. Displays "Create menu item to here" in the picker (uses `label` field)
 2. Stores `content.label` in the `type` field for use as the result label

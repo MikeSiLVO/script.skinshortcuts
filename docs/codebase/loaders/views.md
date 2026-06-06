@@ -25,6 +25,8 @@ Parses three sections:
 2. `<view>` elements → View objects
 3. `<rules><content>` elements → ViewContent objects
 
+Each `<content>` rule also accepts an optional `plugin` attribute (`plugin_default`) alongside `library`.
+
 ---
 
 ## Validation
@@ -33,6 +35,7 @@ The loader validates:
 - All views have `id` and `label`
 - All content rules have `name`, `label`, `library`, `<visible>`, and `<views>`
 - Default view IDs exist in defined views
+- The optional `plugin` default view ID, when present, exists in defined views
 - View IDs in content rules exist in defined views
 
 Raises `ViewConfigError` on validation failure.

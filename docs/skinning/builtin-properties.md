@@ -40,6 +40,7 @@ Menu items in the generated includes have properties accessible via `ListItem.Pr
 | `name` | `name` attribute | Item identifier |
 | `menu` | Parent menu | Menu name containing this item |
 | `visible` | `<visible>` | Visibility condition (output to includes) |
+| `id` | Item position | 1-based position of the item within its menu. Emitted as a `<property name="id">` only for standard `<item>` menus (not control-type menus). The element's `id` attribute is set separately on every item to the same position value (or offset from the menu's `id` attribute for control-type menus). |
 
 ### Usage
 
@@ -107,6 +108,8 @@ Set when a background is assigned to a menu item.
 | `background` | Background name | Background identifier (path for browse/multi types) |
 | `backgroundLabel` | Background label | Display label (path for browse/multi types) |
 | `backgroundPath` | Background path | Image path or info label |
+| `backgroundType` | Background type | Normalized type name: static, playlist, browse, multi, property, live, live-playlist |
+| `backgroundPlaylistType` | Playlist content type | For playlist/live-playlist backgrounds only: raw smart-playlist type (movies, tvshows, episodes, musicvideos, songs, albums, artists) |
 
 ### Usage
 
@@ -128,7 +131,8 @@ Available when items have linked submenus.
 | Property | Description |
 |----------|-------------|
 | `hasSubmenu` | `True` if item has a submenu |
-| `submenuVisibility` | Submenu name (for visibility conditions) |
+| `submenuVisibility` | The item's own name (used to build a submenu visibility condition matching this item) |
+| `parent` | Name of the parent menu item (set on items in the combined `skinshortcuts-{menu}-submenu` include) |
 
 ### Usage
 
@@ -162,18 +166,15 @@ Properties defined in `properties.xml` are stored on items.
 
 | Property | Description |
 |----------|-------------|
-| `widgetStyle` | The stored value (e.g., "Panel") |
-| `widgetStyleLabel` | The resolved label (e.g., "Panel") |
+| `widgetStyle` | The stored value (e.g., "Panel"), emitted in the generated includes |
+
+> Note: For `options`-type properties only the stored value is emitted into the generated menu includes. The resolved option label (`widgetStyleLabel`) exists only on the management dialog list items; `ListItem.Property(widgetStyleLabel)` is empty in the generated includes. Widget and background labels (`widgetLabel`/`backgroundLabel`) are stored on the item itself and are emitted normally.
 
 ### Usage
 
 ```xml
 <control type="panel">
   <visible>String.IsEqual(Container(9000).ListItem.Property(widgetStyle),Panel)</visible>
-</control>
-
-<control type="label">
-  <label>Style: $INFO[Container(9000).ListItem.Property(widgetStyleLabel)]</label>
 </control>
 ```
 
@@ -211,7 +212,7 @@ Templates can define additional properties for output.
 | `action` | Full action string |
 | `path` | Bare content path |
 | `name` | Item name |
-| `index` | Zero-based item index |
+| `index` | One-based item index |
 | `id` | Computed ID (`{idprefix}{index}`) |
 
 ### Literal Values
@@ -272,7 +273,7 @@ Using `$PROPERTY[]` placeholders:
 
 ```xml
 <visible>!String.IsEmpty(Container(9000).ListItem.Property(widgetPath))</visible>
-<visible>String.IsEqual(Container(9000).ListItem.Property(hasSubmenu),true)</visible>
+<visible>String.IsEqual(Container(9000).ListItem.Property(hasSubmenu),True)</visible>
 ```
 
 ---

@@ -27,6 +27,7 @@ Resolves `<content>` references to shortcuts at runtime by querying Kodi JSON-RP
 | `resolve_content(content)` | Resolve Content to shortcuts |
 | `scan_playlist_files(directory)` | Scan for playlist files |
 | `get_browse_provider()` | Get BrowseProvider instance |
+| `clear_content_cache()` | Clear cached content results (call on opening management dialog) |
 
 ***
 
@@ -36,7 +37,7 @@ Lists directory contents for browse-into functionality.
 
 | Method | Description |
 |--------|-------------|
-| `list_directory(path)` | List directory contents, returns list of BrowseItem |
+| `list_directory(path, include_art=False)` | List directory contents; returns list of BrowseItem, empty list for empty dirs, or None if path is not listable |
 
 **BrowseItem fields:** `label`, `path`, `icon`, `is_directory`, `mimetype`
 
@@ -54,3 +55,4 @@ Lists directory contents for browse-into functionality.
 | `commands` | - | Static list |
 | `settings` | - | Static list |
 | `library` | genres, years, etc. | Database queries |
+| `nodes` | video, music (library/all/empty = both) | Files.GetDirectory (library nodes) |

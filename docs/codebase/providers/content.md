@@ -40,6 +40,8 @@ Scan directory for playlist files (.xsp, .m3u, .m3u8, .pls). Returns (label, fil
 | `action_play` | str | PlayMedia action (playlists) |
 | `action_party` | str | Party mode action (music playlists) |
 | `content_type` | str | Content type from source (e.g., movies, tvshows from playlist) |
+| `browse_path` | str | Path for browse-into (plugin://, library://, source path) |
+| `browse_window` | str | Target window for browse-into (videos, music, pictures, programs, games) |
 
 When `action_play` is set, picker offers choice between display/play/party modes.
 

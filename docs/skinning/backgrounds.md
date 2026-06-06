@@ -107,7 +107,6 @@ Groups can contain:
 
 * `<background>` - Background definitions
 * `<group>` - Nested groups
-* `<content>` - Dynamic content (same as widgets/menus)
 
 A group with `flat="true"` has no folder header; its children render at the parent level when the group's `condition` and `visible` both pass. `label` and `icon` are unused in this mode. See [Window Property Pass-Through](management-dialog.md#window-property-pass-through) for setting a window property for the picker's lifetime to drive a flat group's `visible` check.
 
@@ -257,6 +256,8 @@ User selects a playlist to extract images from:
 </background>
 ```
 
+If a playlist background includes a static `<path>`, the playlist picker is skipped and that path is assigned directly; the `<source>` picker only appears when no `<path>` is set.
+
 ### Playlist Sources
 
 | Attribute | Required | Description |
@@ -279,6 +280,8 @@ Dynamic background from library content:
 
 ### Live Path Values
 
+The script stores the `<path>` text verbatim in `backgroundPath` without interpreting it; `type="live"` is handled identically to `type="static"`. The values below are a skin convention. Your skin reads `backgroundPath` and resolves the slideshow itself.
+
 | Path | Description |
 |------|-------------|
 | `random movies` | Random movie fanart |
@@ -298,6 +301,8 @@ Dynamic content from a user-selected playlist:
   <source label="Music Playlists">special://profile/playlists/music/</source>
 </background>
 ```
+
+If a live-playlist background includes a static `<path>`, the playlist picker is skipped and that path is assigned directly; the `<source>` picker only appears when no `<path>` is set.
 
 ---
 

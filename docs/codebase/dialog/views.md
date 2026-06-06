@@ -19,7 +19,7 @@ Hierarchical view browser for managing all view settings.
 
 Menu structure:
 - Library > (content types)
-- Plugins > (content types + Add Addon Override)
+- Plugins > (content types + Add Override)
 - (addon overrides with reset options)
 - Reset Library Views
 - Reset Addon Views
@@ -59,7 +59,7 @@ View Settings
 ├── Plugins >
 │   ├── Movies [current view]
 │   ├── TV Shows [current view]
-│   └── Add Addon Override >
+│   └── Add Override >
 ├── plugin.video.example (reset) >
 ├── Reset Library Views
 └── Reset Addon Views
@@ -67,7 +67,7 @@ View Settings
 
 ### Addon Override Flow
 
-1. User selects "Add Addon Override"
+1. User selects "Add Override"
 2. Dialog shows installed video addons
 3. User selects addon
 4. Dialog shows content types
