@@ -297,6 +297,7 @@ def _parse_icon_overrides(root, _picker_sources: list[IconSource]) -> dict[str, 
         replace = get_attr(icon_elem, "replace")
         value = (icon_elem.text or "").strip()
         if not replace or not value:
+            log.warning("Icon override missing 'replace' attribute or value, skipping")
             continue
         if "://" in value or value.startswith("/"):
             overrides[replace] = value
@@ -671,6 +672,7 @@ def _parse_shortcut(
     shortcut_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
     if not shortcut_name or not label:
+        log.warning(f"Shortcut in {_path} missing 'name' or 'label', skipping")
         return None
 
     actions = []
@@ -716,6 +718,7 @@ def _parse_input(elem, icon_overrides: dict[str, str] | None = None) -> Input | 
     overrides = icon_overrides or {}
     label = get_attr(elem, "label")
     if not label:
+        log.warning("Input element missing 'label', skipping")
         return None
 
     return Input(
