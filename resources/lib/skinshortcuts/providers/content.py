@@ -392,29 +392,28 @@ class ContentProvider:
             addon_id = addon.get("addonid", "")
             name = addon.get("name", addon_id)
             thumb = addon.get("thumbnail", "")
+            if not addon_id:
+                continue
 
-            if addon_id:
-                if content == "executable":
-                    # Executables fire-and-forget, no browse-into.
-                    shortcuts.append(
-                        ResolvedShortcut(
-                            label=name,
-                            action=f"RunAddon({addon_id})",
-                            icon=thumb or "DefaultAddon.png",
-                        )
+            if addon.get("type") == "xbmc.python.pluginsource":
+                window = window_map.get(content, "videos")
+                shortcuts.append(
+                    ResolvedShortcut(
+                        label=name,
+                        action="",
+                        icon=thumb or "DefaultAddon.png",
+                        browse_path=f"plugin://{addon_id}/",
+                        browse_window=window,
                     )
-                else:
-                    # Plugin-source addons are browsable — picker constructs action at pick time.
-                    window = window_map.get(content, "videos")
-                    shortcuts.append(
-                        ResolvedShortcut(
-                            label=name,
-                            action="",
-                            icon=thumb or "DefaultAddon.png",
-                            browse_path=f"plugin://{addon_id}/",
-                            browse_window=window,
-                        )
+                )
+            else:
+                shortcuts.append(
+                    ResolvedShortcut(
+                        label=name,
+                        action=f"RunAddon({addon_id})",
+                        icon=thumb or "DefaultAddon.png",
                     )
+                )
 
         self._cache[cache_key] = shortcuts
         return shortcuts

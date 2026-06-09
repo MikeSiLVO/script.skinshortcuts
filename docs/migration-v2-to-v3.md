@@ -318,7 +318,7 @@ Items with `required="true"` cannot be deleted by users.
     <!-- Dynamic content from library -->
     <content source="library" target="moviegenres" />
 
-    <!-- Dynamic content from add-ons (executable = single-click, others browsable) -->
+    <!-- Dynamic content from add-ons (plugin add-ons browsable, scripts single-click) -->
     <content source="addons" target="videos" folder="Video Add-ons" />
     <content source="addons" target="executable" folder="Program Add-ons" />
   </group>
@@ -350,7 +350,7 @@ In v3, `<content>` pulls from system sources via `source` plus `target`. The sam
 
 | Source | Valid Targets | Notes |
 |--------|---------------|-------|
-| `addons` | `video`, `videos`, `audio`, `music`, `image`, `pictures`, `executable`, `programs`, `game`, `games` | JSON-RPC values (`video`, `audio`, `image`, `executable`, `game`) and window names (`videos`, `music`, `pictures`, `programs`, `games`) both accepted. `executable`/`programs` add-ons resolve as single-click launchers; the rest are browsable |
+| `addons` | `video`, `videos`, `audio`, `music`, `image`, `pictures`, `executable`, `programs`, `game`, `games` | JSON-RPC values (`video`, `audio`, `image`, `executable`, `game`) and window names (`videos`, `music`, `pictures`, `programs`, `games`) both accepted. Plugin add-ons resolve as browsable; script add-ons resolve as single-click launchers, regardless of target |
 | `sources` | `video`, `music`, `pictures`, `files`, `programs` | Matches Kodi's Files.Media values |
 | `playlists` | `video`, `music` | Matches playlist directory names; omit to include all |
 | `nodes` | `video`, `music`, `library` | Library node types; `library` shows Videos and Music as two browsable entries |
