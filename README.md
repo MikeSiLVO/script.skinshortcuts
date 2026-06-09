@@ -131,6 +131,7 @@ userdata/addon_data/script.skinshortcuts/
 |----------|-------------|
 | [Getting Started](docs/skinning/getting-started.md) | Setup walkthrough and basic integration |
 | [File Overview](docs/skinning/files.md) | Configuration file structure |
+| [Migrating from v2](docs/migration-v2-to-v3.md) | Porting a v2 Skin Shortcuts skin to v3 |
 
 ### Configuration Files
 
