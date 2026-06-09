@@ -800,6 +800,8 @@ class PickersMixin:
                         item, as_widget=Widget in leaf_types
                     )
                     if placeholder:
+                        overrides = self._icon_overrides()
+                        placeholder.icon = overrides.get(placeholder.icon, placeholder.icon)
                         visible_items.append(placeholder)
                     if item.folder and resolved and create_folder_group:
                         folder = create_folder_group(item.folder, resolved)
