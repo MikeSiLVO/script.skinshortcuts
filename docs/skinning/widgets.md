@@ -238,6 +238,10 @@ Add dynamic content from system sources:
 ```xml
 <content source="playlists" target="videos" />
 <content source="addons" target="videos" folder="Video Add-ons" />
+<content source="addons" target="music" folder="Music Add-ons" />
+<content source="addons" target="pictures" folder="Picture Add-ons" />
+<content source="addons" target="executable" folder="Program Add-ons" />
+<content source="addons" target="games" folder="Game Add-ons" />
 ```
 
 | Attribute | Description |
@@ -250,6 +254,8 @@ Add dynamic content from system sources:
 | `visible` | Kodi visibility condition (evaluated at runtime) |
 | `icon` | Icon override |
 | `label` | Label override |
+
+For `source="addons"`, `target="executable"` (or `programs`) lists program add-ons, which resolve as single-click launchers; the rest (`videos`, `music`, `pictures`, `games`) resolve as browsable. See the [Content Target Reference](menus.md#content-target-reference) for every source's valid targets.
 
 ### Nodes Source
 

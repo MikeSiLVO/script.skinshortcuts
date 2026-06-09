@@ -574,6 +574,7 @@ Add dynamic content from system sources:
 ```xml
 <content source="playlists" target="videos" folder="Video Playlists" />
 <content source="addons" target="videos" />
+<content source="addons" target="executable" />
 <content source="favourites" />
 <content source="sources" target="videos" />
 ```

@@ -317,6 +317,10 @@ Items with `required="true"` cannot be deleted by users.
 
     <!-- Dynamic content from library -->
     <content source="library" target="moviegenres" />
+
+    <!-- Dynamic content from add-ons (executable = single-click, others browsable) -->
+    <content source="addons" target="videos" folder="Video Add-ons" />
+    <content source="addons" target="executable" folder="Program Add-ons" />
   </group>
 
   <!-- Flat widget (ungrouped) -->
@@ -337,6 +341,44 @@ Items with `required="true"` cannot be deleted by users.
 | `<widget-groupings>` → `<node label="...">`               | `<widgets>` → `<group name="..." label="...">`                        |
 | `<widgetdefault labelID="...">`                           | `<item widget="...">` or `<defaults widget="...">`                    |
 | `<content>video</content>`                                | `<content source="library" target="..." />`                            |
+| `<content>playlist-video</content>`                       | `<content source="playlists" target="videos" />`                       |
+| `<content>widgets</content>`                              | `<content source="addons" target="..." />` (one entry per add-on category) |
+
+### Dynamic Content Targets
+
+In v3, `<content>` pulls from system sources via `source` plus `target`. The same element and target set apply in both `menus.xml` and `widgets.xml`.
+
+| Source | Valid Targets | Notes |
+|--------|---------------|-------|
+| `addons` | `video`, `videos`, `audio`, `music`, `image`, `pictures`, `executable`, `programs`, `game`, `games` | JSON-RPC values (`video`, `audio`, `image`, `executable`, `game`) and window names (`videos`, `music`, `pictures`, `programs`, `games`) both accepted. `executable`/`programs` add-ons resolve as single-click launchers; the rest are browsable |
+| `sources` | `video`, `music`, `pictures`, `files`, `programs` | Matches Kodi's Files.Media values |
+| `playlists` | `video`, `music` | Matches playlist directory names; omit to include all |
+| `nodes` | `video`, `music`, `library` | Library node types; `library` shows Videos and Music as two browsable entries |
+| `pvr` | `tv`, `radio` | PVR channel types |
+| `library` | See Library Targets below | Genre, year, studio, tag, actor queries |
+| `favourites` | (none) | No target needed |
+| `commands` | (none) | No target needed |
+| `settings` | (none) | No target needed |
+
+#### Library Targets
+
+| Target | Description |
+|--------|-------------|
+| `genres`, `moviegenres` | Movie genres |
+| `tvgenres` | TV show genres |
+| `musicgenres` | Music genres |
+| `years`, `movieyears` | Movie years |
+| `tvyears` | TV show years |
+| `studios`, `moviestudios` | Movie studios |
+| `tvstudios` | TV show studios |
+| `tags`, `movietags` | Movie tags |
+| `tvtags` | TV show tags |
+| `actors`, `movieactors` | Movie actors |
+| `tvactors` | TV show actors |
+| `directors`, `moviedirectors` | Movie directors |
+| `tvdirectors` | TV show directors |
+| `artists` | Music artists |
+| `albums` | Music albums |
 
 ### Widget Types
 
