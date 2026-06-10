@@ -90,7 +90,7 @@ Properties extend menu items beyond built-in fields (label, icon, action). Commo
 | `type` | No | `options` | Property type: `options`, `toggle`, `text`, `number`, `widget`, `background` |
 | `value` | No | - | For `toggle` type: custom value to toggle instead of `True` |
 | `requires` | No | - | Property name that must have a value (see [Requires Check](#requires-check)) |
-| `templateonly` | No | `false` | If `true`, the property is not written as a `<property>` element on the menu item in includes.xml. It is still editable in the dialog and still available to templates (which read item properties directly). Use this for values consumed only by templates that should not appear as listitem properties. |
+| `templateonly` | No | `false` | If `true`, the property is not written as a `<property>` element on the menu item in includes.xml. It is still editable in the dialog and still available to templates (which read item properties directly). Use this for values consumed only by templates that should not appear as listitem properties. Numeric slot variants (`widgetSortby.2`, `.3`) inherit the flag, so setting it on the base suppresses the whole slot family. |
 
 ### Property Types
 

@@ -391,14 +391,17 @@ class IncludesBuilder:
         return actions
 
     def _is_template_only(self, prop_name: str) -> bool:
-        """Check if a property is marked as template_only in the schema.
+        """Whether a property is template_only: built but not emitted to includes.
 
-        Template-only properties are used by TemplateBuilder but should not
-        be added to menu item output in includes.xml to keep output cleaner.
+        Numeric slot variants (widgetSortby.2) inherit the base property's flag.
         """
         if not self.property_schema:
             return False
         prop = self.property_schema.get_property(prop_name)
+        if prop is None:
+            base, sep, tail = prop_name.rpartition(".")
+            if sep and tail.isdigit():
+                prop = self.property_schema.get_property(base)
         return prop is not None and prop.template_only
 
     @staticmethod
