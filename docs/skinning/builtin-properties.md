@@ -99,7 +99,7 @@ For additional widget slots, use suffixed properties:
 
 ### Submenu Widget Path
 
-When a menu item links a `type="widgets"` submenu (the per-item widget submenu opened via a `{item}.X` subdialog), the item carries `submenuPath` — the `widgetPath` of the first enabled widget in that submenu.
+When a menu item has a per-item widget submenu (opened via a `{item}.X` subdialog, with items carrying `widgetPath`), the item carries `submenuPath` — the `widgetPath` of its first enabled widget. The submenu is recognized by its widget content, so submenus added at runtime work without a `type="widgets"` definition.
 
 | Property | Description |
 |----------|-------------|

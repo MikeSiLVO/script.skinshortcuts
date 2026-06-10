@@ -326,15 +326,20 @@ class IncludesBuilder:
 
         return elem
 
-    def _widget_submenu_for_item(self, item: MenuItem) -> Menu | None:
-        """Find the per-item widgets submenu linked to this item via a
-        {item}.X subdialog reference.
+    @staticmethod
+    def _enabled_widgets(submenu: Menu) -> list[MenuItem]:
+        """Submenu items that are widgets: enabled and carrying a widgetPath."""
+        return [
+            sub_item
+            for sub_item in submenu.items
+            if not sub_item.disabled and sub_item.properties.get("widgetPath")
+        ]
 
-        Excludes custom-widget content menus: those are referenced by
-        customWidget* item properties (or the {customWidget}/{item}.customwidget
-        subdialog forms) and carry a generated id, not a {item}.X name. They are
-        also menu_type="widgets" but represent one widget's content, not the
-        item's widget list.
+    def _widget_submenu_for_item(self, item: MenuItem) -> Menu | None:
+        """The item's widgets submenu, found via a {item}.X subdialog ref.
+
+        Matched by widget content, not menu_type (runtime submenus have none).
+        Skips custom-widget content menus.
         """
         cw_ids = {
             value
@@ -353,7 +358,7 @@ class IncludesBuilder:
                 if resolved in cw_ids:
                     continue
                 submenu = self._menu_map.get(resolved)
-                if submenu is not None and submenu.menu_type == "widgets":
+                if submenu is not None and self._enabled_widgets(submenu):
                     return submenu
         return None
 
@@ -363,13 +368,7 @@ class IncludesBuilder:
         submenu = self._widget_submenu_for_item(item)
         if submenu is None:
             return {}
-        widgets = [
-            sub_item
-            for sub_item in submenu.items
-            if not sub_item.disabled and sub_item.properties.get("widgetPath")
-        ]
-        if not widgets:
-            return {}
+        widgets = self._enabled_widgets(submenu)
         paths = {"submenuPath": widgets[0].properties["widgetPath"]}
         if submenu.submenu_path == "all":
             for index, widget in enumerate(widgets[1:], start=2):
