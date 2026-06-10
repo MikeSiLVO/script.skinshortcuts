@@ -340,6 +340,7 @@ def _parse_menu(
     build = get_attr(elem, "build") or "true"
     action = get_attr(elem, "action") or ""
     standalone = (get_attr(elem, "standalone") or "true").lower() != "false"
+    submenu_path = get_attr(elem, "submenuPath") or ""
 
     return Menu(
         name=menu_name,
@@ -355,6 +356,7 @@ def _parse_menu(
         build=build,
         action=action,
         standalone=standalone,
+        submenu_path=submenu_path,
     )
 
 

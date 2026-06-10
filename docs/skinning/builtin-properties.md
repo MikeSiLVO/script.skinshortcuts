@@ -97,6 +97,35 @@ For additional widget slots, use suffixed properties:
 </control>
 ```
 
+### Submenu Widget Path
+
+When a menu item links a `type="widgets"` submenu (the per-item widget submenu opened via a `{item}.X` subdialog), the item carries `submenuPath` — the `widgetPath` of the first enabled widget in that submenu.
+
+| Property | Description |
+|----------|-------------|
+| `submenuPath` | First widget path of the item's widgets submenu (empty when the submenu has no widgets) |
+| `submenuPath.2`, `.3`, … | Remaining widget paths, in submenu order. Emitted only when the submenu sets `submenuPath="all"` |
+
+This lets the parent menu item answer "which widget is on this item" and "does it have any widgets" without a hidden counter container:
+
+```xml
+<!-- Drive a panel from the focused item's first widget -->
+<control type="group">
+  <visible>String.IsEqual(Container(9000).ListItem.Property(submenuPath),Settings)</visible>
+</control>
+
+<!-- Item has no widgets -->
+<visible>String.IsEmpty(Container(9000).ListItem.Property(submenuPath))</visible>
+```
+
+With `submenuPath="all"`, the widget count is the highest filled slot: an item with `submenuPath.3` set and `submenuPath.4` empty has three widgets.
+
+Custom widget content submenus do not produce `submenuPath`. To drop the property, declare it `templateonly` in `properties.xml`:
+
+```xml
+<property name="submenuPath" templateonly="true" />
+```
+
 ---
 
 ## Background Properties

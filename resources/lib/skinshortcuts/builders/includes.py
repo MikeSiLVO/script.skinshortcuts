@@ -10,6 +10,7 @@ from ..constants import extract_path_from_action
 
 if TYPE_CHECKING:
     from ..models import Menu, MenuItem
+    from ..models.menu import SubDialog
     from ..models.property import PropertySchema
     from ..models.template import TemplateSchema
     from ..models.views import ViewConfig
@@ -26,12 +27,14 @@ class IncludesBuilder:
         property_schema: PropertySchema | None = None,
         view_config: ViewConfig | None = None,
         userdata: UserData | None = None,
+        subdialogs: list[SubDialog] | None = None,
     ):
         self.menus = menus
         self.templates = templates
         self.property_schema = property_schema
         self.view_config = view_config
         self.userdata = userdata
+        self.subdialogs = subdialogs or []
         self._menu_map: dict[str, Menu] = {m.name: m for m in menus}
 
     def build(self) -> ET.Element:
@@ -315,12 +318,63 @@ class IncludesBuilder:
                 self._add_property(elem, "hasSubmenu", "True")
 
             all_properties = {**menu.defaults.properties, **item.properties}
+            all_properties.update(self._submenu_paths_for_item(item))
             for key, value in all_properties.items():
                 if self._is_template_only(key):
                     continue
                 self._add_property(elem, key, value)
 
         return elem
+
+    def _widget_submenu_for_item(self, item: MenuItem) -> Menu | None:
+        """Find the per-item widgets submenu linked to this item via a
+        {item}.X subdialog reference.
+
+        Excludes custom-widget content menus: those are referenced by
+        customWidget* item properties (or the {customWidget}/{item}.customwidget
+        subdialog forms) and carry a generated id, not a {item}.X name. They are
+        also menu_type="widgets" but represent one widget's content, not the
+        item's widget list.
+        """
+        cw_ids = {
+            value
+            for key, value in item.properties.items()
+            if key.startswith("customWidget") and value
+        }
+        for sub in self.subdialogs:
+            refs = [sub.menu]
+            refs.extend(oc.menu for oc in sub.onclose if oc.action == "menu")
+            for ref in refs:
+                if not ref or "{item}" not in ref:
+                    continue
+                if ref.startswith("{customWidget") or ".customwidget" in ref:
+                    continue
+                resolved = ref.replace("{item}", item.name)
+                if resolved in cw_ids:
+                    continue
+                submenu = self._menu_map.get(resolved)
+                if submenu is not None and submenu.menu_type == "widgets":
+                    return submenu
+        return None
+
+    def _submenu_paths_for_item(self, item: MenuItem) -> dict[str, str]:
+        """Compute submenuPath (first widget) and, when the submenu opts in
+        with submenuPath="all", the numbered submenuPath.N tail."""
+        submenu = self._widget_submenu_for_item(item)
+        if submenu is None:
+            return {}
+        widgets = [
+            sub_item
+            for sub_item in submenu.items
+            if not sub_item.disabled and sub_item.properties.get("widgetPath")
+        ]
+        if not widgets:
+            return {}
+        paths = {"submenuPath": widgets[0].properties["widgetPath"]}
+        if submenu.submenu_path == "all":
+            for index, widget in enumerate(widgets[1:], start=2):
+                paths[f"submenuPath.{index}"] = widget.properties["widgetPath"]
+        return paths
 
     def _get_all_actions(self, exclude: set[str]) -> set[str]:
         """Collect all item actions (lowercased) from menus not in exclude set."""

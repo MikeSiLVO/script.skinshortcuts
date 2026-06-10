@@ -273,6 +273,7 @@ class SkinConfig:
             property_schema=self.property_schema,
             view_config=self._view_config,
             userdata=self.userdata,
+            subdialogs=self.subdialogs,
         )
         builder.write(output_path)
 
