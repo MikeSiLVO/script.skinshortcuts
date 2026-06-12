@@ -48,6 +48,7 @@
 | `standalone` | bool | When False (from `<submenu standalone="false">`), skip the per-template `skinshortcuts-{name}` include |
 | `build` | str | Build mode: `"true"` (default) or `"auto"` |
 | `action` | str | Action to match for `build="auto"` |
+| `submenu_path` | str | `"all"` (from `submenuPath="all"` on the parent `<menu>`) emits the numbered `submenuPath.N` tail; the global form is `MenuConfig.submenu_path_all` |
 
 **Methods:** `get_item()`, `add_item()`, `remove_item()`, `move_item()`
 

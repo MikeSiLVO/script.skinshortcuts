@@ -51,6 +51,7 @@ def load_menus(path: str | Path) -> MenuConfig:
     subdialogs = _parse_dialogs(root)
     action_overrides = _parse_overrides(root)
     show_context_menu = _parse_context_menu(root)
+    submenu_path_all = get_attr(root, "submenuPath") == "all"
 
     return MenuConfig(
         menus=menus,
@@ -60,6 +61,7 @@ def load_menus(path: str | Path) -> MenuConfig:
         action_overrides=action_overrides,
         icon_overrides=icon_overrides,
         show_context_menu=show_context_menu,
+        submenu_path_all=submenu_path_all,
     )
 
 

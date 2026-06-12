@@ -104,7 +104,7 @@ When a menu item has a per-item widget submenu (opened via a `{item}.X` subdialo
 | Property | Description |
 |----------|-------------|
 | `submenuPath` | First widget path of the item's widgets submenu (empty when the submenu has no widgets) |
-| `submenuPath.2`, `.3`, … | Remaining widget paths, in submenu order. Emitted only when the submenu sets `submenuPath="all"` |
+| `submenuPath.2`, `.3`, … | Remaining widget paths, in submenu order. Emitted only when `submenuPath="all"` is set (see below) |
 
 This lets the parent menu item answer "which widget is on this item" and "does it have any widgets" without a hidden counter container:
 
@@ -119,6 +119,13 @@ This lets the parent menu item answer "which widget is on this item" and "does i
 ```
 
 With `submenuPath="all"`, the widget count is the highest filled slot: an item with `submenuPath.3` set and `submenuPath.4` empty has three widgets.
+
+`submenuPath="all"` lives on the parent `<menu>`, or globally on `<menus>` for every menu. It belongs on the menu rather than the submenu because `submenuPath` is a property of the menu item, and the menu scope reaches submenus built entirely at runtime, which have no `<submenu>` element of their own to carry an attribute:
+
+```xml
+<menus submenuPath="all">                    <!-- every widget submenu -->
+  <menu name="mainmenu" submenuPath="all">   <!-- every widget submenu under this menu -->
+```
 
 Custom widget content submenus do not produce `submenuPath`. To drop the property, declare it `templateonly` in `properties.xml`:
 

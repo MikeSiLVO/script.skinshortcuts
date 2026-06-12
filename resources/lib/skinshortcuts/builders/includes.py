@@ -28,6 +28,7 @@ class IncludesBuilder:
         view_config: ViewConfig | None = None,
         userdata: UserData | None = None,
         subdialogs: list[SubDialog] | None = None,
+        submenu_path_all: bool = False,
     ):
         self.menus = menus
         self.templates = templates
@@ -35,6 +36,7 @@ class IncludesBuilder:
         self.view_config = view_config
         self.userdata = userdata
         self.subdialogs = subdialogs or []
+        self.submenu_path_all = submenu_path_all
         self._menu_map: dict[str, Menu] = {m.name: m for m in menus}
 
     def build(self) -> ET.Element:
@@ -318,7 +320,7 @@ class IncludesBuilder:
                 self._add_property(elem, "hasSubmenu", "True")
 
             all_properties = {**menu.defaults.properties, **item.properties}
-            all_properties.update(self._submenu_paths_for_item(item))
+            all_properties.update(self._submenu_paths_for_item(item, menu))
             for key, value in all_properties.items():
                 if self._is_template_only(key):
                     continue
@@ -362,15 +364,17 @@ class IncludesBuilder:
                     return submenu
         return None
 
-    def _submenu_paths_for_item(self, item: MenuItem) -> dict[str, str]:
-        """Compute submenuPath (first widget) and, when the submenu opts in
-        with submenuPath="all", the numbered submenuPath.N tail."""
+    def _submenu_paths_for_item(self, item: MenuItem, parent_menu: Menu) -> dict[str, str]:
+        """The item's submenuPath (its first widget), plus the numbered
+        submenuPath.N tail when "all" is opted in on the parent menu or globally
+        on <menus>."""
         submenu = self._widget_submenu_for_item(item)
         if submenu is None:
             return {}
         widgets = self._enabled_widgets(submenu)
         paths = {"submenuPath": widgets[0].properties["widgetPath"]}
-        if submenu.submenu_path == "all":
+        emit_tail = self.submenu_path_all or parent_menu.submenu_path == "all"
+        if emit_tail:
             for index, widget in enumerate(widgets[1:], start=2):
                 paths[f"submenuPath.{index}"] = widget.properties["widgetPath"]
         return paths

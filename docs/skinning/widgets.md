@@ -479,11 +479,13 @@ A widget submenu tied to a parent menu item via the subdialog system:
 
 Use with [items templates](templates.md#dynamic-widgets-pattern) to iterate over the widget items and generate controls per widget.
 
-The parent menu item also carries `submenuPath` — the first widget path of this submenu — so the item can drive visibility or detect "no widgets" directly, without a hidden counter container. Add `submenuPath="all"` to emit the full numbered list:
+The parent menu item also carries `submenuPath` — the first widget path of this submenu — so the item can drive visibility or detect "no widgets" directly, without a hidden counter container. To also emit the full numbered list, set `submenuPath="all"` on the parent `<menu>` (or globally on `<menus>` for every menu):
 
 ```xml
-<submenu name="movies.widgets" type="widgets" submenuPath="all">
+<menu name="mainmenu" submenuPath="all">
 ```
+
+It goes on the menu, not the submenu, so it also covers submenus a user builds at runtime, which have no `<submenu>` element to annotate.
 
 See [Submenu Widget Path](builtin-properties.md#submenu-widget-path) for the property details.
 
