@@ -82,6 +82,10 @@ class ResolvedShortcut:
     # offers browse-into and constructs ActivateWindow({browse_window},{browse_path},return).
     browse_path: str = ""
     browse_window: str = ""
+    # Media of an originating file source (video/music/pictures/files/programs); marks a
+    # source shortcut. The smart-playlist flow acts on video/music; other media fall back
+    # to Files view. Empty for non-source shortcuts.
+    source_media: str = ""
 
 
 def scan_playlist_files(directory: str) -> list[tuple[str, str]]:
@@ -215,6 +219,7 @@ class ContentProvider:
                         icon="DefaultFolder.png",
                         browse_path=path,
                         browse_window=window,
+                        source_media=media,
                     )
                 )
 

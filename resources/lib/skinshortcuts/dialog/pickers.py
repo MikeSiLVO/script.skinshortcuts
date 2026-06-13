@@ -51,9 +51,18 @@ class PickerGroup(Protocol):
     items: list
 
 
-from ..constants import ADDONS_SOURCE_MAP, extract_path_from_action
+from ..constants import ADDONS_SOURCE_MAP, WINDOW_MAP, extract_path_from_action
 from ..loaders import evaluate_condition, load_groupings
 from ..localize import LANGUAGE, resolve_label
+from ..playlists import (
+    SORT_OPTIONS,
+    SortOption,
+    build_smartplaylist_xml,
+    display_options,
+    path_has_content,
+    save_playlist,
+    unpack_multipath,
+)
 from ..models import (
     Action,
     Background,
@@ -164,7 +173,11 @@ class PickersMixin:
 
         shortcut = self._pick_shortcut(groups, item_props)
         if shortcut:
-            actions = self._get_shortcut_actions(shortcut)
+            if shortcut.source_media:
+                action = self._source_playlist_action(shortcut, item)
+                actions = [action] if action else None
+            else:
+                actions = self._get_shortcut_actions(shortcut)
             if actions is None:
                 return
 
@@ -231,6 +244,65 @@ class PickersMixin:
             yeslabel=LANGUAGE(32062),
         )
         return shortcut.action_play if result else shortcut.action
+
+    def _source_playlist_action(self, shortcut: Shortcut, item: MenuItem) -> str | None:
+        """Pick how to show a source: Files view, or a path-filtered library playlist.
+
+        Returns the action string, or None if cancelled. The option list is built from
+        the source's detected library domain; an exclude with no remaining content falls
+        back to Files view rather than an empty playlist.
+        """
+        paths = unpack_multipath(shortcut.path)
+        options = display_options(shortcut.source_media, paths)
+        if len(options) == 1:
+            return shortcut.get_action()  # not a library source -> Files view, no dialog
+
+        labels = [
+            xbmc.getLocalizedString(o.label_id) if o.core else LANGUAGE(o.label_id)
+            for o in options
+        ]
+        choice = xbmcgui.Dialog().select(LANGUAGE(32078), labels)
+        if choice == -1:
+            return None
+        option = options[choice]
+        if not option.media_type:
+            return shortcut.get_action()
+
+        # Include views are populated: detection confirmed the domain's type, albums and
+        # artists derive from songs, and a scanned show has episodes. Only an exclude can
+        # legitimately empty out (every item of that type sits under this one source).
+        if option.exclude and not path_has_content(option.media_type, paths, exclude=True):
+            use_files = xbmcgui.Dialog().yesno(
+                LANGUAGE(32078),
+                LANGUAGE(32205),
+                nolabel=xbmc.getLocalizedString(222),
+                yeslabel=LANGUAGE(32079),
+            )
+            return shortcut.get_action() if use_files else None
+
+        sort = self._pick_sort()
+        if sort is None:
+            return None
+
+        xml = build_smartplaylist_xml(
+            option.media_type,
+            shortcut.label,
+            paths,
+            exclude=option.exclude,
+            sort_field=sort.field,
+            sort_order=sort.direction,
+        )
+        path = save_playlist(self.menu_id, item.name, xml)
+        window = WINDOW_MAP.get(shortcut.source_media, "Videos")
+        return f"ActivateWindow({window},{path},return)"
+
+    def _pick_sort(self) -> SortOption | None:
+        """Pick a sort order for a generated playlist. None if cancelled."""
+        labels = [xbmc.getLocalizedString(o.label_id) for o in SORT_OPTIONS]
+        choice = xbmcgui.Dialog().select(LANGUAGE(32203), labels)
+        if choice == -1:
+            return None
+        return SORT_OPTIONS[choice]
 
     def _pick_shortcut(
         self, groups: list[Shortcut | ShortcutGroup | Content | Input], item_props: dict[str, str]
@@ -381,6 +453,7 @@ class PickersMixin:
                 icon=item.icon,
                 action_play=item.action_play,
                 action_party=item.action_party,
+                source_media=item.source_media,
             )
             shortcuts.append(shortcut)
 
@@ -639,6 +712,7 @@ class PickersMixin:
                             browse_path,
                             title=resolve_label(selected_item.label),
                             target_window=target_window,
+                            source_media=selected_item.source_media,
                         )
                         if result is not None:
                             return result
@@ -748,6 +822,7 @@ class PickersMixin:
                             browse_path,
                             title=resolve_label(selected_item.label),
                             target_window=target_window,
+                            source_media=selected_item.source_media,
                         )
                         if result is not None:
                             return result
@@ -960,6 +1035,7 @@ class PickersMixin:
         path: str,
         title: str = "",
         target_window: str = "videos",
+        source_media: str = "",
     ) -> Shortcut | None:
         """Browse into a path and let user select location or navigate deeper.
 
@@ -985,6 +1061,8 @@ class PickersMixin:
             label=label,
             actions=[f"ActivateWindow({target_window},{selected_path},return)"],
             icon=icon,
+            path=selected_path,
+            source_media=source_media,
         )
 
     def _filter_widgets_by_slot(self, items: list, slot: str) -> list:

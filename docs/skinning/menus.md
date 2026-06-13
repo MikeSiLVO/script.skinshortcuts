@@ -672,6 +672,19 @@ A shortcut is only browsable in the picker when it explicitly opts in via the `b
 
 Shortcuts that specify only `<action>` (even an `ActivateWindow` to a browsable path) are fire-and-forget, so no browse-into is offered. Dynamic `<content source="addons">` resolves plugin-source addons as browsable automatically (`RunAddon` executables stay single-click), and `<content source="sources">` resolves user-defined media sources as browsable.
 
+### Source Library Views
+
+After browsing a `<content source="sources">` shortcut to a location, the user chooses how it opens: Files view (the plain folder), or a library view of that path. The offered views are detected from what the source has scanned:
+
+| Source content | Views |
+|----------------|-------|
+| Movies | Movies |
+| TV shows | TV Shows, Episodes |
+| Music videos | Music Videos |
+| Music | Songs, Albums, Artists |
+
+A view can show content in the path or everything except it, with a chosen sort order. A library view writes a smart playlist to `addon_data/script.skinshortcuts/playlists/{skin}/` and points the shortcut at it; editing the shortcut overwrites that file and deleting it removes the file on save. A source with no scanned library content offers Files view only.
+
 > **See also:** [Conditions](conditions.md) for `condition` and `visible` attribute syntax
 
 ---

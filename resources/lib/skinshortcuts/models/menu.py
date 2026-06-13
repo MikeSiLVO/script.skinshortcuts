@@ -192,6 +192,7 @@ class Shortcut:
     item_visible: str = ""
     action_play: str = ""
     action_party: str = ""
+    source_media: str = ""  # originating file source's media; drives the source playlist flow
 
     @property
     def action(self) -> str:
