@@ -100,6 +100,8 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
   </dialogs>
 
   <contextmenu>true</contextmenu>
+
+  <submenuPath>all</submenuPath>
 </menus>
 ```
 
@@ -107,7 +109,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 
 | Element | Parent | Required Attributes | Optional Attributes | Description |
 |---------|--------|---------------------|---------------------|-------------|
-| `<menus>` | - | - | `submenuPath` | Root element. `submenuPath="all"` emits the numbered `submenuPath.N` tail for every widget submenu (global default) |
+| `<menus>` | - | - | - | Root element |
 | `<menu>` | menus | `name` | `container`, `type`, `controltype`, `id`, `build`, `template_only`, `action`, `submenuPath` | Main menu definition. `type="widgets"` marks a widget submenu; `controltype` wraps items in `<control type="...">`; `id` sets the start control ID (requires `controltype`); `build="auto"` only emits the menu if its action is assigned; `template_only="submenu"` skips the combined submenu include; `submenuPath="all"` emits the numbered `submenuPath.N` tail for widget submenus under this menu |
 | `<submenu>` | menus | `name` | `container`, `standalone`, `type`, `controltype`, `id`, `build`, `template_only`, `action` | Submenu definition (built when referenced). `standalone="false"` skips the per-template `skinshortcuts-{name}` include. `type="widgets"` marks a widget submenu; `controltype` wraps items in `<control type="...">`; `id` sets the start control ID (requires `controltype`); `build="auto"` only emits the menu if its action is assigned; `template_only="submenu"` skips the combined submenu include |
 | `<allow>` | menu/submenu | - | `widgets`, `backgrounds`, `submenus` | Feature toggles for dialog |
@@ -142,6 +144,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 | `<subdialog>` | dialogs | `buttonID` | `mode`, `menu`, `setfocus`, `suffix` | Subdialog mapping; requires at least one of `mode`, `menu`, or an `<onclose>`. `menu` (without `mode`) opens that menu directly |
 | `<onclose>` | subdialog | `action` | `menu`, `condition` | Action when subdialog closes |
 | `<contextmenu>` | menus | - | - | Enable/disable context menu |
+| `<submenuPath>` | menus | - | - | `all` emits the numbered `submenuPath.N` tail for every widget submenu (global default; per-menu form is the `submenuPath` attribute on `<menu>`) |
 
 ### Protect Types
 

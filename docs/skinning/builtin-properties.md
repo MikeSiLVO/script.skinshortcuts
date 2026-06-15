@@ -120,10 +120,11 @@ This lets the parent menu item answer "which widget is on this item" and "does i
 
 With `submenuPath="all"`, the widget count is the highest filled slot: an item with `submenuPath.3` set and `submenuPath.4` empty has three widgets.
 
-`submenuPath="all"` lives on the parent `<menu>`, or globally on `<menus>` for every menu. It belongs on the menu rather than the submenu because `submenuPath` is a property of the menu item, and the menu scope reaches submenus built entirely at runtime, which have no `<submenu>` element of their own to carry an attribute:
+`submenuPath="all"` lives on the parent `<menu>`; the global form is a `<submenuPath>all</submenuPath>` element under `<menus>` that covers every menu. It belongs on the menu rather than the submenu because `submenuPath` is a property of the menu item, and the menu scope reaches submenus built entirely at runtime, which have no `<submenu>` element of their own to carry an attribute:
 
 ```xml
-<menus submenuPath="all">                    <!-- every widget submenu -->
+<menus>
+  <submenuPath>all</submenuPath>             <!-- every widget submenu -->
   <menu name="mainmenu" submenuPath="all">   <!-- every widget submenu under this menu -->
 ```
 

@@ -51,7 +51,7 @@ def load_menus(path: str | Path) -> MenuConfig:
     subdialogs = _parse_dialogs(root)
     action_overrides = _parse_overrides(root)
     show_context_menu = _parse_context_menu(root)
-    submenu_path_all = get_attr(root, "submenuPath") == "all"
+    submenu_path_all = _parse_submenu_path(root)
 
     return MenuConfig(
         menus=menus,
@@ -126,6 +126,18 @@ def _parse_context_menu(root) -> bool:
 
     text = (elem.text or "").strip().lower()
     return text not in ("false", "0", "no", "")
+
+
+def _parse_submenu_path(root) -> bool:
+    """Parse the global submenuPath setting from <submenuPath>.
+
+    Returns True when set to "all": emit the numbered submenuPath.N tail for
+    every widget submenu. Off unless explicitly enabled.
+    """
+    elem = root.find("submenuPath")
+    if elem is None:
+        return False
+    return (elem.text or "").strip().lower() == "all"
 
 
 def _parse_dialogs(root) -> list[SubDialog]:
