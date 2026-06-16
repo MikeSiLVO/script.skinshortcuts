@@ -15,6 +15,7 @@ import xbmc
 import xbmcvfs
 
 from ..log import get_logger
+from ..playlists import unpack_multipath
 
 if TYPE_CHECKING:
     from ..models.menu import Content
@@ -88,6 +89,18 @@ class ResolvedShortcut:
     source_media: str = ""
 
 
+def _expand_playlist_dirs(directory: str) -> list[str]:
+    """Expand a multipath alias to its component dirs; other dirs pass through.
+
+    Appending a filename to the alias itself won't open; on a component dir it
+    stays a resolvable special:// path.
+    """
+    translated = xbmcvfs.translatePath(directory)
+    if not translated.startswith("multipath://"):
+        return [directory]
+    return [d if d.endswith("/") else d + "/" for d in unpack_multipath(translated)]
+
+
 def scan_playlist_files(directory: str) -> list[tuple[str, str]]:
     """Scan directory for playlist files.
 
@@ -99,16 +112,16 @@ def scan_playlist_files(directory: str) -> list[tuple[str, str]]:
     """
     playlists = []
 
-    try:
-        _dirs, files = xbmcvfs.listdir(directory)
-    except Exception:
-        return playlists
+    for scan_dir in _expand_playlist_dirs(directory):
+        try:
+            _dirs, files = xbmcvfs.listdir(scan_dir)
+        except Exception:
+            continue
 
-    for filename in files:
-        if filename.endswith(PLAYLIST_EXTENSIONS):
-            filepath = directory + filename
-            label = filename.rsplit(".", 1)[0]
-            playlists.append((label, filepath))
+        for filename in files:
+            if filename.endswith(PLAYLIST_EXTENSIONS):
+                label = filename.rsplit(".", 1)[0]
+                playlists.append((label, scan_dir + filename))
 
     return playlists
 
