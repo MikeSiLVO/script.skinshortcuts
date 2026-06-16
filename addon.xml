@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.1~beta5" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.1~beta6" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.2"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
+3.0.1~beta6
+  - Change: the global submenuPath setting is now a submenuPath element under menus, not a root attribute
+  - Fix: a playlist shortcut or background resolves to a valid path
+
 3.0.1~beta5
   - Add: show a source as a library view instead of files (movies, TV shows, episodes, music videos, songs, albums, artists), or everything except it, with a sort order
   - Change: submenuPath="all" is set on the menu or root menus element, not the submenu
