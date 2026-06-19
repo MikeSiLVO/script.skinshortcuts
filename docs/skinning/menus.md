@@ -625,6 +625,10 @@ Valid `target` values depend on the `source` attribute. Values are based on Kodi
 | `commands` | (none) | No target needed |
 | `settings` | (none) | No target needed |
 
+#### `nodes` and `sources` overlap for music
+
+Kodi's music library has a built-in "Sources" node, so `source="nodes" target="music"` lists it alongside Genres, Artists, and the rest. That node opens Kodi's database view of scanned sources. `source="sources" target="music"` is a separate feature: it lists each configured media source as its own browsable shortcut. The video library has no equivalent node, so this only comes up for music. A skin that offers both produces two similarly named entries with different behaviour; pick whichever fits the menu, or expose both deliberately.
+
 ### Playlist Filtering
 
 When `source="playlists"`, the `target` attribute filters smart playlists (.xsp) by type:
