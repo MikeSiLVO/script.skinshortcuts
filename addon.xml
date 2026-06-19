@@ -1,41 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.1~beta6" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.1" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.2"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
-3.0.1~beta6
-  - Change: the global submenuPath setting is now a submenuPath element under menus, not a root attribute
-  - Fix: a playlist shortcut or background resolves to a valid path
-
-3.0.1~beta5
+3.0.1
   - Add: show a source as a library view instead of files (movies, TV shows, episodes, music videos, songs, albums, artists), or everything except it, with a sort order
-  - Change: submenuPath="all" is set on the menu or root menus element, not the submenu
-  - Fix: a menu keeps its submenuPath setting after it is customized
-
-3.0.1~beta4
+  - Add: a global submenuPath element under menus, plus a submenuPath property on menu items for their widget submenu
   - Add: prompt to switch skins or downgrade the add-on when a skin is built for Skin Shortcuts v2
-
-3.0.1~beta3
-  - Add: Menu items get a submenuPath property for their widget submenu
-  - Fix: templateonly now hides a property's numbered slot variants
+  - Add: program add-ons that expose plugin content are browsable in the content picker
+  - Add: skin icon overrides apply to the add-on content placeholder
   - Fix: Create menu item to here names the menu item after the add-on category
-
-3.0.1~beta2
-  - Program add-ons that expose plugin content are browsable in the content picker
-
-3.0.1~beta1
-  - Skin icon overrides apply to the add-on content placeholder
-  - Config files log a warning when elements are skipped for missing attributes
+  - Fix: templateonly now hides a property's numbered slot variants
+  - Fix: a playlist shortcut or background resolves to a valid path
   - Updated translations
-
-3.0.0
-  - Initial Kodi repo release
-  - Complete rewrite: skins built for Skin Shortcuts v2 or earlier are not compatible
-  - Skins must be updated with v3 support; unsupported skins will get a notification
-  - Menu and widget customizations from v2 do not carry over
         </news>
         <summary lang="en_GB">Custom menus, properties, and artwork for skins</summary>
         <platform>all</platform>
