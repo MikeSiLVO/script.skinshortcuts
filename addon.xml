@@ -53,7 +53,7 @@
         <description lang="ru_RU">Дополнение для обложек, предоставляющее простой способ управления пользовательскими ярлыками (требуется поддержка обложкой)</description>
         <description lang="sk_SK">Doplnok poskytujúci jednoduchý manažment zoznamu užívateľských odkazov (vyžaduje podporu v doplnku pre vzhľad)</description>
         <description lang="sv_SE">Skinntillägg som tillhandahåller enkel hantering och översikt av användargenvägar (om skinnet stöder det)</description>
-        <description lang="zh_CN">皮肤加载项，提供简单的用户快捷方式管理和列表（需要皮肤支持）</description>
-        <description lang="zh_TW">插件為皮膚提供了簡單的管理和使用者連線清單（需要皮膚支援）</description>
+        <description lang="zh_CN">皮肤配套插件，用于快捷管理、展示用户自定义快捷键（需对应皮肤支持）</description>
+        <description lang="zh_TW">皮膚專用附加元件，提供簡易管理與瀏覽使用者捷徑功能（需皮膚支援）</description>
     </extension>
 </addon>
