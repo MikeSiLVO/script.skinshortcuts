@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout Add-on
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install dependencies
         run: |
