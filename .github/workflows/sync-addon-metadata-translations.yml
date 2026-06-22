@@ -9,10 +9,7 @@ on:
 
 jobs:
   sync-translations:
-    # PAUSED: Re-enable when main replaces master and Weblate PR is merged
-    # Change 'false' to the condition below to re-enable:
-    # github.repository == 'MikeSiLVO/script.skinshortcuts'
-    if: false
+    if: github.repository == 'MikeSiLVO/script.skinshortcuts'
 
     name: Sync addon metadata translations
     runs-on: ubuntu-latest
