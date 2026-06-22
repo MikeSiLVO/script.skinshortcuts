@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Check and close translation PRs
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const prNumber = context.payload.pull_request?.number ?? Number(context.payload.inputs.pr_number);
