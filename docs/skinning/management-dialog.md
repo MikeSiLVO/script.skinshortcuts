@@ -11,6 +11,7 @@ The management dialog (`script-skinshortcuts.xml`) provides the UI for editing m
 * [Control IDs](#control-ids)
 * [Window Properties](#window-properties)
 * [ListItem Properties](#listitem-properties)
+* [Picker Properties](#picker-properties)
 * [Subdialogs](#subdialogs)
 * [Script Commands](#script-commands)
 
@@ -243,6 +244,67 @@ Any property defined in `properties.xml`:
 Properties with options also get a `{name}Label` property with the resolved label.
 
 > **See also:** [Built-in Properties](builtin-properties.md) for properties in generated includes
+
+---
+
+## Picker Properties
+
+The content, widget, and shortcut pickers use Kodi's shared `DialogSelect`. While one is open, the
+script marks which picker it is and stamps each option's metadata onto its list item, so a skin can
+give the picker a richer layout (for example, the path as a secondary label).
+
+### Which picker is open
+
+`skinshortcuts-picker` is set on the **Home window** for the lifetime of the select dialog (Home,
+not the dialog, because `DialogSelect` is the active window while it is up). It is empty at all other
+times, including other add-ons' select dialogs, so gate any picker styling on it to keep it out of
+the rest of `DialogSelect`.
+
+| Value | Picker |
+|-------|--------|
+| `shortcut` | Menu / submenu shortcut |
+| `widget` | Widget |
+| `background` | Background |
+| `sort` | Sort order |
+| `widgettype` | Widget type |
+| `browse` | Browse into a location |
+| `sourceview` | How to open a source (Files or library view) |
+| `playlist` | Playlist source |
+| `property` | Property value |
+| `restore` | Restore a deleted item |
+
+### Option metadata
+
+On the `widget`, `shortcut`, and `background` pickers, each option carries these list-item
+properties, using the same vocabulary as the menu list:
+
+| Property | Picker | Description |
+|----------|--------|-------------|
+| `ListItem.Property(path)` | widget, shortcut, background | Content path (for a shortcut, derived from the action when it is not a browse path) |
+| `ListItem.Property(name)` | shortcut, background | Option identifier |
+| `ListItem.Property(action)` | shortcut | Full action string |
+| `ListItem.Property(type)` | shortcut | Category/type label |
+| `ListItem.Property(widget)` | widget | Widget name |
+| `ListItem.Property(widgetLabel)` | widget | Widget display label |
+| `ListItem.Property(widgetPath)` | widget | Widget content path |
+| `ListItem.Property(widgetType)` | widget | Widget content type |
+| `ListItem.Property(widgetTarget)` | widget | Widget target window |
+| `ListItem.Property(widgetSource)` | widget | Widget source type |
+| `ListItem.Property(background)` | background | Background name |
+| `ListItem.Property(backgroundLabel)` | background | Background display label |
+| `ListItem.Property(backgroundPath)` | background | Background image path |
+
+### Usage
+
+In the skin's `DialogSelect.xml`, gated so it only affects Skin Shortcuts pickers:
+
+```xml
+<!-- path as a secondary label on the shortcut and widget pickers -->
+<control type="label">
+    <visible>String.IsEqual(Window(home).Property(skinshortcuts-picker),shortcut) | String.IsEqual(Window(home).Property(skinshortcuts-picker),widget)</visible>
+    <label>$INFO[ListItem.Property(path)]</label>
+</control>
+```
 
 ---
 

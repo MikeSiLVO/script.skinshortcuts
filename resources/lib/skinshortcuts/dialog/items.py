@@ -15,6 +15,7 @@ except ImportError:
 
 from ..localize import LANGUAGE, resolve_label
 from ..models import Action, BrowseSource, IconSource, MenuItem
+from .pickers import picker_select
 
 if TYPE_CHECKING:
     from ..manager import MenuManager
@@ -322,7 +323,7 @@ class ItemsMixin:
             return
 
         labels = [resolve_label(item.label) for item in removed]
-        selected = xbmcgui.Dialog().select(LANGUAGE(32137), labels)
+        selected = picker_select("restore", LANGUAGE(32137), labels)
 
         if selected < 0:
             return
@@ -413,7 +414,7 @@ class ItemsMixin:
                     listitem.setArt({"icon": source.icon})
                 listitems.append(listitem)
 
-            selected = xbmcgui.Dialog().select(title, listitems, useDetails=True)
+            selected = picker_select("browse", title, listitems, useDetails=True)
 
             if selected == -1:
                 return None  # Cancelled

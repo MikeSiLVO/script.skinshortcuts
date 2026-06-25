@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Literal, Protocol, runtime_checkable
 
@@ -79,6 +80,60 @@ from ..providers import ContentProvider, get_browse_provider
 
 if TYPE_CHECKING:
     from ..manager import MenuManager
+
+
+def picker_kind(leaf_types: tuple) -> str:
+    """skinshortcuts-picker value for a hierarchy picker, from what it is picking."""
+    if Widget in leaf_types:
+        return "widget"
+    if Background in leaf_types:
+        return "background"
+    return "shortcut"
+
+
+@contextlib.contextmanager
+def picker_context(kind: str):
+    """Set Window(Home).Property(skinshortcuts-picker)=kind for the duration of the block.
+
+    Marker goes on Home, not the dialog: while select() is up the active window is
+    DialogSelect, so a bare Window.Property() would resolve there, not against our dialog.
+    """
+    home = xbmcgui.Window(10000)
+    home.setProperty("skinshortcuts-picker", kind)
+    try:
+        yield
+    finally:
+        home.clearProperty("skinshortcuts-picker")
+
+
+def picker_select(kind: str, *args, **kwargs):
+    """Dialog().select() with the skinshortcuts-picker marker set for its lifetime."""
+    with picker_context(kind):
+        return xbmcgui.Dialog().select(*args, **kwargs)
+
+
+def stamp_picker_props(listitem: xbmcgui.ListItem, item: object) -> None:
+    """Expose an option's metadata as ListItem properties so a DialogSelect layout can surface
+    it (e.g. path as a secondary label). Same vocabulary as the management window; `path` is set
+    on widget and shortcut options alike for one uniform hook."""
+    if isinstance(item, Widget):
+        props = item.to_properties()
+        props["widgetType"] = item.type
+        props["path"] = item.path
+        for key, value in props.items():
+            listitem.setProperty(key, value)
+    elif isinstance(item, Shortcut):
+        path = item.path or (extract_path_from_action(item.action) if item.action else "")
+        listitem.setProperty("name", item.name)
+        listitem.setProperty("path", path)
+        listitem.setProperty("action", item.action or "")
+        listitem.setProperty("type", item.type)
+    elif isinstance(item, Background):
+        listitem.setProperty("name", item.name)
+        listitem.setProperty("path", item.path)
+        listitem.setProperty("background", item.name)
+        listitem.setProperty("backgroundLabel", item.label)
+        listitem.setProperty("backgroundPath", item.path)
 
 
 def _browse_placeholder_for_content(
@@ -261,7 +316,7 @@ class PickersMixin:
             xbmc.getLocalizedString(o.label_id) if o.core else LANGUAGE(o.label_id)
             for o in options
         ]
-        choice = xbmcgui.Dialog().select(LANGUAGE(32078), labels)
+        choice = picker_select("sourceview", LANGUAGE(32078), labels)
         if choice == -1:
             return None
         option = options[choice]
@@ -299,7 +354,7 @@ class PickersMixin:
     def _pick_sort(self) -> SortOption | None:
         """Pick a sort order for a generated playlist. None if cancelled."""
         labels = [xbmc.getLocalizedString(o.label_id) for o in SORT_OPTIONS]
-        choice = xbmcgui.Dialog().select(LANGUAGE(32203), labels)
+        choice = picker_select("sort", LANGUAGE(32203), labels)
         if choice == -1:
             return None
         return SORT_OPTIONS[choice]
@@ -394,12 +449,16 @@ class PickersMixin:
             listitem = xbmcgui.ListItem(resolve_label(w[1]))
             icon = w[2] if len(w) > 2 and w[2] else "DefaultAddonNone.png"
             listitem.setArt({"icon": overrides.get(icon, icon)})
+            if self.manager is not None:
+                widget_obj = self.manager.config.get_widget(w[0])
+                if widget_obj is not None:
+                    stamp_picker_props(listitem, widget_obj)
             listitems.append(listitem)
             if preselect == -1 and w[0] == current_widget:
                 preselect = i + 1  # +1 for "None" option
 
-        selected = xbmcgui.Dialog().select(
-            LANGUAGE(32044), listitems, useDetails=True, preselect=preselect
+        selected = picker_select(
+            "widget", LANGUAGE(32044), listitems, useDetails=True, preselect=preselect
         )
 
         if selected == -1:
@@ -505,7 +564,7 @@ class PickersMixin:
             listitem.setArt({"icon": overrides.get(icon, icon)})
             listitems.append(listitem)
 
-        selected = xbmcgui.Dialog().select(LANGUAGE(32140), listitems, useDetails=True)
+        selected = picker_select("widgettype", LANGUAGE(32140), listitems, useDetails=True)
 
         if selected == -1:
             return None
@@ -664,6 +723,8 @@ class PickersMixin:
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 listitem = xbmcgui.ListItem(label)
                 listitem.setArt({"icon": overrides.get(icon, icon)})
+                if not is_placeholder:
+                    stamp_picker_props(listitem, vis_item)
                 listitems.append(listitem)
 
             if custom_action:
@@ -672,8 +733,12 @@ class PickersMixin:
                 action_item.setArt({"icon": overrides.get(action_icon, action_icon)})
                 listitems.append(action_item)
 
-            selected = xbmcgui.Dialog().select(
-                title or LANGUAGE(32181), listitems, useDetails=True, preselect=preselect
+            selected = picker_select(
+                picker_kind(leaf_types),
+                title or LANGUAGE(32181),
+                listitems,
+                useDetails=True,
+                preselect=preselect,
             )
 
             if selected == -1:
@@ -789,11 +854,13 @@ class PickersMixin:
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 listitem = xbmcgui.ListItem(label)
                 listitem.setArt({"icon": overrides.get(icon, icon)})
+                if not is_placeholder:
+                    stamp_picker_props(listitem, vis_item)
                 listitems.append(listitem)
 
             title = resolve_label(group.label)
-            selected = xbmcgui.Dialog().select(
-                title, listitems, useDetails=True, preselect=preselect
+            selected = picker_select(
+                picker_kind(leaf_types), title, listitems, useDetails=True, preselect=preselect
             )
 
             if selected == -1:
@@ -1009,7 +1076,7 @@ class PickersMixin:
             finally:
                 xbmc.executebuiltin("Dialog.Close(busydialognocancel)")
 
-            selected = xbmcgui.Dialog().select(dialog_title, listitems, useDetails=True)
+            selected = picker_select("browse", dialog_title, listitems, useDetails=True)
 
             if selected == -1:
                 if history:

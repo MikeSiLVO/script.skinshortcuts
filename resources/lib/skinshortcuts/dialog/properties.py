@@ -122,6 +122,7 @@ from ..models import (
 )
 from ..playlists import unpack_multipath
 from ..providers import scan_playlist_files
+from .pickers import picker_select
 
 if TYPE_CHECKING:
     from ..manager import MenuManager
@@ -614,7 +615,7 @@ class PropertiesMixin:
             listitems.append(listitem)
 
         title = f"{LANGUAGE(32181)} {prefix}" if prefix else LANGUAGE(32157)
-        selected = xbmcgui.Dialog().select(title, listitems, useDetails=True)
+        selected = picker_select("playlist", title, listitems, useDetails=True)
         if selected == -1:
             return None
         return sources[selected]
@@ -658,7 +659,7 @@ class PropertiesMixin:
             listitems.append(listitem)
 
         title = resolve_label(source.label) if source.label else LANGUAGE(32157)
-        selected = xbmcgui.Dialog().select(title, listitems, useDetails=True, preselect=preselect)
+        selected = picker_select("playlist", title, listitems, useDetails=True, preselect=preselect)
 
         if selected == -1:
             return None
@@ -774,8 +775,8 @@ class PropertiesMixin:
                 preselect = i + offset
                 break
 
-        selected = xbmcgui.Dialog().select(
-            title, listitems, useDetails=button.show_icons, preselect=preselect
+        selected = picker_select(
+            "property", title, listitems, useDetails=button.show_icons, preselect=preselect
         )
 
         if selected == -1:
