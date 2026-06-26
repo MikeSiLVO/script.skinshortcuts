@@ -276,23 +276,31 @@ the rest of `DialogSelect`.
 ### Option metadata
 
 On the `widget`, `shortcut`, and `background` pickers, each option carries these list-item
-properties, using the same vocabulary as the menu list:
+properties, using the same vocabulary as the menu list.
+
+`name`, `path`, and `type` are uniform across all three pickers, so one layout can bind them
+without caring which picker is open:
 
 | Property | Picker | Description |
 |----------|--------|-------------|
+| `ListItem.Property(name)` | widget, shortcut, background | Option identifier |
 | `ListItem.Property(path)` | widget, shortcut, background | Content path (for a shortcut, derived from the action when it is not a browse path) |
-| `ListItem.Property(name)` | shortcut, background | Option identifier |
+| `ListItem.Property(type)` | widget, shortcut, background | Content/category type |
 | `ListItem.Property(action)` | shortcut | Full action string |
-| `ListItem.Property(type)` | shortcut | Category/type label |
+
+The widget and background pickers also carry their prefixed properties:
+
+| Property | Picker | Description |
+|----------|--------|-------------|
 | `ListItem.Property(widget)` | widget | Widget name |
 | `ListItem.Property(widgetLabel)` | widget | Widget display label |
 | `ListItem.Property(widgetPath)` | widget | Widget content path |
-| `ListItem.Property(widgetType)` | widget | Widget content type |
 | `ListItem.Property(widgetTarget)` | widget | Widget target window |
 | `ListItem.Property(widgetSource)` | widget | Widget source type |
 | `ListItem.Property(background)` | background | Background name |
 | `ListItem.Property(backgroundLabel)` | background | Background display label |
 | `ListItem.Property(backgroundPath)` | background | Background image path |
+| `ListItem.Property(backgroundType)` | background | Background type |
 
 ### Usage
 

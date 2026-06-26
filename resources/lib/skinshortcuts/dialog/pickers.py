@@ -113,27 +113,31 @@ def picker_select(kind: str, *args, **kwargs):
 
 
 def stamp_picker_props(listitem: xbmcgui.ListItem, item: object) -> None:
-    """Expose an option's metadata as ListItem properties so a DialogSelect layout can surface
-    it (e.g. path as a secondary label). Same vocabulary as the management window; `path` is set
-    on widget and shortcut options alike for one uniform hook."""
+    """Stamp an option's metadata as ListItem properties for DialogSelect layouts.
+
+    name/path/type are uniform across every picker; widget and background also carry
+    their prefixed props (widget*, background*) verbatim from the model.
+    """
     if isinstance(item, Widget):
         props = item.to_properties()
-        props["widgetType"] = item.type
         props["path"] = item.path
-        for key, value in props.items():
-            listitem.setProperty(key, value)
-    elif isinstance(item, Shortcut):
-        path = item.path or (extract_path_from_action(item.action) if item.action else "")
-        listitem.setProperty("name", item.name)
-        listitem.setProperty("path", path)
-        listitem.setProperty("action", item.action or "")
-        listitem.setProperty("type", item.type)
+        props["type"] = item.type
     elif isinstance(item, Background):
-        listitem.setProperty("name", item.name)
-        listitem.setProperty("path", item.path)
-        listitem.setProperty("background", item.name)
-        listitem.setProperty("backgroundLabel", item.label)
-        listitem.setProperty("backgroundPath", item.path)
+        props = item.to_properties()
+        props["path"] = item.path
+        props["type"] = item.type_name
+    elif isinstance(item, Shortcut):
+        props = {
+            "path": item.path or (extract_path_from_action(item.action) if item.action else ""),
+            "type": item.type,
+            "action": item.action or "",
+        }
+    else:
+        return
+
+    props["name"] = item.name
+    for key, value in props.items():
+        listitem.setProperty(key, value)
 
 
 def _browse_placeholder_for_content(
