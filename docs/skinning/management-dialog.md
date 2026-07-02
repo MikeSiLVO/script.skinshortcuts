@@ -302,6 +302,16 @@ The widget and background pickers also carry their prefixed properties:
 | `ListItem.Property(backgroundPath)` | background | Background image path |
 | `ListItem.Property(backgroundType)` | background | Background type |
 
+The `browse` picker (navigating into a source, add-on, or library node) is a live directory
+listing rather than a curated option list, so it carries only `name` and `path`. Both are set
+on every row, including the "Use this location" row (whose `path` is the folder being committed).
+There is no `type` here, a directory listing has no content/category type to expose.
+
+| Property | Picker | Description |
+|----------|--------|-------------|
+| `ListItem.Property(name)` | browse | Item label |
+| `ListItem.Property(path)` | browse | Item path |
+
 ### Usage
 
 In the skin's `DialogSelect.xml`, gated so it only affects Skin Shortcuts pickers:

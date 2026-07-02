@@ -1069,13 +1069,19 @@ class PickersMixin:
                 listitems = []
                 use_location_item = xbmcgui.ListItem(LANGUAGE(32058))
                 use_location_item.setArt({"icon": folder_icon})
+                use_location_item.setProperty("path", current_path)
+                use_location_item.setProperty("name", current_label)
                 listitems.append(use_location_item)
+                # path+name for DialogSelect; type is N/A for navigation, and
+                # browse items have no slug so label doubles as name
                 for item in items:
                     label = item.label
                     if item.is_directory:
                         label = f"{label} >"
                     listitem = xbmcgui.ListItem(label)
                     listitem.setArt({"icon": item.icon})
+                    listitem.setProperty("path", item.path)
+                    listitem.setProperty("name", item.label)
                     listitems.append(listitem)
             finally:
                 xbmc.executebuiltin("Dialog.Close(busydialognocancel)")
