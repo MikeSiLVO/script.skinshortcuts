@@ -727,8 +727,7 @@ class PickersMixin:
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 listitem = xbmcgui.ListItem(label)
                 listitem.setArt({"icon": overrides.get(icon, icon)})
-                if not is_placeholder:
-                    stamp_picker_props(listitem, vis_item)
+                stamp_picker_props(listitem, vis_item)
                 listitems.append(listitem)
 
             if custom_action:
@@ -858,8 +857,7 @@ class PickersMixin:
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 listitem = xbmcgui.ListItem(label)
                 listitem.setArt({"icon": overrides.get(icon, icon)})
-                if not is_placeholder:
-                    stamp_picker_props(listitem, vis_item)
+                stamp_picker_props(listitem, vis_item)
                 listitems.append(listitem)
 
             title = resolve_label(group.label)
