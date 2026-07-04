@@ -22,8 +22,11 @@ jobs:
           remove-stale-when-updated: true
           days-before-pr-stale: -1
           days-before-pr-close: -1
-          stale-issue-message: >
-            This issue is still missing the requested debug log and hasn't had a reply in a while.
-            It'll be closed in 7 days if nothing's added. Just reply with the log to keep it open.
-          close-issue-message: >
-            Closing since the requested debug log was never added. This isn't final, add the log and it can be reopened.
+          stale-issue-message: |
+            > **Automated reply** from the issue bot.
+
+            This issue is still missing the requested debug log and hasn't had a reply in a while. It'll be closed in 7 days if nothing's added. Just reply with the log to keep it open.
+          close-issue-message: |
+            > **Automated reply** from the issue bot.
+
+            Closing since no debug log was added. Add one any time and this can be reopened.

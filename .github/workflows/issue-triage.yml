@@ -46,11 +46,15 @@ jobs:
               await github.rest.issues.createComment({
                 owner, repo, issue_number: issue.number,
                 body: [
-                  "Thanks for the report. I can't find a debug log link in this issue.",
+                  "> **Automated reply** from the issue bot.",
+                  "",
+                  "Thanks for the report. There's no debug log link in this issue yet.",
                   "",
                   "Please enable debug logging, reproduce the problem, upload the full log to https://paste.kodi.tv and paste the link here (edit the issue or add a comment).",
                   "",
-                  "It's marked `needs-info` until then. If it stays that way with no response it'll be closed automatically after a couple of weeks. Just add the log to keep it open."
+                  "It's marked `needs-info` until then. If it stays that way with no response it'll be closed automatically after a couple of weeks. Just add the log to keep it open.",
+                  "",
+                  "_This was posted automatically. A maintainer may follow up separately._"
                 ].join("\n")
               });
             } else if (hasLog && hasNeedsInfo) {
@@ -59,6 +63,10 @@ jobs:
               }).catch(() => {});
               await github.rest.issues.createComment({
                 owner, repo, issue_number: issue.number,
-                body: "Got the log, thanks. Clearing `needs-info`."
+                body: [
+                  "> **Automated reply** from the issue bot.",
+                  "",
+                  "Log received, clearing `needs-info`. Thanks."
+                ].join("\n")
               });
             }
