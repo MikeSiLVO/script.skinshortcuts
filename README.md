@@ -2,7 +2,7 @@
 
 # Skin Shortcuts
 
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FMikeSiLVO%2Fscript.skinshortcuts%2Fbadge&logo=none)](https://actions-badge.atrox.dev/MikeSiLVO/script.skinshortcuts/goto)
+[![Type Check](https://github.com/MikeSiLVO/script.skinshortcuts/actions/workflows/pyright.yml/badge.svg)](https://github.com/MikeSiLVO/script.skinshortcuts/actions/workflows/pyright.yml)
 ![License](https://img.shields.io/badge/license-GPL--2.0--only-success.svg)
 ![Kodi Version](https://img.shields.io/badge/kodi-piers%2B-success.svg)
 
