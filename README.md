@@ -1,5 +1,3 @@
-<img src="https://raw.githubusercontent.com/MikeSiLVO/script.skinshortcuts/main/resources/media/icon.png" width="256" height="256" alt="Skin Shortcuts">
-
 # Skin Shortcuts
 
 [![Type Check](https://github.com/MikeSiLVO/script.skinshortcuts/actions/workflows/pyright.yml/badge.svg)](https://github.com/MikeSiLVO/script.skinshortcuts/actions/workflows/pyright.yml)
