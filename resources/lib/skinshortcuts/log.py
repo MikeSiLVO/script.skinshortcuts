@@ -70,10 +70,21 @@ def get_logger(component: str = "") -> Logger:
     return _loggers[component]
 
 
+_notified: set[tuple[str, str]] = set()
+
+
 def notify(heading: str, message: str) -> None:
-    """Fire a Kodi notification. No-op outside Kodi so loaders stay testable."""
+    """Fire a Kodi notification, once per identical heading+message this run.
+
+    Dedup stops per-item build errors toasting the same message dozens of times.
+    No-op outside Kodi so loaders stay testable.
+    """
     if not IN_KODI:
         return
+    key = (heading, message)
+    if key in _notified:
+        return
+    _notified.add(key)
     import xbmcgui
 
     xbmcgui.Dialog().notification(heading, message)

@@ -14,7 +14,7 @@ from ..conditions import evaluate_condition
 from ..constants import extract_path_from_action
 from ..expressions import process_if_expressions, process_math_expressions
 from ..loaders.base import NO_SUFFIX_PROPERTIES, apply_suffix_to_from, apply_suffix_transform
-from ..log import get_logger
+from ..log import get_logger, notify
 from ..models.template import BuildMode, TemplateProperty
 
 log = get_logger("TemplateBuilder")
@@ -158,6 +158,7 @@ class TemplateBuilder:
             menu = self._menu_map.get(submenu_tpl.name)
             if not menu:
                 log.debug(f"Named menu '{submenu_tpl.name}' not found for submenu template")
+                notify("Submenu Template Error", f"menu '{submenu_tpl.name}' not found")
                 return
             self._build_submenu_named(submenu_tpl, menu, include_elem)
         elif submenu_tpl.level > 0:
@@ -1506,6 +1507,7 @@ class TemplateBuilder:
             items_def = self.schema.get_items_template(insert_name)
             if not items_def:
                 log.debug(f"Items definition '{insert_name}' not found")
+                notify("Items Template Error", f"'{insert_name}' not defined")
                 elem.remove(child)
                 continue
 
