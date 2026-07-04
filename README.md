@@ -55,6 +55,7 @@ skin defaults          user customizations           generated includes
 |----------|-------------|
 | [Conditions](docs/skinning/conditions.md) | Condition syntax for properties and visibility |
 | [Built-in Properties](docs/skinning/builtin-properties.md) | Properties available on menu items |
+| [Troubleshooting](docs/skinning/troubleshooting.md) | Error notifications and getting a debug log |
 
 ## Quick Start
 
