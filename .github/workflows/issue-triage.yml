@@ -1,0 +1,51 @@
+name: Issue Triage
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  check-log:
+    if: github.repository == 'MikeSiLVO/script.skinshortcuts' && contains(github.event.issue.labels.*.name, 'bug')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            const hasNeedsInfo = issue.labels.some(l => l.name === 'needs-info');
+
+            const logRe = /https?:\/\/\S*(paste\.kodi\.tv|xbmclogs\.com|pastebin\.com|gist\.github\.com|hastebin|termbin\.com|0bin)\S*/i;
+            const hasLog = logRe.test(body);
+
+            if (!hasLog && !hasNeedsInfo) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, labels: ['needs-info']
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number,
+                body: [
+                  "Thanks for the report. I can't find a debug log link in this issue.",
+                  "",
+                  "Please enable debug logging, reproduce the problem, upload the full log to https://paste.kodi.tv and paste the link here (edit the issue or add a comment).",
+                  "",
+                  "It's marked `needs-info` until then. If it stays that way with no response it'll be closed automatically after a couple of weeks. Just add the log to keep it open."
+                ].join("\n")
+              });
+            } else if (hasLog && hasNeedsInfo) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, name: 'needs-info'
+              }).catch(() => {});
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number,
+                body: "Got the log, thanks. Clearing `needs-info`."
+              });
+            }

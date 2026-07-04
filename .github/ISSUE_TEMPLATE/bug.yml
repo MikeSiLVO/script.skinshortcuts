@@ -1,0 +1,63 @@
+name: Bug report
+description: Something in Skin Shortcuts is broken or misbehaving
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: enable debug logging, reproduce the problem, then upload the full log to https://paste.kodi.tv and paste the link below. Reports without a debug log usually can't be diagnosed.
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: I searched existing issues and this isn't a duplicate
+          required: true
+        - label: I captured a full Kodi debug log with the problem reproduced
+          required: true
+  - type: input
+    id: kodi-version
+    attributes:
+      label: Kodi version
+      placeholder: e.g. 22.0 (Piers)
+    validations:
+      required: true
+  - type: input
+    id: addon-version
+    attributes:
+      label: Skin Shortcuts version
+      placeholder: e.g. 3.0.2
+    validations:
+      required: true
+  - type: input
+    id: skin
+    attributes:
+      label: Skin and version
+      placeholder: e.g. skin.example 1.2.3
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What went wrong, and what you expected to happen instead
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: input
+    id: log
+    attributes:
+      label: Debug log link
+      description: Upload the full debug log to https://paste.kodi.tv and paste the URL here. Don't paste the log inline.
+      placeholder: https://paste.kodi.tv/...
+    validations:
+      required: true
