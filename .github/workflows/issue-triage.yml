@@ -3,33 +3,48 @@ name: Issue Triage
 on:
   issues:
     types: [opened, edited]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to run the log check against'
+        required: true
+        type: string
 
 permissions:
   issues: write
 
 jobs:
   check-log:
-    if: github.repository == 'MikeSiLVO/script.skinshortcuts' && contains(github.event.issue.labels.*.name, 'bug')
+    if: github.repository == 'MikeSiLVO/script.skinshortcuts' && (github.event_name == 'workflow_dispatch' || contains(github.event.issue.labels.*.name, 'bug'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v9
         with:
           script: |
-            const issue = context.payload.issue;
-            const body = issue.body || '';
-            const hasNeedsInfo = issue.labels.some(l => l.name === 'needs-info');
+            const owner = context.repo.owner, repo = context.repo.repo;
+
+            let issue = context.payload.issue;
+            if (!issue) {
+              const num = Number(context.payload.inputs.issue_number);
+              issue = (await github.rest.issues.get({ owner, repo, issue_number: num })).data;
+            }
+
+            const labels = (issue.labels || []).map(l => typeof l === 'string' ? l : l.name);
+            if (!labels.includes('bug')) {
+              console.log('No bug label, skipping');
+              return;
+            }
+            const hasNeedsInfo = labels.includes('needs-info');
 
             const logRe = /https?:\/\/\S*(paste\.kodi\.tv|xbmclogs\.com|pastebin\.com|gist\.github\.com|hastebin|termbin\.com|0bin)\S*/i;
-            const hasLog = logRe.test(body);
+            const hasLog = logRe.test(issue.body || '');
 
             if (!hasLog && !hasNeedsInfo) {
               await github.rest.issues.addLabels({
-                owner: context.repo.owner, repo: context.repo.repo,
-                issue_number: issue.number, labels: ['needs-info']
+                owner, repo, issue_number: issue.number, labels: ['needs-info']
               });
               await github.rest.issues.createComment({
-                owner: context.repo.owner, repo: context.repo.repo,
-                issue_number: issue.number,
+                owner, repo, issue_number: issue.number,
                 body: [
                   "Thanks for the report. I can't find a debug log link in this issue.",
                   "",
@@ -40,12 +55,10 @@ jobs:
               });
             } else if (hasLog && hasNeedsInfo) {
               await github.rest.issues.removeLabel({
-                owner: context.repo.owner, repo: context.repo.repo,
-                issue_number: issue.number, name: 'needs-info'
+                owner, repo, issue_number: issue.number, name: 'needs-info'
               }).catch(() => {});
               await github.rest.issues.createComment({
-                owner: context.repo.owner, repo: context.repo.repo,
-                issue_number: issue.number,
+                owner, repo, issue_number: issue.number,
                 body: "Got the log, thanks. Clearing `needs-info`."
               });
             }
