@@ -450,7 +450,7 @@ A top-level widget menu managed independently of any other menu:
 Open it directly:
 
 ```xml
-<onclick>RunScript(script.skinshortcuts,type=manage&amp;menu=globalwidgets)</onclick>
+<onclick>RunScript(script.skinshortcuts,type=manage,menu=globalwidgets)</onclick>
 ```
 
 The generated include `skinshortcuts-globalwidgets` contains each item with its widget properties.
@@ -573,7 +573,7 @@ The widget picker can be used outside the management dialog to store a selected 
 ### RunScript Call
 
 ```xml
-<onclick>RunScript(script.skinshortcuts,type=skinstring&amp;skinPath=MyWidgetPath&amp;skinLabel=MyWidgetLabel&amp;skinType=MyWidgetType&amp;skinTarget=MyWidgetTarget)</onclick>
+<onclick>RunScript(script.skinshortcuts,type=skinstring,skinPath=MyWidgetPath,skinLabel=MyWidgetLabel,skinType=MyWidgetType,skinTarget=MyWidgetTarget)</onclick>
 ```
 
 This opens the same widget picker used by the management dialog, driven by the skin's `widgets.xml`.
@@ -603,7 +603,7 @@ The "None" option is always shown at the top of the picker.
 <!-- Button to pick a widget -->
 <control type="button">
   <label>Choose Widget</label>
-  <onclick>RunScript(script.skinshortcuts,type=skinstring&amp;skinPath=HubWidget1.Path&amp;skinLabel=HubWidget1.Label&amp;skinType=HubWidget1.Type&amp;skinTarget=HubWidget1.Target)</onclick>
+  <onclick>RunScript(script.skinshortcuts,type=skinstring,skinPath=HubWidget1.Path,skinLabel=HubWidget1.Label,skinType=HubWidget1.Type,skinTarget=HubWidget1.Target)</onclick>
 </control>
 
 <!-- Display the selected widget -->

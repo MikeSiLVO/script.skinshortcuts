@@ -76,7 +76,7 @@ skin.name/
 ### 3. Open the Management Dialog
 
 ```xml
-<onclick>RunScript(script.skinshortcuts,type=manage&amp;menu=mainmenu)</onclick>
+<onclick>RunScript(script.skinshortcuts,type=manage,menu=mainmenu)</onclick>
 ```
 
 ### 4. Display the Menu

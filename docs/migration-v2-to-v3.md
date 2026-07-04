@@ -727,13 +727,13 @@ v2's `type=widgets` (with `showNone`, `skinWidget*` params) is replaced by `type
 **v2:**
 
 ```xml
-<onclick>RunScript(script.skinshortcuts,type=widgets&amp;showNone=true&amp;skinWidgetName=MyLabel&amp;skinWidgetPath=MyPath&amp;skinWidgetType=MyType&amp;skinWidgetTarget=MyTarget)</onclick>
+<onclick>RunScript(script.skinshortcuts,type=widgets,showNone=true,skinWidgetName=MyLabel,skinWidgetPath=MyPath,skinWidgetType=MyType,skinWidgetTarget=MyTarget)</onclick>
 ```
 
 **v3:**
 
 ```xml
-<onclick>RunScript(script.skinshortcuts,type=skinstring&amp;skinLabel=MyLabel&amp;skinPath=MyPath&amp;skinType=MyType&amp;skinTarget=MyTarget)</onclick>
+<onclick>RunScript(script.skinshortcuts,type=skinstring,skinLabel=MyLabel,skinPath=MyPath,skinType=MyType,skinTarget=MyTarget)</onclick>
 ```
 
 | v2 Parameter | v3 Parameter |

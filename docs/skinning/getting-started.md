@@ -159,7 +159,7 @@ The script automatically builds includes when the management dialog closes with 
 To use the widget picker outside the menu property system (e.g., for standalone windows that store widget paths in skin strings):
 
 ```xml
-<onclick>RunScript(script.skinshortcuts,type=skinstring&amp;skinPath=MyWidget&amp;skinLabel=MyWidget.Label&amp;skinType=MyWidget.Type&amp;skinTarget=MyWidget.Target)</onclick>
+<onclick>RunScript(script.skinshortcuts,type=skinstring,skinPath=MyWidget,skinLabel=MyWidget.Label,skinType=MyWidget.Type,skinTarget=MyWidget.Target)</onclick>
 ```
 
 This opens the same widget picker used by the management dialog, but stores results directly in Kodi skin strings.
