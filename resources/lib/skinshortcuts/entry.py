@@ -414,7 +414,7 @@ def reset_menus(shortcuts_path: str | None = None) -> bool:
 
 def main() -> None:
     """Main entry point for RunScript."""
-    log.info("Skin Shortcuts started")
+    log.debug("Skin Shortcuts started")
 
     args: dict[str, str] = {}
     prop_names: list[str] = []
