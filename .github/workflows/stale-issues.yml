@@ -13,7 +13,7 @@ jobs:
     if: github.repository == 'MikeSiLVO/script.skinshortcuts'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v9
+      - uses: actions/stale@v10
         with:
           only-labels: needs-info
           days-before-stale: 14
