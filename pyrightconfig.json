@@ -1,5 +1,5 @@
 {
-  "include": ["resources/lib"],
+  "include": ["resources/lib", "default.py"],
   "exclude": [
     "**/__pycache__",
     "**/.pytest_cache",
@@ -22,7 +22,6 @@
   "reportOptionalMemberAccess": "warning",
   "reportOptionalSubscript": "warning",
   "reportPrivateImportUsage": "none",
-  "stubPath": "typings",
   "venvPath": ".",
   "venv": ".venv"
 }
