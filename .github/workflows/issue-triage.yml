@@ -12,79 +12,12 @@ on:
         required: true
         type: string
 
-permissions:
-  issues: write
-
 jobs:
-  check-log:
-    if: >-
-      github.repository == 'MikeSiLVO/script.skinshortcuts'
-      && (github.event_name == 'workflow_dispatch' || contains(github.event.issue.labels.*.name, 'bug'))
-      && (github.event_name != 'issue_comment' || github.event.comment.user.type != 'Bot')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/github-script@v9
-        with:
-          script: |
-            const owner = context.repo.owner, repo = context.repo.repo;
-
-            let issue = context.payload.issue;
-            if (!issue) {
-              const num = Number(context.payload.inputs.issue_number);
-              issue = (await github.rest.issues.get({ owner, repo, issue_number: num })).data;
-            }
-            if (issue.pull_request) {
-              console.log('Pull request, skipping');
-              return;
-            }
-
-            const labels = (issue.labels || []).map(l => typeof l === 'string' ? l : l.name);
-            if (!labels.includes('bug')) {
-              console.log('No bug label, skipping');
-              return;
-            }
-            const hasNeedsInfo = labels.includes('needs-info');
-
-            const logRe = /https?:\/\/\S*(paste\.kodi\.tv|xbmclogs\.com|pastebin\.com|gist\.github\.com|hastebin|termbin\.com|0bin)\S*/i;
-
-            // Scan the issue body plus human comments. Skip our own bot comments -
-            // the nudge text mentions paste.kodi.tv and would falsely count as a log.
-            let hasLog = logRe.test(issue.body || '');
-            if (!hasLog) {
-              const comments = await github.paginate(github.rest.issues.listComments, {
-                owner, repo, issue_number: issue.number, per_page: 100,
-              });
-              hasLog = comments.some(c => c.user?.type !== 'Bot' && logRe.test(c.body || ''));
-            }
-
-            if (!hasLog && !hasNeedsInfo) {
-              await github.rest.issues.addLabels({
-                owner, repo, issue_number: issue.number, labels: ['needs-info']
-              });
-              await github.rest.issues.createComment({
-                owner, repo, issue_number: issue.number,
-                body: [
-                  "> **Automated reply** from the issue bot.",
-                  "",
-                  "Thanks for the report. There's no debug log link in this issue yet.",
-                  "",
-                  "Please enable debug logging, reproduce the problem, upload the full log to https://paste.kodi.tv and paste the link here (edit the issue or add a comment).",
-                  "",
-                  "It's marked `needs-info` until then. If it stays that way with no response it'll be closed automatically after a couple of weeks. Just add the log to keep it open.",
-                  "",
-                  "_This was posted automatically. A maintainer may follow up separately._"
-                ].join("\n")
-              });
-            } else if (hasLog && hasNeedsInfo) {
-              await github.rest.issues.removeLabel({
-                owner, repo, issue_number: issue.number, name: 'needs-info'
-              }).catch(() => {});
-              await github.rest.issues.createComment({
-                owner, repo, issue_number: issue.number,
-                body: [
-                  "> **Automated reply** from the issue bot.",
-                  "",
-                  "Log received, clearing `needs-info`. Thanks."
-                ].join("\n")
-              });
-            }
+  triage:
+    if: github.repository == 'MikeSiLVO/script.skinshortcuts'
+    permissions:
+      issues: write
+    uses: MikeSiLVO/workflows/.github/workflows/issue-triage.yml@v1
+    with:
+      issue_number: ${{ github.event.inputs.issue_number }}
+    secrets: inherit

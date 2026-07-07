@@ -1,0 +1,9 @@
+# Ruff configuration for script.skinshortcuts
+
+extend-exclude = ["typings"]
+
+[lint]
+
+ignore = [
+    "E402",  # Module level import not at top - needed for Kodi addon initialization order
+]

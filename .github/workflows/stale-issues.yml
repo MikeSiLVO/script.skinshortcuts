@@ -5,28 +5,10 @@ on:
     - cron: '30 1 * * *'
   workflow_dispatch:
 
-permissions:
-  issues: write
-
 jobs:
   stale:
     if: github.repository == 'MikeSiLVO/script.skinshortcuts'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/stale@v9
-        with:
-          only-labels: needs-info
-          days-before-stale: 14
-          days-before-close: 7
-          stale-issue-label: stale
-          remove-stale-when-updated: true
-          days-before-pr-stale: -1
-          days-before-pr-close: -1
-          stale-issue-message: |
-            > **Automated reply** from the issue bot.
-
-            This issue is still missing the requested debug log and hasn't had a reply in a while. It'll be closed in 7 days if nothing's added. Just reply with the log to keep it open.
-          close-issue-message: |
-            > **Automated reply** from the issue bot.
-
-            Closing since no debug log was added. Add one any time and this can be reopened.
+    permissions:
+      issues: write
+    uses: MikeSiLVO/workflows/.github/workflows/stale-issues.yml@v1
+    secrets: inherit

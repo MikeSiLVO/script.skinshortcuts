@@ -1,0 +1,14 @@
+name: Code checks
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**/*.po']
+  pull_request:
+    branches: [main]
+    paths-ignore: ['**/*.po']
+
+jobs:
+  checks:
+    if: github.repository == 'MikeSiLVO/script.skinshortcuts'
+    uses: MikeSiLVO/workflows/.github/workflows/checks.yml@v1

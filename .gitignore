@@ -77,5 +77,4 @@ $RECYCLE.BIN/
 
 # Project-specific
 .claude/
-ruff.toml
 resources/test_config/

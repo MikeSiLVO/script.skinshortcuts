@@ -1,0 +1,16 @@
+name: Kodi addon-checker
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**/*.po']
+  pull_request:
+    branches: [main]
+    paths-ignore: ['**/*.po']
+
+jobs:
+  addon-checker:
+    if: github.repository == 'MikeSiLVO/script.skinshortcuts'
+    uses: MikeSiLVO/workflows/.github/workflows/addon-checker.yml@v1
+    with:
+      kodi_branch: piers
