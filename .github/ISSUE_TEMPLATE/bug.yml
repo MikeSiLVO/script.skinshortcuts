@@ -1,5 +1,5 @@
 name: Bug report
-description: Something in Skin Shortcuts is broken or misbehaving
+description: "Something in Skin Shortcuts is broken or misbehaving"
 labels: ["bug"]
 body:
   - type: markdown
@@ -25,7 +25,7 @@ body:
   - type: input
     id: addon-version
     attributes:
-      label: Skin Shortcuts version
+      label: "Skin Shortcuts version"
       placeholder: e.g. 3.0.2
     validations:
       required: true
@@ -47,6 +47,7 @@ body:
     id: repro
     attributes:
       label: Steps to reproduce
+      description: If it's a skinning issue, include the full plugin:// path and the specific ListItem property or $INFO[] value that isn't working.
       placeholder: |
         1.
         2.
