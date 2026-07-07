@@ -78,3 +78,6 @@ $RECYCLE.BIN/
 # Project-specific
 .claude/
 resources/test_config/
+
+# Type stubs come from kodistubs; no local override
+typings/

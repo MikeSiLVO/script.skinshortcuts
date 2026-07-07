@@ -146,6 +146,10 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         suffixed = self._suffixed_name(name)
         return item.properties.get(suffixed, "")
 
+    def _list(self, control_id: int) -> xbmcgui.ControlList:
+        """getControl typed as ControlList; Kodi's getControl returns base Control."""
+        return self.getControl(control_id)  # type: ignore[return-value]
+
     def onInit(self):  # noqa: N802
         """Called when dialog is initialized.
 
@@ -257,7 +261,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         to read properties without conflicting with the parent dialog's Container 211.
         """
         try:
-            subdialog_list = self.getControl(CONTROL_SUBDIALOG_LIST)
+            subdialog_list = self._list(CONTROL_SUBDIALOG_LIST)
         except RuntimeError:
             self._log("Container 212 not found in skin - subdialog list not populated")
             return
@@ -279,7 +283,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def _clear_subdialog_list(self) -> None:
         """Clear Container 212 after subdialog closes."""
         try:
-            subdialog_list = self.getControl(CONTROL_SUBDIALOG_LIST)
+            subdialog_list = self._list(CONTROL_SUBDIALOG_LIST)
             subdialog_list.reset()
         except RuntimeError:
             pass
@@ -291,7 +295,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         For property changes, use _refresh_selected_item() instead.
         """
         try:
-            list_control = self.getControl(CONTROL_LIST)
+            list_control = self._list(CONTROL_LIST)
         except RuntimeError:
             return
 
@@ -426,7 +430,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def _get_selected_listitem(self) -> xbmcgui.ListItem | None:
         """Get the currently selected ListItem from the control."""
         try:
-            list_control = self.getControl(CONTROL_LIST)
+            list_control = self._list(CONTROL_LIST)
             return list_control.getSelectedItem()
         except RuntimeError:
             return None
@@ -450,7 +454,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def _get_selected_index(self) -> int:
         """Get the currently selected list index."""
         try:
-            list_control = self.getControl(CONTROL_LIST)
+            list_control = self._list(CONTROL_LIST)
             return list_control.getSelectedPosition()
         except RuntimeError:
             return -1

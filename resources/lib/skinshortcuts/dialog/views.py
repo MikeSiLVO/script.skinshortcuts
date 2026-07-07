@@ -126,7 +126,7 @@ def _browse_main_menu(config: ViewConfig, userdata: UserData) -> bool:
         items.append(reset_plugins)
 
         selected = xbmcgui.Dialog().select(
-            LANGUAGE(32185), items, useDetails=True
+            LANGUAGE(32185), items, useDetails=True  # type: ignore[arg-type]
         )
 
         if selected == -1:

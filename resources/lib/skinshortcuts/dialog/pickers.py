@@ -281,7 +281,7 @@ class PickersMixin:
     def _choose_playlist_action(self, shortcut: Shortcut) -> str | None:
         """Show dialog asking what to do with a playlist shortcut."""
         if shortcut.action_party:
-            result = xbmcgui.Dialog().yesnocustom(  # type: ignore[attr-defined]
+            result = xbmcgui.Dialog().yesnocustom(
                 LANGUAGE(32040),
                 LANGUAGE(32060),
                 customlabel=xbmc.getLocalizedString(589),
