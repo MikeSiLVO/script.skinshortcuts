@@ -1,6 +1,6 @@
 # Skin Shortcuts
 
-[![Type Check](https://github.com/MikeSiLVO/script.skinshortcuts/actions/workflows/pyright.yml/badge.svg)](https://github.com/MikeSiLVO/script.skinshortcuts/actions/workflows/pyright.yml)
+[![Code checks](https://github.com/MikeSiLVO/script.skinshortcuts/actions/workflows/checks.yml/badge.svg)](https://github.com/MikeSiLVO/script.skinshortcuts/actions/workflows/checks.yml)
 ![License](https://img.shields.io/badge/license-GPL--2.0--only-success.svg)
 ![Kodi Version](https://img.shields.io/badge/kodi-piers%2B-success.svg)
 
