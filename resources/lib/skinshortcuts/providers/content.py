@@ -7,7 +7,6 @@ Kodi's JSON-RPC API and filesystem.
 from __future__ import annotations
 
 import json
-import urllib.parse
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -16,6 +15,7 @@ import xbmcvfs
 
 from ..log import get_logger
 from ..playlists import unpack_multipath
+from .browse import normalize_image
 
 if TYPE_CHECKING:
     from ..models.menu import Content
@@ -702,7 +702,7 @@ class ContentProvider:
             label = entry.get("label") or entry.get("title") or ""
             if not label or not path:
                 continue
-            icon = self._normalize_image(entry.get("art", {}).get("icon", ""))
+            icon = normalize_image(entry.get("art", {}).get("icon", ""))
             thumb = entry.get("thumbnail", "")
             shortcuts.append(
                 ResolvedShortcut(
@@ -714,20 +714,6 @@ class ContentProvider:
                 )
             )
         return shortcuts
-
-    @staticmethod
-    def _normalize_image(path: str) -> str:
-        """Unwrap Kodi's image:// form to a path setArt can render.
-
-        Built-in textures (DefaultX.png) and external URLs both come wrapped;
-        the inner content is URL-encoded. setArt expects the decoded form.
-        """
-        if not path.startswith("image://"):
-            return path
-        inner = path[len("image://"):]
-        if inner.endswith("/"):
-            inner = inner[:-1]
-        return urllib.parse.unquote(inner)
 
     def _get_video_genres(self, media_type: str) -> list[ResolvedShortcut]:
         """Get video genres (movies or TV shows)."""

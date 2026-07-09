@@ -377,10 +377,10 @@ class PickersMixin:
             default_group_icon="DefaultFolder.png",
             show_none=False,
             content_resolver=self._resolve_content_to_shortcuts,
-            create_folder_group=lambda label, items: ShortcutGroup(
+            create_folder_group=lambda label, items, icon: ShortcutGroup(
                 name=f"folder-{label}",
                 label=label,
-                icon="DefaultFolder.png",
+                icon=icon or "DefaultFolder.png",
                 items=items,
             ),
         )
@@ -392,17 +392,10 @@ class PickersMixin:
         item_props: dict[str, str],
         slot: str = "",
     ) -> Widget | None | Literal[False]:
-        """Show widget picker dialog with back navigation.
+        """Widget picker with back navigation over widgets, groups, and content.
 
-        Handles standalone widgets, groups, and dynamic content at the top level.
-
-        Args:
-            items: Widget groups, widgets, and/or content references to pick from
-            item_props: Current item properties for condition evaluation
-            slot: Current widget slot being edited (e.g., "widget", "widget.2")
-
-        Returns:
-            Widget if selected, None if cancelled completely, False if "None" chosen.
+        Returns the chosen Widget, None if cancelled, False if "None" picked.
+        slot is the widget slot being edited (e.g. "widget", "widget.2").
         """
         current_widget = item_props.get(slot, "")
         items = self._filter_widgets_by_slot(items, slot)
@@ -418,9 +411,10 @@ class PickersMixin:
             show_none=True,
             current_value=current_widget,
             content_resolver=self._resolve_content_to_widgets,
-            create_folder_group=lambda label, grp_items: WidgetGroup(
+            create_folder_group=lambda label, grp_items, icon: WidgetGroup(
                 name=f"folder-{label}",
                 label=label,
+                icon=icon or "DefaultFolder.png",
                 items=grp_items,
             ),
         )
@@ -652,32 +646,19 @@ class PickersMixin:
         show_none: bool = False,
         current_value: str = "",
         content_resolver: Callable[[Content], list] | None = None,
-        create_folder_group: Callable[[str, list], Any] | None = None,
+        create_folder_group: Callable[[str, list, str], Any] | None = None,
         custom_action: tuple[str, str, Callable[[], Any | None]] | None = None,
     ) -> Any | None | Literal[False]:
         """Generic hierarchical picker with back navigation.
 
-        Works with any types that have: name, label, icon, condition, visible.
-        Groups additionally have an items list.
+        Works with any items exposing name, label, icon, condition, visible;
+        groups also carry an items list. Returns the chosen leaf, None if
+        cancelled, False if "None" picked.
 
-        Args:
-            items: List of items/groups to pick from
-            item_props: Current item properties for condition evaluation
-            title: Dialog title
-            leaf_types: Tuple of types considered leaf items (selectable)
-            group_types: Tuple of types considered groups (navigable)
-            default_leaf_icon: Default icon for leaf items
-            default_group_icon: Default icon for groups
-            show_none: Whether to show "None" option at top level
-            current_value: Current item name for preselect
-            content_resolver: Optional function to resolve Content to list of items
-            create_folder_group: Optional function to create folder group from (label, items)
-            custom_action: Optional tuple of (label, icon, callback) for a custom action
-                shown at the bottom of the list. The callback should return an item if
-                successful, or None to return to the picker.
-
-        Returns:
-            Selected leaf item, None if cancelled, False if "None" chosen.
+        content_resolver expands a Content into items; create_folder_group wraps
+        resolved items in a folder as (label, items, icon); custom_action is a
+        (label, icon, callback) row at the list bottom, callback returning an
+        item or None.
         """
         visible_items = self._filter_picker_items(
             items, item_props, leaf_types, group_types, content_resolver, create_folder_group
@@ -818,7 +799,7 @@ class PickersMixin:
         default_leaf_icon: str,
         default_group_icon: str,
         content_resolver: Callable[[Content], list] | None = None,
-        create_folder_group: Callable[[str, list], Any] | None = None,
+        create_folder_group: Callable[[str, list, str], Any] | None = None,
     ) -> Any | None:
         """Pick from items within a group with back navigation."""
         visible_items = self._filter_picker_items(
@@ -926,13 +907,13 @@ class PickersMixin:
         leaf_types: tuple,
         group_types: tuple,
         content_resolver: Callable[[Content], list] | None = None,
-        create_folder_group: Callable[[str, list], Any] | None = None,
+        create_folder_group: Callable[[str, list, str], Any] | None = None,
         parent_label: str = "",
     ) -> list:
-        """Filter and resolve picker items based on conditions and visibility.
+        """Filter and resolve picker items by condition and visibility.
 
-        parent_label is the label of the group currently being browsed; it names
-        an addons content placeholder when the content element carries no label.
+        parent_label names an addons content placeholder when the content
+        element carries no label of its own.
         """
         visible_items = []
 
@@ -947,15 +928,20 @@ class PickersMixin:
                     placeholder = _browse_placeholder_for_content(
                         item, as_widget=Widget in leaf_types, parent_label=parent_label
                     )
-                    if placeholder:
-                        overrides = self._icon_overrides()
-                        placeholder.icon = overrides.get(placeholder.icon, placeholder.icon)
-                        visible_items.append(placeholder)
+                    overrides = self._icon_overrides()
                     if item.folder and resolved and create_folder_group:
-                        folder = create_folder_group(item.folder, resolved)
-                        visible_items.append(folder)
-                    elif resolved:
-                        visible_items.extend(resolved)
+                        # Wrap in one folder like a <group>: item.icon on the
+                        # folder, placeholder as its first child.
+                        if placeholder:
+                            placeholder.icon = overrides.get("DefaultFolder.png", "DefaultFolder.png")
+                            resolved = [placeholder, *resolved]
+                        visible_items.append(create_folder_group(item.folder, resolved, item.icon))
+                    else:
+                        if placeholder:
+                            placeholder.icon = overrides.get(placeholder.icon, placeholder.icon)
+                            visible_items.append(placeholder)
+                        if resolved:
+                            visible_items.extend(resolved)
             elif isinstance(item, (Input, *leaf_types, *group_types)):
                 if not _check_visible(getattr(item, "visible", "")):
                     continue
@@ -1030,18 +1016,10 @@ class PickersMixin:
         path: str,
         title: str = "",
     ) -> tuple[str, str, str] | None:
-        """Browse into a path and let user select location or navigate deeper.
+        """Browse a path, navigating into folders, returning the picked location.
 
-        Shows directory contents with "Use this location" at top.
-        Selecting a directory navigates into it.
-        Selecting "Use this location" or a file returns path info.
-
-        Args:
-            path: Starting path to browse
-            title: Dialog title (defaults to path basename)
-
-        Returns:
-            Tuple of (path, label, icon) for selected location, or None if cancelled
+        A "Use this location" row sits at the top; picking it or a file returns
+        (path, label, icon), None if cancelled.
         """
         browse_provider = get_browse_provider()
         browse_provider.set_icon_overrides(self._icon_overrides())

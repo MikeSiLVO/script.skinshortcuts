@@ -7,6 +7,7 @@ browsable (directory) vs selectable (file) items.
 from __future__ import annotations
 
 import json
+import urllib.parse
 from dataclasses import dataclass
 
 import xbmc
@@ -14,6 +15,22 @@ import xbmc
 from ..log import get_logger
 
 log = get_logger("BrowseProvider")
+
+
+def normalize_image(path: str) -> str:
+    """Unwrap Kodi's image:// wrapper to the plain path inside.
+
+    Embedded-media art (image://music@.../, video@...) stays wrapped: the
+    <type>@ is a texture handler, and unwrapping it yields a dead path.
+    """
+    if not path.startswith("image://"):
+        return path
+    inner = path[len("image://"):]
+    if inner.endswith("/"):
+        inner = inner[:-1]
+    if "@" in inner:
+        return path
+    return urllib.parse.unquote(inner)
 
 
 @dataclass
@@ -40,18 +57,10 @@ class BrowseProvider:
     def list_directory(
         self, path: str, include_art: bool = False
     ) -> list[BrowseItem] | None:
-        """List contents of a directory.
+        """List a directory's items, or None if the path isn't listable.
 
-        Args:
-            path: The path to list (plugin://, videodb://, library://, etc.)
-            include_art: Ask Kodi for per-item `art` so BrowseItem.icon reflects
-                each item's specific icon (e.g., DefaultMusicGenres.png). Leave
-                False for large lists or plain-text display; fetching art for
-                tens of thousands of library items is prohibitively slow.
-
-        Returns:
-            List of BrowseItem objects, empty list for empty directories,
-            or None if path is not listable (error).
+        include_art fetches per-item art for type-aware icons; skip it on big
+        listings, art on tens of thousands of items is too slow.
         """
         properties = ["file", "mimetype"]
         if include_art:
@@ -85,17 +94,19 @@ class BrowseProvider:
             icon = ""
             if include_art:
                 art = file_info.get("art", {})
-                # Prefer per-item imagery. Skip art.icon - it's always the
-                # generic Kodi default; our fallback provides a type-aware one.
+                # Skip art.icon - always the generic Kodi default; the fallback
+                # below gives a type-aware one.
                 icon = (
                     art.get("poster", "")
                     or art.get("thumb", "")
                     or file_info.get("thumbnail", "")
                 )
+                icon = normalize_image(icon)
             if not icon:
                 icon = self._get_icon_for_item(file_info, filetype)
-                if self._icon_overrides:
-                    icon = self._icon_overrides.get(icon, icon)
+            # Overrides key on bare DefaultX.png names; real art paths match none.
+            if icon and self._icon_overrides:
+                icon = self._icon_overrides.get(icon, icon)
 
             items.append(
                 BrowseItem(
@@ -122,7 +133,7 @@ class BrowseProvider:
     }
 
     def _get_icon_for_item(self, file_info: dict, filetype: str) -> str:
-        """Determine appropriate icon for an item."""
+        """Fallback icon by media type, then filetype, then mimetype."""
         item_type = file_info.get("type", "")
         if item_type in self._TYPE_DEFAULTS:
             return self._TYPE_DEFAULTS[item_type]
