@@ -42,6 +42,8 @@ Menu items in the generated includes have properties accessible via `ListItem.Pr
 | `visible` | `<visible>` | Visibility condition (output to includes) |
 | `id` | Item position | 1-based position of the item within its menu. Emitted as a `<property name="id">` only for standard `<item>` menus (not control-type menus). The element's `id` attribute is set separately on every item to the same position value (or offset from the menu's `id` attribute for control-type menus). |
 
+Setting a `<property>` on an item using one of these names replaces the built-in value rather than adding a second entry. This also covers `submenuVisibility` and `hasSubmenu`.
+
 ### Usage
 
 ```xml

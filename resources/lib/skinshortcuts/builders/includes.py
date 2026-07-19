@@ -306,22 +306,27 @@ class IncludesBuilder:
             ET.SubElement(elem, "visible").text = item.visible
 
         if not menu.controltype:
-            self._add_property(elem, "id", str(idx))
-            self._add_property(elem, "name", item.name)
-            self._add_property(elem, "menu", menu.template_origin or menu.name)
-            self._add_property(elem, "action", item.action)
-            path = extract_path_from_action(item.action) if item.action else ""
-            self._add_property(elem, "path", path)
-
-            self._add_property(elem, "submenuVisibility", item.name)
+            builtins = {
+                "id": str(idx),
+                "name": item.name,
+                "menu": menu.template_origin or menu.name,
+                "action": item.action,
+                "path": extract_path_from_action(item.action) if item.action else "",
+                "submenuVisibility": item.name,
+            }
 
             submenu_key = f"{menu.name}/{item.name}"
             submenu = self._menu_map.get(submenu_key)
             if submenu and submenu.items:
-                self._add_property(elem, "hasSubmenu", "True")
+                builtins["hasSubmenu"] = "True"
 
             all_properties = {**menu.defaults.properties, **item.properties}
             all_properties.update(self._submenu_paths_for_item(item, menu))
+
+            # a skin value of the same name replaces the default, in the default's slot
+            for key, value in builtins.items():
+                self._add_property(elem, key, all_properties.pop(key, value))
+
             for key, value in all_properties.items():
                 if self._is_template_only(key):
                     continue
