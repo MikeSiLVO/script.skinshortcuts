@@ -15,11 +15,23 @@ except ImportError:
 
 from ..localize import LANGUAGE, resolve_label
 from ..models import Action, BrowseSource, IconSource, MenuItem
+from ..providers import normalize_image
 from .pickers import picker_select
 
 if TYPE_CHECKING:
     from ..manager import MenuManager
     from ..models import PropertySchema
+
+
+def _browse_path(browse_type: int, title: str, mask: str, start: str = "") -> str:
+    """Browse for a file, unwrapping the image:// form Kodi's image browser returns."""
+    if start:
+        result = xbmcgui.Dialog().browse(
+            browse_type, title, "files", mask, False, False, start
+        )
+    else:
+        result = xbmcgui.Dialog().browse(browse_type, title, "files", mask)
+    return normalize_image(result) if isinstance(result, str) else ""
 
 
 class ItemsMixin:
@@ -398,12 +410,9 @@ class ItemsMixin:
 
         if not visible_sources:
             if default_path:
-                result = xbmcgui.Dialog().browse(
-                    browse_type, title, "files", mask, False, False, default_path
-                )
-                return result if isinstance(result, str) and result != default_path else None
-            result = xbmcgui.Dialog().browse(browse_type, title, "files", mask)
-            return result if isinstance(result, str) else None
+                result = _browse_path(browse_type, title, mask, default_path)
+                return result if result and result != default_path else None
+            return _browse_path(browse_type, title, mask) or None
 
         while True:
             listitems = []
@@ -423,13 +432,11 @@ class ItemsMixin:
             path = source.path
 
             if path.lower() == "browse":
-                result = xbmcgui.Dialog().browse(browse_type, title, "files", mask)
+                result = _browse_path(browse_type, title, mask)
             else:
-                result = xbmcgui.Dialog().browse(
-                    browse_type, title, "files", mask, False, False, path
-                )
+                result = _browse_path(browse_type, title, mask, path)
 
-            if result and isinstance(result, str) and result != path:
+            if result and result != path:
                 return result
 
     def _show_context_menu(self) -> None:

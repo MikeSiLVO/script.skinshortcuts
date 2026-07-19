@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .browse import BrowseItem, BrowseProvider, get_browse_provider
+from .browse import BrowseItem, BrowseProvider, get_browse_provider, normalize_image
 from .content import (
     ContentProvider,
     ResolvedShortcut,
@@ -16,6 +16,7 @@ __all__ = [
     "ContentProvider",
     "ResolvedShortcut",
     "get_browse_provider",
+    "normalize_image",
     "resolve_content",
     "scan_playlist_files",
 ]
