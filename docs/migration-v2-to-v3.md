@@ -567,6 +567,47 @@ v3 adds: `custom` (user-defined item list), `sets` (movie sets)
 
 v3 introduces a new template system. If your v2 skin used custom templates, you must rewrite them.
 
+### Key Mappings
+
+| v2                                                          | v3                                                  |
+| ----------------------------------------------------------- | --------------------------------------------------- |
+| `<other include="x">`                                       | `<template include="x" menu="mainmenu">`            |
+| `<property name="x" tag="property" attribute="name\|y" />`  | `$PROPERTY[y]` (no declaration needed)              |
+| `$SKINSHORTCUTS[x]`                                         | `$PROPERTY[x]`                                      |
+| `$PYTHON[...]`                                              | `$MATH[...]`                                        |
+| One `<property>` row per menu position                      | `$PROPERTY[index]`                                  |
+
+### Other Templates
+
+A v2 `<other>` collected one block of output per menu item into a single named include. A v3 template does the same: every item that matches appends to `skinshortcuts-template-{include}`. Add `menu="..."` to restrict it to one menu, otherwise it runs against all of them.
+
+v2:
+
+```xml
+<other include="main-menu-onright">
+  <property name="main_menu_id" tag="property" attribute="name|id" value="$NUMBER[1]">1</property>
+  <property name="main_menu_id" tag="property" attribute="name|id" value="$NUMBER[2]">2</property>
+  <!-- one row per position -->
+  <property name="submenu_visibility" tag="property" attribute="name|submenuVisibility" />
+
+  <controls>
+    <onright condition="String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),$SKINSHORTCUTS[submenu_visibility])">$PYTHON[9000 + int(main_menu_id) * 100]</onright>
+  </controls>
+</other>
+```
+
+v3:
+
+```xml
+<template include="main-menu-onright" menu="mainmenu">
+  <controls>
+    <onright condition="String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),$PROPERTY[submenuVisibility])">$MATH[9000 + $PROPERTY[index] * 100]</onright>
+  </controls>
+</template>
+```
+
+Both produce one `<onright>` per menu item in a single include. The position rows are gone because `index` is built in, and `submenuVisibility` needs no declaration because it is a built-in item property.
+
 ### v3 Template Features
 
 #### Named Expressions
