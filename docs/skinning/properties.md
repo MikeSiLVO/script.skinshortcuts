@@ -189,6 +189,7 @@ Map control IDs to properties.
 | `showIcons` | No | `true` | Show icons in select dialog |
 | `type` | No | - | Override property type |
 | `requires` | No | - | Property that must be set |
+| `rename` | No | `false` | `true` to prompt for a label after picking (`type="widget"` only) |
 
 ### `<group>` Element
 

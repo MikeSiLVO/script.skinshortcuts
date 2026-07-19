@@ -129,6 +129,20 @@ if TYPE_CHECKING:
     from ..models import PropertySchema
 
 
+def _split_suffix(prop_name: str) -> tuple[str, str]:
+    """Split "widget.2" into ("widget", ".2"); an unsuffixed name gives ("widget", "")."""
+    if "." in prop_name:
+        base, suffix = prop_name.rsplit(".", 1)
+        return base, f".{suffix}"
+    return prop_name, ""
+
+
+def _label_property_name(prop_name: str) -> str:
+    """Label key for a widget slot: "widget.2" -> "widgetLabel.2"."""
+    base, suffix = _split_suffix(prop_name)
+    return f"{base}Label{suffix}"
+
+
 class PropertiesMixin:
     """Mixin providing property management - widget, background, toggle, options.
 
@@ -261,7 +275,9 @@ class PropertiesMixin:
         prop_type = button.type or (prop.type if prop else "")
 
         if prop_type == "widget":
-            self._handle_widget_property(prop, item, prop_name)
+            widget = self._handle_widget_property(prop, item, prop_name)
+            if widget is not None and button.rename:
+                self._prompt_widget_rename(item, prop_name, widget)
             return True
         if prop_type == "background":
             self._handle_background_property(prop, item, prop_name)
@@ -278,7 +294,7 @@ class PropertiesMixin:
 
         return self._handle_options_property(prop, item, button, prop_name)
 
-    def _handle_widget_property(self, prop, item: MenuItem, prop_name: str) -> None:
+    def _handle_widget_property(self, prop, item: MenuItem, prop_name: str) -> Widget | None:
         """Handle a widget-type property.
 
         Shows widget picker and auto-populates related properties:
@@ -292,13 +308,16 @@ class PropertiesMixin:
             prop: The property schema
             item: The menu item
             prop_name: Effective property name (may include suffix like "widget.2")
+
+        Returns:
+            The assigned Widget, or None if cancelled, cleared, or not permitted.
         """
         if self.manager is None:
-            return
+            return None
         menu = self.manager.config.get_menu(self.menu_id)
         if menu and not menu.allow.widgets:
             xbmcgui.Dialog().notification(LANGUAGE(32143), LANGUAGE(32144))
-            return
+            return None
 
         prefix = prop_name
         slot = prefix
@@ -316,11 +335,11 @@ class PropertiesMixin:
             widgets = self.manager.get_widgets()
             if not widgets:
                 xbmcgui.Dialog().notification(LANGUAGE(32147), LANGUAGE(32148))
-                return
+                return None
             result = self._pick_widget_flat(widgets, item_props, slot)
 
         if result is None:
-            return
+            return None
 
         if result is False:
             self._clear_widget_properties(item, prefix)
@@ -336,6 +355,36 @@ class PropertiesMixin:
                     item.icon = result.icon
 
         self._refresh_selected_item()
+        return None if result is False else result
+
+    def _prompt_widget_rename(self, item: MenuItem, prop_name: str, widget: Widget) -> None:
+        """Prompt for a custom widget label after a pick, when the button opts in.
+
+        Confirming the seeded label keeps it, clearing it blanks the label, and
+        cancelling leaves it alone. Skipped for custom widgets and widget menus,
+        where the item label already drives widgetLabel.
+        """
+        if widget.type == "custom":
+            return
+        if self.dialog_mode in ("widgets", "customwidget") or self.dialog_mode.startswith("custom-widget"):
+            return
+
+        default_label = resolve_label(widget.label)
+
+        keyboard = xbmc.Keyboard(default_label, xbmc.getLocalizedString(13334))
+        keyboard.doModal()
+        if not keyboard.isConfirmed():
+            return
+
+        # space, because "" gets dropped and the default comes back
+        new_label = keyboard.getText() or " "
+        if new_label == default_label:
+            return
+
+        label_name = _label_property_name(prop_name)
+        self._log(f"Renaming {label_name} to '{new_label}' on item {item.name}")
+        self._set_item_property(item, label_name, new_label, apply_suffix=False)
+        self._refresh_selected_item()
 
     def _set_widget_properties(self, item: MenuItem, prefix: str, widget: Widget) -> None:
         """Set widget properties on item with auto-populated values.
@@ -347,12 +396,7 @@ class PropertiesMixin:
         """
         self._log(f"Setting widget properties for {prefix}: {widget.name}")
 
-        if "." in prefix:
-            base, suffix = prefix.rsplit(".", 1)
-            suffix = f".{suffix}"
-        else:
-            base = prefix
-            suffix = ""
+        base, suffix = _split_suffix(prefix)
 
         widget_path = widget.path.replace("{menuitem}", item.name)
         related: dict[str, str | None] = {
@@ -372,12 +416,7 @@ class PropertiesMixin:
         """Clear all widget properties for a prefix."""
         self._log(f"Clearing widget properties for {prefix}")
 
-        if "." in prefix:
-            base, suffix = prefix.rsplit(".", 1)
-            suffix = f".{suffix}"
-        else:
-            base = prefix
-            suffix = ""
+        base, suffix = _split_suffix(prefix)
 
         related: dict[str, str | None] = {
             f"{base}Label{suffix}": None,

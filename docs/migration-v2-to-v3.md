@@ -343,6 +343,9 @@ Items with `required="true"` cannot be deleted by users.
 | `<content>video</content>`                                | `<content source="library" target="..." />`                            |
 | `<content>playlist-video</content>`                       | `<content source="playlists" target="videos" />`                       |
 | `<content>widgets</content>`                              | `<content source="addons" target="..." />` (one entry per add-on category) |
+| `<widgetRename>` (overrides.xml, opt-out)                 | `rename="true"` on the widget button in `properties.xml` (opt-in)      |
+
+The rename prompt is off by default in v3, so add `rename="true"` to keep v2 behaviour. See [Renaming On Selection](skinning/widgets.md#renaming-on-selection). Where v2 needed a typed space to blank a label, clearing the field now does it.
 
 ### Dynamic Content Targets
 

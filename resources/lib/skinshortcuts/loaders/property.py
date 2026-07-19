@@ -85,11 +85,32 @@ class PropertyLoader:
                         if btn:
                             buttons[btn.button_id] = btn
 
+        self._check_rename_buttons(properties, buttons)
+
         return PropertySchema(
             properties=properties,
             fallbacks=fallbacks,
             buttons=buttons,
         )
+
+    def _check_rename_buttons(
+        self, properties: dict[str, SchemaProperty], buttons: dict[int, ButtonMapping]
+    ) -> None:
+        """Log buttons where rename="true" is a no-op.
+
+        Effective type can come from either the button or the property, so this
+        runs once both are parsed rather than inside _parse_button.
+        """
+        for button in buttons.values():
+            if not button.rename:
+                continue
+            prop = properties.get(button.property_name)
+            effective_type = button.type or (prop.type if prop else "")
+            if effective_type != "widget":
+                log.error(
+                    f"{self.path}: button {button.button_id} has rename=\"true\" but type is "
+                    f"'{effective_type or 'unset'}' - rename only applies to type=\"widget\", ignoring"
+                )
 
     def _parse_includes(self, root: ET.Element) -> None:
         """Parse include definitions from <includes> section."""
@@ -204,6 +225,7 @@ class PropertyLoader:
         show_icons = (elem.get("showIcons") or "true").lower() != "false"
         prop_type = (elem.get("type") or "").strip()
         requires = (elem.get("requires") or "").strip()
+        rename = get_bool(elem, "rename")
 
         return ButtonMapping(
             button_id=button_id,
@@ -214,6 +236,7 @@ class PropertyLoader:
             show_icons=show_icons,
             type=prop_type,
             requires=requires,
+            rename=rename,
         )
 
     def _parse_options(self, options_elem: ET.Element) -> list[SchemaOption]:

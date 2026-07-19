@@ -541,6 +541,31 @@ When clicked, this opens the widget picker populated from `widgets.xml`. The sel
 
 Selecting "None" clears all widget properties.
 
+### Renaming On Selection
+
+Add `rename="true"` to let users give the widget their own label:
+
+```xml
+<button id="309" property="widget" rename="true" />
+```
+
+After picking a widget, a keyboard opens seeded with the widget's label and writes the result to `widgetLabel`:
+
+| Action | Result |
+|--------|--------|
+| Edit the text | `widgetLabel` becomes the entered text |
+| Confirm unchanged | Keeps the widget's own label |
+| Clear the text | `widgetLabel` is blank, so the skin renders nothing |
+| Cancel | No change |
+
+Picking a widget always resets `widgetLabel` first, so re-picking the same widget restores its label.
+
+A blank label is stored as a single space rather than an empty value, so it is still present for `String.IsEmpty` checks and any layout reserved for it stays reserved.
+
+The prompt is skipped for custom widgets and inside widget menus, where the item label already drives `widgetLabel`.
+
+`rename` only applies to `type="widget"` buttons. On any other type it is ignored and logged as an error.
+
 ### Multiple Widget Slots
 
 For additional widget slots, use [subdialogs](menus.md#subdialogs) with a suffix:
