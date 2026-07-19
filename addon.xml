@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.2~beta4" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.2~beta5" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.2"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
+3.0.2~beta5
+  - Add: a rename attribute on a widget picker button prompts for a custom widget label
+  - Add: picker folder rows stamp a name, type, count and path
+  - Fix: add-ons content includes add-ons that declare their script extension point first
+  - Fix: a content folder wraps its placeholder even when no add-ons resolve
+  - Fix: an icon chosen from the icon browser is stored as a plain path
+
 3.0.2~beta4
   - Fix: browsed picker icons are stored as plain paths so skin icon overrides apply
   - Fix: a content folder wraps its items and the Create menu item to here under the content icon
@@ -19,17 +26,6 @@
 
 3.0.2~beta1
   - Add: skins can restyle the Skin Shortcuts pickers in DialogSelect using a skinshortcuts-picker property and per-option ListItem metadata
-
-3.0.1
-  - Add: show a source as a library view instead of files (movies, TV shows, episodes, music videos, songs, albums, artists), or everything except it, with a sort order
-  - Add: a global submenuPath element under menus, plus a submenuPath property on menu items for their widget submenu
-  - Add: prompt to switch skins or downgrade the add-on when a skin is built for Skin Shortcuts v2
-  - Add: program add-ons that expose plugin content are browsable in the content picker
-  - Add: skin icon overrides apply to the add-on content placeholder
-  - Fix: Create menu item to here names the menu item after the add-on category
-  - Fix: templateonly now hides a property's numbered slot variants
-  - Fix: a playlist shortcut or background resolves to a valid path
-  - Updated translations
         </news>
         <platform>all</platform>
         <license>GPL-2.0-only</license>
