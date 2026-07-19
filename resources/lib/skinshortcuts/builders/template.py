@@ -128,7 +128,9 @@ class TemplateBuilder:
                 continue
             if len(include_elem) == 0:
                 desc = ET.SubElement(include_elem, "description")
-                desc.text = "Automatically generated - no menu items matched this template"
+                desc.text = (
+                    "Automatically generated - no menu items matched this template (see log)"
+                )
             root.append(include_elem)
 
         return root
@@ -450,8 +452,9 @@ class TemplateBuilder:
                 # Only warn when the template explicitly targets this menu
                 if template.menu:
                     log.warning(
-                        f"<skinshortcuts>visibility in build=\"true\" template for "
-                        f"menu '{menu.name}' but menu has no container attribute"
+                        f"build=\"true\" template matched no items: menu '{menu.name}' has no "
+                        f"container attribute, which raw mode needs to build item visibility. "
+                        f"Add container= to the menu, or drop build=\"true\" to iterate items."
                     )
                 continue
             for idx, item in enumerate(menu.items, start=1):
