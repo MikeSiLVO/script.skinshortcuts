@@ -929,7 +929,7 @@ class PickersMixin:
                         item, as_widget=Widget in leaf_types, parent_label=parent_label
                     )
                     overrides = self._icon_overrides()
-                    if item.folder and resolved and create_folder_group:
+                    if item.folder and (resolved or placeholder) and create_folder_group:
                         # Wrap in one folder like a <group>: item.icon on the
                         # folder, placeholder as its first child.
                         if placeholder:

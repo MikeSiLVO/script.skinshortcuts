@@ -393,25 +393,31 @@ class ContentProvider:
             "game": "games",
         }
 
-        result = self._jsonrpc(
-            "Addons.GetAddons",
-            {
-                "content": content,
-                "enabled": True,
-                "properties": ["name", "thumbnail"],
-            },
-        )
-        addons = _collection(result, "addons")
+        # content ignored without type; type = first extension point, so query both
+        addons: dict[str, dict] = {}
+        for addon_type in ("xbmc.python.pluginsource", "xbmc.python.script"):
+            result = self._jsonrpc(
+                "Addons.GetAddons",
+                {
+                    "type": addon_type,
+                    "content": content,
+                    "enabled": True,
+                    "properties": ["name", "thumbnail"],
+                },
+            )
+            for addon in _collection(result, "addons"):
+                addon_id = addon.get("addonid", "")
+                if addon_id:
+                    addons.setdefault(addon_id, addon)
+
         if not addons:
             return []
 
         shortcuts = []
-        for addon in addons:
-            addon_id = addon.get("addonid", "")
+        for addon_id in sorted(addons):
+            addon = addons[addon_id]
             name = addon.get("name", addon_id)
             thumb = addon.get("thumbnail", "")
-            if not addon_id:
-                continue
 
             if addon.get("type") == "xbmc.python.pluginsource":
                 window = window_map.get(content, "videos")
