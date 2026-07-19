@@ -82,6 +82,9 @@ if TYPE_CHECKING:
     from ..manager import MenuManager
 
 
+PLACEHOLDER_PREFIX = "content-placeholder-"
+
+
 def picker_kind(leaf_types: tuple) -> str:
     """skinshortcuts-picker value for a hierarchy picker, from what it is picking."""
     if Widget in leaf_types:
@@ -116,7 +119,8 @@ def stamp_picker_props(listitem: xbmcgui.ListItem, item: object) -> None:
     """Stamp an option's metadata as ListItem properties for DialogSelect layouts.
 
     name/path/type are uniform across every picker; widget and background also carry
-    their prefixed props (widget*, background*) verbatim from the model.
+    their prefixed props (widget*, background*) verbatim from the model. Groups get a
+    path only when a real one exists.
     """
     if isinstance(item, Widget):
         props = item.to_properties()
@@ -132,12 +136,32 @@ def stamp_picker_props(listitem: xbmcgui.ListItem, item: object) -> None:
             "type": item.type,
             "action": item.action or "",
         }
+    elif isinstance(item, (WidgetGroup, ShortcutGroup)):
+        children = [
+            child
+            for child in item.items
+            if not getattr(child, "name", "").startswith(PLACEHOLDER_PREFIX)
+        ]
+        props = {
+            "path": item.path,
+            "type": "group",
+            "count": str(len(children)),
+        }
     else:
         return
 
     props["name"] = item.name
     for key, value in props.items():
         listitem.setProperty(key, value)
+
+
+def _content_folder_path(content: Content) -> str:
+    """Real browsable path behind an addons content folder; empty for other sources."""
+    if content.source.lower() != "addons":
+        return ""
+    target = content.target.lower() if content.target else "video"
+    entry = ADDONS_SOURCE_MAP.get(target)
+    return entry[0] if entry else ""
 
 
 def _browse_placeholder_for_content(
@@ -157,7 +181,7 @@ def _browse_placeholder_for_content(
         return None
 
     path, window = ADDONS_SOURCE_MAP[target]
-    name = f"content-placeholder-{content.source}-{target}"
+    name = f"{PLACEHOLDER_PREFIX}{content.source}-{target}"
     icon = content.icon if content.icon else "DefaultFolder.png"
 
     label = content.label or parent_label or LANGUAGE(32058)
@@ -377,11 +401,12 @@ class PickersMixin:
             default_group_icon="DefaultFolder.png",
             show_none=False,
             content_resolver=self._resolve_content_to_shortcuts,
-            create_folder_group=lambda label, items, icon: ShortcutGroup(
+            create_folder_group=lambda label, items, icon, path: ShortcutGroup(
                 name=f"folder-{label}",
                 label=label,
                 icon=icon or "DefaultFolder.png",
                 items=items,
+                path=path,
             ),
         )
         return result if isinstance(result, Shortcut) else None
@@ -411,11 +436,12 @@ class PickersMixin:
             show_none=True,
             current_value=current_widget,
             content_resolver=self._resolve_content_to_widgets,
-            create_folder_group=lambda label, grp_items, icon: WidgetGroup(
+            create_folder_group=lambda label, grp_items, icon, path: WidgetGroup(
                 name=f"folder-{label}",
                 label=label,
                 icon=icon or "DefaultFolder.png",
                 items=grp_items,
+                path=path,
             ),
         )
 
@@ -646,7 +672,7 @@ class PickersMixin:
         show_none: bool = False,
         current_value: str = "",
         content_resolver: Callable[[Content], list] | None = None,
-        create_folder_group: Callable[[str, list, str], Any] | None = None,
+        create_folder_group: Callable[[str, list, str, str], Any] | None = None,
         custom_action: tuple[str, str, Callable[[], Any | None]] | None = None,
     ) -> Any | None | Literal[False]:
         """Generic hierarchical picker with back navigation.
@@ -688,7 +714,7 @@ class PickersMixin:
             for vis_item in visible_items:
                 is_placeholder = (
                     isinstance(vis_item, (Shortcut, Widget))
-                    and vis_item.name.startswith("content-placeholder-")
+                    and vis_item.name.startswith(PLACEHOLDER_PREFIX)
                 )
                 if is_placeholder:
                     label = LANGUAGE(32058)
@@ -750,7 +776,7 @@ class PickersMixin:
             if isinstance(selected_item, leaf_types):
                 is_browsable_shortcut = (
                     isinstance(selected_item, Shortcut)
-                    and not selected_item.name.startswith("content-placeholder-")
+                    and not selected_item.name.startswith(PLACEHOLDER_PREFIX)
                     and self._is_browsable(selected_item)
                 )
                 if is_browsable_shortcut:
@@ -799,7 +825,7 @@ class PickersMixin:
         default_leaf_icon: str,
         default_group_icon: str,
         content_resolver: Callable[[Content], list] | None = None,
-        create_folder_group: Callable[[str, list, str], Any] | None = None,
+        create_folder_group: Callable[[str, list, str, str], Any] | None = None,
     ) -> Any | None:
         """Pick from items within a group with back navigation."""
         visible_items = self._filter_picker_items(
@@ -818,7 +844,7 @@ class PickersMixin:
             for vis_item in visible_items:
                 is_placeholder = (
                     isinstance(vis_item, (Shortcut, Widget))
-                    and vis_item.name.startswith("content-placeholder-")
+                    and vis_item.name.startswith(PLACEHOLDER_PREFIX)
                 )
                 if is_placeholder:
                     label = LANGUAGE(32058)
@@ -861,7 +887,7 @@ class PickersMixin:
             if isinstance(selected_item, leaf_types):
                 is_browsable_shortcut = (
                     isinstance(selected_item, Shortcut)
-                    and not selected_item.name.startswith("content-placeholder-")
+                    and not selected_item.name.startswith(PLACEHOLDER_PREFIX)
                     and self._is_browsable(selected_item)
                 )
                 if is_browsable_shortcut:
@@ -907,7 +933,7 @@ class PickersMixin:
         leaf_types: tuple,
         group_types: tuple,
         content_resolver: Callable[[Content], list] | None = None,
-        create_folder_group: Callable[[str, list, str], Any] | None = None,
+        create_folder_group: Callable[[str, list, str, str], Any] | None = None,
         parent_label: str = "",
     ) -> list:
         """Filter and resolve picker items by condition and visibility.
@@ -935,7 +961,11 @@ class PickersMixin:
                         if placeholder:
                             placeholder.icon = overrides.get("DefaultFolder.png", "DefaultFolder.png")
                             resolved = [placeholder, *resolved]
-                        visible_items.append(create_folder_group(item.folder, resolved, item.icon))
+                        visible_items.append(
+                            create_folder_group(
+                                item.folder, resolved, item.icon, _content_folder_path(item)
+                            )
+                        )
                     else:
                         if placeholder:
                             placeholder.icon = overrides.get(placeholder.icon, placeholder.icon)

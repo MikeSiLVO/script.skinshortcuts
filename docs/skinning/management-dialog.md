@@ -302,6 +302,34 @@ The widget and background pickers also carry their prefixed properties:
 | `ListItem.Property(backgroundPath)` | background | Background image path |
 | `ListItem.Property(backgroundType)` | background | Background type |
 
+On the `widget` and `shortcut` pickers, folder rows carry their own set. These are the rows created
+by a `<group>`, and by `folder=` on a `<content>` element:
+
+| Property | Description |
+|----------|-------------|
+| `ListItem.Property(name)` | Group name |
+| `ListItem.Property(type)` | Always `group` |
+| `ListItem.Property(count)` | Number of items inside |
+| `ListItem.Property(path)` | Browsable path, set only where one exists |
+
+`count` is the number of real entries, so a folder offering "Create menu item to here" plus four
+add-ons reads `4`.
+
+`path` is set on `<content source="addons">` folders, where the category has a real location
+(`addons://sources/video/` and so on). A hand-written `<group>` has no browsable location, so its
+`path` is empty rather than a made-up one, which keeps `path` meaning the same thing on every row
+in every picker. Decide skin-side what those rows show, for example falling back to `count`:
+
+```xml
+<label2>$VAR[PickerRowPath]</label2>
+
+<variable name="PickerRowPath">
+    <value condition="!String.IsEmpty(ListItem.Property(path))">$INFO[ListItem.Property(path)]</value>
+    <value condition="String.IsEqual(ListItem.Property(type),group)">$INFO[ListItem.Property(count),, items]</value>
+    <value></value>
+</variable>
+```
+
 The `browse` picker (navigating into a source, add-on, or library node) is a live directory
 listing rather than a curated option list, so it carries only `name` and `path`. Both are set
 on every row, including the "Use this location" row (whose `path` is the folder being committed).
