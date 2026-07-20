@@ -115,7 +115,45 @@ def picker_select(kind: str, *args, **kwargs):
         return xbmcgui.Dialog().select(*args, **kwargs)
 
 
-def stamp_picker_props(listitem: xbmcgui.ListItem, item: object) -> None:
+def _group_count(
+    item: object,
+    item_props: dict[str, str],
+    content_resolver: Callable[[Content], list] | None = None,
+) -> str:
+    """Rows a group will show; empty when a content element cannot be counted."""
+    total = 0
+    for child in getattr(item, "items", []):
+        if not _check_visible(getattr(child, "visible", "")):
+            continue
+        condition = getattr(child, "condition", "")
+        if condition and not evaluate_condition(condition, item_props):
+            continue
+        if isinstance(child, Content):
+            if child.folder:
+                total += 1
+                continue
+            if content_resolver is None:
+                return ""
+            total += len(content_resolver(child))
+            continue
+        if getattr(child, "name", "").startswith(PLACEHOLDER_PREFIX):
+            continue
+        if getattr(child, "flat", False):
+            nested = _group_count(child, item_props, content_resolver)
+            if not nested:
+                return ""
+            total += int(nested)
+            continue
+        total += 1
+    return str(total)
+
+
+def stamp_picker_props(
+    listitem: xbmcgui.ListItem,
+    item: object,
+    item_props: dict[str, str] | None = None,
+    content_resolver: Callable[[Content], list] | None = None,
+) -> None:
     """Stamp an option's metadata as ListItem properties for DialogSelect layouts.
 
     name/path/type are uniform across every picker; widget and background also carry
@@ -137,15 +175,10 @@ def stamp_picker_props(listitem: xbmcgui.ListItem, item: object) -> None:
             "action": item.action or "",
         }
     elif isinstance(item, (WidgetGroup, ShortcutGroup, BackgroundGroup)):
-        children = [
-            child
-            for child in item.items
-            if not getattr(child, "name", "").startswith(PLACEHOLDER_PREFIX)
-        ]
         props = {
             "path": item.path,
             "type": "group",
-            "count": str(len(children)),
+            "count": _group_count(item, item_props or {}, content_resolver),
         }
     else:
         return
@@ -734,7 +767,7 @@ class PickersMixin:
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 listitem = xbmcgui.ListItem(label)
                 listitem.setArt({"icon": overrides.get(icon, icon)})
-                stamp_picker_props(listitem, vis_item)
+                stamp_picker_props(listitem, vis_item, item_props, content_resolver)
                 listitems.append(listitem)
 
             if custom_action:
@@ -864,7 +897,7 @@ class PickersMixin:
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 listitem = xbmcgui.ListItem(label)
                 listitem.setArt({"icon": overrides.get(icon, icon)})
-                stamp_picker_props(listitem, vis_item)
+                stamp_picker_props(listitem, vis_item, item_props, content_resolver)
                 listitems.append(listitem)
 
             title = resolve_label(group.label)

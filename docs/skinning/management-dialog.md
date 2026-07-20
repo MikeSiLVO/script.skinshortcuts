@@ -310,11 +310,21 @@ makes one on any of them; `folder=` on a `<content>` element makes one on the `w
 |----------|-------------|
 | `ListItem.Property(name)` | Group name |
 | `ListItem.Property(type)` | Always `group` |
-| `ListItem.Property(count)` | Number of items inside |
+| `ListItem.Property(count)` | Rows the group will show, empty where that cannot be known |
 | `ListItem.Property(path)` | Browsable path, set only where one exists |
 
-`count` is the number of real entries, so a folder offering "Create menu item to here" plus four
-add-ons reads `4`.
+`count` is what opening the group actually shows. The "Create menu item to here" row does not
+count, and neither does a child hidden by its `visible` or `condition`, so a folder holding that
+row plus four add-ons reads `4` and a group whose only child is hidden reads `0`.
+
+A `<content>` child counts as the rows it produces, not as one element. With `folder=` that is a
+single row. Without it the content expands in place, so the count includes everything it resolves
+to: a group holding a bare add-ons content and one shortcut reads `5` where four add-ons are
+installed.
+
+`count` is empty only where it cannot be worked out, which today means a bare `<content>` in a
+picker that does not resolve content, such as the background picker. Empty means unknown rather
+than zero, so treat the two apart if the difference matters.
 
 `path` is set on `<content source="addons">` folders, where the category has a real location
 (`addons://sources/video/` and so on). A hand-written `<group>` has no browsable location, so its
