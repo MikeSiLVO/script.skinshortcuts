@@ -981,26 +981,3 @@ class ContentProvider:
 
         return None
 
-
-_provider: ContentProvider | None = None
-
-
-def resolve_content(content: Content) -> list[ResolvedShortcut]:
-    """Resolve a content reference to shortcuts.
-
-    Convenience function using module-level provider instance.
-    """
-    global _provider
-    if _provider is None:
-        _provider = ContentProvider()
-    return _provider.resolve(content)
-
-
-def clear_content_cache() -> None:
-    """Clear the content provider cache.
-
-    Call this when opening the management dialog to ensure fresh data
-    (e.g., newly added favourites are visible in the picker).
-    """
-    if _provider is not None:
-        _provider.clear_cache()

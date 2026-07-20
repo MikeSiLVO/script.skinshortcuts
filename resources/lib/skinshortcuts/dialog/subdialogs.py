@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from ..manager import MenuManager
     from ..models import IconSource, PropertySchema
     from ..models.menu import SubDialog
+    from ..providers import ContentProvider
 
 
 class SubdialogsMixin:
@@ -50,6 +51,7 @@ class SubdialogsMixin:
         def _refresh_selected_item(self) -> None: ...
         def _clear_subdialog_list(self) -> None: ...
         def _log(self, msg: str) -> None: ...
+        def _get_content_provider(self) -> ContentProvider: ...
 
         def setProperty(self, key: str, value: str) -> None: ...
         def clearProperty(self, key: str) -> None: ...
@@ -70,6 +72,7 @@ class SubdialogsMixin:
             menu_id=menu_id,
             shortcuts_path=self.shortcuts_path,
             manager=self.manager,
+            content_provider=self._get_content_provider(),
             property_schema=self.property_schema,
             icon_sources=self.icon_sources,
             show_context_menu=self.show_context_menu,

@@ -6,7 +6,6 @@ from .browse import BrowseItem, BrowseProvider, get_browse_provider, normalize_i
 from .content import (
     ContentProvider,
     ResolvedShortcut,
-    resolve_content,
     scan_playlist_files,
 )
 
@@ -17,6 +16,5 @@ __all__ = [
     "ResolvedShortcut",
     "get_browse_provider",
     "normalize_image",
-    "resolve_content",
     "scan_playlist_files",
 ]

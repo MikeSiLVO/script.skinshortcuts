@@ -253,6 +253,7 @@ class PickersMixin:
     shortcuts_path: str
     manager: MenuManager | None
     items: list[MenuItem]
+    _content_provider: ContentProvider | None = None
 
     if TYPE_CHECKING:
         def _get_selected_item(self) -> MenuItem | None: ...
@@ -528,10 +529,15 @@ class PickersMixin:
             return None
         return self.manager.config.get_widget(widget_name)
 
+    def _get_content_provider(self) -> ContentProvider:
+        """One provider per dialog, so its cache outlives a single picker redraw."""
+        if self._content_provider is None:
+            self._content_provider = ContentProvider(icon_overrides=self._icon_overrides())
+        return self._content_provider
+
     def _resolve_content_to_widgets(self, content: Content) -> list[Widget]:
         """Resolve a Content reference to a list of Widget objects for the picker."""
-        provider = ContentProvider(icon_overrides=self._icon_overrides())
-        resolved = provider.resolve(content)
+        resolved = self._get_content_provider().resolve(content)
 
         source = content.source.rstrip("s") if content.source.endswith("s") else content.source
 
@@ -554,8 +560,7 @@ class PickersMixin:
 
     def _resolve_content_to_shortcuts(self, content: Content) -> list[Shortcut]:
         """Resolve a Content reference to a list of Shortcut objects for the picker."""
-        provider = ContentProvider(icon_overrides=self._icon_overrides())
-        resolved = provider.resolve(content)
+        resolved = self._get_content_provider().resolve(content)
 
         shortcuts = []
         for item in resolved:

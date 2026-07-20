@@ -19,7 +19,6 @@ from ..localize import resolve_label
 from ..log import get_logger
 from ..manager import MenuManager
 from ..models import MenuItem, PropertySchema
-from ..providers.content import clear_content_cache
 
 _log = get_logger("Dialog")
 
@@ -93,6 +92,8 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         self.manager = None
         self.items = []
 
+        self._content_provider = kwargs.get("content_provider")
+
         self._shared_schema = kwargs.get("property_schema")
         self.property_schema = None
 
@@ -164,7 +165,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 self.manager = self._shared_manager
             else:
                 self.manager = MenuManager(self.shortcuts_path)
-                clear_content_cache()
 
             menu_ids = self.manager.get_menu_ids()
             self._log(f"Loaded menus: {menu_ids}")
