@@ -92,6 +92,7 @@ class BackgroundGroup:
     icon: str = ""  # Optional icon for group display
     items: list[BackgroundGroupContent] = field(default_factory=list)
     flat: bool = False  # No folder header; children render at parent level
+    path: str = ""  # Real browsable path, set on content folders only
 
 
 @dataclass

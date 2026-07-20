@@ -136,7 +136,7 @@ def stamp_picker_props(listitem: xbmcgui.ListItem, item: object) -> None:
             "type": item.type,
             "action": item.action or "",
         }
-    elif isinstance(item, (WidgetGroup, ShortcutGroup)):
+    elif isinstance(item, (WidgetGroup, ShortcutGroup, BackgroundGroup)):
         children = [
             child
             for child in item.items

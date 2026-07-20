@@ -421,6 +421,9 @@ class ItemsMixin:
                 listitem = xbmcgui.ListItem(label)
                 if source.icon:
                     listitem.setArt({"icon": source.icon})
+                row_path = "" if source.path.lower() == "browse" else source.path
+                listitem.setProperty("path", row_path)
+                listitem.setProperty("name", label)
                 listitems.append(listitem)
 
             selected = picker_select("browse", title, listitems, useDetails=True)
