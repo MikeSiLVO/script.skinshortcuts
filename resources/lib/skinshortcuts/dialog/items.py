@@ -23,14 +23,9 @@ if TYPE_CHECKING:
     from ..models import PropertySchema
 
 
-def _browse_path(browse_type: int, title: str, mask: str, start: str = "") -> str:
+def _browse_path(browse_type: int, title: str, start: str = "") -> str:
     """Browse for a file, unwrapping the image:// form Kodi's image browser returns."""
-    if start:
-        result = xbmcgui.Dialog().browse(
-            browse_type, title, "files", mask, False, False, start
-        )
-    else:
-        result = xbmcgui.Dialog().browse(browse_type, title, "files", mask)
+    result = xbmcgui.Dialog().browse(browse_type, title, "files", defaultt=start)
     return normalize_image(result) if isinstance(result, str) else ""
 
 
@@ -263,7 +258,6 @@ class ItemsMixin:
             sources=sources,
             title=xbmc.getLocalizedString(1030),  # "Choose icon"
             browse_type=2,  # Image file
-            mask=".png|.jpg|.gif",
             item_properties=item.properties,
             default_path=default_path,
         )
@@ -378,7 +372,6 @@ class ItemsMixin:
         sources: list[IconSource] | list[BrowseSource],
         title: str,
         browse_type: int,
-        mask: str = "",
         item_properties: dict[str, str] | None = None,
         default_path: str = "",
     ) -> str | None:
@@ -388,7 +381,6 @@ class ItemsMixin:
             sources: List of IconSource or BrowseSource objects
             title: Dialog title
             browse_type: Kodi browse type (0=folder, 2=image file)
-            mask: File mask for filtering (e.g., ".png|.jpg")
             item_properties: Current item properties for condition evaluation
             default_path: Starting path when sources is empty (direct browse mode)
 
@@ -410,9 +402,9 @@ class ItemsMixin:
 
         if not visible_sources:
             if default_path:
-                result = _browse_path(browse_type, title, mask, default_path)
+                result = _browse_path(browse_type, title, default_path)
                 return result if result and result != default_path else None
-            return _browse_path(browse_type, title, mask) or None
+            return _browse_path(browse_type, title) or None
 
         while True:
             listitems = []
@@ -435,9 +427,9 @@ class ItemsMixin:
             path = source.path
 
             if path.lower() == "browse":
-                result = _browse_path(browse_type, title, mask)
+                result = _browse_path(browse_type, title)
             else:
-                result = _browse_path(browse_type, title, mask, path)
+                result = _browse_path(browse_type, title, path)
 
             if result and result != path:
                 return result

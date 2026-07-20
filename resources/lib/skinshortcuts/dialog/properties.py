@@ -186,7 +186,6 @@ class PropertiesMixin:
             sources: list,
             title: str,
             browse_type: int,
-            mask: str = "",
             item_properties: dict[str, str] | None = None,
             default_path: str = "",
         ) -> str | None: ...
@@ -471,7 +470,6 @@ class PropertiesMixin:
                     sources=bg.browse_sources,
                     title=resolve_label(bg.label),
                     browse_type=2,  # Image file
-                    mask=".jpg|.png|.gif",
                     item_properties=item.properties,
                     default_path=bg.path,
                 )
