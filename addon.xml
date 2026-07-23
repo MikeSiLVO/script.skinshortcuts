@@ -1,36 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.2~beta6" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.2~beta7" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.2"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
-3.0.2~beta6
-  - Fix: background picker folder rows stamp a name, type, count and path
-  - Fix: browse source rows stamp a name and path
-  - Fix: a property set with a built-in name replaces the built-in instead of adding a second entry
+3.0.2~beta7
+  - Fix: a picker group counts only the entries it will show
+  - Fix: a widget or background picks up the skin's current path and label instead of a saved copy
+  - Fix: clearing a skin default property stays cleared
 
-3.0.2~beta5
+3.0.2~beta1 - beta6
+  - Add: skins can restyle the DialogSelect pickers with a skinshortcuts-picker property and ListItem metadata: name, path and type on every option, plus a count on folders
   - Add: a rename attribute on a widget picker button prompts for a custom widget label
-  - Add: picker folder rows stamp a name, type, count and path
-  - Fix: add-ons content includes add-ons that declare their script extension point first
-  - Fix: a content folder wraps its placeholder even when no add-ons resolve
-  - Fix: an icon chosen from the icon browser is stored as a plain path
-
-3.0.2~beta4
-  - Fix: browsed picker icons are stored as plain paths so skin icon overrides apply
-  - Fix: a content folder wraps its items and the Create menu item to here under the content icon
-
-3.0.2~beta3
-  - Fix: the add-ons content placeholder fills its path property like the other picker options
-
-3.0.2~beta2
-  - Add: the widget, shortcut and background pickers stamp a uniform name, path and type on each option
-  - Fix: browsing into a location fills the path and name properties (library node sublevels, sources, add-ons)
-
-3.0.2~beta1
-  - Add: skins can restyle the Skin Shortcuts pickers in DialogSelect using a skinshortcuts-picker property and per-option ListItem metadata
+  - Fix: browsing a location fills each option's path and name, and browsed icons store as plain paths so skin icon overrides apply
+  - Fix: a property set with a built-in name replaces it instead of adding a second entry
         </news>
         <platform>all</platform>
         <license>GPL-2.0-only</license>
