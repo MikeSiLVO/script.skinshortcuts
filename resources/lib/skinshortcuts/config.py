@@ -16,7 +16,7 @@ from .loaders import (
     load_widgets,
 )
 from .localize import resolve_label
-from .models import Background, Menu, Widget
+from .models import Background, Menu, MenuItem, Widget
 from .models.background import BackgroundConfig, BackgroundGroup
 from .models.menu import ActionOverride, SubDialog
 from .models.property import PropertySchema
@@ -280,26 +280,39 @@ class SkinConfig:
         )
         builder.write(output_path)
 
-    def resolve_item_properties(self, menu: Menu) -> None:
-        """Resolve background and widget names to their full properties."""
-        for item in menu.items:
-            bg_name = item.properties.get("background")
-            if bg_name and "backgroundLabel" not in item.properties:
-                bg = self.get_background(bg_name)
-                if bg:
-                    item.properties["backgroundLabel"] = resolve_label(bg.label)
-                    item.properties["backgroundPath"] = bg.path
+    def derived_item_properties(self, item: MenuItem) -> dict[str, str]:
+        """Widget/background sub-properties derivable from the item's assigned names.
 
-            widget_name = item.properties.get("widget")
-            if widget_name and "widgetLabel" not in item.properties:
-                widget = self.get_widget(widget_name)
-                if widget:
-                    props = widget.to_properties()
-                    if "widgetLabel" in props:
-                        props["widgetLabel"] = resolve_label(props["widgetLabel"])
-                    for key, value in props.items():
-                        if key not in item.properties:
-                            item.properties[key] = value
+        Excludes the widget/background name keys themselves, which are user choices,
+        not derived. Used both to fill items on load and to strip these from saved
+        userdata so they recompute from the name on the next build.
+        """
+        derived: dict[str, str] = {}
+
+        bg_name = item.properties.get("background")
+        if bg_name:
+            bg = self.get_background(bg_name)
+            if bg:
+                derived["backgroundLabel"] = resolve_label(bg.label)
+                derived["backgroundPath"] = bg.path
+
+        widget_name = item.properties.get("widget")
+        if widget_name:
+            widget = self.get_widget(widget_name)
+            if widget:
+                props = widget.to_properties()
+                props.pop("widget", None)
+                if "widgetLabel" in props:
+                    props["widgetLabel"] = resolve_label(props["widgetLabel"])
+                derived.update(props)
+
+        return derived
+
+    def resolve_item_properties(self, menu: Menu) -> None:
+        """Fill widget/background sub-properties, keeping any the user set."""
+        for item in menu.items:
+            for key, value in self.derived_item_properties(item).items():
+                item.properties.setdefault(key, value)
 
 
 def _apply_action_overrides(menu: Menu, overrides: list[ActionOverride]) -> None:

@@ -40,6 +40,7 @@ class MenuItemOverride:
     icon: str | None = None
     disabled: bool | None = None
     properties: dict[str, str] = field(default_factory=dict)  # Includes widget/background
+    removed_properties: list[str] = field(default_factory=list)  # Skin defaults the user cleared
     position: int | None = None  # For reordering
     is_new: bool = False  # True if user-added item
     submenu: str | None = None  # Submenu template reference (picker auto-attach)
@@ -86,6 +87,8 @@ def _item_override_to_dict(item: MenuItemOverride) -> dict[str, Any]:
         result["disabled"] = item.disabled
     if item.properties:
         result["properties"] = item.properties
+    if item.removed_properties:
+        result["removed_properties"] = item.removed_properties
     if item.position is not None:
         result["position"] = item.position
     if item.is_new:
@@ -327,6 +330,9 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
 
 def _apply_override(item: MenuItem, override: MenuItemOverride) -> MenuItem:
     """Apply user override to a menu item."""
+    properties = {**item.properties, **override.properties}
+    for key in override.removed_properties:
+        properties.pop(key, None)
     return MenuItem(
         name=item.name,
         label=override.label if override.label is not None else item.label,
@@ -338,7 +344,7 @@ def _apply_override(item: MenuItem, override: MenuItemOverride) -> MenuItem:
         disabled=override.disabled if override.disabled is not None else item.disabled,
         required=item.required,
         protection=item.protection,
-        properties={**item.properties, **override.properties},
+        properties=properties,
         submenu=override.submenu if override.submenu is not None else item.submenu,
         original_action=item.action,  # Store original for protection matching
         includes=item.includes,

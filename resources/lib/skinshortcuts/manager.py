@@ -811,14 +811,23 @@ class MenuManager:
             diff.disabled = working.disabled
             has_changes = True
 
-        if working.properties != default.properties:
-            diff_props = {
-                k: v for k, v in working.properties.items()
-                if default.properties.get(k) != v
-            }
-            if diff_props:
-                diff.properties = diff_props
-                has_changes = True
+        # Derived widget/background props recompute from the name on build, so they
+        # stay out of userdata: saving them would freeze the skin's paths and labels.
+        derived = self.config.derived_item_properties(working)
+        diff_props = {
+            k: v for k, v in working.properties.items()
+            if default.properties.get(k) != v and derived.get(k) != v
+        }
+        if diff_props:
+            diff.properties = diff_props
+            has_changes = True
+
+        # A skin default the user cleared has no key in working; record it so the
+        # merge can drop it instead of the default silently returning.
+        removed_props = [k for k in default.properties if k not in working.properties]
+        if removed_props:
+            diff.removed_properties = removed_props
+            has_changes = True
 
         if working.submenu != default.submenu:
             diff.submenu = working.submenu or ""
