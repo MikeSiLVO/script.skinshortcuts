@@ -27,8 +27,6 @@ def _check_visible(visible: str) -> bool:
     return xbmc.getCondVisibility(visible)
 
 
-
-
 @runtime_checkable
 class PickerItem(Protocol):
     """Protocol for leaf items in picker hierarchy (Shortcut, Widget, Background)."""
