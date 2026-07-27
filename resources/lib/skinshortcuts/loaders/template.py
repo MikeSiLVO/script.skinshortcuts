@@ -117,7 +117,9 @@ class TemplateLoader:
         for elem in section.findall("expression"):
             name = (elem.get("name") or "").strip()
             if not name:
-                log.warning(f"{self.path}: <{elem.tag}> definition missing 'name' attribute, skipping")
+                log.warning(
+                    f"{self.path}: <{elem.tag}> definition missing 'name' attribute, skipping"
+                )
                 continue
             value = (elem.text or "").strip()
             nosuffix = get_bool(elem, "nosuffix")
@@ -167,7 +169,8 @@ class TemplateLoader:
                     )
                 else:
                     log.warning(
-                        f"{self.path}: <preset> in <presetGroup> missing 'content' attribute, skipping"
+                        f"{self.path}: <preset> in <presetGroup> missing "
+                        "'content' attribute, skipping"
                     )
             elif child.tag == "values":
                 condition = (child.get("condition") or "").strip()
@@ -189,7 +192,9 @@ class TemplateLoader:
         for elem in section.findall("propertyGroup"):
             name = (elem.get("name") or "").strip()
             if not name:
-                log.warning(f"{self.path}: <{elem.tag}> definition missing 'name' attribute, skipping")
+                log.warning(
+                    f"{self.path}: <{elem.tag}> definition missing 'name' attribute, skipping"
+                )
                 continue
 
             properties = []
@@ -258,7 +263,9 @@ class TemplateLoader:
         """
         name = (elem.get("content") or "").strip()
         if not name:
-            log.warning(f"{self.path}: <{elem.tag}> reference missing 'content' attribute, skipping")
+            log.warning(
+                f"{self.path}: <{elem.tag}> reference missing 'content' attribute, skipping"
+            )
             return None
         condition = (elem.get("condition") or "").strip()
         return VariableReference(name=name, condition=condition)
@@ -271,7 +278,9 @@ class TemplateLoader:
         for elem in section.findall("include"):
             name = (elem.get("name") or "").strip()
             if not name:
-                log.warning(f"{self.path}: <{elem.tag}> definition missing 'name' attribute, skipping")
+                log.warning(
+                    f"{self.path}: <{elem.tag}> definition missing 'name' attribute, skipping"
+                )
                 continue
 
             self._includes[name] = IncludeDefinition(
@@ -563,7 +572,9 @@ class TemplateLoader:
         """
         name = (elem.get("content") or "").strip()
         if not name:
-            log.warning(f"{self.path}: <{elem.tag}> reference missing 'content' attribute, skipping")
+            log.warning(
+                f"{self.path}: <{elem.tag}> reference missing 'content' attribute, skipping"
+            )
             return None
 
         suffix = (elem.get("suffix") or "").strip()
@@ -582,7 +593,9 @@ class TemplateLoader:
         """
         name = (elem.get("content") or "").strip()
         if not name:
-            log.warning(f"{self.path}: <{elem.tag}> reference missing 'content' attribute, skipping")
+            log.warning(
+                f"{self.path}: <{elem.tag}> reference missing 'content' attribute, skipping"
+            )
             return None
 
         suffix = (elem.get("suffix") or "").strip()
@@ -601,7 +614,9 @@ class TemplateLoader:
         """
         name = (elem.get("content") or "").strip()
         if not name:
-            log.warning(f"{self.path}: <{elem.tag}> reference missing 'content' attribute, skipping")
+            log.warning(
+                f"{self.path}: <{elem.tag}> reference missing 'content' attribute, skipping"
+            )
             return None
 
         suffix = (elem.get("suffix") or "").strip()
@@ -620,7 +635,9 @@ class TemplateLoader:
         """
         name = (elem.get("content") or "").strip()
         if not name:
-            log.warning(f"{self.path}: <{elem.tag}> reference missing 'content' attribute, skipping")
+            log.warning(
+                f"{self.path}: <{elem.tag}> reference missing 'content' attribute, skipping"
+            )
             return None
 
         suffix = (elem.get("suffix") or "").strip()

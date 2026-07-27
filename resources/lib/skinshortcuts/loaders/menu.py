@@ -631,7 +631,9 @@ def _parse_shortcut_group(
         notify("Shortcut Group Error", "Group missing 'name' (see log)")
         return None
     if not label and not flat:
-        log.warning(f"Shortcut group '{group_name}' in {path} missing 'label' (required when not flat)")
+        log.warning(
+            f"Shortcut group '{group_name}' in {path} missing 'label' (required when not flat)"
+        )
         notify("Shortcut Group Error", f"'{group_name}' missing label")
         return None
 

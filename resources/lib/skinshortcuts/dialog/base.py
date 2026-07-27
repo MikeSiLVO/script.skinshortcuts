@@ -204,7 +204,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         if self.dialog_mode:
             self.setProperty("skinshortcuts-dialog", self.dialog_mode)
 
-        # Mirror to Home so visibility checks work when native dialogs (DialogSelect, etc) take focus
+        # Mirror to Home so visibility checks work when a native dialog takes focus
         if self.dialog_mode:
             home = xbmcgui.Window(10000)
             home.setProperty("skinshortcuts-dialog", self.dialog_mode)
@@ -611,7 +611,10 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         """Handle actions."""
         action_id = action.getId()
         if action_id in ACTION_CANCEL:
-            self._log(f"Back/Cancel received (action_id={action_id}), menu={self.menu_id}, mode={self.dialog_mode}, is_child={self.is_child}")
+            self._log(
+                f"Back/Cancel received (action_id={action_id}), menu={self.menu_id}, "
+                f"mode={self.dialog_mode}, is_child={self.is_child}"
+            )
             self.close()
         elif action_id in ACTION_CONTEXT and self.show_context_menu:
             self._show_context_menu()

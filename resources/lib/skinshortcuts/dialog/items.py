@@ -83,7 +83,10 @@ class ItemsMixin:
 
         index = self._get_selected_index()
 
-        if self.dialog_mode in ("widgets", "customwidget") or self.dialog_mode.startswith("custom-widget"):
+        if (
+            self.dialog_mode in ("widgets", "customwidget")
+            or self.dialog_mode.startswith("custom-widget")
+        ):
             widget = self._pick_widget_for_add()
             if not widget:
                 return
@@ -230,7 +233,8 @@ class ItemsMixin:
                 return
             self.manager.set_label(self.menu_id, item.name, new_label)
             item.label = new_label
-            # widgetLabel is seeded from label for widget submenus; sync on edit so list 211 and widget output match
+            # widgetLabel is seeded from label for widget submenus
+            # sync on edit so list 211 and widget output match
             # custom widget menus only exist in working[]
             menu = self.manager.working.get(self.menu_id)
             if menu and menu.menu_type == "widgets":
@@ -248,7 +252,8 @@ class ItemsMixin:
             return
 
         self._log(f"Opening icon picker, current icon: {item.icon}")
-        # <icons>path</icons> simple mode is parsed as one unlabeled source; treat as direct browse start
+        # <icons>path</icons> simple mode is parsed as one unlabeled source
+        # treat as direct browse start
         sources = self.icon_sources
         default_path = ""
         if len(sources) == 1 and not sources[0].label:

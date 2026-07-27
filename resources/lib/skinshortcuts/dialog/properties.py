@@ -346,7 +346,10 @@ class PropertiesMixin:
             self._log(f"Widget selected: {result.name}")
             self._set_widget_properties(item, prefix, result)
 
-            if self.dialog_mode in ("widgets", "customwidget") or self.dialog_mode.startswith("custom-widget"):
+            if (
+                self.dialog_mode in ("widgets", "customwidget")
+                or self.dialog_mode.startswith("custom-widget")
+            ):
                 self.manager.set_label(self.menu_id, item.name, result.label)
                 item.label = result.label
                 if result.icon:
@@ -365,7 +368,10 @@ class PropertiesMixin:
         """
         if widget.type == "custom":
             return
-        if self.dialog_mode in ("widgets", "customwidget") or self.dialog_mode.startswith("custom-widget"):
+        if (
+            self.dialog_mode in ("widgets", "customwidget")
+            or self.dialog_mode.startswith("custom-widget")
+        ):
             return
 
         default_label = resolve_label(widget.label)

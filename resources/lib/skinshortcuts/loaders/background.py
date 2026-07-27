@@ -91,7 +91,11 @@ def _parse_background(
     if not bg_path and bg_type not in OPTIONAL_PATH_TYPES:
         raise BackgroundConfigError(path, f"Background '{bg_name}' missing <path>")
 
-    if bg_path and bg_type in (BackgroundType.BROWSE, BackgroundType.MULTI) and elem.find("source") is not None:
+    if (
+        bg_path
+        and bg_type in (BackgroundType.BROWSE, BackgroundType.MULTI)
+        and elem.find("source") is not None
+    ):
         log.warning(
             f"Background '{bg_name}' in {path} has both <path> and <source>; ignoring <path>"
         )
@@ -148,7 +152,9 @@ def _parse_background_group(elem, path: str) -> BackgroundGroup | None:
         notify("Background Group Error", "Group missing 'name' (see log)")
         return None
     if not label and not flat:
-        log.warning(f"Background group '{group_name}' in {path} missing 'label' (required when not flat)")
+        log.warning(
+            f"Background group '{group_name}' in {path} missing 'label' (required when not flat)"
+        )
         notify("Background Group Error", f"'{group_name}' missing label")
         return None
 

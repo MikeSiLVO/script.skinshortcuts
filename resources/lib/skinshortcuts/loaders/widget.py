@@ -104,7 +104,9 @@ def _parse_widget_group(elem, path: str, default_source: str = "") -> WidgetGrou
         notify("Widget Group Error", "Group missing 'name' (see log)")
         return None
     if not label and not flat:
-        log.warning(f"Widget group '{group_name}' in {path} missing 'label' (required when not flat)")
+        log.warning(
+            f"Widget group '{group_name}' in {path} missing 'label' (required when not flat)"
+        )
         notify("Widget Group Error", f"'{group_name}' missing label")
         return None
 

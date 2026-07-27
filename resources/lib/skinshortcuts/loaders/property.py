@@ -109,7 +109,8 @@ class PropertyLoader:
             if effective_type != "widget":
                 log.error(
                     f"{self.path}: button {button.button_id} has rename=\"true\" but type is "
-                    f"'{effective_type or 'unset'}' - rename only applies to type=\"widget\", ignoring"
+                    f"'{effective_type or 'unset'}' - rename only applies to "
+                    'type="widget", ignoring'
                 )
 
     def _parse_includes(self, root: ET.Element) -> None:
@@ -205,7 +206,7 @@ class PropertyLoader:
             raise PropertyConfigError(
                 str(self.path),
                 f"Invalid button id '{button_id_str}'",
-            )
+            ) from None
 
         property_name = (elem.get("property") or "").strip()
         if not property_name:

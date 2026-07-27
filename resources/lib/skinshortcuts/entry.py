@@ -64,7 +64,7 @@ def _unsupported_marker() -> Path:
 
 
 def _warn_unsupported(marker: Path) -> None:
-    """Modal once per session: switch skins, ignore (marks the skin so it never warns again), or cancel."""
+    """Modal once per session: switch skins, ignore (marks the skin so it won't warn) or cancel."""
     win = xbmcgui.Window(10000)
     if win.getProperty("skinshortcuts-unsupported-warned"):
         return

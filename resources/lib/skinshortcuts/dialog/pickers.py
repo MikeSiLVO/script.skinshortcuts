@@ -744,7 +744,9 @@ class PickersMixin:
             listitems = []
             if show_none:
                 none_item = xbmcgui.ListItem(xbmc.getLocalizedString(231))
-                none_item.setArt({"icon": overrides.get("DefaultAddonNone.png", "DefaultAddonNone.png")})
+                none_item.setArt(
+                    {"icon": overrides.get("DefaultAddonNone.png", "DefaultAddonNone.png")}
+                )
                 listitems.append(none_item)
 
             for vis_item in visible_items:
@@ -995,7 +997,9 @@ class PickersMixin:
                         # Wrap in one folder like a <group>: item.icon on the
                         # folder, placeholder as its first child.
                         if placeholder:
-                            placeholder.icon = overrides.get("DefaultFolder.png", "DefaultFolder.png")
+                            placeholder.icon = overrides.get(
+                                "DefaultFolder.png", "DefaultFolder.png"
+                            )
                             resolved = [placeholder, *resolved]
                         visible_items.append(
                             create_folder_group(
