@@ -222,7 +222,7 @@ def _browse_placeholder_for_content(
             name=name,
             label=label,
             path=path,
-            type=target,
+            type="addons",
             target=window,
             icon=icon,
             source="addon",
@@ -546,7 +546,7 @@ class PickersMixin:
                 name=f"dynamic-{content.source}-{len(widgets)}",
                 label=item.label,
                 path=path,
-                type=item.content_type or content.target or "",
+                type=item.content_type,
                 target=self._map_target_to_window(content.target),
                 icon=item.icon,
                 source=source,
@@ -659,6 +659,9 @@ class PickersMixin:
     def _browse_widget_path(self, widget: Widget) -> Widget | None:
         """Browse into a widget's path and let user select location.
 
+        A skin-declared type wins; only ask when nothing was declared, since a
+        plugin:// path's content type can't be read off the addon category.
+
         Args:
             widget: Widget with browsable path
 
@@ -679,7 +682,7 @@ class PickersMixin:
         elif widget.target == "pictures":
             addon_type = "pictures"
 
-        widget_type = self._pick_widget_type(addon_type)
+        widget_type = widget.type or self._pick_widget_type(addon_type)
         if widget_type is None:
             return None
 
@@ -692,7 +695,7 @@ class PickersMixin:
             type=widget_type,
             target=widget_target,
             icon=icon or widget.icon,
-            source="addon",
+            source=widget.source,
         )
 
     def _pick_from_hierarchy(

@@ -128,6 +128,8 @@ By default, selecting a widget in the picker assigns the widget as-is. Set `brow
 
 When browsing, the user navigates directories and the first entry ("Create menu item to here") uses the current location as-is. `<content source="addons">` resolves plugin-source addons as browsable automatically, no attribute needed in that case.
 
+The browsed widget keeps the `type` declared on the `<widget>`. Leave `type` off and the user is asked to pick one, since a `plugin://` path's content isn't readable from the add-on category alone. Addons reached through `<content>` always ask, as they carry no declaration of their own.
+
 ### Custom Widgets
 
 Custom widgets let users define their own item list:
