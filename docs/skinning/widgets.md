@@ -61,7 +61,7 @@ Widgets and groups are defined directly at the root level:
 | `name` | Yes | - | Unique identifier |
 | `label` | Yes | - | Display label |
 | `type` | No | - | Content type (e.g., `movies`, `episodes`, `albums`) |
-| `target` | No | `videos` | Target window: `videos`, `music`, `pictures`, `programs` |
+| `target` | No | `videos` | Target window: `videos`, `music`, `pictures`, `programs`, `games`, `files`, `tv`, `radio` |
 | `icon` | No | - | Icon for picker |
 | `source` | No | - | Source type: `library`, `playlist`, `addon`. Inherited from parent group if not set |
 | `condition` | No | - | Property condition (evaluated against item properties) |
@@ -249,7 +249,7 @@ Add dynamic content from system sources:
 | Attribute | Description |
 |-----------|-------------|
 | `source` | Content type: `playlists`, `addons`, `sources`, `favourites`, `pvr`, `commands`, `settings`, `library`, `nodes` |
-| `target` | Media context: `videos`, `music`, `pictures`, `programs`, `tv`, `radio` |
+| `target` | Media context: `videos`, `music`, `pictures`, `programs`, `games`, `files`, `tv`, `radio` |
 | `folder` | Wrap items in a folder with this label |
 | `path` | Custom path override |
 | `condition` | Property condition (evaluated against item properties) |

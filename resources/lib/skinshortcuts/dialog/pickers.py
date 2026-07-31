@@ -50,9 +50,15 @@ class PickerGroup(Protocol):
     items: list
 
 
-from ..constants import ADDONS_SOURCE_MAP, WINDOW_MAP, extract_path_from_action
+from ..constants import (
+    ADDONS_SOURCE_MAP,
+    WINDOW_MAP,
+    extract_path_from_action,
+    extract_window_from_action,
+)
 from ..loaders import evaluate_condition, load_groupings
 from ..localize import LANGUAGE, resolve_label
+from ..log import get_logger
 from ..playlists import (
     SORT_OPTIONS,
     SortOption,
@@ -78,7 +84,10 @@ from ..providers import ContentProvider, get_browse_provider
 
 if TYPE_CHECKING:
     from ..manager import MenuManager
+    from ..providers.content import ResolvedShortcut
 
+
+log = get_logger("Pickers")
 
 PLACEHOLDER_PREFIX = "content-placeholder-"
 
@@ -547,7 +556,7 @@ class PickersMixin:
                 label=item.label,
                 path=path,
                 type=item.content_type,
-                target=self._map_target_to_window(content.target),
+                target=self._widget_target_window(item, content.target),
                 icon=item.icon,
                 source=source,
                 browse=bool(item.browse_path),
@@ -582,19 +591,41 @@ class PickersMixin:
         """Map content target to widget target window."""
         from ..constants import TARGET_MAP
 
-        return TARGET_MAP.get(target.lower(), "videos") if target else "videos"
+        if not target:
+            return "videos"
+
+        window = TARGET_MAP.get(target.lower())
+        if window is None:
+            log.debug(f"Pickers - target '{target}' is not a known window, using videos")
+            return "videos"
+        return window
+
+    def _widget_target_window(self, item: ResolvedShortcut, content_target: str) -> str:
+        """Window the provider put this item in, falling back to the content target.
+
+        Per item, because one content block can span windows: source="nodes"
+        target="library" resolves to a video entry and a music entry.
+        """
+        from ..constants import TARGET_MAP
+
+        window = item.browse_window or extract_window_from_action(item.action)
+        if window:
+            return TARGET_MAP.get(window.lower(), window.lower())
+
+        return self._map_target_to_window(content_target)
 
     def _pick_widget_type(self, addon_type: str) -> str | None:
         """Show dialog to pick widget content type.
 
         Args:
-            addon_type: The addon category (video, audio, executable, pictures)
+            addon_type: The addon category (video, audio, executable, pictures, games)
 
         Returns:
             Selected widget type string, or None if cancelled.
         """
-        if addon_type == "pictures":
-            return "pictures"
+        # one possible type, nothing to ask
+        if addon_type in ("pictures", "games"):
+            return addon_type
 
         if addon_type == "video":
             types = [
@@ -646,6 +677,7 @@ class PickersMixin:
             "programs": "programs",
             "files": "files",
             "pictures": "pictures",
+            "games": "games",
         }
         return type_to_target.get(widget_type, default)
 
@@ -679,8 +711,8 @@ class PickersMixin:
             addon_type = "audio"
         elif widget.target == "programs":
             addon_type = "executable"
-        elif widget.target == "pictures":
-            addon_type = "pictures"
+        elif widget.target in ("pictures", "games"):
+            addon_type = widget.target
 
         widget_type = widget.type or self._pick_widget_type(addon_type)
         if widget_type is None:
