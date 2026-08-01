@@ -543,13 +543,20 @@ class PickersMixin:
         return self._content_provider
 
     def _resolve_content_to_widgets(self, content: Content) -> list[Widget]:
-        """Resolve a Content reference to a list of Widget objects for the picker."""
+        """Resolve a Content reference to a list of Widget objects for the picker.
+
+        Script-only addons resolve to a launcher, which lists nothing, so they are
+        offered as shortcuts but never as widget content.
+        """
         resolved = self._get_content_provider().resolve(content)
 
         source = content.source.rstrip("s") if content.source.endswith("s") else content.source
 
         widgets = []
         for item in resolved:
+            if content.source == "addons" and not item.browse_path:
+                continue
+
             path = item.browse_path or extract_path_from_action(item.action)
             widget = Widget(
                 name=f"dynamic-{content.source}-{len(widgets)}",

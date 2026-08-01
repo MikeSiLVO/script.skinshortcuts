@@ -257,7 +257,7 @@ Add dynamic content from system sources:
 | `icon` | Icon override |
 | `label` | Label override |
 
-For `source="addons"`, an add-on resolves as browsable when it is a plugin add-on (it exposes a `plugin://` path) and as a single-click launcher when it is a script. This is decided per add-on, not per target: a program add-on like AutoWidget is browsable under `target="executable"`, while a plain script launcher there is not. See the [Content Target Reference](menus.md#content-target-reference) for every source's valid targets.
+For `source="addons"`, an add-on resolves as browsable when it is a plugin add-on (it exposes a `plugin://` path) and as a single-click launcher when it is a script. This is decided per add-on, not per target: a program add-on like AutoWidget is browsable under `target="executable"`, while a plain script launcher there is not. Launchers are offered as menu items only. A widget picker lists the browsable add-ons, since a script has no content to fill a widget with. See the [Content Target Reference](menus.md#content-target-reference) for every source's valid targets.
 
 ### Nodes Source
 
