@@ -205,13 +205,14 @@ def _content_folder_path(content: Content) -> str:
 
 
 def _browse_placeholder_for_content(
-    content: Content, *, as_widget: bool = False, parent_label: str = ""
+    content: Content, *, as_widget: bool = False, parent_label: str = "", parent_icon: str = ""
 ) -> Shortcut | Widget | None:
     """Create a "Create menu item to here" placeholder for an addons content section.
 
-    Returns a Shortcut (shortcut picker) or Widget (widget picker) pointing at
-    addons://sources/<type>/, so users can commit a menu item or widget to the
-    addon category root even when no addons of that type are installed.
+    Shortcut or Widget pointing at addons://sources/<type>/, so a menu item can
+    commit to the addon category root with no addons of that type installed. The
+    picker shows this row as string 32058, so the label and icon set here are the
+    ones the committed item gets.
     """
     if content.source.lower() != "addons":
         return None
@@ -222,9 +223,9 @@ def _browse_placeholder_for_content(
 
     path, window = ADDONS_SOURCE_MAP[target]
     name = f"{PLACEHOLDER_PREFIX}{content.source}-{target}"
-    icon = content.icon if content.icon else "DefaultFolder.png"
+    icon = content.icon or parent_icon or "DefaultFolder.png"
 
-    label = content.label or parent_label or LANGUAGE(32058)
+    label = content.label or content.folder or parent_label or LANGUAGE(32058)
 
     if as_widget:
         return Widget(
@@ -910,7 +911,7 @@ class PickersMixin:
         """Pick from items within a group with back navigation."""
         visible_items = self._filter_picker_items(
             group.items, item_props, leaf_types, group_types, content_resolver,
-            create_folder_group, parent_label=resolve_label(group.label),
+            create_folder_group, parent_label=group.label, parent_icon=group.icon,
         )
 
         if not visible_items:
@@ -1015,11 +1016,12 @@ class PickersMixin:
         content_resolver: Callable[[Content], list] | None = None,
         create_folder_group: Callable[[str, list, str, str], Any] | None = None,
         parent_label: str = "",
+        parent_icon: str = "",
     ) -> list:
         """Filter and resolve picker items by condition and visibility.
 
-        parent_label names an addons content placeholder when the content
-        element carries no label of its own.
+        parent_label and parent_icon are the fallbacks for an addons content
+        placeholder. Raw, so a language switch still moves the committed label.
         """
         visible_items = []
 
@@ -1032,16 +1034,17 @@ class PickersMixin:
                 if content_resolver:
                     resolved = content_resolver(item)
                     placeholder = _browse_placeholder_for_content(
-                        item, as_widget=Widget in leaf_types, parent_label=parent_label
+                        item,
+                        as_widget=Widget in leaf_types,
+                        parent_label=parent_label,
+                        parent_icon=parent_icon,
                     )
                     overrides = self._icon_overrides()
+                    if placeholder:
+                        placeholder.icon = overrides.get(placeholder.icon, placeholder.icon)
                     if item.folder and (resolved or placeholder) and create_folder_group:
-                        # Wrap in one folder like a <group>: item.icon on the
-                        # folder, placeholder as its first child.
+                        # Wrap in one folder like a <group>, placeholder as its first child.
                         if placeholder:
-                            placeholder.icon = overrides.get(
-                                "DefaultFolder.png", "DefaultFolder.png"
-                            )
                             resolved = [placeholder, *resolved]
                         visible_items.append(
                             create_folder_group(
@@ -1050,7 +1053,6 @@ class PickersMixin:
                         )
                     else:
                         if placeholder:
-                            placeholder.icon = overrides.get(placeholder.icon, placeholder.icon)
                             visible_items.append(placeholder)
                         if resolved:
                             visible_items.extend(resolved)
@@ -1068,7 +1070,8 @@ class PickersMixin:
                         group_types,
                         content_resolver,
                         create_folder_group,
-                        parent_label=resolve_label(getattr(item, "label", "")) or parent_label,
+                        parent_label=getattr(item, "label", "") or parent_label,
+                        parent_icon=getattr(item, "icon", "") or parent_icon,
                     )
                     visible_items.extend(expanded)
                     continue

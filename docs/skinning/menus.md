@@ -594,7 +594,7 @@ Add dynamic content from system sources:
 
 For `source="addons"`, a "Create menu item to here" option appears at the top of the picker. This lets users create a shortcut to the addon category itself (e.g., "Video add-ons") even when no addons are installed.
 
-The `label` attribute sets the menu item label when the user selects this option:
+The row always reads "Create menu item to here", but the label and icon it commits come from the `<content>` element, so the menu item can name itself:
 
 ```xml
 <group name="video-addons" label="$LOCALIZE[1037]" icon="DefaultAddonVideo.png">
@@ -607,7 +607,7 @@ The `label` attribute sets the menu item label when the user selects this option
 | Selects "Create menu item to here" | Menu item labeled "Video add-ons" ($LOCALIZE[1037]) |
 | Selects a specific addon | Menu item labeled with addon name |
 
-Without the `label` attribute, the menu item defaults to "Create menu item to here".
+The label falls back through `label`, then `folder`, then the enclosing group's label, and the icon through `icon` then the group's icon. Set nothing anywhere and the menu item is labeled "Create menu item to here" with a folder icon.
 
 ### Content Target Reference
 
