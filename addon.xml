@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.2~beta7" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.2~beta8" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.2"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
+3.0.2~beta8
+  - Fix: browsing into a widget keeps the type declared by the skin instead of always asking
+  - Fix: the add-on category placeholder takes the label and icon from its content element
+  - Fix: widgets resolved from library or node content open in the window that content lives in
+  - Fix: script-only add-ons are offered as menu items only, not as widget content
+
 3.0.2~beta7
   - Fix: a picker group counts only the entries it will show
   - Fix: a widget or background picks up the skin's current path and label instead of a saved copy
