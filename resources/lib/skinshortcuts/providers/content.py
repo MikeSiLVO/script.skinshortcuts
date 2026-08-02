@@ -926,6 +926,7 @@ class ContentProvider:
                         label=label,
                         action=f"ActivateWindow(Music,{path},return)",
                         icon=thumb or "DefaultMusicArtists.png",
+                        content_type="artists",
                     )
                 )
         return shortcuts
@@ -955,6 +956,7 @@ class ContentProvider:
                         action=f"ActivateWindow(Music,{path},return)",
                         icon=thumb or "DefaultMusicAlbums.png",
                         label2=artist_str,
+                        content_type="albums",
                     )
                 )
         return shortcuts
