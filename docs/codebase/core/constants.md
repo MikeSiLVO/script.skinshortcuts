@@ -33,8 +33,6 @@
 
 | Set | Values |
 |-----|--------|
-| `WIDGET_TYPES` | movies, tvshows, episodes, musicvideos, artists, albums, songs, pvr, pictures, programs, addons, files, custom |
-| `WIDGET_TARGETS` | videos, music, pictures, programs, pvr, files |
 | `PROPERTY_TYPES` | select, text, number, bool, image, path |
 
 ***

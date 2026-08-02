@@ -21,35 +21,6 @@ DEFAULT_ICON = "DefaultShortcut.png"
 DEFAULT_TARGET = "videos"
 DEFAULT_VIEW_PREFIX = "ShortcutView_"
 
-WIDGET_TYPES = frozenset(
-    {
-        "movies",
-        "tvshows",
-        "episodes",
-        "musicvideos",
-        "artists",
-        "albums",
-        "songs",
-        "pvr",
-        "pictures",
-        "programs",
-        "addons",
-        "files",
-        "custom",
-    }
-)
-
-WIDGET_TARGETS = frozenset(
-    {
-        "videos",
-        "music",
-        "pictures",
-        "programs",
-        "pvr",
-        "files",
-    }
-)
-
 PROPERTY_TYPES = frozenset(
     {
         "select",
