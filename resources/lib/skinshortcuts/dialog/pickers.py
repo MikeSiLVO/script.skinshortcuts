@@ -52,6 +52,7 @@ class PickerGroup(Protocol):
 
 from ..constants import (
     ADDONS_SOURCE_MAP,
+    TARGET_MAP,
     WINDOW_MAP,
     extract_path_from_action,
     extract_window_from_action,
@@ -555,7 +556,7 @@ class PickersMixin:
 
         widgets = []
         for item in resolved:
-            if content.source == "addons" and not item.browse_path:
+            if content.source.lower() == "addons" and not item.browse_path:
                 continue
 
             path = item.browse_path or extract_path_from_action(item.action)
@@ -597,14 +598,12 @@ class PickersMixin:
 
     def _map_target_to_window(self, target: str) -> str:
         """Map content target to widget target window."""
-        from ..constants import TARGET_MAP
-
         if not target:
             return "videos"
 
         window = TARGET_MAP.get(target.lower())
         if window is None:
-            log.debug(f"Pickers - target '{target}' is not a known window, using videos")
+            log.debug(f"target '{target}' is not a known window, using videos")
             return "videos"
         return window
 
@@ -612,15 +611,13 @@ class PickersMixin:
         """Window the provider put this item in, falling back to the content target.
 
         Per item, because one content block can span windows: source="nodes"
-        target="library" resolves to a video entry and a music entry.
+        target="library" resolves to a video entry and a music entry. A favourite
+        can name any window at all, so anything non-media takes the fallback.
         """
-        from ..constants import TARGET_MAP
-
         window = item.browse_window or extract_window_from_action(item.action)
-        if window:
-            return TARGET_MAP.get(window.lower(), window.lower())
+        mapped = TARGET_MAP.get(window.lower()) if window else None
 
-        return self._map_target_to_window(content_target)
+        return mapped or self._map_target_to_window(content_target)
 
     def _pick_widget_type(self, addon_type: str) -> str | None:
         """Show dialog to pick widget content type.
@@ -1269,8 +1266,6 @@ class PickersMixin:
         """
         if not self._is_browsable(shortcut):
             return None
-
-        from ..constants import WINDOW_MAP
 
         window = WINDOW_MAP.get(shortcut.browse.lower(), "Videos")
         return (shortcut.path, window)
