@@ -1798,27 +1798,3 @@ class TemplateBuilder:
             text = process_if_expressions(text, properties)
 
         return text
-
-    def write(self, path: str, indent: bool = True) -> None:
-        """Write template includes to file."""
-        root = self.build()
-        if indent:
-            _indent_xml(root)
-        tree = ET.ElementTree(root)
-        tree.write(path, encoding="UTF-8", xml_declaration=True)
-
-
-def _indent_xml(elem: ET.Element, level: int = 0) -> None:
-    """Add indentation to XML tree."""
-    indent = "\n" + "\t" * level
-    if len(elem):
-        if not elem.text or not elem.text.strip():
-            elem.text = indent + "\t"
-        if not elem.tail or not elem.tail.strip():
-            elem.tail = indent
-        for child in elem:
-            _indent_xml(child, level + 1)
-        if not child.tail or not child.tail.strip():
-            child.tail = indent
-    elif level and (not elem.tail or not elem.tail.strip()):
-        elem.tail = indent
