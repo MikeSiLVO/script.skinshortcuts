@@ -421,12 +421,17 @@ class IncludesBuilder:
             prop.text = value
 
     def write(self, path: str | Path, indent: bool = True) -> None:
-        """Write includes XML to file."""
+        """Write includes XML to file.
+
+        Binary handle so ElementTree writes LF: given a filename it opens text
+        mode and Windows turns every newline into CRLF. Skins ship this file.
+        """
         root = self.build()
         if indent:
             _indent_xml(root)
         tree = ET.ElementTree(root)
-        tree.write(str(path), encoding="UTF-8", xml_declaration=True)
+        with open(path, "wb") as f:
+            tree.write(f, encoding="UTF-8", xml_declaration=True)
 
 
 def _indent_xml(elem: ET.Element, level: int = 0) -> None:
