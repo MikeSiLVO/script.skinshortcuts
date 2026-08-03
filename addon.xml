@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.2~beta8" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.2~beta9" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.2"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
+3.0.2~beta9
+  - Fix: the includes file is written with unix line endings on every platform, a skin that ships the file sees one full rewrite the first time it builds on Windows
+
 3.0.2~beta8
   - Fix: browsing into a widget keeps the type declared by the skin instead of always asking
   - Fix: the add-on category placeholder takes the label and icon from its content element
