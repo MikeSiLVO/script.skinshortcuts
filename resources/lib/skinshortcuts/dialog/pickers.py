@@ -137,12 +137,15 @@ def _group_count(
         if condition and not evaluate_condition(condition, item_props):
             continue
         if isinstance(child, Content):
-            if child.folder:
-                total += 1
-                continue
             if content_resolver is None:
                 return ""
-            total += len(content_resolver(child))
+            resolved = content_resolver(child)
+            if child.folder:
+                # folder row is dropped when it resolves to nothing
+                if resolved or _browse_placeholder_for_content(child):
+                    total += 1
+                continue
+            total += len(resolved)
             continue
         if getattr(child, "name", "").startswith(PLACEHOLDER_PREFIX):
             continue
