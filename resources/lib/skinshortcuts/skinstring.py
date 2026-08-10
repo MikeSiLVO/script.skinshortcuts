@@ -35,18 +35,23 @@ class _StandalonePicker(PickersMixin):
         self._overrides = icon_overrides or {}
 
     def _icon_overrides(self) -> dict[str, str]:
+        """Overrides handed in by the caller."""
         return self._overrides
 
     def _get_selected_item(self) -> MenuItem | None:
+        """No item is selected outside the management dialog."""
         return None
 
     def _get_item_properties(self, _item: MenuItem) -> dict[str, str]:
+        """No item properties to test picker conditions against."""
         return {}
 
     def _refresh_selected_item(self) -> None:
+        """Nothing to refresh without a list control."""
         pass
 
     def _log(self, msg: str) -> None:
+        """Send picker logging to this module's logger."""
         log.debug(msg)
 
 

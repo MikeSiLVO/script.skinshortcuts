@@ -463,6 +463,7 @@ def main() -> None:
 
 
 def _dispatch(args: dict[str, str]) -> None:
+    """Run the action named by the type parameter, building includes by default."""
     action = args.get("type", "buildxml")
 
     if action == "buildxml":

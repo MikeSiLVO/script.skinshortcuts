@@ -136,6 +136,7 @@ class IncludesBuilder:
         return root
 
     def _build_menu_include(self, menu: Menu, name_override: str | None = None) -> ET.Element:
+        """Build a menu's include, one entry per item the user left enabled."""
         include = ET.Element("include")
         include.set("name", f"skinshortcuts-{name_override or menu.name}")
 
@@ -248,6 +249,7 @@ class IncludesBuilder:
         return includes
 
     def _build_item(self, item: MenuItem, idx: int, menu: Menu) -> ET.Element:
+        """Build one menu entry, as a control when the menu names a controltype."""
         if menu.controltype:
             elem = ET.Element("control")
             elem.set("type", menu.controltype)
@@ -415,6 +417,7 @@ class IncludesBuilder:
 
     @staticmethod
     def _add_property(parent: ET.Element, name: str, value: str) -> None:
+        """Append a property element, skipping empty values."""
         if value:
             prop = ET.SubElement(parent, "property")
             prop.set("name", name)

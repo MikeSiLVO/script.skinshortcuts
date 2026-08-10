@@ -85,6 +85,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     _skin_path: str
 
     def __init__(self, *args, **kwargs):
+        """Read dialog state from kwargs; a child reuses the parent's shared objects."""
         super().__init__(*args)
         self.menu_id = kwargs.get("menu_id", "mainmenu")
         self.shortcuts_path = kwargs.get("shortcuts_path", get_shortcuts_path())

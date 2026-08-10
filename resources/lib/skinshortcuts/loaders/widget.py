@@ -54,6 +54,7 @@ def load_widgets(path: str | Path) -> WidgetConfig:
 
 
 def _parse_widget(elem, path: str, default_source: str = "") -> Widget:
+    """Parse a widget element; only a custom widget may leave out its path."""
     widget_name = get_attr(elem, "name")
     if not widget_name:
         raise WidgetConfigError(path, "Widget missing 'name' attribute")

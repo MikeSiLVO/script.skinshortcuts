@@ -291,6 +291,7 @@ def _parse_overrides(root) -> list[ActionOverride]:
 
 
 def _check_visible(visible: str) -> bool:
+    """Whether a Kodi visibility condition passes; an empty one always does."""
     if not visible:
         return True
     try:
@@ -375,6 +376,7 @@ def _parse_menu(
     is_submenu: bool = False,
     icon_overrides: dict[str, str] | None = None,
 ) -> Menu:
+    """Parse a menu or submenu element with its items, defaults and allow rules."""
     menu_name = get_attr(elem, "name")
     if not menu_name:
         raise MenuConfigError(path, "Menu missing 'name' attribute")
@@ -425,6 +427,7 @@ def _parse_item(
     is_widget_submenu: bool = False,
     icon_overrides: dict[str, str] | None = None,
 ) -> MenuItem:
+    """Parse an item element: label, icon, actions, properties and protection."""
     overrides = icon_overrides or {}
     item_name = get_attr(elem, "name")
     if not item_name:
@@ -504,6 +507,7 @@ def _parse_item(
 
 
 def _parse_defaults(elem) -> MenuDefaults:
+    """Parse a defaults element: properties and actions every item in the menu starts with."""
     if elem is None:
         return MenuDefaults()
 
@@ -550,6 +554,7 @@ def _parse_defaults(elem) -> MenuDefaults:
 
 
 def _parse_allow(elem) -> MenuAllow:
+    """Parse an allow element: which features the menu lets the user edit."""
     if elem is None:
         return MenuAllow()
 

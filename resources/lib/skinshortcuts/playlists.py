@@ -182,6 +182,7 @@ def save_playlist(menu: str, item: str, xml: str) -> str:
 
 
 def _probe_total(method: str, filt: dict) -> int:
+    """Rows a filtered library query would return; 0 if the query fails."""
     request = {
         "jsonrpc": "2.0",
         "method": method,

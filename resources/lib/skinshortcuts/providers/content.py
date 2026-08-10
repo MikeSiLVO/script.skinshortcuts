@@ -140,6 +140,7 @@ class ContentProvider:
     """Resolves dynamic content references to shortcuts."""
 
     def __init__(self, icon_overrides: dict[str, str] | None = None) -> None:
+        """Take the icon overrides; resolved content is cached per instance."""
         self._cache: dict[str, list[ResolvedShortcut]] = {}
         self._icon_overrides = icon_overrides or {}
 

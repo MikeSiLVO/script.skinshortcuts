@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 
 
 class BackgroundType(Enum):
+    """What kind of source a background draws from."""
+
     STATIC = auto()
     PLAYLIST = auto()
     BROWSE = auto()

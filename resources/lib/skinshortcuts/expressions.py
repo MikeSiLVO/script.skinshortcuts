@@ -51,6 +51,7 @@ class MathEvaluator:
             return expr
 
     def _skip_whitespace(self) -> None:
+        """Advance to the next non-space character."""
         while self.pos < len(self.expr) and self.expr[self.pos].isspace():
             self.pos += 1
 

@@ -76,6 +76,7 @@ def load_backgrounds(
 def _parse_background(
     elem, path: str, icon_overrides: dict[str, str] | None = None
 ) -> Background:
+    """Parse a background element; name and label are required."""
     bg_name = get_attr(elem, "name")
     if not bg_name:
         raise BackgroundConfigError(path, "Background missing 'name' attribute")

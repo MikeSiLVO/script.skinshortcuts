@@ -657,6 +657,7 @@ class PropertiesMixin:
         sources: list[PlaylistSource],
         prefix: str,
     ) -> PlaylistSource | None:
+        """Pick which source to scan, skipping the dialog when the skin lists one."""
         if len(sources) == 1:
             return sources[0]
 
@@ -680,6 +681,7 @@ class PropertiesMixin:
         prefix: str,
         current_path: str,
     ) -> tuple[str, str, str] | None:
+        """Pick a playlist from one source, returning its path, label and type."""
         playlists = []
 
         for raw_label, path in scan_playlist_files(source.path):
