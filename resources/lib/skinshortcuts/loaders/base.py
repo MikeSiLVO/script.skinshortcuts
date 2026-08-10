@@ -10,6 +10,8 @@ from ..exceptions import ConfigError
 
 NO_SUFFIX_PROPERTIES = frozenset({
     "name",
+    "label",
+    "disabled",
     "default",
     "menu",
     "index",

@@ -9,6 +9,7 @@ The management dialog (`script-skinshortcuts.xml`) provides the UI for editing m
 * [Overview](#overview)
 * [Dialog XML](#dialog-xml)
 * [Control IDs](#control-ids)
+* [Context Menu](#context-menu)
 * [Window Properties](#window-properties)
 * [ListItem Properties](#listitem-properties)
 * [Picker Properties](#picker-properties)
@@ -138,6 +139,30 @@ All property buttons (widget, background, custom options) are configured in `pro
 These aren't built-in. Define button mappings in your `properties.xml`.
 
 > **See also:** [Properties](properties.md#button-mappings) for configuring property buttons
+
+---
+
+## Context Menu
+
+The context action opens a menu of actions for the item selected in control 211. It fires anywhere in the dialog unless `enableon` limits it to specific controls. It also works in subdialogs, where it acts on the item the subdialog was opened for, so an `enableon` list has to include the controls a subdialog focuses or the menu is unreachable there.
+
+Rows are declared in `menus.xml` and reference the button IDs above, so a row can trigger a button your dialog XML never draws:
+
+```xml
+<contextmenu enableon="211">
+  <button id="305" label="$ADDON[script.skinshortcuts 32171]" />
+  <button id="302" label="$LOCALIZE[117]" />
+</contextmenu>
+```
+
+Rows can be filtered per menu or per subdialog mode with the same window properties the rest of your dialog uses:
+
+```xml
+<button id="800" label="$LOCALIZE[31000]"
+        visible="String.IsEmpty(Window.Property(skinshortcuts-dialog))" />
+```
+
+> **See also:** [Context Menu](menus.md#context-menu) for the full syntax and defaults
 
 ---
 

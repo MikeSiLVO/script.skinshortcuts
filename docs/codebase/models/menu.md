@@ -122,4 +122,6 @@ User input prompt for custom values.
 | `SubDialog` | Subdialog definition (button_id, mode, menu, setfocus, suffix, onclose) |
 | `OnCloseAction` | Action on subdialog close |
 | `ActionOverride` | Action replacement rule |
+| `ContextMenu` | Context menu settings (enabled, enable_on, buttons) |
+| `ContextMenuButton` | Context menu row (button_id, label, condition, visible) |
 | `MenuConfig` | Top-level container for all menu config |

@@ -13,14 +13,59 @@ try:
 except ImportError:
     IN_KODI = False
 
+from ..conditions import evaluate_condition
+from ..loaders.base import apply_suffix_transform
 from ..localize import LANGUAGE, resolve_label
 from ..models import Action, BrowseSource, IconSource, MenuItem
+from ..models.menu import ContextMenu, ContextMenuButton
 from ..providers import normalize_image
+from .base import (
+    CONTROL_ADD,
+    CONTROL_CHOOSE_SHORTCUT,
+    CONTROL_DELETE,
+    CONTROL_EDIT_SUBMENU,
+    CONTROL_MOVE_DOWN,
+    CONTROL_MOVE_UP,
+    CONTROL_RESET_ITEM,
+    CONTROL_RESTORE_DELETED,
+    CONTROL_SET_ACTION,
+    CONTROL_SET_ICON,
+    CONTROL_SET_LABEL,
+    CONTROL_TOGGLE_DISABLED,
+)
 from .pickers import picker_select
+from .properties import BUTTON_ONLY_TYPES
 
 if TYPE_CHECKING:
     from ..manager import MenuManager
     from ..models import PropertySchema
+    from ..models.menu import SubDialog
+
+CONTEXT_DEFAULT_BUTTONS = (
+    CONTROL_SET_LABEL,
+    CONTROL_SET_ACTION,
+    CONTROL_SET_ICON,
+    CONTROL_EDIT_SUBMENU,
+    CONTROL_DELETE,
+)
+
+
+def _default_context_labels(item: MenuItem) -> dict[int, str]:
+    """Default label per built-in button the context menu can route."""
+    return {
+        CONTROL_ADD: LANGUAGE(32000),
+        CONTROL_DELETE: xbmc.getLocalizedString(117),
+        CONTROL_MOVE_UP: LANGUAGE(32002),
+        CONTROL_MOVE_DOWN: LANGUAGE(32003),
+        CONTROL_SET_LABEL: LANGUAGE(32171),
+        CONTROL_SET_ICON: LANGUAGE(32173),
+        CONTROL_SET_ACTION: LANGUAGE(32172),
+        CONTROL_RESTORE_DELETED: LANGUAGE(32028),
+        CONTROL_RESET_ITEM: LANGUAGE(32104),
+        CONTROL_TOGGLE_DISABLED: LANGUAGE(32207 if item.disabled else 32117),
+        CONTROL_CHOOSE_SHORTCUT: LANGUAGE(32043),
+        CONTROL_EDIT_SUBMENU: LANGUAGE(32139),
+    }
 
 
 def _browse_path(browse_type: int, title: str, start: str = "") -> str:
@@ -49,8 +94,11 @@ class ItemsMixin:
     items: list[MenuItem]
     property_schema: PropertySchema | None
     icon_sources: list[IconSource]
+    context_menu: ContextMenu
     shortcuts_path: str
     dialog_mode: str
+    property_suffix: str
+    _subdialogs: dict[int, SubDialog]
 
     if TYPE_CHECKING:
         from typing import Literal
@@ -69,6 +117,7 @@ class ItemsMixin:
         def _suffixed_name(self, name: str) -> str: ...
         def _log(self, msg: str) -> None: ...
         def _get_item_properties(self, item: MenuItem) -> dict[str, str]: ...
+        def onClick(self, control_id: int) -> None: ...  # noqa: N802
         def _pick_widget_from_groups(
             self,
             items: list[WidgetGroup | Widget | Content],
@@ -392,8 +441,6 @@ class ItemsMixin:
         Returns:
             Selected path, or None if cancelled
         """
-        from ..conditions import evaluate_condition
-
         props = item_properties or {}
 
         visible_sources = []
@@ -445,19 +492,56 @@ class ItemsMixin:
         if not item:
             return
 
-        options = [
-            (LANGUAGE(32171), self._set_label),
-            (LANGUAGE(32172), self._set_action),
-            (LANGUAGE(32173), self._set_icon),
-            (LANGUAGE(32139), self._edit_submenu),
-            (xbmc.getLocalizedString(117), self._delete_item),
-        ]
+        rows = self._context_menu_rows(item)
+        if not rows:
+            return
 
-        labels = [opt[0] for opt in options]
-        selected = xbmcgui.Dialog().contextmenu(labels)
-
+        selected = xbmcgui.Dialog().contextmenu([label for _, label in rows])
         if selected >= 0:
-            options[selected][1]()
+            self.onClick(rows[selected][0])
+
+    def _context_menu_rows(self, item: MenuItem) -> list[tuple[int, str]]:
+        """Button ID and label per row, after condition and visibility filtering."""
+        buttons = self.context_menu.buttons or [
+            ContextMenuButton(button_id=button_id) for button_id in CONTEXT_DEFAULT_BUTTONS
+        ]
+        props = self._get_item_properties(item)
+        defaults = _default_context_labels(item)
+
+        rows = []
+        for button in buttons:
+            condition = apply_suffix_transform(button.condition, self.property_suffix)
+            if condition and not evaluate_condition(condition, props):
+                continue
+            if button.visible and not xbmc.getCondVisibility(button.visible):
+                continue
+
+            if not self._context_button_routes(button.button_id, defaults):
+                self._log(f"Context menu button {button.button_id} does nothing, skipping")
+                continue
+
+            label = resolve_label(button.label) if button.label else defaults.get(button.button_id)
+            if not label:
+                self._log(f"Context menu button {button.button_id} has no label, skipping")
+                continue
+
+            rows.append((button.button_id, label))
+
+        return rows
+
+    def _context_button_routes(self, button_id: int, builtin_labels: dict[int, str]) -> bool:
+        """Whether onClick can route this button ID."""
+        if button_id in builtin_labels or button_id in self._subdialogs:
+            return True
+        if not self.property_schema:
+            return False
+
+        prop, mapping = self.property_schema.get_property_for_button(button_id)
+        if mapping is None:
+            return False
+        if prop is not None:
+            return True
+        return mapping.type in BUTTON_ONLY_TYPES
 
     def _set_item_property(
         self,

@@ -58,10 +58,13 @@ Property conditions use a simple expression language to compare against the curr
 * `<background condition="...">` - Filter background in picker
 * `<option condition="...">` - Filter property option
 * `<source condition="...">` - Filter icon/browse source
+* `<button condition="...">` - Filter context menu row
 * Template `<condition>` - Control template building
 * Template `<property condition="...">` - Conditional property
 * Template `<value condition="...">` - Conditional var value
 * Fallback `<when condition="...">` - Conditional fallback
+
+During dialog operations the item's own fields are available alongside its properties: `name`, `label`, and `disabled` (`True` or `False`).
 
 ---
 
@@ -77,6 +80,7 @@ Evaluated at runtime using Kodi's condition system.
 * `<background visible="...">` - Filter background in picker
 * `<item visible="...">` - Filter in management dialog
 * `<source visible="...">` - Filter icon/browse source
+* `<button visible="...">` - Filter context menu row
 * `<action condition="...">` - Conditional action execution
 
 ### Common Kodi Conditions
@@ -144,6 +148,8 @@ propertyName=value
 <!-- Check for empty value explicitly -->
 <option condition="suffix=">
 ```
+
+A `true`/`false` value compares case-insensitively in `=` and `IN`, so `disabled=True` and `disabled=true` are the same test. Every other value compares exactly.
 
 ### Contains
 

@@ -39,7 +39,7 @@ skin.name/
 | `<icons>` | Icon picker sources |
 | `<dialogs>` | Subdialog definitions |
 | `<overrides>` | Action replacements |
-| `<contextmenu>` | Context menu toggle |
+| `<contextmenu>` | Context menu toggle and rows |
 
 See [Menus](menus.md) for full reference.
 

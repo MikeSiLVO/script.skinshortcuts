@@ -41,7 +41,7 @@ DialogBaseMixin provides foundation for the management dialog: initialization, l
 | `manager` | MenuManager | Shared manager for child dialogs |
 | `property_schema` | PropertySchema | Shared schema |
 | `icon_sources` | list[IconSource] | Shared icon sources for child dialogs |
-| `show_context_menu` | bool | Shared context-menu enable flag |
+| `context_menu` | ContextMenu | Shared context menu settings |
 | `subdialogs` | list[SubDialog] | Shared subdialog definitions |
 | `dialog_mode` | str | Mode for Home window property |
 | `property_suffix` | str | Suffix for widget slots |
@@ -58,6 +58,7 @@ DialogBaseMixin provides foundation for the management dialog: initialization, l
 | `close` | Save changes and close (root dialog only saves) |
 | `onClick` | Route control clicks to handlers |
 | `onAction` | Handle cancel/context actions |
+| `_context_menu_allowed` | Whether the context action opens the menu with the current focus |
 | `_load_items` | Load menu items from manager |
 | `_rebuild_list` | Rebuild list control after changes |
 | `_refresh_selected_item` | Update selected item's display |

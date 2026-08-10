@@ -213,6 +213,13 @@ def _evaluate_expanded(condition: str, properties: dict[str, str]) -> bool:
     return _evaluate_single(condition, properties)
 
 
+def _matches(actual: str, value: str) -> bool:
+    """Value comparison, case insensitive when the value is a boolean."""
+    if value.lower() in ("true", "false"):
+        return actual.lower() == value.lower()
+    return actual == value
+
+
 def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
     """Evaluate a single condition (property=value or property~value)."""
     condition = condition.strip()
@@ -240,7 +247,7 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
         values_str = values_str.strip()
         actual = properties.get(prop_name, "")
         values = [v.strip() for v in values_str.split(",")]
-        result = actual in values
+        result = any(_matches(actual, v) for v in values)
         return not result if negated else result
 
     if "=" in condition:
@@ -255,7 +262,7 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
             actual = prop_name
         else:
             actual = ""
-        result = actual == value
+        result = _matches(actual, value)
         return not result if negated else result
 
     if "~" in condition:

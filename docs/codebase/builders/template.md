@@ -132,4 +132,4 @@ When suffix is specified (e.g., `.2` for widget slot 2):
 
 - `from="widgetPath"` → `from="widgetPath.2"`
 - `condition="widgetType=movies"` → `condition="widgetType.2=movies"`
-- Built-ins are excluded from suffixing, via two lists: `NO_SUFFIX_PROPERTIES` (`name`, `default`, `menu`, `index`, `id`, `idprefix`) for from/condition attribute transforms (loaders/base.py), and the `reserved` tuple (`index`, `name`, `menu`, `id`, `idprefix`, `suffix`) for template condition suffixing (`_apply_suffix_to_condition`)
+- Built-ins are excluded from suffixing, via two lists: `NO_SUFFIX_PROPERTIES` (`name`, `label`, `disabled`, `default`, `menu`, `index`, `id`, `idprefix`) for from/condition attribute transforms (loaders/base.py), and the `reserved` tuple (`index`, `name`, `menu`, `id`, `idprefix`, `suffix`) for template condition suffixing (`_apply_suffix_to_condition`)

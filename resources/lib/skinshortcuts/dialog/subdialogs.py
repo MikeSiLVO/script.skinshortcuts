@@ -18,7 +18,7 @@ from ..models import MenuItem
 if TYPE_CHECKING:
     from ..manager import MenuManager
     from ..models import IconSource, PropertySchema
-    from ..models.menu import SubDialog
+    from ..models.menu import ContextMenu, SubDialog
     from ..providers import ContentProvider
 
 
@@ -39,7 +39,7 @@ class SubdialogsMixin:
     manager: MenuManager | None
     property_schema: PropertySchema | None
     icon_sources: list[IconSource]
-    show_context_menu: bool
+    context_menu: ContextMenu
     _subdialogs: dict[int, SubDialog]
     _dialog_xml: str
     _skin_path: str
@@ -75,7 +75,7 @@ class SubdialogsMixin:
             content_provider=self._get_content_provider(),
             property_schema=self.property_schema,
             icon_sources=self.icon_sources,
-            show_context_menu=self.show_context_menu,
+            context_menu=self.context_menu,
             subdialogs=list(self._subdialogs.values()),
             dialog_mode=dialog_mode,
             **kwargs,

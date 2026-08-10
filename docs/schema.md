@@ -99,7 +99,10 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
     <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2" />
   </dialogs>
 
-  <contextmenu>true</contextmenu>
+  <contextmenu enableon="211,212">
+    <button id="305" label="$ADDON[script.skinshortcuts 32171]" />
+    <button id="302" label="$LOCALIZE[117]" />
+  </contextmenu>
 
   <submenuPath>all</submenuPath>
 </menus>
@@ -143,7 +146,8 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 | `<dialogs>` | menus | - | - | Subdialog definitions |
 | `<subdialog>` | dialogs | `buttonID` | `mode`, `menu`, `setfocus`, `suffix` | Subdialog mapping; requires at least one of `mode`, `menu`, or an `<onclose>`. `menu` (without `mode`) opens that menu directly |
 | `<onclose>` | subdialog | `action` | `menu`, `condition` | Action when subdialog closes |
-| `<contextmenu>` | menus | - | - | Enable/disable context menu |
+| `<contextmenu>` | menus | - | `enableon` | Context menu settings. Text `false` disables it; `enableon` is a comma separated list of control IDs the context action fires on (default: anywhere) |
+| `<button>` | contextmenu | `id` | `label`, `condition`, `visible` | Context menu row; clicking it clicks that dialog button. `label` defaults to the script's own label for built-in button IDs. Without any `<button>`, the built-in rows are shown |
 | `<submenuPath>` | menus | - | - | `all` emits the numbered `submenuPath.N` tail for every widget submenu (global default; per-menu form is the `submenuPath` attribute on `<menu>`) |
 
 ### Protect Types

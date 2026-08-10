@@ -420,6 +420,38 @@ class SubDialog:
 
 
 @dataclass
+class ContextMenuButton:
+    """A row in the management dialog context menu.
+
+    Attributes:
+        button_id: Button clicked when the row is chosen; built-in, property or subdialog
+        label: Row label; falls back to the script's own label for built-in IDs
+        condition: Property condition, checked against the selected item
+        visible: Kodi visibility condition
+    """
+
+    button_id: int
+    label: str = ""
+    condition: str = ""
+    visible: str = ""
+
+
+@dataclass
+class ContextMenu:
+    """Context menu settings from <contextmenu>.
+
+    Attributes:
+        enabled: Whether the context action opens the menu at all
+        enable_on: Control IDs the context action fires on; empty means anywhere
+        buttons: Rows to show; empty means the built-in set
+    """
+
+    enabled: bool = True
+    enable_on: list[int] = field(default_factory=list)
+    buttons: list[ContextMenuButton] = field(default_factory=list)
+
+
+@dataclass
 class ActionOverride:
     """An action override that replaces one action with another.
 
@@ -445,5 +477,5 @@ class MenuConfig:
     subdialogs: list[SubDialog] = field(default_factory=list)
     action_overrides: list[ActionOverride] = field(default_factory=list)
     icon_overrides: dict[str, str] = field(default_factory=dict)  # DefaultX.png -> override path
-    show_context_menu: bool = True  # Whether to show context menu on items
+    context_menu: ContextMenu = field(default_factory=ContextMenu)
     submenu_path_all: bool = False  # <submenuPath>all</submenuPath>: numbers every widget submenu

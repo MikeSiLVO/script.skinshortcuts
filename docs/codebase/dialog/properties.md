@@ -15,7 +15,7 @@ PropertiesMixin handles property button clicks from schema and manages widget, b
 
 ### `_handle_property_button`(button_id) → bool
 
-Route property button click to appropriate handler based on property type from schema.
+Route property button click to appropriate handler based on property type from schema. A button mapped to a property the schema does not define notifies the skinner and returns, rather than falling through to the options handler.
 
 ***
 

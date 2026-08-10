@@ -19,6 +19,7 @@ from ..localize import resolve_label
 from ..log import get_logger
 from ..manager import MenuManager
 from ..models import MenuItem, PropertySchema
+from ..models.menu import ContextMenu
 
 _log = get_logger("Dialog")
 
@@ -67,7 +68,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     items: list[MenuItem]
     property_schema: PropertySchema | None
     icon_sources: list[IconSource]
-    show_context_menu: bool
+    context_menu: ContextMenu
     dialog_mode: str
     property_suffix: str
     is_child: bool
@@ -75,7 +76,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     _shared_manager: MenuManager | None
     _shared_schema: PropertySchema | None
     _shared_icon_sources: list[IconSource] | None
-    _shared_show_context_menu: bool | None
+    _shared_context_menu: ContextMenu | None
     _shared_subdialogs: list[SubDialog] | None
     _subdialogs: dict[int, SubDialog]
     _setfocus: int | None
@@ -100,8 +101,8 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         self._shared_icon_sources = kwargs.get("icon_sources")
         self.icon_sources = []
 
-        self._shared_show_context_menu = kwargs.get("show_context_menu")
-        self.show_context_menu = True
+        self._shared_context_menu = kwargs.get("context_menu")
+        self.context_menu = ContextMenu()
 
         self._shared_subdialogs = kwargs.get("subdialogs")
         self._subdialogs = {}
@@ -179,18 +180,14 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         if not self.icon_sources:
             if self._shared_icon_sources is not None:
                 self.icon_sources = self._shared_icon_sources
-                self.show_context_menu = (
-                    self._shared_show_context_menu
-                    if self._shared_show_context_menu is not None
-                    else True
-                )
+                self.context_menu = self._shared_context_menu or ContextMenu()
                 if self._shared_subdialogs:
                     self._subdialogs = {sd.button_id: sd for sd in self._shared_subdialogs}
             else:
                 menus_path = Path(self.shortcuts_path) / "menus.xml"
                 menu_config = load_menus(menus_path)
                 self.icon_sources = menu_config.icon_sources
-                self.show_context_menu = menu_config.show_context_menu
+                self.context_menu = menu_config.context_menu
                 self._subdialogs = {sd.button_id: sd for sd in menu_config.subdialogs}
 
         if not self.dialog_mode and self.manager:
@@ -371,6 +368,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 "backgroundPath",
                 "name",
                 "label",
+                "disabled",
             ):
                 continue
             if self._is_widget_dependent(prop_name):
@@ -484,6 +482,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         props = dict(item.properties)
         props["name"] = item.name
         props["label"] = resolve_label(item.label)
+        props["disabled"] = "True" if item.disabled else "False"
 
         return props
 
@@ -616,8 +615,19 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 f"mode={self.dialog_mode}, is_child={self.is_child}"
             )
             self.close()
-        elif action_id in ACTION_CONTEXT and self.show_context_menu:
+        elif action_id in ACTION_CONTEXT and self._context_menu_allowed():
             self._show_context_menu()
+
+    def _context_menu_allowed(self) -> bool:
+        """Whether the context action opens the menu with the current focus."""
+        if not self.context_menu.enabled:
+            return False
+        if not self.context_menu.enable_on:
+            return True
+        try:
+            return self.getFocusId() in self.context_menu.enable_on
+        except RuntimeError:
+            return False
 
     def close(self) -> None:
         """Save changes and close dialog.

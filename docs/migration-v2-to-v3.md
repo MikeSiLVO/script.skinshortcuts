@@ -246,6 +246,30 @@ v3 (conditional actions on item):
 </item>
 ```
 
+### Context Menu
+
+v2 (`overrides.xml`):
+
+```xml
+<contextmenu>
+  <enableon>211</enableon>
+  <item control="313"
+     condition="String.IsEqual(Container(211).ListItem.Property(skinshortcuts-disabled),False)">$LOCALIZE[24021]</item>
+  <item control="302">$LOCALIZE[117]</item>
+</contextmenu>
+```
+
+v3 (`menus.xml`):
+
+```xml
+<contextmenu enableon="211">
+  <button id="313" />
+  <button id="302" label="$LOCALIZE[117]" />
+</contextmenu>
+```
+
+`<enableon>` is an attribute taking a comma separated list, rows are `<button id="...">` with the label as an attribute, and Kodi conditions moved to `visible` (`condition` is now a [property condition](skinning/conditions.md)). Omit the rows for the built-in set, and omit `label` on a built-in button to take the script's own wording, which for 313 already follows the item's disabled state.
+
 ### Required Items (v3 only)
 
 ```xml

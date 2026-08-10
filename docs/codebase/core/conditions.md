@@ -24,7 +24,7 @@ Main entry point. Returns True if condition matches (empty conditions return Tru
 | Symbol | Keyword | Example |
 |--------|---------|---------|
 | *(none)* | - | `widgetPath` (truthy check) |
-| `=` | `EQUALS` | `widgetType=movies` |
+| `=` | `EQUALS` | `widgetType=movies` (a `true`/`false` right side compares case-insensitively) |
 | `~` | `CONTAINS` | `widgetPath~library` |
 | - | `EMPTY` | `widgetPath EMPTY` |
 | - | `IN` | `widgetType IN movies,episodes,tvshows` |

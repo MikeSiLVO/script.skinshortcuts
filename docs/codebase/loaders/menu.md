@@ -22,7 +22,7 @@ Load complete menu configuration. Returns MenuConfig containing:
 - `subdialogs` - Subdialog definitions
 - `action_overrides` - Action replacement rules
 - `icon_overrides` - DefaultX.png -> override-path map from `<overrides><icons>`
-- `show_context_menu` - Context menu visibility
+- `context_menu` - Context menu settings from `<contextmenu>`
 
 ### load_groupings(path, menu_id="") → list[ShortcutGroup]
 
@@ -48,7 +48,9 @@ Load shortcut groupings for the picker. If `menu_id` is provided, a `<groupings 
 | `_parse_onclose` | `<onclose>` actions inside a `<subdialog>` |
 | `_parse_overrides` | Action replacement rules |
 | `_parse_icon_overrides` | `<overrides><icons>` icon substitution map |
-| `_parse_context_menu` | `<contextmenu>` show/hide setting |
+| `_parse_context_menu` | `<contextmenu>` on/off, `enableon`, and rows |
+| `_parse_context_buttons` | `<button>` rows inside `<contextmenu>` |
+| `_parse_enable_on` | Control IDs from the `enableon` comma separated list |
 
 ***
 

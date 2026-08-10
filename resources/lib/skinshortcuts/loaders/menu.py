@@ -9,6 +9,8 @@ from ..models.menu import (
     Action,
     ActionOverride,
     Content,
+    ContextMenu,
+    ContextMenuButton,
     DefaultAction,
     IconSource,
     IncludeRef,
@@ -50,7 +52,7 @@ def load_menus(path: str | Path) -> MenuConfig:
     groupings = _parse_shortcut_groupings(root, path_str, icon_overrides=icon_overrides)
     subdialogs = _parse_dialogs(root)
     action_overrides = _parse_overrides(root)
-    show_context_menu = _parse_context_menu(root)
+    context_menu = _parse_context_menu(root)
     submenu_path_all = _parse_submenu_path(root)
 
     return MenuConfig(
@@ -60,7 +62,7 @@ def load_menus(path: str | Path) -> MenuConfig:
         subdialogs=subdialogs,
         action_overrides=action_overrides,
         icon_overrides=icon_overrides,
-        show_context_menu=show_context_menu,
+        context_menu=context_menu,
         submenu_path_all=submenu_path_all,
     )
 
@@ -115,17 +117,59 @@ def _parse_icons(root) -> list[IconSource]:
     return sources
 
 
-def _parse_context_menu(root) -> bool:
-    """Parse contextmenu setting from <contextmenu> element.
-
-    Returns True (show context menu) by default unless explicitly set to false.
-    """
+def _parse_context_menu(root) -> ContextMenu:
+    """On/off, the controls the context action fires on, and the rows it lists."""
     elem = root.find("contextmenu")
     if elem is None:
-        return True
+        return ContextMenu()
 
     text = (elem.text or "").strip().lower()
-    return text not in ("false", "0", "no", "")
+    if text and text not in ("true", "false"):
+        log.warning(f"<contextmenu>: '{text}' is not true or false, treating as true")
+
+    return ContextMenu(
+        enabled=text != "false",
+        enable_on=_parse_enable_on(get_attr(elem, "enableon")),
+        buttons=_parse_context_buttons(elem.findall("button")),
+    )
+
+
+def _parse_context_buttons(rows) -> list[ContextMenuButton]:
+    """The rows a skin lists, in the order written."""
+    buttons = []
+    for child in rows:
+        button_id = get_attr(child, "id")
+        if not button_id.isdecimal():
+            log.warning("<contextmenu>: <button> has no valid id, skipping the row")
+            continue
+
+        buttons.append(ContextMenuButton(
+            button_id=int(button_id),
+            label=get_attr(child, "label"),
+            condition=get_attr(child, "condition"),
+            visible=get_attr(child, "visible"),
+        ))
+
+    return buttons
+
+
+def _parse_enable_on(value: str) -> list[int]:
+    """Control IDs the context action fires on, from the comma separated list."""
+    ids = []
+    for part in value.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        if not part.isdecimal():
+            log.warning(f"<contextmenu>: '{part}' is not a control ID, skipping")
+            continue
+        ids.append(int(part))
+
+    if value and not ids:
+        log.warning(f"<contextmenu>: enableon='{value}' has no control IDs, "
+                    "the context menu opens anywhere")
+
+    return ids
 
 
 def _parse_submenu_path(root) -> bool:

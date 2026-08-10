@@ -48,4 +48,12 @@ Browse for file using configured sources. Handles single/multiple sources and "b
 
 #### `_show_context_menu`()
 
-Show context menu with Edit Label, Edit Action, Change Icon, Edit Submenu, Delete.
+Show the context menu for the selected item and route the chosen row through `onClick`, so rows reach built-in buttons, property buttons and subdialogs alike.
+
+#### `_context_menu_rows`(item) → list[tuple[int, str]]
+
+Button ID and label per row. Skin `<button>` rows replace the built-in set (Edit Label, Edit Action, Change Icon, Edit Submenu, Delete), filtered by `condition` against the item's stored properties (suffix-transformed like every other dialog condition) and `visible` against Kodi. Rows with an unroutable ID or no label are dropped.
+
+#### `_context_button_routes`(button_id, builtin_labels) → bool
+
+Whether `onClick` can route a button ID: a built-in, a subdialog, or a property button mapping.

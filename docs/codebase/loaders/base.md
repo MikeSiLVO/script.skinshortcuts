@@ -9,7 +9,7 @@
 
 ### NO_SUFFIX_PROPERTIES
 
-Properties that never get suffix transforms: `name`, `default`, `menu`, `index`, `id`, `idprefix`
+Properties that never get suffix transforms: `name`, `label`, `disabled`, `default`, `menu`, `index`, `id`, `idprefix`
 
 ***
 

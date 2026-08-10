@@ -46,7 +46,7 @@ The `menus.xml` file defines menu structure, items, shortcut picker groupings, a
   <!-- Action overrides -->
   <overrides>...</overrides>
 
-  <!-- Context menu toggle -->
+  <!-- Context menu settings -->
   <contextmenu>true</contextmenu>
 </menus>
 ```
@@ -840,13 +840,64 @@ Overrides apply only to icons the script generates as a default (when no `icon=`
 
 ## Context Menu
 
-Enable or disable context menu on items:
+The context action (`C` on a keyboard, the menu button on a remote) opens a menu of actions for the selected item.
 
 ```xml
 <contextmenu>true</contextmenu>
 ```
 
-Default `true` when the `<contextmenu>` element is absent. When the element is present, set its text to `false`, `no`, `0`, or leave it empty to disable.
+Default `true` when the `<contextmenu>` element is absent. Set its text to `false` to disable it. Any other text is treated as `true` and logged.
+
+### Where It Opens
+
+By default the context action works anywhere in the management dialog. Set `enableon` to a comma separated list of control IDs to limit it to those controls when focused:
+
+```xml
+<contextmenu enableon="211,212" />
+```
+
+List every control the menu should open on, including the ones a subdialog focuses. A value with no usable control IDs is ignored, and the menu opens anywhere.
+
+### Rows
+
+With no `<button>` children, the menu shows the built-in rows: Edit Label, Edit Action, Change Icon, Edit Submenu, Delete.
+
+Add `<button>` children to replace that set. Each row clicks the dialog button with that ID, so it reaches built-in buttons, [property buttons](properties.md#button-mappings) and [subdialogs](management-dialog.md#subdialogs) alike, whether or not your dialog draws that button as a control:
+
+```xml
+<contextmenu enableon="211">
+  <button id="305" label="$ADDON[script.skinshortcuts 32171]" />
+  <button id="307" label="$ADDON[script.skinshortcuts 32172]" />
+  <button id="306" label="$ADDON[script.skinshortcuts 32173]" />
+  <button id="313" />
+  <button id="800" label="$LOCALIZE[31000]" condition="widgetType=custom" />
+  <button id="302" label="$LOCALIZE[117]" />
+</contextmenu>
+```
+
+| Attribute | Required | Description |
+|-----------|----------|-------------|
+| `id` | Yes | Button to click when the row is chosen |
+| `label` | No | Row label. Defaults to the script's own label for [built-in button IDs](management-dialog.md#built-in-buttons) |
+| `condition` | No | [Property condition](conditions.md), checked against the selected item |
+| `visible` | No | [Kodi condition](conditions.md#kodi-visibility-conditions) |
+
+Rows are listed in the order written. A row is dropped when its `condition` or `visible` fails, when nothing routes its `id`, or when it has no `label` and no built-in default. When every row is dropped, the context action opens nothing.
+
+The `disabled` state of the item is available to `condition` as `disabled=True` or `disabled=False`. Button 313 already picks its own default label from that state, so it only needs a `label` when you want different wording.
+
+In a subdialog, `condition` reads the item the subdialog is editing and follows its property suffix, so `condition="widgetType=custom"` checks `widgetType.2` in a `.2` slot. Only `=` and `~` comparisons are suffixed; write `EMPTY`, `IN` and bare property checks against the slot you mean.
+
+`condition` reads stored values, so a property left unset reads empty even when a [fallback](properties.md#fallbacks) would supply a value. `visible` is evaluated by Kodi against container 211, which carries the fallback-resolved value and does not track the edited item in a subdialog. Gate subdialog rows on `Window.Property(skinshortcuts-dialog)` rather than on `Container(211).ListItem`.
+
+### What Overrides What
+
+| Setting | Default | Overridden by |
+|---------|---------|---------------|
+| On or off | On | Element text `false` |
+| Where it opens | Anywhere in the dialog | `enableon` |
+| Rows | Built-in five | Any `<button>` children |
+| Row label | Script label for built-in IDs, otherwise none | `label` |
 
 ---
 
