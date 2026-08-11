@@ -299,9 +299,8 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
 
         list_control.reset()
 
-        for item in self.items:
-            listitem = self._create_listitem(item)
-            list_control.addItem(listitem)
+        # addItem re-sends the whole list on every call
+        list_control.addItems([self._create_listitem(item) for item in self.items])
 
         if focus_index is not None and 0 <= focus_index < len(self.items):
             list_control.selectItem(focus_index)
