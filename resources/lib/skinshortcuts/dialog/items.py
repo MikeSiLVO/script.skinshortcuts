@@ -462,7 +462,7 @@ class ItemsMixin:
             listitems = []
             for source in visible_sources:
                 label = resolve_label(source.label) if source.label else source.path
-                listitem = xbmcgui.ListItem(label)
+                listitem = xbmcgui.ListItem(label, offscreen=True)
                 if source.icon:
                     listitem.setArt({"icon": source.icon})
                 row_path = "" if source.path.lower() == "browse" else source.path

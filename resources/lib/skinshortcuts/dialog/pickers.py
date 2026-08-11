@@ -511,12 +511,12 @@ class PickersMixin:
         overrides = self._icon_overrides()
 
         listitems = []
-        none_item = xbmcgui.ListItem(xbmc.getLocalizedString(231))
+        none_item = xbmcgui.ListItem(xbmc.getLocalizedString(231), offscreen=True)
         none_item.setArt({"icon": overrides.get("DefaultAddonNone.png", "DefaultAddonNone.png")})
         listitems.append(none_item)
 
         for i, w in enumerate(widgets):
-            listitem = xbmcgui.ListItem(resolve_label(w[1]))
+            listitem = xbmcgui.ListItem(resolve_label(w[1]), offscreen=True)
             icon = w[2] if len(w) > 2 and w[2] else "DefaultAddonNone.png"
             listitem.setArt({"icon": overrides.get(icon, icon)})
             if self.manager is not None:
@@ -659,7 +659,7 @@ class PickersMixin:
         overrides = self._icon_overrides()
         listitems = []
         for _type_id, label, icon in types:
-            listitem = xbmcgui.ListItem(label)
+            listitem = xbmcgui.ListItem(label, offscreen=True)
             listitem.setArt({"icon": overrides.get(icon, icon)})
             listitems.append(listitem)
 
@@ -786,7 +786,7 @@ class PickersMixin:
         while True:
             listitems = []
             if show_none:
-                none_item = xbmcgui.ListItem(xbmc.getLocalizedString(231))
+                none_item = xbmcgui.ListItem(xbmc.getLocalizedString(231), offscreen=True)
                 none_item.setArt(
                     {"icon": overrides.get("DefaultAddonNone.png", "DefaultAddonNone.png")}
                 )
@@ -813,14 +813,14 @@ class PickersMixin:
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 else:
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
-                listitem = xbmcgui.ListItem(label)
+                listitem = xbmcgui.ListItem(label, offscreen=True)
                 listitem.setArt({"icon": overrides.get(icon, icon)})
                 stamp_picker_props(listitem, vis_item, item_props, content_resolver)
                 listitems.append(listitem)
 
             if custom_action:
                 action_label, action_icon, _callback = custom_action
-                action_item = xbmcgui.ListItem(action_label)
+                action_item = xbmcgui.ListItem(action_label, offscreen=True)
                 action_item.setArt({"icon": overrides.get(action_icon, action_icon)})
                 listitems.append(action_item)
 
@@ -943,7 +943,7 @@ class PickersMixin:
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 else:
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
-                listitem = xbmcgui.ListItem(label)
+                listitem = xbmcgui.ListItem(label, offscreen=True)
                 listitem.setArt({"icon": overrides.get(icon, icon)})
                 stamp_picker_props(listitem, vis_item, item_props, content_resolver)
                 listitems.append(listitem)
@@ -1158,7 +1158,7 @@ class PickersMixin:
                 dialog_title = current_label or LANGUAGE(32151)
 
                 listitems = []
-                use_location_item = xbmcgui.ListItem(LANGUAGE(32058))
+                use_location_item = xbmcgui.ListItem(LANGUAGE(32058), offscreen=True)
                 use_location_item.setArt({"icon": folder_icon})
                 use_location_item.setProperty("path", current_path)
                 use_location_item.setProperty("name", current_label)
@@ -1169,7 +1169,7 @@ class PickersMixin:
                     label = item.label
                     if item.is_directory:
                         label = f"{label} >"
-                    listitem = xbmcgui.ListItem(label)
+                    listitem = xbmcgui.ListItem(label, offscreen=True)
                     listitem.setArt({"icon": item.icon})
                     listitem.setProperty("path", item.path)
                     listitem.setProperty("name", item.label)

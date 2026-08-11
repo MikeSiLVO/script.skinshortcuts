@@ -104,8 +104,8 @@ def _browse_main_menu(config: ViewConfig, userdata: UserData) -> bool:
 
     while True:
         items = [
-            xbmcgui.ListItem(f"{xbmc.getLocalizedString(14022)} >"),
-            xbmcgui.ListItem(f"{xbmc.getLocalizedString(24001)} >"),
+            xbmcgui.ListItem(f"{xbmc.getLocalizedString(14022)} >", offscreen=True),
+            xbmcgui.ListItem(f"{xbmc.getLocalizedString(24001)} >", offscreen=True),
         ]
         items[0].setArt({"icon": "DefaultFolder.png"})
         items[1].setArt({"icon": "DefaultAddonProgram.png"})
@@ -113,15 +113,15 @@ def _browse_main_menu(config: ViewConfig, userdata: UserData) -> bool:
         plugin_overrides = _get_all_addon_overrides(userdata)
         if plugin_overrides:
             for plugin_id in sorted(plugin_overrides):
-                item = xbmcgui.ListItem(f"{LANGUAGE(32189) % plugin_id} >")
+                item = xbmcgui.ListItem(f"{LANGUAGE(32189) % plugin_id} >", offscreen=True)
                 item.setArt({"icon": "DefaultAddonVideo.png"})
                 items.append(item)
 
-        reset_library = xbmcgui.ListItem(LANGUAGE(32164))
+        reset_library = xbmcgui.ListItem(LANGUAGE(32164), offscreen=True)
         reset_library.setArt({"icon": "DefaultIconWarning.png"})
         items.append(reset_library)
 
-        reset_plugins = xbmcgui.ListItem(LANGUAGE(32165))
+        reset_plugins = xbmcgui.ListItem(LANGUAGE(32165), offscreen=True)
         reset_plugins.setArt({"icon": "DefaultIconWarning.png"})
         items.append(reset_plugins)
 
@@ -181,7 +181,7 @@ def _browse_source_menu(
                 if view:
                     view_label = resolve_label(view.label)
 
-            item = xbmcgui.ListItem(resolve_label(content.label))
+            item = xbmcgui.ListItem(resolve_label(content.label), offscreen=True)
             item.setLabel2(view_label)
             item.setArt({"icon": content.icon or "DefaultFolder.png"})
             items.append(item)
@@ -216,12 +216,12 @@ def _browse_plugins_menu(config: ViewConfig, userdata: UserData) -> bool:
                 if view:
                     view_label = resolve_label(view.label)
 
-            item = xbmcgui.ListItem(resolve_label(content.label))
+            item = xbmcgui.ListItem(resolve_label(content.label), offscreen=True)
             item.setLabel2(view_label)
             item.setArt({"icon": content.icon or "DefaultFolder.png"})
             items.append(item)
 
-        add_override = xbmcgui.ListItem(f"{LANGUAGE(32166)} >")
+        add_override = xbmcgui.ListItem(f"{LANGUAGE(32166)} >", offscreen=True)
         add_override.setArt({"icon": "DefaultAddonProgram.png"})
         items.append(add_override)
 
@@ -250,7 +250,7 @@ def _add_plugin_override(config: ViewConfig, userdata: UserData) -> bool:
 
     items = []
     for addon_id, addon_name in addons:
-        item = xbmcgui.ListItem(addon_name)
+        item = xbmcgui.ListItem(addon_name, offscreen=True)
         item.setArt({"icon": f"special://home/addons/{addon_id}/icon.png"})
         item.setProperty("addon_id", addon_id)
         items.append(item)
@@ -263,7 +263,7 @@ def _add_plugin_override(config: ViewConfig, userdata: UserData) -> bool:
 
     content_items = []
     for content in config.content_rules:
-        item = xbmcgui.ListItem(resolve_label(content.label))
+        item = xbmcgui.ListItem(resolve_label(content.label), offscreen=True)
         item.setArt({"icon": content.icon or "DefaultFolder.png"})
         content_items.append(item)
 
@@ -311,7 +311,7 @@ def _pick_view_for_content(
         if is_current or is_default_fallback:
             preselect = i
 
-        item = xbmcgui.ListItem(label)
+        item = xbmcgui.ListItem(label, offscreen=True)
         if view.id == default_view:
             item.setLabel2(xbmc.getLocalizedString(571))
         icon = view.icon or "DefaultFolder.png"

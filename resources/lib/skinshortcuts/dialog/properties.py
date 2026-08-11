@@ -664,7 +664,7 @@ class PropertiesMixin:
         listitems = []
         for source in sources:
             label = resolve_label(source.label) if source.label else source.path
-            listitem = xbmcgui.ListItem(label)
+            listitem = xbmcgui.ListItem(label, offscreen=True)
             if source.icon:
                 listitem.setArt({"icon": source.icon})
             listitems.append(listitem)
@@ -710,7 +710,7 @@ class PropertiesMixin:
 
         listitems = []
         for label, _path, icon, _content_type in playlists:
-            listitem = xbmcgui.ListItem(label)
+            listitem = xbmcgui.ListItem(label, offscreen=True)
             listitem.setArt({"icon": icon})
             listitems.append(listitem)
 
@@ -804,12 +804,12 @@ class PropertiesMixin:
 
         listitems = []
         if button.show_none:
-            none_item = xbmcgui.ListItem(xbmc.getLocalizedString(231))
+            none_item = xbmcgui.ListItem(xbmc.getLocalizedString(231), offscreen=True)
             none_item.setArt({"icon": "DefaultAddonNone.png"})
             listitems.append(none_item)
 
         for opt in visible_options:
-            listitem = xbmcgui.ListItem(resolve_label(opt.label))
+            listitem = xbmcgui.ListItem(resolve_label(opt.label), offscreen=True)
             icon = "DefaultAddonNone.png"
             if opt.icons:
                 for icon_variant in opt.icons:
