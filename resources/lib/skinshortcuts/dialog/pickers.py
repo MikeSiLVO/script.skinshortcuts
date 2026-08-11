@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import time
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Literal, Protocol, runtime_checkable
 
@@ -93,6 +94,24 @@ log = get_logger("Pickers")
 PLACEHOLDER_PREFIX = "content-placeholder-"
 
 
+SLOW_RESOLVE_MS = 250
+
+
+def _ms(start: float) -> float:
+    """Elapsed milliseconds, for the picker's timing lines."""
+    return (time.monotonic() - start) * 1000
+
+
+def _log_slow_resolve(content: Content, rows: int, start: float) -> None:
+    """Name the <content> element when resolving it takes long enough to notice."""
+    elapsed = _ms(start)
+    if elapsed >= SLOW_RESOLVE_MS:
+        log.debug(
+            f"slow content: source={content.source} target={content.target} "
+            f"rows={rows} {elapsed:.0f}ms"
+        )
+
+
 def picker_kind(leaf_types: tuple) -> str:
     """skinshortcuts-picker value for a hierarchy picker, from what it is picking."""
     if Widget in leaf_types:
@@ -139,7 +158,9 @@ def _group_count(
         if isinstance(child, Content):
             if content_resolver is None:
                 return ""
+            start = time.monotonic()
             resolved = content_resolver(child)
+            _log_slow_resolve(child, len(resolved), start)
             if child.folder:
                 # folder row is dropped when it resolves to nothing
                 if resolved or _browse_placeholder_for_content(child):
@@ -765,8 +786,13 @@ class PickersMixin:
         (label, icon, callback) row at the list bottom, callback returning an
         item or None.
         """
+        start = time.monotonic()
         visible_items = self._filter_picker_items(
             items, item_props, leaf_types, group_types, content_resolver, create_folder_group
+        )
+        log.debug(
+            f"picker: {picker_kind(leaf_types)} root rows={len(visible_items)} "
+            f"built in {_ms(start):.0f}ms"
         )
 
         if not visible_items:
@@ -909,10 +935,12 @@ class PickersMixin:
         create_folder_group: Callable[[str, list, str, str], Any] | None = None,
     ) -> Any | None:
         """Pick from items within a group with back navigation."""
+        start = time.monotonic()
         visible_items = self._filter_picker_items(
             group.items, item_props, leaf_types, group_types, content_resolver,
             create_folder_group, parent_label=group.label, parent_icon=group.icon,
         )
+        log.debug(f"picker: {group.name} rows={len(visible_items)} built in {_ms(start):.0f}ms")
 
         if not visible_items:
             xbmcgui.Dialog().notification(LANGUAGE(32141), LANGUAGE(32142))
@@ -1032,7 +1060,9 @@ class PickersMixin:
                 if item.visible and not _check_visible(item.visible):
                     continue
                 if content_resolver:
+                    start = time.monotonic()
                     resolved = content_resolver(item)
+                    _log_slow_resolve(item, len(resolved), start)
                     placeholder = _browse_placeholder_for_content(
                         item,
                         as_widget=Widget in leaf_types,
