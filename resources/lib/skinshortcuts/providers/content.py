@@ -225,6 +225,9 @@ class ContentProvider:
         for source in sources:
             path = source.get("file", "")
             label = source.get("label", "")
+            # Kodi computes an addons:// row per media type, never stored as a source
+            if path.startswith("addons://"):
+                continue
             if path and label:
                 shortcuts.append(
                     ResolvedShortcut(
