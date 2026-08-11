@@ -11,6 +11,7 @@ Integration guide for Skin Shortcuts.
 | Document | Description |
 |----------|-------------|
 | [Getting Started](getting-started.md) | Setup walkthrough and basic integration |
+| [Starter Configuration](starter.md) | Copy/paste groupings and widget groups to build on |
 | [File Overview](files.md) | Configuration file structure and loading |
 | [Migrating from v2](../migration-v2-to-v3.md) | Porting a v2 skin to v3 |
 

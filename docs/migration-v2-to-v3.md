@@ -34,6 +34,29 @@ This guide covers all changes needed to migrate a v2 skin to v3.
 
 Until a v3 `shortcuts/menus.xml` (or `views.xml`) exists, the script treats the skin as not-yet-migrated: `type=manage` and `type=buildxml` both abort and show the notification "This skin has not been updated; menu editing unavailable". This is expected - create `menus.xml` first.
 
+### No Built-in Shortcuts
+
+v2 kept its own shortcut list inside the script, so a skin that defined no groupings still got Movies, TV Shows, Music, Favourites and the rest. v3 ships none of that. The picker shows exactly what the skin's `<groupings>` define, and a skin with no `<groupings>` has an empty picker.
+
+Dynamic sources are still resolved by the script through `<content>`, so those entries follow the running system rather than a hardcoded list. What the skin decides is which sources appear, and where.
+
+| v2 `<content>`                                     | v3 equivalent                                                       |
+| -------------------------------------------------- | ------------------------------------------------------------------- |
+| `common`                                            | None. Write `<shortcut>` elements for the windows the skin wants     |
+| `video`, `music`                                    | `<content source="nodes" target="video" />` (or `music`)            |
+| `videosources`, `musicsources`, `picturesources`    | `<content source="sources" target="video" />` (or `music`/`pictures`) |
+| `playlist-video`, `playlist-audio`                  | `<content source="playlists" target="video" />` (or `music`)        |
+| `addon-video`, `addon-audio`, `addon-image`, `addon-program` | `<content source="addons" target="video" />` (or `music`/`pictures`/`programs`) |
+| `pvr`, `pvr-tv`, `pvr-radio`, `radio`               | `<content source="pvr" target="tv" />` (or `radio`)                 |
+| `favourite`                                         | `<content source="favourites" />`                                   |
+| `commands`                                          | `<content source="commands" />`                                     |
+| `settings`                                          | `<content source="settings" />`                                     |
+| `upnp-video`, `upnp-music`                          | None                                                                |
+
+The skin now owns its shortcut list, which is the point: nothing waits on a script release to be fixed. `ActivateWindow(Favourites)` stopped resolving in Kodi 21, and a v3 skin corrects that itself.
+
+> **See also:** [Starter Configuration](skinning/starter.md) for groupings and widget groups to paste in and cut down
+
 ### What Users Lose
 
 * All existing menu customizations (users must reconfigure menus)
@@ -44,10 +67,11 @@ Until a v3 `shortcuts/menus.xml` (or `views.xml`) exists, the script treats the 
 ### What Skinners Must Do
 
 1. Create new configuration files (`menus.xml`, etc.)
-2. Update dialog XML (remove obsolete controls)
-3. Update RunScript calls
-4. Rewrite `templates.xml` if using custom templates (different syntax)
-5. Update skin XML references to generated includes (if names changed)
+2. Define the shortcut picker in `<groupings>` (nothing is provided by default)
+3. Update dialog XML (remove obsolete controls)
+4. Update RunScript calls
+5. Rewrite `templates.xml` if using custom templates (different syntax)
+6. Update skin XML references to generated includes (if names changed)
 
 ### Generated Include Names
 
@@ -303,8 +327,8 @@ Items with `required="true"` cannot be deleted by users.
   <widget label="Recent Movies" name="recent-movies" type="movies">
     special://videoplaylists/RecentMovies.xsp
   </widget>
-  <widget label="In Progress" name="inprogress-movies" type="movies">
-    videodb://inprogressmovies/
+  <widget label="Movie Sets" name="movie-sets" type="sets">
+    videodb://movies/sets/
   </widget>
 
   <!-- Widget groupings (customize picker structure) -->
@@ -332,8 +356,8 @@ Items with `required="true"` cannot be deleted by users.
       <sortorder>descending</sortorder>
     </widget>
 
-    <widget name="inprogress-movies" label="In Progress" type="movies">
-      <path>videodb://inprogressmovies/</path>
+    <widget name="movie-sets" label="Movie Sets" type="sets">
+      <path>videodb://movies/sets/</path>
     </widget>
 
     <!-- Dynamic content from playlists -->
@@ -364,7 +388,7 @@ Items with `required="true"` cannot be deleted by users.
 | `<widget label="..." name="..." type="...">path</widget>` | `<widget name="..." label="..." type="..."><path>...</path></widget>` |
 | `<widget-groupings>` → `<node label="...">`               | `<widgets>` → `<group name="..." label="...">`                        |
 | `<widgetdefault labelID="...">`                           | `<item widget="...">` or `<defaults widget="...">`                    |
-| `<content>video</content>`                                | `<content source="library" target="..." />`                            |
+| `<content>video</content>`                                | `<content source="nodes" target="video" />` for the library hierarchy, `<content source="library" target="moviegenres" />` for a single query |
 | `<content>playlist-video</content>`                       | `<content source="playlists" target="videos" />`                       |
 | `<content>widgets</content>`                              | `<content source="addons" target="..." />` (one entry per add-on category) |
 | `<widgetRename>` (overrides.xml, opt-out)                 | `rename="true"` on the widget button in `properties.xml` (opt-in)      |
@@ -670,12 +694,11 @@ First matching condition wins. All matched row attributes become properties.
       <value condition="widgetStyle=Panel">panel</value>
       <value>list</value>
     </var>
-    <preset content="WidgetDimensions" />
   </propertyGroup>
 </propertyGroups>
 ```
 
-Reference with `<propertyGroup content="widgetProps" />` in templates.
+Reference with `<propertyGroup content="widgetProps" />` in templates. A property group holds `<property>` and `<var>` only; presets are referenced from the template itself with `<preset content="WidgetDimensions" />`.
 
 #### Dynamic Expressions
 
@@ -917,7 +940,6 @@ Remove these controls from your dialog XML.
           "icon": "DefaultMovies.png",
           "properties": {
             "widget": "recent-movies",
-            "widgetPath": "videodb://recentlyaddedmovies/",
             "widgetType": "movies",
             "background": "movie-fanart"
           }
@@ -928,6 +950,8 @@ Remove these controls from your dialog XML.
   }
 }
 ```
+
+Only fields that differ from the skin defaults are written. Widget and background sub-properties the script can derive from the assigned name (`widgetLabel`, `widgetPath`, `widgetTarget`, `backgroundLabel`, `backgroundPath`) stay out, so edits to `widgets.xml` and `backgrounds.xml` reach saved menus on the next build.
 
 User data is stored in:
 `userdata/addon_data/script.skinshortcuts/{skin_id}.userdata.json`

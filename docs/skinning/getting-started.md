@@ -75,7 +75,9 @@ Create `shortcuts/menus.xml`:
 </menus>
 ```
 
-> **See also:** [Menu Configuration](menus.md) for full element reference
+The picker users add items from is empty until the skin defines `<groupings>`; the script supplies no shortcuts of its own.
+
+> **See also:** [Menu Configuration](menus.md) for full element reference, [Starter Configuration](starter.md) for groupings to paste in
 
 ---
 

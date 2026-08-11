@@ -156,8 +156,8 @@ Organize widgets into categories for the picker dialog:
       <path>videodb://recentlyaddedmovies/</path>
     </widget>
 
-    <widget name="inprogress" label="In Progress" type="movies">
-      <path>videodb://inprogressmovies/</path>
+    <widget name="sets" label="Movie Sets" type="sets">
+      <path>videodb://movies/sets/</path>
     </widget>
 
     <!-- Nested group -->

@@ -415,7 +415,7 @@ Items with `required="true"` cannot be deleted or disabled. Adding `required` to
 
 ## Shortcut Groupings
 
-Define shortcuts available in the picker dialog.
+Define shortcuts available in the picker dialog. The script provides none of its own, so the picker holds exactly what is defined here. [Starter Configuration](starter.md) has a full set to paste in and cut down.
 
 ```xml
 <groupings>
