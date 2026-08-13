@@ -24,6 +24,7 @@ log = get_logger("playlists")
 DATA_DIR = "special://profile/addon_data/script.skinshortcuts/"
 PLAYLISTS_SUBDIR = "playlists"
 FILENAME_PREFIX = "source-"
+DEFAULT_PLAYLISTS_PATH = "special://profile/playlists/"
 
 
 def _playlist_dir() -> str:
@@ -33,6 +34,24 @@ def _playlist_dir() -> str:
     {skin}.userdata.json) to avoid name clashes and keep the folder organised.
     """
     return f"{DATA_DIR}{PLAYLISTS_SUBDIR}/{xbmc.getSkinDir()}/"
+
+
+def playlists_base_path() -> str:
+    """Folder Kodi keeps the user's playlists in, trailing slash included."""
+    request = {
+        "jsonrpc": "2.0",
+        "method": "Settings.GetSettingValue",
+        "params": {"setting": "system.playlistspath"},
+        "id": 1,
+    }
+    try:
+        response = json.loads(xbmc.executeJSONRPC(json.dumps(request)))
+    except (ValueError, TypeError):
+        return DEFAULT_PLAYLISTS_PATH
+    base = (response.get("result") or {}).get("value") or ""
+    if not base:
+        return DEFAULT_PLAYLISTS_PATH
+    return base if base.endswith("/") else f"{base}/"
 
 _PROBE_METHODS: dict[str, str] = {
     "movies": "VideoLibrary.GetMovies",

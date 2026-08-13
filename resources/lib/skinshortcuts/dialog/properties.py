@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
@@ -18,33 +17,6 @@ try:
     IN_KODI = True
 except ImportError:
     IN_KODI = False
-
-
-def _get_playlists_base_path() -> str:
-    """Get the playlist base path from Kodi settings.
-
-    Returns the user-configured playlist path, or the default
-    special://profile/playlists/ if not set.
-    """
-    if not IN_KODI:
-        return "special://profile/playlists/"
-
-    try:
-        request = {
-            "jsonrpc": "2.0",
-            "method": "Settings.GetSettingValue",
-            "params": {"setting": "system.playlistspath"},
-            "id": 1,
-        }
-        response = json.loads(xbmc.executeJSONRPC(json.dumps(request)))
-        if "result" in response and response["result"].get("value"):
-            base = response["result"]["value"]
-            if not base.endswith("/"):
-                base += "/"
-            return base
-    except Exception:
-        pass
-    return "special://profile/playlists/"
 
 
 def _resolve_playlist_path(filepath: str) -> str | None:
@@ -120,7 +92,7 @@ from ..models import (
     Widget,
     WidgetGroup,
 )
-from ..playlists import unpack_multipath
+from ..playlists import playlists_base_path, unpack_multipath
 from ..providers import scan_playlist_files
 from .pickers import picker_select
 
@@ -614,7 +586,7 @@ class PropertiesMixin:
             playlist_type is the raw type from the .xsp file (movies, tvshows, etc.)
         """
         if not sources:
-            base = _get_playlists_base_path()
+            base = playlists_base_path()
             sources = [
                 PlaylistSource(
                     label=xbmc.getLocalizedString(20012),
