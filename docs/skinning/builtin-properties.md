@@ -35,6 +35,7 @@ Menu items in the generated includes have properties accessible via `ListItem.Pr
 | `label` | `<label>` | Display label |
 | `label2` | `<label2>` | Secondary label |
 | `icon` | `<icon>` | Icon path |
+| `thumb` | `<thumb>` | Thumbnail path, written only when the item sets one |
 | `action` | `<action>` | Full action string (e.g. `ActivateWindow(videos,plugin://...,return)`) |
 | `path` | `<action>` | Bare content path extracted from action |
 | `name` | `name` attribute | Item identifier |
@@ -43,6 +44,8 @@ Menu items in the generated includes have properties accessible via `ListItem.Pr
 | `id` | Item position | 1-based position of the item within its menu. Emitted as a `<property name="id">` only for standard `<item>` menus (not control-type menus). The element's `id` attribute is set separately on every item to the same position value (or offset from the menu's `id` attribute for control-type menus). |
 
 Setting a `<property>` on an item using one of these names replaces the built-in value rather than adding a second entry. This also covers `submenuVisibility` and `hasSubmenu`.
+
+A `controltype` menu emits no `<property>` entries at all, so `id`, `name`, `menu`, `action`, `path` and `submenuVisibility` are absent there, and `icon` is left out as well. `label`, `label2`, `thumb`, `visible` and the actions are still written.
 
 ### Usage
 
@@ -247,12 +250,19 @@ Templates can define additional properties for output.
 | `label` | Item label |
 | `label2` | Secondary label |
 | `icon` | Icon path |
-| `thumb` | Thumbnail path |
+| `visible` | Item visibility condition |
 | `action` | Full action string |
 | `path` | Bare content path |
 | `name` | Item name |
+| `menu` | Name of the menu holding the item |
 | `index` | One-based item index |
+| `idprefix` | The template's `idprefix` value |
 | `id` | Computed ID (`{idprefix}{index}`) |
+| `suffix` | Output suffix (e.g. `.2`), empty when the output has none |
+| `submenuVisibility` | The item's own name, for building a submenu visibility condition |
+
+`thumb` is not among them. It is written to the includes as a `<thumb>` element but is not
+exposed to templates.
 
 ### Literal Values
 
