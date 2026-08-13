@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: translations@kodi.tv\n"
+"Report-Msgid-Bugs-To: noreply@noreply.com\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2026-06-23 11:27+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
@@ -831,4 +831,8 @@ msgstr ""
 
 msgctxt "#32206"
 msgid "Artists not in this source"
+msgstr ""
+
+msgctxt "#32207"
+msgid "Enable shortcut"
 msgstr ""
