@@ -105,7 +105,7 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 
 | Attribute | Required | Default | Description |
 |-----------|----------|---------|-------------|
-| `include` | Yes | - | Output include name (`skinshortcuts-template-{include}`) |
+| `include` | Unless `<output>` used | - | Output include name (`skinshortcuts-template-{include}`) |
 | `build` | No | `menu` | Build mode: `menu` or `true` |
 | `idprefix` | No | - | Prefix for computed control IDs |
 | `menu` | No | (all menus) | Restrict the template to a single menu by name (e.g. `mainmenu`). When omitted, the template runs against every menu. |
@@ -435,8 +435,9 @@ Compute numeric values using property variables:
 
 ```xml
 <control type="panel" id="$MATH[mainmenuid * 1000 + 600 + id]">
-<posx>$MATH[index * 100 + 50]</posx>
-<width>$MATH[(columns - 1) * spacing + itemWidth]</width>
+  <posx>$MATH[index * 100 + 50]</posx>
+  <width>$MATH[(columns - 1) * spacing + itemWidth]</width>
+</control>
 ```
 
 #### Supported Operators
@@ -473,7 +474,7 @@ $IF[cond1 THEN val1 ELIF cond2 THEN val2 ELSE val3]
 <param name="showThumb" value="$IF[widgetArt~Thumb THEN true ELSE false]" />
 
 <!-- URL parameter separator -->
-<path>$PROPERTY[widgetPath]$IF[widgetPath~? THEN & ELSE ?]reload=true</path>
+<path>$PROPERTY[widgetPath]$IF[widgetPath~? THEN &amp; ELSE ?]reload=true</path>
 
 <!-- Multiple conditions -->
 <layout>$IF[widgetType=movies THEN poster ELIF widgetType=albums THEN square ELSE landscape]</layout>
@@ -651,6 +652,7 @@ This enables creating button menus where each menu item becomes an individual bu
 | `include` | No | Name of include definition to expand |
 | `condition` | No | Condition expression (see [Conditions](conditions.md)) |
 | `wrap` | No | If `true`, output as Kodi `<include>` element instead of unwrapping |
+| `insert` | No | Marker for submenu iteration, see [Submenu Items Iteration](#submenu-items-iteration) |
 
 **Text content:**
 
@@ -807,9 +809,13 @@ Vars and presets can be defined in items templates:
 
 | Element | Description |
 |---------|-------------|
+| `<property>` | Property value for each submenu item |
 | `<var>` | Conditional property value (first match wins) |
 | `<preset content="name" />` | Apply preset values as properties |
 | `<propertyGroup content="name" />` | Apply property group |
+| `<variableGroup content="name" />` | Build variables from a variable group |
+
+`<presetGroup>` is not among them; a presetGroup reference is only read at template level.
 
 ### Dynamic Expressions
 
