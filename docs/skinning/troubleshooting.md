@@ -22,6 +22,7 @@ Notifications appear once per problem per run, so a mistake repeated across item
 | Shortcut / Widget / Background Group Error: Group missing 'name' | A group in the picker groupings has no `name` attribute | Add `name="..."` to the group |
 | Shortcut / Widget / Background Group Error: '\<name>' missing label | A group has a name but no `label`, required unless the group is `flat` | Add `label="..."`, or mark it `flat="true"` |
 | Background Config: '\<name>' has both `path` and `source` | A browse or multi background defines both; the fixed path is ignored | Keep one: a fixed `<path>` or a dynamic `<source>` |
+| Property Button Error: button \<id>: '\<name>' not defined | A `<button>` in `properties.xml` points at a property that has no `<property>` definition | Define the property, or correct the button's `property` attribute |
 | Submenu Template Error: menu '\<name>' not found | A submenu template references a named menu that isn't defined | Correct the name, or define that menu in `menus.xml` |
 | Items Template Error: '\<name>' not defined | A `<skinshortcuts insert="...">` references an items template that doesn't exist | Define the items template, or correct the insert name |
 | Expression Error: $MATH failed: \<expr> | A `$MATH[...]` expression has invalid syntax | Fix the expression, checking operators and parentheses |

@@ -152,7 +152,11 @@ userdata/
 └── addon_data/
     └── script.skinshortcuts/
         ├── skin.name.userdata.json
-        └── skin.name.hashes        # internal rebuild cache (config + userdata hashes)
+        ├── skin.name.hashes        # internal rebuild cache (config + userdata hashes)
+        ├── skin.name.unsupported-ack   # written if the unsupported-skin warning is dismissed
+        └── playlists/
+            └── skin.name/
+                └── source-*.xsp    # playlists generated for source shortcuts
 ```
 
 The `.hashes` file is managed by the script and rewritten on every build; do not edit it. A `type=buildxml,force=true` rebuild bypasses the cache and rebuilds even when the hashes match.

@@ -33,4 +33,5 @@ Integration guide for Skin Shortcuts.
 | [Management Dialog](management-dialog.md) | Dialog controls, properties, window setup |
 | [Built-in Properties](builtin-properties.md) | Properties available on menu items |
 | [Conditions](conditions.md) | Condition syntax for properties and visibility |
+| [Schema Reference](../schema.md) | Every element and attribute, across all config files |
 | [Troubleshooting](troubleshooting.md) | Reading error notifications and enabling debug logging |
