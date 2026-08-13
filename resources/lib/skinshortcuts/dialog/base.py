@@ -308,7 +308,8 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def _create_listitem(self, item: MenuItem) -> xbmcgui.ListItem:
         """Create a ListItem from a MenuItem."""
         display_label = resolve_label(item.label)
-        listitem = xbmcgui.ListItem(label=display_label, offscreen=True)
+        # not offscreen: _refresh_selected_item rewrites these in place while bound
+        listitem = xbmcgui.ListItem(label=display_label)
         self._populate_listitem(listitem, item)
         return listitem
 
