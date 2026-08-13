@@ -27,9 +27,14 @@ Located in the skin's `shortcuts/` folder:
 
 ### User Data
 
-| File | Location | Purpose |
-|------|----------|---------|
-| `{skin_id}.userdata.json` | `userdata/addon_data/script.skinshortcuts/` | User customizations merged with skin defaults at build time |
+All under `userdata/addon_data/script.skinshortcuts/`, namespaced per skin:
+
+| File | Purpose |
+|------|---------|
+| `{skin_id}.userdata.json` | User customizations, merged with skin defaults at build time |
+| `{skin_id}.hashes` | Config file hashes, used to skip a rebuild when nothing changed |
+| `{skin_id}.unsupported-ack` | Written when the user dismisses the unsupported-skin warning for this skin |
+| `playlists/{skin_id}/source-*.xsp` | Smart playlists generated for source shortcuts |
 
 ***
 
@@ -114,7 +119,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 |---------|--------|---------------------|---------------------|-------------|
 | `<menus>` | - | - | - | Root element |
 | `<menu>` | menus | `name` | `container`, `type`, `controltype`, `id`, `build`, `template_only`, `action`, `submenuPath` | Main menu definition. `type="widgets"` marks a widget submenu; `controltype` wraps items in `<control type="...">`; `id` sets the start control ID (requires `controltype`); `build="auto"` only emits the menu if its action is assigned; `template_only="submenu"` skips the combined submenu include; `submenuPath="all"` emits the numbered `submenuPath.N` tail for widget submenus under this menu |
-| `<submenu>` | menus | `name` | `container`, `standalone`, `type`, `controltype`, `id`, `build`, `template_only`, `action` | Submenu definition (built when referenced). `standalone="false"` skips the per-template `skinshortcuts-{name}` include. `type="widgets"` marks a widget submenu; `controltype` wraps items in `<control type="...">`; `id` sets the start control ID (requires `controltype`); `build="auto"` only emits the menu if its action is assigned; `template_only="submenu"` skips the combined submenu include |
+| `<submenu>` | menus | `name` | `container`, `standalone`, `type`, `controltype`, `id` | Submenu definition (built when referenced). `standalone="false"` skips the per-template `skinshortcuts-{name}` include. `type="widgets"` marks a widget submenu; `controltype` wraps items in `<control type="...">`; `id` sets the start control ID (requires `controltype`). `build`, `action` and `template_only` are read but only act on `<menu>` |
 | `<allow>` | menu/submenu | - | `widgets`, `backgrounds`, `submenus` | Feature toggles for dialog |
 | `<defaults>` | menu/submenu | - | `widget`, `background` | Default settings for items |
 | `<action>` | defaults | - | `when`, `condition` | Default action (before/after) |
@@ -309,6 +314,11 @@ Defines background options and groupings.
 
 ### Live Path Values
 
+The script stores a `live` background's `<path>` text verbatim in `backgroundPath` and never
+interprets it, so the skin resolves the content itself. The values below are a skin convention
+rather than a fixed vocabulary, and any text works. See
+[backgrounds.md](skinning/backgrounds.md).
+
 | Path | Description |
 |------|-------------|
 | `random movies` | Random movie fanart |
@@ -390,7 +400,7 @@ Defines property schemas, button mappings, and fallback values.
 | `<icon>` | option | - | `condition` | Option icon (multiple allowed) |
 | `<buttons>` | properties | - | `suffix` | Button mappings |
 | `<group>` | buttons | - | `suffix` | Button group |
-| `<button>` | buttons/group | `id`, `property` | `title`, `suffix`, `showNone`, `showIcons`, `type`, `requires` | Button mapping |
+| `<button>` | buttons/group | `id`, `property` | `title`, `suffix`, `showNone`, `showIcons`, `type`, `requires`, `rename` | Button mapping. `rename="true"` prompts for a custom label after picking (`type="widget"` only) |
 | `<fallbacks>` | properties | - | - | Fallback definitions |
 | `<fallback>` | fallbacks | `property` | - | Fallback for property |
 | `<when>` | fallback | `condition` | - | Conditional fallback |
@@ -555,7 +565,7 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `<preset/>` | presetGroup | `content` | `condition` | Preset reference child |
 | `<values>` | presetGroup | - | `condition`, *attributes* | Inline values child |
 | `<propertyGroups>` | templates | - | - | Reusable property groups |
-| `<propertyGroup>` | propertyGroups | `name` | - | Property group definition |
+| `<propertyGroup>` | propertyGroups | `name` | - | Property group definition; holds `<property>` and `<var>` only, presets are referenced from the template itself |
 | `<includes>` | templates | - | - | Reusable control snippets |
 | `<include>` | includes | `name` | - | Include definition |
 | `<variables>` | templates/template | - | - | Variable definitions |
@@ -568,13 +578,13 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `<template items="...">` | templates | `items` | `source`, `filter` | Items-template variant: iteration body inserted at `<skinshortcuts insert="..."/>` markers; `source` selects the `{item}.source` submenu (defaults to the `items` value), `filter` is a per-subitem condition |
 | `<output>` | template | `include` | `idprefix`, `suffix` | Multi-output target |
 | `<condition>` | template | - | - | Template condition (ANDed) |
-| `<property>` | template/propertyGroup/submenu | `name` | `from`, `condition` | Property definition |
+| `<property>` | template/propertyGroup/items/submenu | `name` | `from`, `condition` | Property definition |
 | `<var>` | template/propertyGroup/items/submenu | `name` | - | Conditional variable |
 | `<value>` | var | - | `condition` | Var value (first match wins) |
-| `<preset/>` | template/propertyGroup/items | `content` | `condition`, `suffix` | Apply preset reference |
-| `<presetGroup/>` | template/propertyGroup/items | `content` | `condition`, `suffix` | Apply a presetGroup reference |
-| `<propertyGroup/>` | template/propertyGroup/items | `content` | `condition`, `suffix` | Apply property group |
-| `<variableGroup/>` | template | `content` | `condition`, `suffix` | Apply variable group |
+| `<preset/>` | template/items | `content` | `condition`, `suffix` | Apply preset reference |
+| `<presetGroup/>` | template | `content` | `condition`, `suffix` | Apply a presetGroup reference |
+| `<propertyGroup/>` | template/items/submenu | `content` | `condition`, `suffix` | Apply property group |
+| `<variableGroup/>` | template/items | `content` | `condition`, `suffix` | Apply variable group |
 | `<param>` | template | `name` | `default` | Parameter (build="true") |
 | `<controls>` | template/submenu | - | - | Control container |
 | `<skinshortcuts>` | controls | - | `include`, `condition`, `wrap`, `insert` | Special tag |
@@ -632,8 +642,12 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `id` | Computed ID: `{idprefix}{index}` |
 | `suffix` | Output suffix (e.g., `.2`) or empty |
 | `label` | Item label |
+| `label2` | Item secondary label |
+| `icon` | Item icon path |
+| `visible` | Item visibility condition |
 | `action` | Full action string |
 | `path` | Bare content path |
+| `submenuVisibility` | Item name, for submenu visibility conditions |
 
 ***
 
@@ -697,39 +711,37 @@ For `<content source="...">` elements:
 
 ## RunScript Parameters
 
-### Build XML
+`type` selects the action and defaults to `buildxml`. Every action accepts `path`, which
+defaults to the active skin's `shortcuts` folder.
+
+| Type | Parameters | Description |
+|------|------------|-------------|
+| `buildxml` | `output`, `force` | Generate the includes file. `force=true` rebuilds even when the config hashes match |
+| `manage` | `menu` | Open the management dialog (default `mainmenu`), rebuilding the includes if anything was saved |
+| `viewselect` | `content`, `plugin` | Open the view picker for one content type |
+| `skinstring` | `skinPath`, `skinLabel`, `skinType`, `skinTarget` | Open the standalone widget picker and store the result in those skin strings |
+| `reset` | `menu`, `submenus` | Reset one menu to skin defaults, after a confirmation. `submenus=true` resets its submenus too |
+| `resetmenus` | - | Reset every menu, keeping view selections |
+| `resetsubmenus` | - | Reset every submenu, after a confirmation |
+| `resetviews` | - | Reset every view selection |
+| `resetall` | - | Delete all user data for the skin, menus and views alike |
+| `clear` | `menu`, `item`, `suffix`, `property` | Clear an item's custom widget menu, and reset the named property if given |
 
 ```
 RunScript(script.skinshortcuts,type=buildxml)
-```
-
-Generates the includes file.
-
-### Manage Menu
-
-```
 RunScript(script.skinshortcuts,type=manage,menu=mainmenu)
+RunScript(script.skinshortcuts,type=reset,menu=mainmenu,submenus=true)
 ```
 
-| Parameter | Description |
-|-----------|-------------|
-| `menu` | Menu to edit (e.g., `mainmenu`, `movies`) |
+### Window Property Parameters
 
-### Reset All
-
-```
-RunScript(script.skinshortcuts,type=resetall)
-```
-
-Resets all user data to defaults.
-
-### Clear Menu
+`prop` and `value` pair up by position and work with any `type`. Each pair is set as a Home
+window property for the script's lifetime and cleared when it exits, so pickers and groups can
+gate on it:
 
 ```
-RunScript(script.skinshortcuts,type=clear,menu=mainmenu)
+RunScript(script.skinshortcuts,type=skinstring,prop=widgetContext,value=spotlight,skinPath=home.widget.path)
 ```
-
-Clears a specific menu's user data.
 
 ***
 
@@ -743,7 +755,9 @@ Clears a specific menu's user data.
 | `disableWidgets` | `true` if widgets disabled for this menu (empty if allowed) |
 | `disableBackgrounds` | `true` if backgrounds disabled for this menu (empty if allowed) |
 | `disableSubmenus` | `true` if submenus disabled for this menu (empty if allowed) |
+| `skinshortcuts-menutype` | `widgets` for a widget menu, `submenu` for a submenu, empty for a normal one |
 | `skinshortcuts-hasdeleted` | `true` if deleted items exist |
+| `additionalDialog` | `true` while a child dialog is stacked on top of this one |
 
 ### Dialog Window Properties
 
