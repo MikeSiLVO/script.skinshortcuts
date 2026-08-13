@@ -130,7 +130,11 @@ def _expand_or_segment(segment: str) -> str:
             continue
 
         # a group is a condition of its own, never a bare value for the running property
-        if part.lstrip("!").startswith("["):
+        stripped = part.lstrip("!")
+        if stripped.startswith("["):
+            if _is_wrapped_in_brackets(stripped):
+                negation = part[: len(part) - len(stripped)]
+                part = f"{negation}[{expand_compact_or(stripped[1:-1])}]"
             result_parts.append(part)
             continue
 
