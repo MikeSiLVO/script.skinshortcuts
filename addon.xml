@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.2~beta12" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.2~beta13" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.2"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
+3.0.2~beta13
+  - Fix: an expression reference expands as a single term, so a condition like suffix=.2 + $EXP[name] applies to the whole expression
+
 3.0.2~beta12
   - Fix: property conditions combine + and | as Kodi does, so an unbracketed a + b | c means (a and b) or c instead of a and (b or c)
   - Fix: a bracketed group inside a condition value list is read as a condition, not as a value
