@@ -196,13 +196,14 @@ def _evaluate_expanded(condition: str, properties: dict[str, str]) -> bool:
         return _evaluate_expanded(condition[1:-1], properties)
 
     # Split AND/OR before negation: !a + b = (!a) + b, not !(a + b)
-    and_parts = _split_preserving_brackets(condition, "+")
-    if len(and_parts) > 1:
-        return all(_evaluate_expanded(part.strip(), properties) for part in and_parts)
-
+    # OR splits first so AND binds tighter, as Kodi's own conditions do
     or_parts = _split_preserving_brackets(condition, "|")
     if len(or_parts) > 1:
         return any(_evaluate_expanded(part.strip(), properties) for part in or_parts)
+
+    and_parts = _split_preserving_brackets(condition, "+")
+    if len(and_parts) > 1:
+        return all(_evaluate_expanded(part.strip(), properties) for part in and_parts)
 
     if condition.startswith("!"):
         inner = condition[1:].strip()
