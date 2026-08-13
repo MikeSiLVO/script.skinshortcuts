@@ -267,9 +267,9 @@ Reuse option sets across properties:
   </options>
 </property>
 
-<property name="backgroundArt">
+<property name="widgetArt.2">
   <options>
-    <include content="standardArt" suffix=".bg" />
+    <include content="standardArt" suffix=".2" />
   </options>
 </property>
 ```
@@ -280,6 +280,10 @@ Reuse option sets across properties:
 |-----------|-------------|
 | `content` | Name of include to expand |
 | `suffix` | Apply suffix transform to conditions |
+
+The suffix rewrites property names inside the included options' conditions, so an option carrying
+no condition is copied unchanged. In the example above only a conditional option would differ
+between the two properties.
 
 ---
 
