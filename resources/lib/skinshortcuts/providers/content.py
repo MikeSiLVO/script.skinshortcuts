@@ -114,7 +114,7 @@ def scan_playlist_files(directory: str) -> list[tuple[str, str]]:
 
     for scan_dir in _expand_playlist_dirs(directory):
         try:
-            _dirs, files = xbmcvfs.listdir(scan_dir)
+            _, files = xbmcvfs.listdir(scan_dir)
         except Exception:
             continue
 

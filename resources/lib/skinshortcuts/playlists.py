@@ -243,7 +243,7 @@ def cleanup_orphan_playlists(actions: list[str]) -> None:
     """
     plist_dir = _playlist_dir()
     try:
-        _dirs, files = xbmcvfs.listdir(plist_dir)
+        _, files = xbmcvfs.listdir(plist_dir)
     except OSError:
         return
     referenced = "\n".join(actions)

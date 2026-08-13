@@ -307,7 +307,7 @@ def _list_default_pngs(path: str) -> list[str]:
     try:
         import xbmcvfs
 
-        _dirs, files = xbmcvfs.listdir(path)
+        _, files = xbmcvfs.listdir(path)
         return [f for f in files if f.startswith("Default") and f.endswith(".png")]
     except Exception:
         return []
