@@ -28,7 +28,6 @@ from __future__ import annotations
 
 import re
 
-_OR_SPLIT_PATTERN = re.compile(r"\s*\|\s*")
 _CONDITION_MATCH_PATTERN = re.compile(r"^(!?)([a-zA-Z_][a-zA-Z0-9_\.]*)(=|~)(.*)$")
 
 # Keyword to symbol mappings (applied with word boundaries)
@@ -117,7 +116,7 @@ def _split_preserving_brackets(text: str, delimiter: str) -> list[str]:
 
 def _expand_or_segment(segment: str) -> str:
     """Expand a single OR segment."""
-    parts = _OR_SPLIT_PATTERN.split(segment)
+    parts = _split_preserving_brackets(segment, "|")
     if len(parts) <= 1:
         return segment
 
@@ -128,6 +127,11 @@ def _expand_or_segment(segment: str) -> str:
     for part in parts:
         part = part.strip()
         if not part:
+            continue
+
+        # a group is a condition of its own, never a bare value for the running property
+        if part.lstrip("!").startswith("["):
+            result_parts.append(part)
             continue
 
         match = _CONDITION_MATCH_PATTERN.match(part)
