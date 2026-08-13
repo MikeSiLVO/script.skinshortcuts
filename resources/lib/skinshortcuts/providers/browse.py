@@ -77,7 +77,7 @@ class BrowseProvider:
             },
         )
         log.debug(
-            f"list_directory: {path} rows={len((result or {}).get('files', []))} "
+            f"list_directory: {path} rows={len((result or {}).get('files') or [])} "
             f"{(time.monotonic() - start) * 1000:.0f}ms"
         )
 
@@ -88,7 +88,7 @@ class BrowseProvider:
             return []
 
         items = []
-        for file_info in result["files"]:
+        for file_info in result["files"] or []:
             label = file_info.get("label", "")
             file_path = file_info.get("file", "")
             filetype = file_info.get("filetype", "file")
