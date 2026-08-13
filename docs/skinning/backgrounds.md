@@ -107,6 +107,7 @@ Groups can contain:
 
 * `<background>` - Background definitions
 * `<group>` - Nested groups
+* `<content>` - Dynamic content
 
 A group with `flat="true"` has no folder header; its children render at the parent level when the group's `condition` and `visible` both pass. `label` and `icon` are unused in this mode. See [Window Property Pass-Through](management-dialog.md#window-property-pass-through) for setting a window property for the picker's lifetime to drive a flat group's `visible` check.
 
@@ -308,7 +309,7 @@ If a live-playlist background includes a static `<path>`, the playlist picker is
 
 ## Sources
 
-Both `<source>` elements are used differently based on background type:
+The `<source>` element is used differently based on background type:
 
 ### For browse/multi types
 
@@ -336,6 +337,8 @@ Sources define playlist locations to browse:
   special://profile/playlists/video/
 </source>
 ```
+
+Only `label`, `icon` and the path text are read here. `condition` and `visible` apply to browse/multi sources only.
 
 ---
 
