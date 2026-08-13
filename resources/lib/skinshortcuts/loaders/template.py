@@ -123,7 +123,10 @@ class TemplateLoader:
                 continue
             value = (elem.text or "").strip()
             nosuffix = get_bool(elem, "nosuffix")
-            self._expressions[name] = Expression(value=value, nosuffix=nosuffix)
+            # one term, so callers can compound it without brackets, as Kodi stores them
+            self._expressions[name] = Expression(
+                value=f"[{value}]" if value else "", nosuffix=nosuffix
+            )
 
     def _parse_presets_section(self, root: ET.Element) -> None:
         """Parse <presets> section."""

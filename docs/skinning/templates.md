@@ -1241,6 +1241,15 @@ Use in template conditions:
 <propertyGroup content="movieProps" condition="$EXP[IsMovies]" />
 ```
 
+An expression expands as a single bracketed term, so it can be compounded or negated without adding brackets around the reference:
+
+```xml
+<values condition="suffix=.2 + $EXP[IsVideoWidget]" top="117" height="299" />
+<propertyGroup content="otherProps" condition="!$EXP[IsVideoWidget]" />
+```
+
+Because the expansion is its own group, a compact value list inside an expression has to name its property: `widgetType=movies | episodes` works, while a bare `movies | episodes` will not pick up `widgetType` from the condition referencing it.
+
 ### The `nosuffix` Attribute
 
 By default, property names inside an expression are suffix-transformed under a suffixed output or reference (e.g. in a `suffix=".2"` output, `widgetArt` becomes `widgetArt.2`). Set `nosuffix="true"` to keep the expression fixed so its property names are never suffixed:
