@@ -56,6 +56,8 @@ Property conditions use a simple expression language to compare against the curr
 * `<group condition="...">` - Filter group in picker
 * `<widget condition="...">` - Filter widget in picker
 * `<background condition="...">` - Filter background in picker
+* `<content condition="...">` - Filter dynamic content in picker
+* `<input condition="...">` - Filter input prompt in picker
 * `<option condition="...">` - Filter property option
 * `<source condition="...">` - Filter icon/browse source
 * `<button condition="...">` - Filter context menu row
@@ -78,6 +80,8 @@ Evaluated at runtime using Kodi's condition system.
 * `<group visible="...">` - Filter group in picker
 * `<widget visible="...">` - Filter widget in picker
 * `<background visible="...">` - Filter background in picker
+* `<content visible="...">` - Filter dynamic content in picker
+* `<input visible="...">` - Filter input prompt in picker
 * `<item visible="...">` - Filter in management dialog
 * `<source visible="...">` - Filter icon/browse source
 * `<button visible="...">` - Filter context menu row
@@ -275,6 +279,16 @@ propertyName=value1 | propertyName=value2 | propertyName=value3
 <!-- These are equivalent -->
 <option condition="widgetType=movies | episodes | tvshows">
 <option condition="widgetType=movies | widgetType=episodes | widgetType=tvshows">
+```
+
+Each value is an OR term like any other, so AND still binds tighter. Bracket the list to apply an AND to the whole of it:
+
+```xml
+<!-- movies, or episodes with a Panel style -->
+<option condition="widgetType=movies | episodes + widgetStyle=Panel">
+
+<!-- movies or episodes, either way with a Panel style -->
+<option condition="[widgetType=movies | episodes] + widgetStyle=Panel">
 ```
 
 ---
