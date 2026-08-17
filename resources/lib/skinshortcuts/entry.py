@@ -164,6 +164,10 @@ def build_includes(
             log.error("Could not determine output paths")
             return False
 
+        previous = {
+            out_path: hash_file(Path(out_path) / INCLUDES_FILE) for out_path in output_paths
+        }
+
         for out_path in output_paths:
             output_file = Path(out_path) / INCLUDES_FILE
             config.build_includes(str(output_file))
@@ -171,18 +175,23 @@ def build_includes(
 
         hashes = generate_config_hashes(shortcuts_path)
 
+        output_changed = False
         for out_path in output_paths:
             output_file = Path(out_path) / INCLUDES_FILE
             includes_hash = hash_file(output_file)
             if includes_hash:
                 hashes[f"includes:{out_path}"] = includes_hash
                 log.debug(f"Stored includes hash for {out_path}")
+            if includes_hash != previous[out_path]:
+                output_changed = True
 
         write_hashes(hashes)
         log.debug("Saved config hashes")
 
-        if IN_KODI:
+        if IN_KODI and output_changed:
             xbmc.executebuiltin("ReloadSkin()")
+        elif IN_KODI:
+            log.debug("Includes unchanged, skipping skin reload")
 
         return True
 
