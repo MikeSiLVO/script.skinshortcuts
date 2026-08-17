@@ -729,7 +729,7 @@ class PickersMixin:
         Returns:
             New Widget with browsed path, or None if cancelled
         """
-        result = self._browse_directory(widget.path, resolve_label(widget.label))
+        result = self._browse_directory(widget.path, resolve_label(widget.label), icon=widget.icon)
         if result is None:
             return None
 
@@ -895,6 +895,7 @@ class PickersMixin:
                             title=resolve_label(selected_item.label),
                             target_window=target_window,
                             source_media=selected_item.source_media,
+                            icon=selected_item.icon,
                         )
                         if result is not None:
                             return result
@@ -1008,6 +1009,7 @@ class PickersMixin:
                             title=resolve_label(selected_item.label),
                             target_window=target_window,
                             source_media=selected_item.source_media,
+                            icon=selected_item.icon,
                         )
                         if result is not None:
                             return result
@@ -1160,6 +1162,7 @@ class PickersMixin:
         self,
         path: str,
         title: str = "",
+        icon: str = "",
     ) -> tuple[str, str, str] | None:
         """Browse a path, navigating into folders, returning the picked location.
 
@@ -1170,10 +1173,12 @@ class PickersMixin:
         browse_provider.set_icon_overrides(self._icon_overrides())
         current_path = path
         current_label = title
-        history: list[tuple[str, str]] = []
+        history: list[tuple[str, str, str]] = []
 
         overrides = self._icon_overrides()
         folder_icon = overrides.get("DefaultFolder.png", "DefaultFolder.png")
+        root_icon = icon or folder_icon
+        current_icon = root_icon
 
         while True:
             xbmc.executebuiltin("ActivateWindow(busydialognocancel)")
@@ -1189,7 +1194,7 @@ class PickersMixin:
 
                 listitems = []
                 use_location_item = xbmcgui.ListItem(LANGUAGE(32058), offscreen=True)
-                use_location_item.setArt({"icon": folder_icon})
+                use_location_item.setArt({"icon": current_icon})
                 use_location_item.setProperty("path", current_path)
                 use_location_item.setProperty("name", current_label)
                 listitems.append(use_location_item)
@@ -1211,19 +1216,23 @@ class PickersMixin:
 
             if selected == -1:
                 if history:
-                    current_path, current_label = history.pop()
+                    current_path, current_label, current_icon = history.pop()
                     continue
                 return None
 
             if selected == 0:
-                return (current_path, current_label or LANGUAGE(32182), folder_icon)
+                return (current_path, current_label or LANGUAGE(32182), current_icon)
 
             selected_item = items[selected - 1]
 
             if selected_item.is_directory:
-                history.append((current_path, current_label))
+                history.append((current_path, current_label, current_icon))
                 current_path = selected_item.path
                 current_label = selected_item.label
+                # only the generic folder is worth replacing
+                current_icon = (
+                    root_icon if selected_item.icon == folder_icon else selected_item.icon
+                )
                 continue
 
             return (selected_item.path, selected_item.label, selected_item.icon)
@@ -1234,6 +1243,7 @@ class PickersMixin:
         title: str = "",
         target_window: str = "videos",
         source_media: str = "",
+        icon: str = "",
     ) -> Shortcut | None:
         """Browse into a path and let user select location or navigate deeper.
 
@@ -1249,7 +1259,7 @@ class PickersMixin:
         Returns:
             Shortcut for selected location, or None if cancelled
         """
-        result = self._browse_directory(path, title)
+        result = self._browse_directory(path, title, icon=icon)
         if result is None:
             return None
 
