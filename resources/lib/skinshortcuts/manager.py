@@ -7,6 +7,7 @@ import uuid
 from pathlib import Path
 
 from .config import SkinConfig
+from .localize import resolve_label
 from .log import get_logger
 from .models import Action, Menu, MenuItem
 from .playlists import cleanup_orphan_playlists
@@ -19,6 +20,14 @@ from .userdata import (
 )
 
 log = get_logger("MenuManager")
+
+
+def _is_derived(derived: dict[str, str], key: str, value: str) -> bool:
+    """Whether a stored value is the derived one, raw or resolved."""
+    current = derived.get(key)
+    if current is None:
+        return False
+    return value == current or (current.startswith("$") and value == resolve_label(current))
 
 
 class MenuManager:
@@ -816,7 +825,7 @@ class MenuManager:
         derived = self.config.derived_item_properties(working)
         diff_props = {
             k: v for k, v in working.properties.items()
-            if default.properties.get(k) != v and derived.get(k) != v
+            if default.properties.get(k) != v and not _is_derived(derived, k, v)
         }
         if diff_props:
             diff.properties = diff_props

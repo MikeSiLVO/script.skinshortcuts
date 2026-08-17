@@ -193,7 +193,7 @@ class ItemsMixin:
         if widget.source:
             properties["widgetSource"] = widget.source
         if widget.label:
-            properties["widgetLabel"] = resolve_label(widget.label)
+            properties["widgetLabel"] = widget.label
 
         return MenuItem(
             name=widget.name,

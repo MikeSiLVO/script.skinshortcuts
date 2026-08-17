@@ -15,7 +15,6 @@ from .loaders import (
     load_views,
     load_widgets,
 )
-from .localize import resolve_label
 from .models import Background, Menu, MenuItem, Widget
 from .models.background import BackgroundConfig, BackgroundGroup
 from .models.menu import ActionOverride, SubDialog
@@ -286,6 +285,8 @@ class SkinConfig:
         Excludes the widget/background name keys themselves, which are user choices,
         not derived. Used both to fill items on load and to strip these from saved
         userdata so they recompute from the name on the next build.
+
+        Labels stay in $LOCALIZE form so a language change reaches the menu.
         """
         derived: dict[str, str] = {}
 
@@ -293,7 +294,7 @@ class SkinConfig:
         if bg_name:
             bg = self.get_background(bg_name)
             if bg:
-                derived["backgroundLabel"] = resolve_label(bg.label)
+                derived["backgroundLabel"] = bg.label
                 derived["backgroundPath"] = bg.path
 
         widget_name = item.properties.get("widget")
@@ -302,8 +303,6 @@ class SkinConfig:
             if widget:
                 props = widget.to_properties()
                 props.pop("widget", None)
-                if "widgetLabel" in props:
-                    props["widgetLabel"] = resolve_label(props["widgetLabel"])
                 derived.update(props)
 
         return derived

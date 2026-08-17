@@ -388,7 +388,7 @@ class PropertiesMixin:
 
         widget_path = widget.path.replace("{menuitem}", item.name)
         related: dict[str, str | None] = {
-            f"{base}Label{suffix}": resolve_label(widget.label),
+            f"{base}Label{suffix}": widget.label,
             f"{base}Path{suffix}": widget_path,
             f"{base}Type{suffix}": widget.type or "",
             f"{base}Target{suffix}": widget.target or "",
@@ -505,7 +505,7 @@ class PropertiesMixin:
         self._log(f"Setting background properties for {prefix}: {bg.name}")
 
         related: dict[str, str | None] = {
-            f"{prefix}Label": resolve_label(bg.label),
+            f"{prefix}Label": bg.label,
             f"{prefix}Path": bg.path,
             f"{prefix}Type": bg.type_name,
         }
@@ -540,7 +540,7 @@ class PropertiesMixin:
             label = custom_label if custom_label else custom_path
             value = custom_path
         else:
-            label = custom_label if custom_label else resolve_label(bg.label)
+            label = custom_label if custom_label else bg.label
             value = bg.name
 
         related: dict[str, str | None] = {

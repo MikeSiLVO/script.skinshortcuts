@@ -46,6 +46,11 @@ ACTION_CANCEL = (9, 10, 92, 216, 247, 257, 275, 61467, 61448)
 ACTION_CONTEXT = (117,)
 
 
+def _display_label(value: str) -> str:
+    """Resolve an emitted $LOCALIZE label for the dialog; user text passes through."""
+    return resolve_label(value) if value.startswith("$") else value
+
+
 class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     """Core dialog functionality - initialization, list management, event routing.
 
@@ -332,7 +337,9 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         has_widget = bool(widget_name or item.properties.get("widgetPath"))
         if has_widget:
             listitem.setProperty("widget", widget_name)
-            listitem.setProperty("widgetLabel", item.properties.get("widgetLabel", ""))
+            listitem.setProperty(
+                "widgetLabel", _display_label(item.properties.get("widgetLabel", ""))
+            )
             listitem.setProperty("widgetPath", item.properties.get("widgetPath", ""))
             listitem.setProperty("widgetType", item.properties.get("widgetType", ""))
             listitem.setProperty("widgetTarget", item.properties.get("widgetTarget", ""))
@@ -348,7 +355,9 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         background_name = item.properties.get("background", "")
         if background_name:
             listitem.setProperty("background", background_name)
-            listitem.setProperty("backgroundLabel", item.properties.get("backgroundLabel", ""))
+            listitem.setProperty(
+                "backgroundLabel", _display_label(item.properties.get("backgroundLabel", ""))
+            )
             listitem.setProperty("backgroundPath", item.properties.get("backgroundPath", ""))
         else:
             listitem.setProperty("background", "")
@@ -382,6 +391,8 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                     listitem.setProperty(prop_name, "")
                     listitem.setProperty(f"{prop_name}Label", "")
                     continue
+            if prop_name.split(".")[0].endswith("Label"):
+                prop_value = _display_label(prop_value)
             listitem.setProperty(prop_name, prop_value)
             resolved_label = self._get_property_label(prop_name, prop_value)
             if resolved_label:
