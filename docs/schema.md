@@ -146,7 +146,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 | `<overrides>` | menus | - | - | Action and icon overrides |
 | `<action>` | overrides | `replace` | - | Replacement action |
 | `<icons>` | overrides | - | - | Icon override block (groups `<source>` and `<icon>` overrides) |
-| `<source>` | overrides/icons | - | `visible` | Override source path; first matching used |
+| `<source>` | overrides/icons | - | - | Override source folder; may be a Kodi expression |
 | `<icon>` | overrides/icons | `replace` | - | Replacement icon path (relative to active source) |
 | `<dialogs>` | menus | - | - | Subdialog definitions |
 | `<subdialog>` | dialogs | `buttonID` | `mode`, `menu`, `setfocus`, `suffix` | Subdialog mapping; requires at least one of `mode`, `menu`, or an `<onclose>`. `menu` (without `mode`) opens that menu directly |

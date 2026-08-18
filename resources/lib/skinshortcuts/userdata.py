@@ -19,6 +19,8 @@ from .constants import DEFAULT_ICON
 from .log import get_logger
 from .models import Action, Menu, MenuItem
 
+from .models.menu import IconOverrides
+
 log = get_logger("UserData")
 
 
@@ -239,7 +241,7 @@ def _check_dialog_visible(condition: str) -> bool:
 
 def merge_menu(
     default_menu: Menu, override: MenuOverride | None,
-    icon_overrides: dict[str, str] | None = None,
+    icon_overrides: IconOverrides | None = None,
 ) -> Menu:
     """Merge default menu with user overrides."""
     if override is None:
@@ -356,10 +358,10 @@ def _apply_override(item: MenuItem, override: MenuItemOverride) -> MenuItem:
 
 
 def _create_item_from_override(
-    override: MenuItemOverride, icon_overrides: dict[str, str] | None = None
+    override: MenuItemOverride, icon_overrides: IconOverrides | None = None
 ) -> MenuItem:
     """Create a new menu item from user override."""
-    fallback = (icon_overrides or {}).get(DEFAULT_ICON, DEFAULT_ICON)
+    fallback = (icon_overrides or IconOverrides()).get(DEFAULT_ICON, DEFAULT_ICON)
     return MenuItem(
         name=override.name,
         label=override.label or "",

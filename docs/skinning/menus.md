@@ -819,21 +819,32 @@ Resolution:
 2. **Convention scan**: any `Default*.png` file found in the active source is automatically registered as an override pointing at itself. Drop replacement icons into your icons folder with matching filenames to skip listing them individually.
 3. **Explicit overrides**: `<icon replace="X">Y</icon>` declarations win over convention. The replacement path Y is resolved relative to the active source unless it's absolute (starts with `special://` or `/`). With no `<source>` declared, relative Y values are dropped and logged.
 
-### Conditional Sources
+### Switching Icon Sets
 
-Use multiple `<source>` children to switch override sets based on skin state:
+Point `<source>` at a variable to swap sets without rebuilding:
 
 ```xml
 <overrides>
   <icons>
-    <source visible="Skin.HasSetting(theme.dark)">special://skin/extras/icons-dark/</source>
-    <source>special://skin/extras/icons-light/</source>
+    <source>$VAR[MyIconSet]</source>
     <icon replace="DefaultFolder.png">files.png</icon>
   </icons>
 </overrides>
 ```
 
-The condition is evaluated at config load. If the user changes the skin setting at runtime, run a rebuild to pick up the new overrides.
+```xml
+<variable name="MyIconSet">
+  <value condition="Skin.HasSetting(theme.dark)">special://skin/extras/icons-dark/</value>
+  <value>special://skin/extras/icons-light/</value>
+</variable>
+```
+
+The build keeps the variable in the paths it writes, so Kodi picks the folder when it
+draws and a change takes effect on the next skin reload. End every value with a slash.
+
+The folder may sit anywhere the skin can draw from, including inside `media/` where it is
+packed into `Textures.xbt`. Address a packed folder the way Kodi does, relative to
+`media/`, so `views/icons/` rather than a full path.
 
 ### Scope
 

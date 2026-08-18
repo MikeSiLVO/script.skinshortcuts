@@ -3,12 +3,69 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import TYPE_CHECKING
+
+try:
+    import xbmc
+    import xbmcvfs
+
+    IN_KODI = True
+except ImportError:
+    IN_KODI = False
 
 if TYPE_CHECKING:
     from typing import Union
 
     GroupContent = Union["Shortcut", "ShortcutGroup", "Content", "Input"]
+
+
+def skin_has_image(path: str) -> bool:
+    """Whether the skin can draw this texture, packed into an xbt or loose on disk."""
+    if not path:
+        return False
+    if not IN_KODI:
+        return Path(path).exists()
+    if "://" in path or path.startswith("/"):
+        return xbmcvfs.exists(path)
+    return bool(xbmc.skinHasImage(path))
+
+
+@dataclass
+class IconOverrides:
+    """Kodi default icon names mapped to the replacements a skin ships.
+
+    An expression source resolves for the lookup and stays unresolved in the output.
+    """
+
+    source: str = ""
+    explicit: dict[str, str] = field(default_factory=dict)
+    _tested: dict[str, str] = field(default_factory=dict, repr=False)
+
+    def __bool__(self) -> bool:
+        return bool(self.source or self.explicit)
+
+    def __contains__(self, name: str) -> bool:
+        return bool(self.get(name))
+
+    def __getitem__(self, name: str) -> str:
+        found = self.get(name)
+        if not found:
+            raise KeyError(name)
+        return found
+
+    def get(self, name: str, default: str = "") -> str:
+        """The skin's replacement for a default icon name, if it has one."""
+        if name in self.explicit:
+            return self.explicit[name]
+        if not self.source or not name.startswith("Default"):
+            return default
+        if name not in self._tested:
+            from ..localize import resolve_label
+
+            candidate = self.source + name
+            self._tested[name] = candidate if skin_has_image(resolve_label(candidate)) else ""
+        return self._tested[name] or default
 
 
 @dataclass
@@ -476,6 +533,6 @@ class MenuConfig:
     icon_sources: list[IconSource] = field(default_factory=list)
     subdialogs: list[SubDialog] = field(default_factory=list)
     action_overrides: list[ActionOverride] = field(default_factory=list)
-    icon_overrides: dict[str, str] = field(default_factory=dict)  # DefaultX.png -> override path
+    icon_overrides: IconOverrides = field(default_factory=IconOverrides)
     context_menu: ContextMenu = field(default_factory=ContextMenu)
     submenu_path_all: bool = False  # <submenuPath>all</submenuPath>: numbers every widget submenu

@@ -17,7 +17,7 @@ from .loaders import (
 )
 from .models import Background, Menu, MenuItem, Widget
 from .models.background import BackgroundConfig, BackgroundGroup
-from .models.menu import ActionOverride, SubDialog
+from .models.menu import IconOverrides, ActionOverride, SubDialog
 from .models.property import PropertySchema
 from .models.template import TemplateSchema
 from .models.views import ViewConfig
@@ -43,7 +43,7 @@ class SkinConfig:
     templates: TemplateSchema = field(default_factory=TemplateSchema)
     property_schema: PropertySchema = field(default_factory=PropertySchema)
     subdialogs: list[SubDialog] = field(default_factory=list)
-    icon_overrides: dict[str, str] = field(default_factory=dict)
+    icon_overrides: IconOverrides = field(default_factory=IconOverrides)
     submenu_path_all: bool = False
 
     @property

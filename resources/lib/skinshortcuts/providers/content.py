@@ -18,7 +18,7 @@ from ..playlists import playlists_base_path, unpack_multipath
 from .browse import normalize_image
 
 if TYPE_CHECKING:
-    from ..models.menu import Content
+    from ..models.menu import IconOverrides, Content
 
 log = get_logger("ContentProvider")
 
@@ -139,7 +139,7 @@ def _collection(result: dict | None, key: str) -> list:
 class ContentProvider:
     """Resolves dynamic content references to shortcuts."""
 
-    def __init__(self, icon_overrides: dict[str, str] | None = None) -> None:
+    def __init__(self, icon_overrides: IconOverrides | None = None) -> None:
         """Take the icon overrides; resolved content is cached per instance."""
         self._cache: dict[str, list[ResolvedShortcut]] = {}
         self._icon_overrides = icon_overrides or {}

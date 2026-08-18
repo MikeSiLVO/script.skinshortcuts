@@ -19,6 +19,8 @@ from .localize import LANGUAGE, resolve_label
 from .log import get_logger
 from .models import MenuItem
 
+from .models.menu import IconOverrides
+
 log = get_logger("SkinString")
 
 
@@ -26,15 +28,15 @@ class _StandalonePicker(PickersMixin):
     """Minimal adapter for PickersMixin outside the management dialog."""
 
     def __init__(
-        self, shortcuts_path: str, icon_overrides: dict[str, str] | None = None
+        self, shortcuts_path: str, icon_overrides: IconOverrides | None = None
     ) -> None:
         self.shortcuts_path = shortcuts_path
         self.manager = None  # type: ignore[assignment]
         self.menu_id = ""
         self.items: list[MenuItem] = []
-        self._overrides = icon_overrides or {}
+        self._overrides = icon_overrides or IconOverrides()
 
-    def _icon_overrides(self) -> dict[str, str]:
+    def _icon_overrides(self) -> IconOverrides:
         """Overrides handed in by the caller."""
         return self._overrides
 

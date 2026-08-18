@@ -312,7 +312,8 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         listitem.setProperty("skinshortcuts-isProtected", "True" if item.protection else "False")
 
         if item.icon:
-            listitem.setArt({"thumb": item.icon, "icon": item.icon})
+            icon = _display_label(item.icon)
+            listitem.setArt({"thumb": icon, "icon": icon})
 
         widget_name = item.properties.get("widget", "")
         has_widget = bool(widget_name or item.properties.get("widgetPath"))
