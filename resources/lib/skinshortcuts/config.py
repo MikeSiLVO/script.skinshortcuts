@@ -118,12 +118,14 @@ class SkinConfig:
                     continue
                 # source="N" lookups read flat keys; merge user customizations there too
                 override = userdata.menus.get(menu.name)
-                merged = merge_menu(menu, override) if override else menu
+                merged = (
+                    merge_menu(menu, override, menu_config.icon_overrides) if override else menu
+                )
                 _apply_action_overrides(merged, menu_config.action_overrides)
                 menus.append(merged)
                 continue
             override = userdata.menus.get(menu.name)
-            merged = merge_menu(menu, override)
+            merged = merge_menu(menu, override, menu_config.icon_overrides)
             _apply_action_overrides(merged, menu_config.action_overrides)
             menus.append(merged)
 
@@ -138,9 +140,11 @@ class SkinConfig:
                         continue
                     instance = Menu(name=key, is_submenu=True)
                     for item_override in instance_override.items:
-                        instance.items.append(_create_item_from_override(item_override))
+                        instance.items.append(
+                            _create_item_from_override(item_override, menu_config.icon_overrides)
+                        )
                 else:
-                    instance = merge_menu(template, instance_override)
+                    instance = merge_menu(template, instance_override, menu_config.icon_overrides)
                     instance.name = key
                     instance.template_origin = template_name
                 _apply_action_overrides(instance, menu_config.action_overrides)
@@ -156,7 +160,9 @@ class SkinConfig:
                     continue
             user_menu = Menu(name=menu_name, is_submenu=True)
             for item_override in menu_override.items:
-                user_menu.items.append(_create_item_from_override(item_override))
+                user_menu.items.append(
+                    _create_item_from_override(item_override, menu_config.icon_overrides)
+                )
             menus.append(user_menu)
 
         return cls(

@@ -15,6 +15,7 @@ try:
 except ImportError:
     IN_KODI = False
 
+from .constants import DEFAULT_ICON
 from .log import get_logger
 from .models import Action, Menu, MenuItem
 
@@ -236,7 +237,10 @@ def _check_dialog_visible(condition: str) -> bool:
     return xbmc.getCondVisibility(condition)
 
 
-def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
+def merge_menu(
+    default_menu: Menu, override: MenuOverride | None,
+    icon_overrides: dict[str, str] | None = None,
+) -> Menu:
     """Merge default menu with user overrides."""
     if override is None:
         # No user customization - filter by dialog_visible
@@ -278,7 +282,7 @@ def merge_menu(default_menu: Menu, override: MenuOverride | None) -> Menu:
 
     new_items = [o for o in override.items if o.is_new]
     for new_item in new_items:
-        items.append(_create_item_from_override(new_item))
+        items.append(_create_item_from_override(new_item, icon_overrides))
 
     positioned_items: dict[int, MenuItem] = {}
     unpositioned_items: list[MenuItem] = []
@@ -351,13 +355,16 @@ def _apply_override(item: MenuItem, override: MenuItemOverride) -> MenuItem:
     )
 
 
-def _create_item_from_override(override: MenuItemOverride) -> MenuItem:
+def _create_item_from_override(
+    override: MenuItemOverride, icon_overrides: dict[str, str] | None = None
+) -> MenuItem:
     """Create a new menu item from user override."""
+    fallback = (icon_overrides or {}).get(DEFAULT_ICON, DEFAULT_ICON)
     return MenuItem(
         name=override.name,
         label=override.label or "",
         actions=override.actions or [Action(action="noop")],
-        icon=override.icon or "DefaultShortcut.png",
+        icon=override.icon or fallback,
         visible=override.visible or "",
         disabled=override.disabled or False,
         properties=override.properties,
