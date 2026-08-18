@@ -58,16 +58,7 @@ class _StandalonePicker(PickersMixin):
 
 
 def pick_widget_skinstring(shortcuts_path: str, params: dict[str, str]) -> None:
-    """Open widget picker and store result in skin strings.
-
-    Args:
-        shortcuts_path: Path to skin's shortcuts folder
-        params: Dict with skin string names:
-            skinPath - Skin string for widget path
-            skinLabel - Skin string for widget label
-            skinType - Skin string for widget type
-            skinTarget - Skin string for widget target
-    """
+    """Open widget picker and store result in skin strings."""
     if not IN_KODI:
         return
 

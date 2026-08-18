@@ -37,15 +37,7 @@ class PlaylistSource:
 
 @dataclass
 class BrowseSource:
-    """A source path for browse dialogs.
-
-    Used by browse/multi background types to provide multiple
-    conditional starting paths for file browsing.
-
-    Attributes:
-        condition: Property condition (evaluated against item properties)
-        visible: Kodi visibility condition (evaluated at runtime)
-    """
+    """A source path for browse dialogs."""
 
     label: str
     path: str  # Path to browse from, or "browse" for free file browser
@@ -99,11 +91,7 @@ class BackgroundGroup:
 
 @dataclass
 class BackgroundConfig:
-    """Background configuration including backgrounds, groupings, and settings.
-
-    Groupings can contain both BackgroundGroup (folders) and standalone Background items
-    at the top level for flexibility.
-    """
+    """Background configuration including backgrounds, groupings, and settings."""
 
     backgrounds: list[Background] = field(default_factory=list)
     groupings: list[BackgroundGroup | Background] = field(default_factory=list)

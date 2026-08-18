@@ -15,15 +15,7 @@ log = get_logger("WidgetLoader")
 
 
 def load_widgets(path: str | Path) -> WidgetConfig:
-    """Load widget configuration from XML file.
-
-    Parses <widget>, <group>, and <content> elements directly from the root
-    <widgets> element. Widgets at root level appear flat in picker, groups
-    create nested navigation, and root-level <content> resolves dynamically.
-
-    Returns:
-        WidgetConfig containing widgets, groupings, and settings.
-    """
+    """Load widget configuration from XML file."""
     path = Path(path)
     if not path.exists():
         return WidgetConfig()

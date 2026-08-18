@@ -26,21 +26,7 @@ def show_view_browser(
     config: ViewConfig,
     userdata: UserData,
 ) -> bool:
-    """Show hierarchical view browser for managing all view settings.
-
-    Opens a dialog with:
-    - Library > (content types)
-    - Plugins > (content types + Add Plugin Override)
-    - Reset Library Views
-    - Reset Plugin Views
-
-    Args:
-        config: View configuration from views.xml
-        userdata: User data for reading/writing selections
-
-    Returns:
-        True if any changes were made
-    """
+    """Show hierarchical view browser for managing all view settings."""
     if not IN_KODI or not config.content_rules:
         return False
 
@@ -58,19 +44,7 @@ def show_view_picker(
     content: str,
     plugin: str = "",
 ) -> bool:
-    """Show view picker for a specific content type.
-
-    Opens a dialog to select a view for the specified content.
-
-    Args:
-        config: View configuration from views.xml
-        userdata: User data for reading/writing selections
-        content: Content type name (e.g., "movies")
-        plugin: Optional plugin ID for plugin-specific override
-
-    Returns:
-        True if a change was made
-    """
+    """Show view picker for a specific content type."""
     if not IN_KODI:
         return False
 
@@ -283,10 +257,7 @@ def _pick_view_for_content(
     content: ViewContent,
     source: str,
 ) -> bool:
-    """Show view picker dialog for a content type.
-
-    Returns True if a selection was made.
-    """
+    """Show view picker dialog for a content type."""
     views = config.get_views_for_content(content.name)
     if not views:
         return False

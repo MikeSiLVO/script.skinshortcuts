@@ -180,10 +180,7 @@ class SkinConfig:
         )
 
     def get_widget(self, widget_name: str) -> Widget | None:
-        """Get widget by name.
-
-        Searches both top-level widgets and widgets within groupings.
-        """
+        """Get widget by name."""
         for widget in self.widgets:
             if widget.name == widget_name:
                 return widget
@@ -207,10 +204,7 @@ class SkinConfig:
         return None
 
     def get_background(self, bg_name: str) -> Background | None:
-        """Get background by name.
-
-        Searches both top-level backgrounds and backgrounds within groupings.
-        """
+        """Get background by name."""
         for bg in self.backgrounds:
             if bg.name == bg_name:
                 return bg
@@ -277,10 +271,6 @@ class SkinConfig:
     def derived_item_properties(self, item: MenuItem) -> dict[str, str]:
         """Widget/background sub-properties derivable from the item's assigned names.
 
-        Excludes the widget/background name keys themselves, which are user choices,
-        not derived. Used both to fill items on load and to strip these from saved
-        userdata so they recompute from the name on the next build.
-
         Labels stay in $LOCALIZE form so a language change reaches the menu.
         """
         derived: dict[str, str] = {}
@@ -310,11 +300,7 @@ class SkinConfig:
 
 
 def _apply_action_overrides(menu: Menu, overrides: list[ActionOverride]) -> None:
-    """Apply action overrides to all items in a menu.
-
-    Replaces deprecated/changed actions with their updated versions.
-    Comparison is case-insensitive to handle variations in action strings.
-    """
+    """Apply action overrides to all items in a menu."""
     if not overrides:
         return
 

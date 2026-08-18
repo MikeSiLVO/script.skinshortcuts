@@ -33,10 +33,7 @@ def _is_derived(derived: dict[str, str], key: str, value: str) -> bool:
 class MenuManager:
     """Manages menu operations with working copy and diff-based save.
 
-    Architecture:
-    - defaults: Immutable skin defaults (from config.default_menus)
-    - working: Mutable working copy (all edits happen here)
-    - Save diffs working against defaults to generate minimal userdata
+    Edits land in the working copy; save diffs it against defaults for minimal userdata.
     """
 
     def __init__(self, shortcuts_path: str | Path, userdata_path: str | None = None):
@@ -46,8 +43,7 @@ class MenuManager:
 
         self.config = SkinConfig.load(shortcuts_path, load_user=True, userdata_path=userdata_path)
 
-        # Submenu templates referenced by an item (via submenu="..." or name match)
-        # are seed sources only - per-item working copies live under f"{parent}/{item}" keys.
+        # referenced templates are seed sources; per-item copies live under "{parent}/{item}"
         referenced_templates = self._referenced_submenu_templates()
 
         self.working: dict[str, Menu] = {}
@@ -63,9 +59,7 @@ class MenuManager:
     def _referenced_submenu_templates(self) -> set[str]:
         """Set of submenu template names referenced by any item (defaults or userdata).
 
-        A referenced template is used only as a seed source for per-item submenu
-        working copies. Non-referenced submenu entries (standalone named templates)
-        remain in working storage under their template name.
+        Referenced ones seed per-item copies; the rest stay under their template name.
         """
         referenced: set[str] = set()
         for menu in self.config.default_menus:
@@ -294,12 +288,7 @@ class MenuManager:
         return False
 
     def reset_menu(self, menu_id: str) -> bool:
-        """Reset a menu to its skin default values.
-
-        For skin-defined menus, restores all items to defaults.
-        For per-item submenu keys (parent/item), re-seeds from the item's template.
-        For custom menus (user-created), clears all items.
-        """
+        """Reset a menu to its skin default values."""
         default_menu = self.config.get_default_menu(menu_id)
 
         if default_menu:
@@ -472,17 +461,11 @@ class MenuManager:
         return self._set_item_property(menu_id, item_id, "submenu", submenu)
 
     def set_widget(self, menu_id: str, item_id: str, widget: str | None) -> bool:
-        """Set the widget for an item.
-
-        Widget is stored as a property in the properties dict.
-        """
+        """Set the widget for an item."""
         return self.set_custom_property(menu_id, item_id, "widget", widget)
 
     def set_background(self, menu_id: str, item_id: str, background: str | None) -> bool:
-        """Set the background for an item.
-
-        Background is stored as a property in the properties dict.
-        """
+        """Set the background for an item."""
         return self.set_custom_property(menu_id, item_id, "background", background)
 
     def set_disabled(self, menu_id: str, item_id: str, disabled: bool) -> bool:
@@ -578,8 +561,7 @@ class MenuManager:
                     if key.startswith("customWidget") and value:
                         referenced_menus.add(value)
 
-        # Subdialog menu patterns like {item}.1 create menus named e.g. "music.1"
-        # that aren't in defaults or referenced by submenu/customWidget properties.
+        # {item}.N subdialog menus ("music.1") sit in neither defaults nor properties
         for subdialog in self.config.subdialogs:
             if subdialog.menu and "{item}" in subdialog.menu:
                 for menu in self.working.values():
@@ -699,8 +681,7 @@ class MenuManager:
             diff.disabled = working.disabled
             has_changes = True
 
-        # Derived widget/background props recompute from the name on build, so they
-        # stay out of userdata: saving them would freeze the skin's paths and labels.
+        # derived props recompute on build; saving them would freeze the skin's paths and labels
         derived = self.config.derived_item_properties(working)
         diff_props = {
             k: v for k, v in working.properties.items()
@@ -710,8 +691,7 @@ class MenuManager:
             diff.properties = diff_props
             has_changes = True
 
-        # A skin default the user cleared has no key in working; record it so the
-        # merge can drop it instead of the default silently returning.
+        # a cleared default has no working key; record it so merge drops it
         removed_props = [k for k in default.properties if k not in working.properties]
         if removed_props:
             diff.removed_properties = removed_props

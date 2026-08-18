@@ -154,16 +154,7 @@ def _expand_or_segment(segment: str) -> str:
 
 
 def evaluate_condition(condition: str, properties: dict[str, str]) -> bool:
-    """Evaluate a condition against property values.
-
-    Args:
-        condition: Condition string to evaluate
-        properties: Dict of property name -> value to check against
-
-    Returns:
-        True if condition matches, False otherwise.
-        Empty/None conditions return True.
-    """
+    """Evaluate a condition against property values."""
     if not condition:
         return True
 

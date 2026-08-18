@@ -106,12 +106,7 @@ def _item_override_to_dict(item: MenuItemOverride) -> dict[str, Any]:
 
 @dataclass
 class UserData:
-    """All user customizations for a skin.
-
-    The views field stores user view selections:
-    source -> content -> view_id
-    Sources are: 'library', 'plugins', or 'plugin.video.X' for specific plugins.
-    """
+    """All user customizations for a skin."""
 
     menus: dict[str, MenuOverride] = field(default_factory=dict)
     views: dict[str, dict[str, str]] = field(default_factory=dict)
@@ -146,11 +141,7 @@ class UserData:
         self.views.clear()
 
     def get_addon_overrides(self, content: str) -> dict[str, str]:
-        """Get all addon-specific view overrides for a content type.
-
-        Returns dict of addon_id -> view_id for addons with custom selections.
-        Includes any source that isn't 'library' or 'plugins' (generic).
-        """
+        """Get all addon-specific view overrides for a content type."""
         overrides = {}
         for source, selections in self.views.items():
             if source not in ("library", "plugins") and content in selections:
@@ -228,10 +219,7 @@ def save_userdata(userdata: UserData, path: str | None = None) -> bool:
 
 
 def _check_dialog_visible(condition: str) -> bool:
-    """Check if a Kodi visibility condition passes for dialog filtering.
-
-    Returns True if condition is empty or passes.
-    """
+    """Check if a Kodi visibility condition passes for dialog filtering."""
     if not condition:
         return True
     if not IN_KODI:

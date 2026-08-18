@@ -85,16 +85,7 @@ class PropertySchema:
     def get_property_for_button(
         self, button_id: int
     ) -> tuple[SchemaProperty | None, ButtonMapping | None]:
-        """Get property and button mapping for a button ID.
-
-        Args:
-            button_id: The button control ID
-
-        Returns:
-            Tuple of (property, button_mapping) or (None, None) if not found.
-            Always returns the base property - suffix is applied at runtime
-            by the caller when getting/setting values.
-        """
+        """Get property and button mapping for a button ID."""
         button = self.buttons.get(button_id)
         if not button:
             return None, None

@@ -82,7 +82,6 @@ _notified: set[tuple[str, str]] = set()
 def notify(heading: str, message: str) -> None:
     """Fire a Kodi notification, once per identical heading+message this run.
 
-    Dedup stops per-item build errors toasting the same message dozens of times.
     No-op outside Kodi so loaders stay testable.
     """
     if not IN_KODI:

@@ -41,14 +41,7 @@ OPTIONAL_PATH_TYPES = {
 def load_backgrounds(
     path: str | Path, icon_overrides: IconOverrides | None = None
 ) -> BackgroundConfig:
-    """Load background configuration from XML file.
-
-    Parses <background> and <group> elements directly from root <backgrounds> element.
-    Backgrounds at root level appear flat in picker, groups create nested navigation.
-
-    Returns:
-        BackgroundConfig containing backgrounds, groupings, and settings.
-    """
+    """Load background configuration from XML file."""
     overrides = icon_overrides or IconOverrides()
     path = Path(path)
     if not path.exists():

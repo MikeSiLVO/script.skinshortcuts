@@ -25,13 +25,7 @@ if TYPE_CHECKING:
 class SubdialogsMixin:
     """Mixin providing subdialog management - submenu editing, widget slots.
 
-    This mixin implements:
-    - Edit submenu spawning
-    - Subdialog spawning with mode/suffix
-    - Onclose action handling
-    - Custom widget menu creation
-
-    Requires DialogBaseMixin to be mixed in first.
+    Requires DialogBaseMixin first.
     """
 
     menu_id: str
@@ -123,9 +117,6 @@ class SubdialogsMixin:
 
         If subdialog has `menu` but no `mode`, opens the menu directly.
         Otherwise opens the subdialog, and after it closes, evaluates onclose actions.
-
-        Args:
-            subdialog: The subdialog definition containing the mode, menu, suffix, and onclose
         """
         item = self._get_selected_item()
         if not item:
@@ -149,10 +140,6 @@ class SubdialogsMixin:
 
         Evaluates each onclose action's condition against the current item state.
         The first matching action is executed.
-
-        Args:
-            subdialog: The subdialog definition with onclose actions
-            item: The original menu item (used as fallback)
         """
         if not self.manager:
             return
@@ -182,14 +169,6 @@ class SubdialogsMixin:
         Handles special placeholders:
         - {customWidget} or {customWidget.N} - get/create custom widget menu
         - {item}.X - legacy format, converted to explicit reference
-
-        Args:
-            menu_ref: The menu reference string from onclose action
-            item: The current menu item
-            subdialog: The subdialog definition
-
-        Returns:
-            Resolved menu name/ID
         """
         if not self.manager:
             return ""
@@ -244,12 +223,7 @@ class SubdialogsMixin:
         return resolved
 
     def _open_onclose_menu(self, menu_name: str, subdialog: SubDialog) -> None:
-        """Open a menu from an onclose action.
-
-        Args:
-            menu_name: Name of the menu to open (already resolved)
-            subdialog: The parent subdialog definition (for dialog mode)
-        """
+        """Open a menu from an onclose action."""
         if not self.manager:
             return
 
@@ -264,11 +238,7 @@ class SubdialogsMixin:
         self._refresh_selected_item()
 
     def _open_subdialog(self, subdialog: SubDialog) -> None:
-        """Open the subdialog for widget/property editing.
-
-        Args:
-            subdialog: The subdialog definition
-        """
+        """Open the subdialog for widget/property editing."""
         self._run_child_dialog(
             self.menu_id,
             subdialog.mode,

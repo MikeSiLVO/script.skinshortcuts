@@ -54,16 +54,7 @@ def _display_label(value: str) -> str:
 class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     """Core dialog functionality - initialization, list management, event routing.
 
-    This mixin provides:
-    - Constructor with all shared state setup
-    - onInit/close lifecycle methods
-    - List control management (display, rebuild, refresh)
-    - Property access helpers
-    - Event routing (onClick/onAction)
-
-    Inherits from WindowXMLDialog for type checking. At runtime, the final
-    ManagementDialog class also inherits from WindowXMLDialog, so the MRO
-    is correct.
+    Inherits WindowXMLDialog for typing; the runtime class does too, so the MRO holds.
     """
 
 
@@ -140,12 +131,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         return self.getControl(control_id)  # type: ignore[return-value]
 
     def onInit(self):  # noqa: N802
-        """Called when dialog is initialized.
-
-        Note: In Kodi, onInit() is called every time the window regains focus,
-        not just on first open. We must avoid recreating the manager to preserve
-        unsaved changes.
-        """
+        """Called when dialog is initialized."""
         self._log(f"onInit: shortcuts_path={self.shortcuts_path}, menu_id={self.menu_id}")
 
         if self.manager is None:
@@ -241,8 +227,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def _populate_subdialog_list(self) -> None:
         """Populate Container 212 with current item for subdialog variable access.
 
-        Container 212 is a single-item list used by widget settings controls
-        to read properties without conflicting with the parent dialog's Container 211.
+        Separate container so widget settings controls don't fight the parent's 211.
         """
         try:
             subdialog_list = self._list(CONTROL_SUBDIALOG_LIST)
@@ -275,8 +260,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def _rebuild_list(self, focus_index: int | None = None) -> None:
         """Rebuild the list control from self.items.
 
-        Use this for structural changes (add/delete/move/reset).
-        For property changes, use _refresh_selected_item() instead.
+        Structural changes only; a property change wants _refresh_selected_item.
         """
         try:
             list_control = self._list(CONTROL_LIST)
@@ -399,17 +383,10 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             listitem.setProperty("isResettable", "true" if is_modified else "")
 
     def _is_widget_dependent(self, prop_name: str) -> bool:
-        """Check if a property depends on a widget being set.
-
-        Uses the property schema's requires field rather than prefix matching,
-        so custom properties that happen to start with 'widget' aren't affected.
-        Checks both property-level and button-level requires, since a skin may
-        declare a widget-dependent toggle only via a <button> entry.
-        """
+        """Check if a property depends on a widget being set."""
         if not self.property_schema:
             return False
         widget_requires = ("widget", "widgetPath", "widgetStyle")
-        # Strip suffix (e.g., "widgetStyle.2" -> "widgetStyle")
         base_name = prop_name.split(".")[0] if "." in prop_name else prop_name
         prop = self.property_schema.properties.get(base_name)
         if prop and prop.requires in widget_requires:
@@ -428,10 +405,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             return None
 
     def _refresh_selected_item(self) -> None:
-        """Refresh the selected item's ListItem from our local item state.
-
-        Call this after making changes to sync the UI with item state.
-        """
+        """Refresh the selected item's ListItem from our local item state."""
         index = self._get_selected_index()
         if index < 0 or index >= len(self.items):
             return
@@ -454,8 +428,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def _get_selected_item(self) -> MenuItem | None:
         """Get the currently selected MenuItem.
 
-        In subdialog mode, uses _selected_index (the item being edited) rather
-        than querying Container 211 which may have different focus.
+        Subdialog mode reads _selected_index; Container 211 may be focused elsewhere.
         """
         if (
             self.dialog_mode
@@ -469,10 +442,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         return None
 
     def _get_item_properties(self, item: MenuItem) -> dict[str, str]:
-        """Get all properties of an item as a dict for condition evaluation.
-
-        All properties including widget and background are stored in item.properties.
-        """
+        """Get all properties of an item as a dict for condition evaluation."""
         props = dict(item.properties)
         props["name"] = item.name
         props["label"] = resolve_label(item.label)
@@ -481,11 +451,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         return props
 
     def _get_effective_properties(self, item: MenuItem) -> dict[str, str]:
-        """Get item properties with fallbacks applied.
-
-        Returns a dict of property name -> effective value, including
-        fallback values for properties that aren't explicitly set.
-        """
+        """Get item properties with fallbacks applied."""
         props = self._get_item_properties(item)
 
         if not self.property_schema:

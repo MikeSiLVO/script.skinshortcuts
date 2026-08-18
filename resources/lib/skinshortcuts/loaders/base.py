@@ -110,13 +110,7 @@ def get_bool(elem: ET.Element, attr: str, default: bool = False) -> bool:
 
 
 def parse_content(elem: ET.Element):
-    """Parse a content reference element.
-
-    Attributes: source, target, path, condition, visible, icon, label, folder
-
-    Returns:
-        Content object or None if source is missing
-    """
+    """Parse a content reference element."""
     # Import here to avoid circular dependency
     from ..models.menu import Content
 

@@ -34,11 +34,7 @@ log = get_logger("MenuLoader")
 
 
 def load_menus(path: str | Path) -> MenuConfig:
-    """Load complete menu configuration from menus.xml.
-
-    Returns:
-        MenuConfig containing menus, groupings, icon sources, subdialogs, and settings.
-    """
+    """Load complete menu configuration from menus.xml."""
     path = Path(path)
     if not path.exists():
         return MenuConfig()
@@ -85,12 +81,7 @@ def _parse_menus(root, path: str, icon_overrides: IconOverrides | None = None) -
 
 
 def _parse_icons(root) -> list[IconSource]:
-    """Parse icon sources from <icons> element.
-
-    Supports two formats:
-    1. Simple: <icons>path/to/icons/</icons>
-    2. Advanced: <icons><source label="..." condition="...">path</source>...</icons>
-    """
+    """Parse icon sources from <icons> element."""
     icons_elem = root.find("icons")
     if icons_elem is None:
         return []
@@ -186,22 +177,7 @@ def _parse_submenu_path(root) -> bool:
 
 
 def _parse_dialogs(root) -> list[SubDialog]:
-    """Parse subdialog definitions from <dialogs> element.
-
-    Schema:
-        <dialogs>
-            <subdialog buttonID="800" mode="widget1" setfocus="309">
-                <prompt>
-                    <option label="Choose Widget" action="subdialog"/>
-                    <option label="Edit Custom" action="menu" menu="{item}.customwidget"
-                            condition="String.IsEqual(widgetType,custom)"/>
-                    <option label="Clear"
-                            onclick="RunScript(script.skinshortcuts,type=clear...)"
-                            condition="String.IsEqual(widgetType,custom)"/>
-                </prompt>
-            </subdialog>
-        </dialogs>
-    """
+    """Parse subdialog definitions from <dialogs> element."""
     dialogs_elem = root.find("dialogs")
     if dialogs_elem is None:
         return []
@@ -246,11 +222,7 @@ def _parse_dialogs(root) -> list[SubDialog]:
 
 
 def _parse_onclose(subdialog_elem) -> list[OnCloseAction]:
-    """Parse onclose actions from a subdialog element.
-
-    <onclose condition="widgetType=custom" action="menu" menu="{item}.customwidget"/>
-    <onclose condition="widgetType.2=custom" action="menu" menu="{item}.customwidget.2"/>
-    """
+    """Parse onclose actions from a subdialog element."""
     actions = []
     for elem in subdialog_elem.findall("onclose"):
         action = get_attr(elem, "action")
@@ -269,13 +241,7 @@ def _parse_onclose(subdialog_elem) -> list[OnCloseAction]:
 
 
 def _parse_overrides(root) -> list[ActionOverride]:
-    """Parse action overrides from <overrides> element.
-
-    Schema:
-        <overrides>
-            <action replace="ActivateWindow(favourites)">ActivateWindow(favouritesbrowser)</action>
-        </overrides>
-    """
+    """Parse action overrides from <overrides> element."""
     overrides_elem = root.find("overrides")
     if overrides_elem is None:
         return []
@@ -537,37 +503,7 @@ def load_groupings(
 ) -> list[Shortcut | ShortcutGroup | Content | Input]:
     """Load shortcut groupings from menus.xml file.
 
-    Groupings define the available shortcuts for the picker dialog.
-    They are stored inside a <groupings> element within <menus>.
-
-    If menu_id is provided, a <groupings menu="menu_id"> element takes
-    priority over the default (unnamed) <groupings>.
-
-    Note: Consider using load_menus() instead which returns full MenuConfig.
-
-    Schema:
-        <menus>
-          ...
-          <groupings>
-            <group name="..." label="..." icon="..." condition="...">
-              <shortcut name="..." label="..." icon="..." type="..." condition="...">
-                <action>...</action>
-              </shortcut>
-              <shortcut name="..." label="..." browse="videos">
-                <path>videodb://movies/genres/</path>
-              </shortcut>
-              <content source="playlists" target="videos"/>
-              <group name="...">...</group>  <!-- nested -->
-            </group>
-            <!-- Top-level items also supported -->
-            <shortcut name="..." label="...">...</shortcut>
-            <content source="..." target="..."/>
-            <input label="..." type="text" for="action" />
-          </groupings>
-          <groupings menu="powermenu">
-            <!-- Completely replaces default groupings for this menu -->
-          </groupings>
-        </menus>
+    load_menus returns these inside the full MenuConfig; prefer it.
     """
     path = Path(path)
     if not path.exists():
@@ -583,11 +519,7 @@ def _parse_shortcut_groupings(
     menu_id: str = "",
     icon_overrides: IconOverrides | None = None,
 ) -> list[Shortcut | ShortcutGroup | Content | Input]:
-    """Parse groupings from root element.
-
-    Supports all item types at the top level: groups, shortcuts, content, and inputs.
-    If menu_id is provided, a menu-specific <groupings> replaces the default.
-    """
+    """Parse groupings from root element."""
     overrides = icon_overrides or IconOverrides()
     default_elem = None
     menu_elem = None
@@ -687,16 +619,7 @@ def _parse_shortcut(
     _path: str,
     icon_overrides: IconOverrides | None = None,
 ) -> Shortcut | None:
-    """Parse a shortcut element.
-
-    Supports two modes:
-    1. Action mode: <action>ActivateWindow(...)</action>
-    2. Browse mode: browse="videos" with <path>videodb://...</path>
-
-    The visible="..." attribute hides the shortcut from the picker. A
-    <visible> child element is baked into the resulting menu item when the
-    shortcut is picked. Multiple <visible> children are joined with " + ".
-    """
+    """Parse a shortcut element."""
     overrides = icon_overrides or IconOverrides()
     shortcut_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
@@ -740,10 +663,7 @@ def _parse_shortcut(
 
 
 def _parse_input(elem, icon_overrides: IconOverrides | None = None) -> Input | None:
-    """Parse an input element.
-
-    Schema: <input label="Custom action" type="text" for="action" />
-    """
+    """Parse an input element."""
     overrides = icon_overrides or IconOverrides()
     label = get_attr(elem, "label")
     if not label:

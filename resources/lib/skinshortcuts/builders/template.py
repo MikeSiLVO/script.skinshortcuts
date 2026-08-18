@@ -59,11 +59,7 @@ class TemplateBuilder:
         self._assigned_templates: set[str] = self._collect_assigned_templates()
 
     def _collect_assigned_templates(self) -> set[str]:
-        """Collect template include names that are actually assigned to menu items.
-
-        Scans all menu item properties (widgetPath, widgetPath.2, etc.) for
-        $INCLUDE[skinshortcuts-template-*] references.
-        """
+        """Collect template include names that are actually assigned to menu items."""
         assigned: set[str] = set()
         include_pattern = re.compile(r"\$INCLUDE\[skinshortcuts-template-([^\]]+)\]")
 
@@ -140,12 +136,7 @@ class TemplateBuilder:
         submenu_tpl: SubmenuTemplate,
         include_map: dict[str, ET.Element],
     ) -> None:
-        """Build a submenu template.
-
-        Two modes:
-        - name="menuname": Process controls once, with items insert for iteration
-        - level=N: Process controls for each main menu item that has submenus
-        """
+        """Build a submenu template."""
         if not submenu_tpl.controls:
             return
 
@@ -186,11 +177,7 @@ class TemplateBuilder:
         submenu_tpl: SubmenuTemplate,
         include_elem: ET.Element,
     ) -> None:
-        """Build a level-based submenu template.
-
-        Iterates over main menu items and generates controls for each
-        item that has a submenu at the specified level.
-        """
+        """Build a level-based submenu template."""
         main_menu = self._menu_map.get("mainmenu")
         if not main_menu:
             log.debug("Main menu not found for level-based submenu template")
@@ -518,9 +505,6 @@ class TemplateBuilder:
     ) -> None:
         """Build template controls and variables for a specific output.
 
-        Controls go into the include element.
-        Variables go into the variable_map (merged by name, output at root level).
-
         The output's suffix is applied to all conditions and references,
         allowing one template to generate multiple includes.
         """
@@ -560,11 +544,7 @@ class TemplateBuilder:
                     )
 
     def _combine_suffixes(self, base_suffix: str, ref_suffix: str) -> str:
-        """Combine output suffix with reference suffix.
-
-        If ref already has a suffix, use it (explicit overrides output default).
-        Otherwise, use the base output suffix.
-        """
+        """Combine output suffix with reference suffix."""
         return ref_suffix if ref_suffix else base_suffix
 
     def _build_context(
@@ -662,9 +642,8 @@ class TemplateBuilder:
     ) -> ET.Element | None:
         """Build a Kodi <variable> element from a variable definition.
 
-        Checks the variable's condition, substitutes $PROPERTY[...] placeholders.
-        When parent context/item are supplied (items-template scope), $PARENT[...]
-        and $MATH[...] also resolve in the output name and content.
+        In items-template scope $PARENT[...] and $MATH[...] also resolve in the
+        output name and content.
         """
         if var_def.condition:
             condition = self._expand_expressions(var_def.condition)
@@ -782,11 +761,7 @@ class TemplateBuilder:
         var_elem: ET.Element,
         variable_map: dict[str, ET.Element],
     ) -> None:
-        """Add a variable to the map, merging if same name exists.
-
-        If a variable with the same name already exists, append this variable's
-        children to the existing one. Otherwise, add as new entry.
-        """
+        """Add a variable to the map, merging if same name exists."""
         var_name = var_elem.get("name", "")
         if not var_name:
             return
@@ -807,16 +782,7 @@ class TemplateBuilder:
         parent_context: dict[str, str] | None = None,
         parent_item: MenuItem | None = None,
     ) -> None:
-        """Build variables from a variableGroup reference.
-
-        Looks up the group, iterates its variable references, applies suffix
-        transforms, and builds each matching variable from global definitions.
-        Handles nested group references recursively.
-
-        override_suffix: If provided, overrides the group_ref's suffix.
-        parent_context/parent_item: Items-template scope; enables $PARENT[...] in
-        variable output and content.
-        """
+        """Build variables from a variableGroup reference."""
         if group_ref.condition:
             condition = self._expand_expressions(group_ref.condition)
             if not self._eval_condition(condition, item, context):
@@ -1079,9 +1045,6 @@ class TemplateBuilder:
         """Apply presetGroup - conditional preset selection.
 
         Evaluates children in document order, first matching condition wins.
-        Children can be preset references or inline values.
-
-        override_suffix: If provided, overrides the ref's suffix.
         """
         group = self.schema.get_preset_group(ref.name)
         if not group:
@@ -1280,11 +1243,7 @@ class TemplateBuilder:
         item: MenuItem,
         context: dict[str, str],
     ) -> bool:
-        """Evaluate a condition against a menu item.
-
-        Uses the shared evaluate_condition from loaders/property.py.
-        Adds expression expansion ($EXP[name]) before evaluation.
-        """
+        """Evaluate a condition against a menu item."""
         condition = self._expand_expressions(condition)
         condition = self._strip_nosuffix_markers(condition)
 
@@ -1417,11 +1376,7 @@ class TemplateBuilder:
             elem.remove(child)
 
     def _handle_include_substitution(self, elem: ET.Element) -> None:
-        """Convert $INCLUDE[...] in element text to <include> child elements.
-
-        When element text contains $INCLUDE[name], converts it to a Kodi
-        <include>name</include> child element.
-        """
+        """Convert $INCLUDE[...] in element text to <include> child elements."""
         if elem.text:
             match = _INCLUDE_PATTERN.search(elem.text)
             if match:
@@ -1746,14 +1701,6 @@ class TemplateBuilder:
         3. $PROPERTY[...] - property substitution (so refs in $MATH get resolved)
         4. $MATH[...] - arithmetic expressions
         5. $IF[...] - conditional expressions
-
-        Args:
-            text: Text to process
-            context: Property context for $PROPERTY substitution
-            item: Menu item for property fallback
-            _menu: Unused, kept for compatibility
-            parent_context: Optional parent context for $PARENT substitution
-            parent_item: Optional parent item for $PARENT substitution
         """
         if "$EXP[" in text:
             text = self._expand_expressions(text)

@@ -102,8 +102,7 @@ class BrowseProvider:
             icon = ""
             if include_art:
                 art = file_info.get("art", {})
-                # Skip art.icon - always the generic Kodi default; the fallback
-                # below gives a type-aware one.
+                # art.icon is always the generic Kodi default; the fallback below is type-aware
                 icon = (
                     art.get("poster", "")
                     or art.get("thumb", "")

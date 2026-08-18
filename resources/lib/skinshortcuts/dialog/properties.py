@@ -22,8 +22,7 @@ except ImportError:
 def _resolve_playlist_path(filepath: str) -> str | None:
     """Resolve a playlist path to an actual readable file path.
 
-    Handles special://videoplaylists/ which is a multipath combining
-    video and mixed playlist directories.
+    special://videoplaylists/ is a multipath over the video and mixed dirs.
     """
     import xbmcvfs
 
@@ -116,15 +115,7 @@ BUTTON_ONLY_TYPES = ("widget", "background", "toggle", "text", "number")
 class PropertiesMixin:
     """Mixin providing property management - widget, background, toggle, options.
 
-    This mixin implements:
-    - Property button handling from schema
-    - Widget property setting/clearing
-    - Background property setting/clearing
-    - Toggle property handling
-    - Options list property handling
-    - Playlist picker
-
-    Requires DialogBaseMixin and PickersMixin to be mixed in first.
+    Requires DialogBaseMixin and PickersMixin first.
     """
 
     menu_id: str
@@ -176,11 +167,7 @@ class PropertiesMixin:
         ) -> Background | None | Literal[False]: ...
 
     def _check_requires(self, item: MenuItem, requires_name: str) -> bool:
-        """Check if a required property is satisfied.
-
-        For widget/background requirements, also accepts the Path variant
-        as proof the property is configured (e.g., widgetPath for widget).
-        """
+        """Check if a required property is satisfied."""
         if item.properties.get(requires_name, ""):
             return True
 
@@ -259,12 +246,7 @@ class PropertiesMixin:
     def _handle_widget_property(self, prop, item: MenuItem, prop_name: str) -> Widget | None:
         """Handle a widget-type property.
 
-        Shows widget picker and auto-populates related properties:
-        - {prefix}Name, {prefix}Path, {prefix}Type, {prefix}Target
-
-        For custom widgets, the user selects "Custom list" which sets widgetType=custom.
-        When the subdialog closes, the onclose action checks this condition and opens
-        the custom widget menu editor automatically.
+        Custom list sets widgetType=custom, which an onclose opens the editor for.
         """
         if self.manager is None:
             return None
@@ -315,12 +297,7 @@ class PropertiesMixin:
         return None if result is False else result
 
     def _prompt_widget_rename(self, item: MenuItem, prop_name: str, widget: Widget) -> None:
-        """Prompt for a custom widget label after a pick, when the button opts in.
-
-        Confirming the seeded label keeps it, clearing it blanks the label, and
-        cancelling leaves it alone. Skipped for custom widgets and widget menus,
-        where the item label already drives widgetLabel.
-        """
+        """Prompt for a custom widget label after a pick, when the button opts in."""
         if widget.type == "custom":
             return
         if (
@@ -386,14 +363,7 @@ class PropertiesMixin:
             self.manager.clear_custom_widget(self.menu_id, item.name, suffix)
 
     def _handle_background_property(self, prop, item: MenuItem, prop_name: str) -> None:
-        """Handle a background-type property.
-
-        Shows background picker and auto-populates related properties:
-        - {prefix}Name, {prefix}Path
-
-        For type="browse" backgrounds, opens single image browser.
-        For type="multi" backgrounds, opens folder browser.
-        """
+        """Handle a background-type property."""
         if self.manager is None:
             return
         menu = self.manager.config.get_menu(self.menu_id)
@@ -482,11 +452,7 @@ class PropertiesMixin:
         custom_label: str | None = None,
         playlist_type: str | None = None,
     ) -> None:
-        """Set background properties with a user-browsed custom path.
-
-        Used for type="browse" (single image), type="multi" (folder),
-        and type="playlist" backgrounds.
-        """
+        """Set background properties with a user-browsed custom path."""
         self._log(f"Setting custom background for {prefix}: {bg.name} -> {custom_path}")
 
         if bg.type in (BackgroundType.BROWSE, BackgroundType.MULTI):
@@ -636,11 +602,7 @@ class PropertiesMixin:
         return (playlists[selected][1], playlists[selected][0], playlists[selected][3])
 
     def _handle_toggle_property(self, prop, item: MenuItem, button, prop_name: str) -> None:
-        """Handle a toggle-type property.
-
-        Toggles between a value and empty (cleared).
-        Uses prop.value if set, otherwise defaults to "True".
-        """
+        """Handle a toggle-type property."""
         toggle_value = (prop.value if prop else "") or "True"
         current_value = item.properties.get(prop_name, "")
         if current_value == toggle_value:

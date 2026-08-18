@@ -43,16 +43,7 @@ class IncludesBuilder:
         """Build the includes XML tree."""
         root = ET.Element("includes")
 
-        # Build includes only for root menus (not submenus)
-        # A menu is a root menu if:
-        # 1. It was defined with <menu> tag (is_submenu=False), AND
-        # 2. It's not referenced as a submenu by another menu item
-        #
-        # Submenus defined with <submenu> tag are never built as root includes,
-        # even if deleted from the parent menu (they become orphaned).
-        #
-        # Menus with named submenu templates (e.g., <submenu name="powermenu">)
-        # don't get raw includes - only the template version is built.
+        # root menus only; <submenu> definitions and templated menus get no raw include
 
         template_menu_names: set[str] = set()
         if self.templates:
@@ -208,16 +199,7 @@ class IncludesBuilder:
         return elem
 
     def _build_custom_widget_includes(self, parent_menu: Menu) -> list[ET.Element]:
-        """Build custom widget includes for a root menu.
-
-        Custom widgets are referenced via item properties:
-        - customWidget -> slot 1, include: skinshortcuts-{item}-customwidget
-        - customWidget.2 -> slot 2, include: skinshortcuts-{item}-customwidget2
-        - etc.
-
-        Returns:
-            List of include elements, one per custom widget reference found.
-        """
+        """Build custom widget includes for a root menu."""
         includes = []
 
         for parent_item in parent_menu.items:
@@ -348,8 +330,7 @@ class IncludesBuilder:
     def _widget_submenu_for_item(self, item: MenuItem) -> Menu | None:
         """The item's widgets submenu, found via a {item}.X subdialog ref.
 
-        Matched by widget content, not menu_type (runtime submenus have none).
-        Skips custom-widget content menus.
+        Matched by widget content, not menu_type; runtime submenus have none.
         """
         cw_ids = {
             value
@@ -373,9 +354,9 @@ class IncludesBuilder:
         return None
 
     def _submenu_paths_for_item(self, item: MenuItem, parent_menu: Menu) -> dict[str, str]:
-        """The item's submenuPath (its first widget), plus the numbered
-        submenuPath.N tail when "all" is opted in on the parent menu or globally
-        on <menus>."""
+        """The item's submenuPath (its first widget), plus the numbered submenuPath.N
+        tail when "all" is opted in on the parent menu or globally on <menus>.
+        """
         submenu = self._widget_submenu_for_item(item)
         if submenu is None:
             return {}
@@ -426,8 +407,7 @@ class IncludesBuilder:
     def write(self, path: str | Path, indent: bool = True) -> None:
         """Write includes XML to file.
 
-        Binary handle so ElementTree writes LF: given a filename it opens text
-        mode and Windows turns every newline into CRLF. Skins ship this file.
+        Binary handle so ElementTree writes LF; given a filename Windows gets CRLF.
         """
         root = self.build()
         if indent:

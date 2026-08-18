@@ -26,8 +26,7 @@ log = get_logger("ContentProvider")
 PLAYLIST_EXTENSIONS = (".xsp", ".m3u", ".m3u8", ".pls")
 
 
-# Target aliases: map skinner-facing target values to the canonical form each
-# JSON-RPC endpoint expects.
+# skinner-facing target values mapped to the form each JSON-RPC endpoint expects
 
 # Files.Media accepts: video, music, pictures, files, programs.
 _SOURCES_TARGET_ALIASES: dict[str, str] = {
@@ -42,8 +41,7 @@ _SOURCES_TARGET_ALIASES: dict[str, str] = {
     "program": "programs",
 }
 
-# Addons.GetAddons content accepts: video, audio, image, executable, game.
-# Skinner-facing plural/window-name forms map to these.
+# Addons.GetAddons content accepts: video, audio, image, executable, game
 _ADDONS_TARGET_ALIASES: dict[str, str] = {
     "video": "video",
     "videos": "video",
@@ -79,13 +77,10 @@ class ResolvedShortcut:
     action_play: str = ""
     action_party: str = ""
     content_type: str = ""
-    # Set for browsable items (plugin-source addons, etc.). When populated, picker
-    # offers browse-into and constructs ActivateWindow({browse_window},{browse_path},return).
+    # browsable items; picker offers browse-into and builds ActivateWindow from these
     browse_path: str = ""
     browse_window: str = ""
-    # Media of an originating file source (video/music/pictures/files/programs); marks a
-    # source shortcut. The smart-playlist flow acts on video/music; other media fall back
-    # to Files view. Empty for non-source shortcuts.
+    # marks a source shortcut; the playlist flow acts on video/music, the rest get Files view
     source_media: str = ""
 
 
@@ -102,14 +97,7 @@ def _expand_playlist_dirs(directory: str) -> list[str]:
 
 
 def scan_playlist_files(directory: str) -> list[tuple[str, str]]:
-    """Scan directory for playlist files.
-
-    Args:
-        directory: Path to scan (e.g., "{playlists_base}/video/")
-
-    Returns:
-        List of (label, filepath) tuples for found playlists.
-    """
+    """Scan directory for playlist files."""
     playlists = []
 
     for scan_dir in _expand_playlist_dirs(directory):
@@ -147,15 +135,7 @@ class ContentProvider:
     def resolve(self, content: Content) -> list[ResolvedShortcut]:
         """Resolve a content reference to a list of shortcuts.
 
-        Args:
-            content: Content object with source and target attributes.
-
-        Returns:
-            List of resolved shortcuts.
-
-        Note:
-            Condition (property) and visible (Kodi visibility) are checked
-            by the caller (picker) before calling this method.
+        The picker checks condition and visible before calling this.
         """
         source = content.source.lower()
         target = content.target.lower() if content.target else ""
@@ -333,11 +313,7 @@ class ContentProvider:
         return shortcuts
 
     def _parse_smart_playlist(self, filepath: str) -> tuple[str, str]:
-        """Parse a smart playlist (.xsp file) for type and name.
-
-        Returns:
-            Tuple of (type, name). Falls back to ("unknown", "") on error.
-        """
+        """Parse a smart playlist (.xsp file) for type and name."""
         try:
             f = xbmcvfs.File(filepath)
             try:
@@ -571,18 +547,7 @@ class ContentProvider:
         ]
 
     def _resolve_library(self, target: str) -> list[ResolvedShortcut]:
-        """Resolve library nodes (genres, years, studios, tags, actors).
-
-        Args:
-            target: Library content type. Valid values:
-                - "genres", "moviegenres", "tvgenres", "musicgenres"
-                - "years", "movieyears", "tvyears"
-                - "studios", "moviestudios", "tvstudios"
-                - "tags", "movietags", "tvtags"
-                - "actors", "movieactors", "tvactors"
-                - "directors", "moviedirectors", "tvdirectors"
-                - "artists", "albums"
-        """
+        """Resolve a library field target into one shortcut per value."""
         cache_key = f"library_{target}"
         if cache_key in self._cache:
             return self._cache[cache_key]
@@ -625,16 +590,7 @@ class ContentProvider:
         return shortcuts
 
     def _resolve_nodes(self, target: str) -> list[ResolvedShortcut]:
-        """Resolve library nodes (navigation structure from XML files).
-
-        Args:
-            target: Library type (``video``, ``music``, ``video_flat``).
-                    ``library`` / ``all`` / empty returns video and music
-                    as two browsable parent entries.
-
-        Returns:
-            List of shortcuts for top-level library navigation nodes.
-        """
+        """Resolve library nodes (navigation structure from XML files)."""
         cache_key = f"nodes_{target}"
         if cache_key in self._cache:
             return self._cache[cache_key]
@@ -857,8 +813,7 @@ class ContentProvider:
     def _get_video_directors(self, media_type: str) -> list[ResolvedShortcut]:
         """Get directors from video library.
 
-        Note: TV shows don't have directors - episodes do. For tvshow media type,
-        we query episodes to get directors.
+        Episodes carry them, so a tvshow query goes through episodes.
         """
         if media_type == "movie":
             result = self._jsonrpc(

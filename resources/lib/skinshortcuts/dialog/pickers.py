@@ -17,10 +17,7 @@ except ImportError:
 
 
 def _check_visible(visible: str) -> bool:
-    """Evaluate a Kodi visibility condition.
-
-    Returns True if condition passes or is empty.
-    """
+    """Evaluate a Kodi visibility condition."""
     if not visible:
         return True
     if not IN_KODI:
@@ -276,12 +273,7 @@ def _browse_placeholder_for_content(
 class PickersMixin:
     """Mixin providing picker dialogs for shortcuts and widgets.
 
-    This mixin implements:
-    - Shortcut picker from groupings
-    - Widget picker from groups/flat list
-    - Content resolution (dynamic shortcuts/widgets)
-
-    Requires DialogBaseMixin to be mixed in first.
+    Requires DialogBaseMixin first.
     """
 
     menu_id: str
@@ -1162,8 +1154,7 @@ class PickersMixin:
                 use_location_item.setProperty("path", current_path)
                 use_location_item.setProperty("name", current_label)
                 listitems.append(use_location_item)
-                # path+name for DialogSelect; type is N/A for navigation, and
-                # browse items have no slug so label doubles as name
+                # label doubles as name for DialogSelect; browse rows have no slug or type
                 for item in items:
                     label = item.label
                     if item.is_directory:
