@@ -354,6 +354,7 @@ def _parse_menu(
     allow = _parse_allow(elem.find("allow"))
     container = get_attr(elem, "container") or None
     controltype = get_attr(elem, "controltype") or ""
+    icons = get_bool(elem, "icons", True)
     startid_str = get_attr(elem, "id") or ""
     startid = int(startid_str) if startid_str.isdigit() else 1
     template_only = get_attr(elem, "template_only") or ""
@@ -371,6 +372,7 @@ def _parse_menu(
         is_submenu=is_submenu,
         menu_type=menu_type,
         controltype=controltype,
+        icons=icons,
         startid=startid,
         template_only=template_only,
         build=build,

@@ -260,7 +260,7 @@ class IncludesBuilder:
         ET.SubElement(elem, "label").text = item.label
         if item.label2:
             ET.SubElement(elem, "label2").text = item.label2
-        if not menu.controltype:
+        if not menu.controltype and menu.icons:
             ET.SubElement(elem, "icon").text = item.icon
         if item.thumb:
             ET.SubElement(elem, "thumb").text = item.thumb

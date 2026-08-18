@@ -382,6 +382,7 @@ class Menu:
     is_submenu: bool = False
     menu_type: str | None = None
     controltype: str = ""
+    icons: bool = True
     startid: int = 1
     template_only: str = ""  # "submenu"=skip combined submenu include
     build: str = "true"

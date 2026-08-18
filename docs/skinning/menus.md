@@ -73,6 +73,7 @@ Defines a standalone menu that generates an include.
 | `container` | No | List control ID for visibility conditions |
 | `controltype` | No | Output as `<control type="X">` instead of `<item>` (e.g., `button`) |
 | `id` | No | Starting control ID for `controltype` menus (default: 1) |
+| `icons` | No | `false` omits `<icon>` from every item in the menu |
 | `build` | No | Build mode: `true` (default) or `auto`. When `auto`, only built if another menu item's action matches the `action` attribute |
 | `action` | No | Action string for `build="auto"`. Menu is built when any item in another menu has this action |
 | `type` | No | Menu type. `widgets` puts the dialog in [widget mode](widgets.md#widget-menus) |
