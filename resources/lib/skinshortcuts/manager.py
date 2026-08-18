@@ -40,12 +40,7 @@ class MenuManager:
     """
 
     def __init__(self, shortcuts_path: str | Path, userdata_path: str | None = None):
-        """Initialize manager.
-
-        Args:
-            shortcuts_path: Path to skin's shortcuts folder
-            userdata_path: Optional path to userdata file (for testing)
-        """
+        """Initialize manager."""
         self.shortcuts_path = Path(shortcuts_path)
         self.userdata_path = userdata_path
 
@@ -89,11 +84,7 @@ class MenuManager:
         return [menu.name for menu in self.config.menus]
 
     def get_all_menus(self) -> list[Menu]:
-        """Get all menus from working copy.
-
-        Returns:
-            List of Menu objects ready for building includes
-        """
+        """Get all menus from working copy."""
         return list(self.working.values())
 
     def get_menu_items(self, menu_id: str) -> list[MenuItem]:
@@ -170,16 +161,7 @@ class MenuManager:
                 return name
 
     def create_custom_widget_menu(self, menu_id: str, item_id: str, suffix: str = "") -> str:
-        """Create a custom widget menu for an item and store the reference.
-
-        Args:
-            menu_id: Menu containing the item
-            item_id: Item to attach custom widget to
-            suffix: Widget slot suffix (e.g., ".2" for second slot)
-
-        Returns:
-            The new menu ID, or empty string if item not found
-        """
+        """Create a custom widget menu for an item and store the reference."""
         item = self._get_working_item(menu_id, item_id)
         if not item:
             return ""
@@ -195,16 +177,7 @@ class MenuManager:
         return cw_menu_id
 
     def get_custom_widget_menu(self, menu_id: str, item_id: str, suffix: str = "") -> str:
-        """Get the custom widget menu ID for an item.
-
-        Args:
-            menu_id: Menu containing the item
-            item_id: Item to get custom widget for
-            suffix: Widget slot suffix (e.g., ".2" for second slot)
-
-        Returns:
-            The menu ID, or empty string if not set
-        """
+        """Get the custom widget menu ID for an item."""
         item = self._get_working_item(menu_id, item_id)
         if not item:
             return ""
@@ -212,16 +185,7 @@ class MenuManager:
         return item.properties.get(prop_name, "")
 
     def clear_custom_widget(self, menu_id: str, item_id: str, suffix: str = "") -> bool:
-        """Clear a custom widget menu and remove the reference.
-
-        Args:
-            menu_id: Menu containing the item
-            item_id: Item to clear custom widget from
-            suffix: Widget slot suffix (e.g., ".2" for second slot)
-
-        Returns:
-            True if cleared successfully
-        """
+        """Clear a custom widget menu and remove the reference."""
         item = self._get_working_item(menu_id, item_id)
         if not item:
             return False
@@ -246,17 +210,7 @@ class MenuManager:
         label: str = "",
         item: MenuItem | None = None,
     ) -> MenuItem:
-        """Add a new item to a menu.
-
-        Args:
-            menu_id: Menu to add item to
-            after_index: Insert after this index (None = append)
-            label: Initial label for the item
-            item: Optional pre-created MenuItem to add
-
-        Returns:
-            The newly created or provided MenuItem
-        """
+        """Add a new item to a menu."""
         menu = self._ensure_working_menu(menu_id)
 
         if item:
@@ -287,15 +241,7 @@ class MenuManager:
         return any(item.name == name for item in menu.items)
 
     def remove_item(self, menu_id: str, item_id: str) -> bool:
-        """Remove an item from a menu.
-
-        Args:
-            menu_id: Menu containing the item
-            item_id: ID of item to remove
-
-        Returns:
-            True if item was removed
-        """
+        """Remove an item from a menu."""
         if menu_id not in self.working:
             return False
 
@@ -309,15 +255,7 @@ class MenuManager:
         return False
 
     def restore_item(self, menu_id: str, item: MenuItem) -> bool:
-        """Restore a previously deleted item.
-
-        Args:
-            menu_id: Menu to restore item to
-            item: The MenuItem to restore (will be deep copied)
-
-        Returns:
-            True if item was restored
-        """
+        """Restore a previously deleted item."""
         menu = self._ensure_working_menu(menu_id)
 
         menu.items[:] = [i for i in menu.items if not (i.is_placeholder and not i.actions)]
@@ -328,15 +266,7 @@ class MenuManager:
         return True
 
     def reset_item(self, menu_id: str, item_id: str) -> bool:
-        """Reset an item to its skin default values.
-
-        Args:
-            menu_id: Menu containing the item
-            item_id: ID of item to reset
-
-        Returns:
-            True if item was reset
-        """
+        """Reset an item to its skin default values."""
         default_menu = self.config.get_default_menu(menu_id)
         if default_menu is None and "/" in menu_id:
             default_menu = self._template_for_submenu_key(menu_id)
@@ -369,12 +299,6 @@ class MenuManager:
         For skin-defined menus, restores all items to defaults.
         For per-item submenu keys (parent/item), re-seeds from the item's template.
         For custom menus (user-created), clears all items.
-
-        Args:
-            menu_id: ID of menu to reset
-
-        Returns:
-            True if menu was reset
         """
         default_menu = self.config.get_default_menu(menu_id)
 
@@ -410,18 +334,7 @@ class MenuManager:
         return False
 
     def reset_menu_tree(self, menu_id: str, _visited: set[str] | None = None) -> bool:
-        """Reset a menu and all its submenus by following submenu references.
-
-        Recursively resets the specified menu and any menus referenced by
-        item submenu properties.
-
-        Args:
-            menu_id: ID of root menu to reset
-            _visited: Internal set to prevent infinite loops
-
-        Returns:
-            True if any menus were reset
-        """
+        """Reset a menu and all its submenus by following submenu references."""
         if _visited is None:
             _visited = set()
 
@@ -446,11 +359,7 @@ class MenuManager:
         return changed
 
     def reset_all_submenus(self) -> bool:
-        """Reset all submenus (menus defined with <submenu> tag).
-
-        Returns:
-            True if any menus were reset
-        """
+        """Reset all submenus (menus defined with <submenu> tag)."""
         changed = False
         for menu in self.working.values():
             if menu.is_submenu and self.reset_menu(menu.name):
@@ -458,15 +367,7 @@ class MenuManager:
         return changed
 
     def is_item_modified(self, menu_id: str, item_id: str) -> bool:
-        """Check if an item differs from its skin default.
-
-        Args:
-            menu_id: Menu containing the item
-            item_id: ID of item to check
-
-        Returns:
-            True if item is modified from defaults
-        """
+        """Check if an item differs from its skin default."""
         working_item = self._get_working_item(menu_id, item_id)
         if not working_item:
             return False
@@ -498,14 +399,7 @@ class MenuManager:
         return working_item.properties != default_item.properties
 
     def get_removed_items(self, menu_id: str) -> list[MenuItem]:
-        """Get default items that have been removed from working copy.
-
-        Args:
-            menu_id: Menu to check
-
-        Returns:
-            List of MenuItems that can be restored
-        """
+        """Get default items that have been removed from working copy."""
         default_menu = self.config.get_default_menu(menu_id)
         if default_menu is None and "/" in menu_id:
             default_menu = self._template_for_submenu_key(menu_id)
@@ -531,16 +425,7 @@ class MenuManager:
         return bool(self.get_removed_items(menu_id))
 
     def move_item(self, menu_id: str, item_id: str, direction: int) -> bool:
-        """Move an item up or down in the menu.
-
-        Args:
-            menu_id: Menu containing the item
-            item_id: ID of item to move
-            direction: -1 for up, 1 for down
-
-        Returns:
-            True if item was moved
-        """
+        """Move an item up or down in the menu."""
         if menu_id not in self.working:
             return False
 
@@ -571,13 +456,7 @@ class MenuManager:
         return self._set_item_property(menu_id, item_id, "label", label)
 
     def set_action(self, menu_id: str, item_id: str, action: str | list[str]) -> bool:
-        """Set the action(s) for an item.
-
-        Args:
-            menu_id: Menu containing the item
-            item_id: ID of item to update
-            action: Single action string or list of actions
-        """
+        """Set the action(s) for an item."""
         if isinstance(action, str):
             actions = [action]
         else:
@@ -800,7 +679,7 @@ class MenuManager:
         return override
 
     def _diff_item(self, working: MenuItem, default: MenuItem) -> MenuItemOverride | None:
-        """Generate diff for a single item - only include changed fields."""
+        """Diff for a single item, changed fields only."""
         diff = MenuItemOverride(name=working.name)
         has_changes = False
 

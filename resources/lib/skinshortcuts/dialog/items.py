@@ -429,18 +429,7 @@ class ItemsMixin:
         item_properties: dict[str, str] | None = None,
         default_path: str = "",
     ) -> str | None:
-        """Browse for a file using configured sources.
-
-        Args:
-            sources: List of IconSource or BrowseSource objects
-            title: Dialog title
-            browse_type: Kodi browse type (0=folder, 2=image file)
-            item_properties: Current item properties for condition evaluation
-            default_path: Starting path when sources is empty (direct browse mode)
-
-        Returns:
-            Selected path, or None if cancelled
-        """
+        """Browse for a file using configured sources."""
         props = item_properties or {}
 
         visible_sources = []
@@ -555,15 +544,6 @@ class ItemsMixin:
 
         All properties (including widget and background) are stored in item.properties.
         Updates both the manager (for persistence) and local item state (for UI).
-
-        Args:
-            item: The menu item to update
-            name: Property name (e.g., "widget", "background", "widgetStyle")
-            value: Property value, or None/empty string to clear
-            related: Optional dict of related properties to auto-populate
-                     (e.g., {"widgetLabel": "Movies", "widgetPath": "..."})
-            apply_suffix: If True, apply property_suffix to name and related props.
-                         Set to False for shared properties like widget/background.
         """
         if not self.manager:
             return

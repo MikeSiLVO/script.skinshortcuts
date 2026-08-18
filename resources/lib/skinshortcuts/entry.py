@@ -101,16 +101,7 @@ def build_includes(
     output_path: str | None = None,
     force: bool = False,
 ) -> bool:
-    """Build includes.xml from skin config files.
-
-    Args:
-        shortcuts_path: Path to shortcuts folder (default: special://skin/shortcuts/)
-        output_path: Path to write includes.xml (default: auto-detect from addon.xml)
-        force: Force rebuild even if hashes match
-
-    Returns:
-        True if built successfully, False otherwise
-    """
+    """Build includes.xml from skin config files."""
     log.debug(f"build_includes called: path={shortcuts_path}, output={output_path}, force={force}")
 
     home = xbmcgui.Window(10000) if IN_KODI else None
@@ -213,18 +204,7 @@ def clear_custom_widget(
     property_name: str = "",
     shortcuts_path: str | None = None,
 ) -> bool:
-    """Clear a custom widget menu and optionally reset related properties.
-
-    Args:
-        menu: Parent menu ID (e.g., "mainmenu")
-        item: Item ID to clear custom widget from (e.g., "movies")
-        suffix: Widget slot suffix (e.g., ".2" for second slot)
-        property_name: Optional property prefix to clear (e.g., "widget")
-        shortcuts_path: Path to shortcuts folder
-
-    Returns:
-        True if cleared successfully
-    """
+    """Clear a custom widget menu and optionally reset related properties."""
     if not menu or not item:
         log.warning("clear_custom_widget: menu and item are required")
         return False
@@ -274,14 +254,7 @@ def clear_custom_widget(
 
 
 def reset_all_menus(shortcuts_path: str | None = None) -> bool:
-    """Reset all menus to skin defaults by deleting skin's userdata.
-
-    Args:
-        shortcuts_path: Path to shortcuts folder (for rebuild after reset)
-
-    Returns:
-        True if reset successfully
-    """
+    """Reset all menus to skin defaults by deleting skin's userdata."""
     if not IN_KODI:
         return False
 
@@ -316,16 +289,7 @@ def view_select(
     plugin: str = "",
     shortcuts_path: str | None = None,
 ) -> bool:
-    """Show view selection dialog.
-
-    Args:
-        content: Optional content type (e.g., "movies") for direct picker
-        plugin: Optional plugin ID for plugin-specific override
-        shortcuts_path: Path to shortcuts folder
-
-    Returns:
-        True if changes were made
-    """
+    """Show view selection dialog."""
     if not IN_KODI:
         return False
 
@@ -352,14 +316,7 @@ def view_select(
 
 
 def reset_views(shortcuts_path: str | None = None) -> bool:
-    """Reset all view selections to defaults.
-
-    Args:
-        shortcuts_path: Path to shortcuts folder (for rebuild after reset)
-
-    Returns:
-        True if reset successfully
-    """
+    """Reset all view selections to defaults."""
     if not IN_KODI:
         return False
 
@@ -387,14 +344,7 @@ def reset_views(shortcuts_path: str | None = None) -> bool:
 
 
 def reset_menus(shortcuts_path: str | None = None) -> bool:
-    """Reset all menu selections to defaults (keeps view selections).
-
-    Args:
-        shortcuts_path: Path to shortcuts folder (for rebuild after reset)
-
-    Returns:
-        True if reset successfully
-    """
+    """Reset all menu selections to defaults (keeps view selections)."""
     if not IN_KODI:
         return False
 

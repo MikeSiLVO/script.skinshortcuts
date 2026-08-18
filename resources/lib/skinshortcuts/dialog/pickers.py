@@ -418,9 +418,7 @@ class PickersMixin:
         if not option.media_type:
             return shortcut.get_action()
 
-        # Include views are populated: detection confirmed the domain's type, albums and
-        # artists derive from songs, and a scanned show has episodes. Only an exclude can
-        # legitimately empty out (every item of that type sits under this one source).
+        # only an exclude can legitimately come back empty
         if option.exclude and not path_has_content(option.media_type, paths, exclude=True):
             use_files = xbmcgui.Dialog().yesno(
                 LANGUAGE(32078),
@@ -517,16 +515,7 @@ class PickersMixin:
     def _pick_widget_flat(
         self, widgets: list, item_props: dict[str, str] | None = None, slot: str = ""
     ) -> Widget | None | Literal[False]:
-        """Pick from flat widget list.
-
-        Args:
-            widgets: List of (name, label, icon) tuples
-            item_props: Current item properties for finding current widget
-            slot: Widget slot name (e.g., "widget", "widget.2")
-
-        Returns:
-            Widget if selected, None if cancelled, False if "None" chosen.
-        """
+        """Pick from a flat widget list. False when the user picks "None"."""
         current_widget = item_props.get(slot, "") if item_props else ""
         preselect = -1
         overrides = self._icon_overrides()
@@ -644,13 +633,9 @@ class PickersMixin:
         return mapped or self._map_target_to_window(content_target)
 
     def _pick_widget_type(self, addon_type: str) -> str | None:
-        """Show dialog to pick widget content type.
+        """Pick a widget content type for an addon category.
 
-        Args:
-            addon_type: The addon category (video, audio, executable, pictures, games)
-
-        Returns:
-            Selected widget type string, or None if cancelled.
+        addon_type is video, audio, executable, pictures or games.
         """
         # one possible type, nothing to ask
         if addon_type in ("pictures", "games"):
@@ -722,12 +707,6 @@ class PickersMixin:
 
         A skin-declared type wins; only ask when nothing was declared, since a
         plugin:// path's content type can't be read off the addon category.
-
-        Args:
-            widget: Widget with browsable path
-
-        Returns:
-            New Widget with browsed path, or None if cancelled
         """
         result = self._browse_directory(widget.path, resolve_label(widget.label), icon=widget.icon)
         if result is None:
@@ -775,17 +754,7 @@ class PickersMixin:
         create_folder_group: Callable[[str, list, str, str], Any] | None = None,
         custom_action: tuple[str, str, Callable[[], Any | None]] | None = None,
     ) -> Any | None | Literal[False]:
-        """Generic hierarchical picker with back navigation.
-
-        Works with any items exposing name, label, icon, condition, visible;
-        groups also carry an items list. Returns the chosen leaf, None if
-        cancelled, False if "None" picked.
-
-        content_resolver expands a Content into items; create_folder_group wraps
-        resolved items in a folder as (label, items, icon); custom_action is a
-        (label, icon, callback) row at the list bottom, callback returning an
-        item or None.
-        """
+        """Hierarchical picker with back navigation. False when the user picks "None"."""
         start = time.monotonic()
         visible_items = self._filter_picker_items(
             items, item_props, leaf_types, group_types, content_resolver, create_folder_group
@@ -1112,14 +1081,7 @@ class PickersMixin:
         return visible_items
 
     def _handle_input_selection(self, input_item: Input) -> Shortcut | None:
-        """Handle selection of an Input item by showing keyboard.
-
-        Args:
-            input_item: The Input item that was selected
-
-        Returns:
-            Shortcut with entered value, or None if cancelled
-        """
+        """Handle selection of an Input item by showing keyboard."""
         input_type_map = {
             "text": xbmcgui.INPUT_ALPHANUM,
             "numeric": xbmcgui.INPUT_NUMERIC,
@@ -1245,20 +1207,7 @@ class PickersMixin:
         source_media: str = "",
         icon: str = "",
     ) -> Shortcut | None:
-        """Browse into a path and let user select location or navigate deeper.
-
-        Shows directory contents with "Use this location" at top.
-        Selecting a directory navigates into it.
-        Selecting "Use this location" or a file returns a Shortcut.
-
-        Args:
-            path: Starting path to browse
-            title: Dialog title (defaults to path basename)
-            target_window: Window for ActivateWindow action
-
-        Returns:
-            Shortcut for selected location, or None if cancelled
-        """
+        """Browse into a path and let user select location or navigate deeper."""
         result = self._browse_directory(path, title, icon=icon)
         if result is None:
             return None
@@ -1316,11 +1265,7 @@ class PickersMixin:
     def _pick_background(
         self, item_props: dict[str, str], current_value: str = ""
     ) -> Background | None | Literal[False]:
-        """Pick a background from groupings.
-
-        Returns:
-            Background if selected, None if cancelled, False if "None" chosen.
-        """
+        """Pick a background from groupings. False when the user picks "None"."""
         if not self.manager:
             return None
 

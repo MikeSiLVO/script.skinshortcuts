@@ -78,13 +78,7 @@ class SkinConfig:
         load_user: bool = True,
         userdata_path: str | None = None,
     ) -> SkinConfig:
-        """Load configuration from shortcuts directory.
-
-        Args:
-            shortcuts_path: Path to skin's shortcuts folder
-            load_user: Whether to load and merge user customizations
-            userdata_path: Optional path to userdata file (for testing)
-        """
+        """Load configuration from shortcuts directory."""
         path = Path(shortcuts_path)
 
         menu_config = load_menus(path / "menus.xml")
@@ -259,12 +253,7 @@ class SkinConfig:
     def build_includes_from_menus(
         self, output_path: str | Path, menus: list[Menu]
     ) -> None:
-        """Build and write includes.xml from provided menus.
-
-        Args:
-            output_path: Path to write includes.xml
-            menus: List of Menu objects (typically merged with userdata)
-        """
+        """Build and write includes.xml from provided menus."""
         for menu in menus:
             self.resolve_item_properties(menu)
 

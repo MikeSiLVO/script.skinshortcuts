@@ -125,32 +125,13 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         self.changes_saved = False
 
     def _suffixed_name(self, name: str) -> str:
-        """Apply property suffix to a property name.
-
-        Widget properties are stored with suffix (e.g., widgetArt.2) to allow
-        multiple widget slots per menu item. This method applies the current
-        dialog's suffix to property names.
-
-        Args:
-            name: Base property name (e.g., "widgetArt", "widgetStyle")
-
-        Returns:
-            Suffixed property name (e.g., "widgetArt.2") or original if no suffix
-        """
+        """Apply the dialog's suffix; slots let one item hold several widgets (widgetArt.2)."""
         if self.property_suffix:
             return f"{name}{self.property_suffix}"
         return name
 
     def _get_item_property(self, item: MenuItem, name: str) -> str:
-        """Get a property value with suffix applied.
-
-        Args:
-            item: The menu item to read from
-            name: Base property name (suffix will be applied)
-
-        Returns:
-            Property value or empty string if not set
-        """
+        """Get a property value with suffix applied."""
         suffixed = self._suffixed_name(name)
         return item.properties.get(suffixed, "")
 
@@ -528,18 +509,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         return props
 
     def _get_property_label(self, prop_name: str, prop_value: str) -> str | None:
-        """Get the resolved display label for a property value.
-
-        Looks up the property in the schema, finds the matching option,
-        and returns its resolved label.
-
-        Args:
-            prop_name: The property name (e.g., "widgetStyle")
-            prop_value: The property value (e.g., "Panel")
-
-        Returns:
-            The resolved label, or None if not found
-        """
+        """Get the resolved display label for a property value."""
         if not self.property_schema:
             return None
 
