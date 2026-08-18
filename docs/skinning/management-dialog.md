@@ -486,9 +486,17 @@ Execute actions when subdialog closes:
 | Parameter | Description |
 |-----------|-------------|
 | `type` | `buildxml` |
-| `force` | `true` to force rebuild |
+| `force` | `true` to rebuild even when nothing on disk changed |
 | `path` | Custom shortcuts path |
 | `output` | Custom output path |
+
+A skin calls `buildxml` once, unconditionally, from its startup window. The script decides
+whether there is anything to do, and the dialog rebuilds on its own when it closes with
+changes, so neither needs a decision from you.
+
+Do not add a build to the dialog's `onload` or `onunload`. Builds are exclusive rather than
+queued: one started while another is running is dropped, so a build fired at close can take
+the slot the dialog's own rebuild needed and leave the output stale.
 
 ### Reset All
 

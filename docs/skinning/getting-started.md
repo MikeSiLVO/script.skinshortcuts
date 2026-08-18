@@ -148,9 +148,17 @@ The script automatically builds includes when the management dialog closes with 
 | Parameter | Description |
 |-----------|-------------|
 | `type=buildxml` | Trigger include build |
-| `force=true` | Force rebuild even if unchanged |
+| `force=true` | Rebuild even when nothing on disk changed |
 | `path=...` | Custom shortcuts path |
 | `output=...` | Custom output path |
+
+Editing a config file never needs `force`. The build hashes the config files and the user's
+stored menus, so an edit is picked up on the next build by itself.
+
+Treat `force` as a skinner diagnostic rather than something a shipped skin calls. It is for
+when a build should have changed something and did not, which is possible wherever the build
+reads Kodi state instead of a file: nothing on disk moved, so the rebuild check finds no work
+to do.
 
 **Output location:** `script-skinshortcuts-includes.xml` is written to each resolution folder defined in your skin's `addon.xml` (e.g., `16x9/`, `21x9/`).
 

@@ -159,7 +159,7 @@ userdata/
                 └── source-*.xsp    # playlists generated for source shortcuts
 ```
 
-The `.hashes` file is managed by the script and rewritten on every build; do not edit it. A `type=buildxml,force=true` rebuild bypasses the cache and rebuilds even when the hashes match.
+The `.hashes` file is managed by the script and rewritten on every build; do not edit it. A `type=buildxml,force=true` rebuild bypasses the cache and rebuilds even when the hashes match. The generated includes file is hashed alongside the config, so editing it by hand is detected and the next build restores it.
 
 ### Format
 
