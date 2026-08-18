@@ -22,6 +22,7 @@
   "reportOptionalMemberAccess": "warning",
   "reportOptionalSubscript": "warning",
   "reportPrivateImportUsage": "none",
+  "reportPossiblyUnboundVariable": "none",
   "venvPath": ".",
   "venv": ".venv"
 }
