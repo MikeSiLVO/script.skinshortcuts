@@ -21,7 +21,7 @@ from .constants import INCLUDES_FILE, MENUS_FILE, VIEWS_FILE, get_shortcuts_path
 from .hashing import generate_config_hashes, hash_file, needs_rebuild, write_hashes
 from .localize import LANGUAGE
 from .log import get_logger
-from .userdata import get_userdata_path
+from .userdata import get_userdata_path, save_userdata
 
 log = get_logger("Entry")
 
@@ -163,6 +163,9 @@ def build_includes(
             output_file = Path(out_path) / INCLUDES_FILE
             config.build_includes(str(output_file))
             log.info(f"Generated: {output_file}")
+
+        if config.migrated and save_userdata(config.userdata, config.userdata_path):
+            log.info(f"Applied {config.migrated} skin override(s) to userdata")
 
         hashes = generate_config_hashes(shortcuts_path)
 

@@ -25,6 +25,7 @@ Integration guide for Skin Shortcuts.
 | [Properties](properties.md) | Custom property schemas and button mappings |
 | [Templates](templates.md) | Output template system for include generation |
 | [Views](views.md) | View locking configuration |
+| [Retired Names](overrides.md) | Moving user selections when you rename or drop something |
 
 ## Reference
 

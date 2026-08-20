@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from .override import Override
+
 
 @dataclass
 class IconVariant:
@@ -73,6 +75,7 @@ class PropertySchema:
     properties: dict[str, SchemaProperty] = field(default_factory=dict)
     fallbacks: dict[str, PropertyFallback] = field(default_factory=dict)
     buttons: dict[int, ButtonMapping] = field(default_factory=dict)  # button_id -> mapping
+    overrides: list[Override] = field(default_factory=list)
 
     def get_property(self, name: str) -> SchemaProperty | None:
         """Get property by name."""

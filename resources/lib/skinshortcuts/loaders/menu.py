@@ -5,9 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from ..exceptions import MenuConfigError
+from ..models.override import Override
 from ..models.menu import (
     Action,
-    ActionOverride,
     Content,
     ContextMenu,
     ContextMenuButton,
@@ -240,7 +240,7 @@ def _parse_onclose(subdialog_elem) -> list[OnCloseAction]:
     return actions
 
 
-def _parse_overrides(root) -> list[ActionOverride]:
+def _parse_overrides(root) -> list[Override]:
     """Parse action overrides from <overrides> element."""
     overrides_elem = root.find("overrides")
     if overrides_elem is None:
@@ -252,7 +252,7 @@ def _parse_overrides(root) -> list[ActionOverride]:
         action = (elem.text or "").strip()
 
         if replace and action:
-            overrides.append(ActionOverride(replace=replace, action=action))
+            overrides.append(Override(replace=replace, value=action))
 
     return overrides
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -210,8 +211,11 @@ def save_userdata(userdata: UserData, path: str | None = None) -> bool:
     try:
         file_path = Path(path)
         file_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(file_path, "w", encoding="utf-8") as f:
+        # write beside the target and swap, so a kill mid-write cannot truncate userdata
+        temp_path = file_path.with_name(f"{file_path.name}.tmp")
+        with open(temp_path, "w", encoding="utf-8") as f:
             json.dump(userdata.to_dict(), f, indent=2)
+        os.replace(temp_path, file_path)
         return True
     except OSError as e:
         log.error(f"Failed to save userdata to {path}: {e}")

@@ -797,7 +797,7 @@ Replace deprecated or changed actions:
 |-----------|-------------|
 | `replace` | Action string to find |
 
-The element text is the replacement action.
+The element text is the replacement action. This substitutes at build time and does not change what the user has stored; to move a stored widget, background or property name, see [Retired Names](overrides.md).
 
 ---
 
@@ -816,9 +816,10 @@ Substitute Kodi's generic `Default*.png` icons (e.g., `DefaultFolder.png`, `Defa
 
 Resolution:
 
-1. The active `<source>` is the first one whose `visible` condition passes (or the first source without a `visible` attribute). Sources must be declared explicitly in the override block; the root `<icons>` picker source is not reused automatically, since a skin's icon picker folder is usually a flat collection of icons rather than a substitution map.
-2. **Convention scan**: any `Default*.png` file found in the active source is automatically registered as an override pointing at itself. Drop replacement icons into your icons folder with matching filenames to skip listing them individually.
-3. **Explicit overrides**: `<icon replace="X">Y</icon>` declarations win over convention. The replacement path Y is resolved relative to the active source unless it's absolute (starts with `special://` or `/`). With no `<source>` declared, relative Y values are dropped and logged.
+1. **By name**: a `Default*.png` the script would otherwise use is looked for in `<source>`. Found means the skin's copy is used, so a matching filename in your icons folder is enough and needs no declaration. This works whether the icons are loose on disk or packed into an xbt.
+2. **Explicit overrides**: `<icon replace="X">Y</icon>` names a replacement whose filename differs. The path Y is resolved relative to the source unless it is absolute (starts with `special://` or `/`). With no `<source>` declared, relative Y values are dropped and logged.
+
+Declare `<source>` explicitly. The root `<icons>` picker source is not reused, since a skin's icon picker folder is usually a flat collection rather than a substitution map.
 
 ### Switching Icon Sets
 

@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from ..exceptions import ConfigError
+from ..models.override import Override
 
 NO_SUFFIX_PROPERTIES = frozenset({
     "name",
@@ -128,3 +129,18 @@ def parse_content(elem: ET.Element):
         label=get_attr(elem, "label") or "",
         folder=get_attr(elem, "folder") or "",
     )
+
+
+def parse_name_overrides(root, tag: str) -> list[Override]:
+    """Parse an <overrides> section listing names the skin retired."""
+    section = root.find("overrides")
+    if section is None:
+        return []
+
+    overrides = []
+    for elem in section.findall(tag):
+        replace = get_attr(elem, "replace")
+        if replace:
+            overrides.append(Override(replace=replace, value=(elem.text or "").strip()))
+
+    return overrides

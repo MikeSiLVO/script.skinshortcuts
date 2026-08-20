@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+
+from .override import Override
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -73,3 +75,4 @@ class WidgetConfig:
 
     widgets: list[Widget] = field(default_factory=list)
     groupings: list[WidgetGroupContent] = field(default_factory=list)
+    overrides: list[Override] = field(default_factory=list)

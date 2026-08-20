@@ -9,7 +9,15 @@ from ..exceptions import WidgetConfigError
 from ..log import get_logger, notify
 from ..models import Content, Widget, WidgetGroup
 from ..models.widget import WidgetConfig
-from .base import get_attr, get_bool, get_int, get_text, parse_content, parse_xml
+from .base import (
+    get_attr,
+    get_bool,
+    get_int,
+    get_text,
+    parse_content,
+    parse_name_overrides,
+    parse_xml,
+)
 
 log = get_logger("WidgetLoader")
 
@@ -42,6 +50,7 @@ def load_widgets(path: str | Path) -> WidgetConfig:
     return WidgetConfig(
         widgets=widgets,
         groupings=groupings,
+        overrides=parse_name_overrides(root, "widget"),
     )
 
 

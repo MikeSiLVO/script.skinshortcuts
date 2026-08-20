@@ -14,7 +14,14 @@ from ..models.background import (
     BrowseSource,
     PlaylistSource,
 )
-from .base import get_attr, get_bool, get_text, parse_content, parse_xml
+from .base import (
+    get_attr,
+    get_bool,
+    get_text,
+    parse_content,
+    parse_name_overrides,
+    parse_xml,
+)
 
 from ..models.menu import IconOverrides
 
@@ -65,6 +72,7 @@ def load_backgrounds(
     return BackgroundConfig(
         backgrounds=backgrounds,
         groupings=groupings,
+        overrides=parse_name_overrides(root, "background"),
     )
 
 

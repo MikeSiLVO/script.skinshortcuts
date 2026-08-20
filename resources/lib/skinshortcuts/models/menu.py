@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+
+from .override import Override
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -358,14 +360,6 @@ class ContextMenu:
 
 
 @dataclass
-class ActionOverride:
-    """An action override that replaces one action with another."""
-
-    replace: str
-    action: str
-
-
-@dataclass
 class MenuConfig:
     """Menu configuration including menus, groupings, and icon sources."""
 
@@ -373,7 +367,7 @@ class MenuConfig:
     groupings: list[Shortcut | ShortcutGroup | Content | Input] = field(default_factory=list)
     icon_sources: list[IconSource] = field(default_factory=list)
     subdialogs: list[SubDialog] = field(default_factory=list)
-    action_overrides: list[ActionOverride] = field(default_factory=list)
+    action_overrides: list[Override] = field(default_factory=list)
     icon_overrides: IconOverrides = field(default_factory=IconOverrides)
     context_menu: ContextMenu = field(default_factory=ContextMenu)
     submenu_path_all: bool = False  # <submenuPath>all</submenuPath>: numbers every widget submenu

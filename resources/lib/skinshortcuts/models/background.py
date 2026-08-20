@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+
+from .override import Override
 from enum import Enum, auto
 from typing import TYPE_CHECKING
 
@@ -95,3 +97,4 @@ class BackgroundConfig:
 
     backgrounds: list[Background] = field(default_factory=list)
     groupings: list[BackgroundGroup | Background] = field(default_factory=list)
+    overrides: list[Override] = field(default_factory=list)

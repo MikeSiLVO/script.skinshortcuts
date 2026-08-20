@@ -13,9 +13,9 @@ Located in the skin's `shortcuts/` folder:
 | File | Purpose |
 |------|---------|
 | `menus.xml` | Menu structure, items, groupings, icon sources, action overrides |
-| `widgets.xml` | Widget definitions and groupings for widget picker |
-| `backgrounds.xml` | Background options and groupings for background picker |
-| `properties.xml` | Property definitions, options, fallbacks, button mappings |
+| `widgets.xml` | Widget definitions, groupings for widget picker, retired widget names |
+| `backgrounds.xml` | Background options, groupings for background picker, retired background names |
+| `properties.xml` | Property definitions, options, fallbacks, button mappings, retired property names |
 | `templates.xml` | Template definitions for generating skin includes |
 | `views.xml` | View definitions and per-content view-selection rules |
 
@@ -206,6 +206,8 @@ Defines widgets and widget picker groupings.
 | Element | Parent | Required Attributes | Optional Attributes | Description |
 |---------|--------|---------------------|---------------------|-------------|
 | `<widgets>` | - | - | - | Root element |
+| `<overrides>` | widgets | - | - | Names the skin retired, moved in user data on the next build |
+| `<widget>` | overrides | `replace` | - | Old name; element text is the new name, empty clears the stored value |
 | `<widget>` | widgets/group | `name`, `label` | `type`, `target`, `icon`, `condition`, `visible`, `source`, `slot`, `browse` | Widget definition |
 | `<path>` | widget | - | - | Content path (required except type="custom") |
 | `<limit>` | widget | - | - | Item limit |
@@ -293,6 +295,8 @@ Defines background options and groupings.
 | Element | Parent | Required Attributes | Optional Attributes | Description |
 |---------|--------|---------------------|---------------------|-------------|
 | `<backgrounds>` | - | - | - | Root element |
+| `<overrides>` | backgrounds | - | - | Names the skin retired, moved in user data on the next build |
+| `<background>` | overrides | `replace` | - | Old name; element text is the new name, empty clears the stored value |
 | `<background>` | backgrounds/group | `name`, `label` | `type`, `condition`, `visible` | Background definition |
 | `<path>` | background | - | - | Image path, info label, live keyword, or browse start path (browse/multi). Mutually exclusive with `<source>` on browse/multi |
 | `<icon>` | background | - | - | Icon for picker |
@@ -391,6 +395,8 @@ Defines property schemas, button mappings, and fallback values.
 | Element | Parent | Required Attributes | Optional Attributes | Description |
 |---------|--------|---------------------|---------------------|-------------|
 | `<properties>` | - | - | - | Root element |
+| `<overrides>` | properties | - | - | Names the skin retired, moved in user data on the next build |
+| `<property>` | overrides | `replace` | - | Old name; element text is the new name, empty clears the stored value |
 | `<includes>` | properties | - | - | Reusable definitions |
 | `<include>` | includes | `name` | - | Include definition |
 | `<include/>` | options/fallback | `content` | `suffix` | Include reference |

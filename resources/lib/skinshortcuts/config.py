@@ -17,10 +17,12 @@ from .loaders import (
 )
 from .models import Background, Menu, MenuItem, Widget
 from .models.background import BackgroundConfig, BackgroundGroup
-from .models.menu import IconOverrides, ActionOverride, SubDialog
+from .models.menu import IconOverrides, SubDialog
+from .models.override import Override
 from .models.property import PropertySchema
 from .models.template import TemplateSchema
 from .models.views import ViewConfig
+from .migrations import apply_overrides
 from .models.widget import WidgetConfig
 from .userdata import (
     UserData,
@@ -45,6 +47,8 @@ class SkinConfig:
     subdialogs: list[SubDialog] = field(default_factory=list)
     icon_overrides: IconOverrides = field(default_factory=IconOverrides)
     submenu_path_all: bool = False
+    userdata_path: str | None = None
+    migrated: int = 0
 
     @property
     def widgets(self) -> list[Widget]:
@@ -91,6 +95,9 @@ class SkinConfig:
         views = load_views(path / "views.xml")
 
         userdata = load_userdata(userdata_path) if load_user else UserData()
+        migrated = (
+            apply_overrides(userdata, property_schema, widgets, backgrounds) if load_user else 0
+        )
 
         template_map = {m.name: m for m in menu_config.menus if m.is_submenu}
 
@@ -177,6 +184,8 @@ class SkinConfig:
             subdialogs=menu_config.subdialogs,
             icon_overrides=menu_config.icon_overrides,
             submenu_path_all=menu_config.submenu_path_all,
+            userdata_path=userdata_path,
+            migrated=migrated,
         )
 
     def get_widget(self, widget_name: str) -> Widget | None:
@@ -299,12 +308,12 @@ class SkinConfig:
                 item.properties.setdefault(key, value)
 
 
-def _apply_action_overrides(menu: Menu, overrides: list[ActionOverride]) -> None:
+def _apply_action_overrides(menu: Menu, overrides: list[Override]) -> None:
     """Apply action overrides to all items in a menu."""
     if not overrides:
         return
 
-    override_map = {o.replace.lower(): o.action for o in overrides}
+    override_map = {o.replace.lower(): o.value for o in overrides}
 
     for item in menu.items:
         for action in item.actions:

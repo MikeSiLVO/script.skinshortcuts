@@ -19,7 +19,7 @@ from ..models.property import (
     SchemaOption,
     SchemaProperty,
 )
-from .base import apply_suffix_transform, get_bool
+from .base import apply_suffix_transform, get_bool, parse_name_overrides
 
 log = get_logger("PropertyLoader")
 
@@ -91,6 +91,7 @@ class PropertyLoader:
             properties=properties,
             fallbacks=fallbacks,
             buttons=buttons,
+            overrides=parse_name_overrides(root, "property"),
         )
 
     def _check_rename_buttons(
