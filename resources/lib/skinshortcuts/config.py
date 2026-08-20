@@ -280,26 +280,35 @@ class SkinConfig:
     def derived_item_properties(self, item: MenuItem) -> dict[str, str]:
         """Widget/background sub-properties derivable from the item's assigned names.
 
+        Covers numbered slots, so what the skin owns is recomputed rather than stored.
         Labels stay in $LOCALIZE form so a language change reaches the menu.
         """
         derived: dict[str, str] = {}
 
-        bg_name = item.properties.get("background")
-        if bg_name:
-            bg = self.get_background(bg_name)
-            if bg:
-                derived["backgroundLabel"] = bg.label
-                derived["backgroundPath"] = bg.path
+        for key, name in item.properties.items():
+            if not name:
+                continue
+            base, _, slot = key.partition(".")
+            if slot and not slot.isdigit():
+                continue
+            if base == "background":
+                bg = self.get_background(name)
+                if bg:
+                    # the dialog writes background.2Label, not backgroundLabel.2
+                    derived[f"{key}Label"] = bg.label
+                    derived[f"{key}Path"] = bg.path
+                    derived[f"{key}Type"] = bg.type_name
+            elif base == "widget":
+                widget = self.get_widget(name)
+                if widget:
+                    tail = f".{slot}" if slot else ""
+                    derived[f"widgetLabel{tail}"] = widget.label
+                    derived[f"widgetPath{tail}"] = widget.path.replace("{menuitem}", item.name)
+                    derived[f"widgetType{tail}"] = widget.type
+                    derived[f"widgetTarget{tail}"] = widget.target
+                    derived[f"widgetSource{tail}"] = widget.source
 
-        widget_name = item.properties.get("widget")
-        if widget_name:
-            widget = self.get_widget(widget_name)
-            if widget:
-                props = widget.to_properties()
-                props.pop("widget", None)
-                derived.update(props)
-
-        return derived
+        return {k: v for k, v in derived.items() if v}
 
     def resolve_item_properties(self, menu: Menu) -> None:
         """Fill widget/background sub-properties, keeping any the user set."""
