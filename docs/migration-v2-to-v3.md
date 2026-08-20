@@ -951,7 +951,7 @@ Remove these controls from your dialog XML.
 }
 ```
 
-Only fields that differ from the skin defaults are written. Widget and background sub-properties the script can derive from the assigned name (`widgetLabel`, `widgetPath`, `widgetTarget`, `backgroundLabel`, `backgroundPath`) stay out, so edits to `widgets.xml` and `backgrounds.xml` reach saved menus on the next build.
+Only fields that differ from the skin defaults are written. Widget and background sub-properties the script can derive from the assigned name (`widgetLabel`, `widgetPath`, `widgetType`, `widgetTarget`, `widgetSource`, `backgroundLabel`, `backgroundPath`, `backgroundType`) stay out, so edits to `widgets.xml` and `backgrounds.xml` reach saved menus on the next build.
 
 User data is stored in:
 `userdata/addon_data/script.skinshortcuts/{skin_id}.userdata.json`

@@ -291,17 +291,16 @@ class SkinConfig:
             base, _, slot = key.partition(".")
             if slot and not slot.isdigit():
                 continue
+            tail = f".{slot}" if slot else ""
             if base == "background":
                 bg = self.get_background(name)
                 if bg:
-                    # the dialog writes background.2Label, not backgroundLabel.2
-                    derived[f"{key}Label"] = bg.label
-                    derived[f"{key}Path"] = bg.path
-                    derived[f"{key}Type"] = bg.type_name
+                    derived[f"backgroundLabel{tail}"] = bg.label
+                    derived[f"backgroundPath{tail}"] = bg.path
+                    derived[f"backgroundType{tail}"] = bg.type_name
             elif base == "widget":
                 widget = self.get_widget(name)
                 if widget:
-                    tail = f".{slot}" if slot else ""
                     derived[f"widgetLabel{tail}"] = widget.label
                     derived[f"widgetPath{tail}"] = widget.path.replace("{menuitem}", item.name)
                     derived[f"widgetType{tail}"] = widget.type

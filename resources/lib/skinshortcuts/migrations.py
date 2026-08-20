@@ -141,12 +141,10 @@ def _slot_of(key: str, name: str) -> str:
 
 def _sibling_names(kind: str, key: str) -> list[str]:
     """The baked keys the dialog writes beside a stored widget or background name."""
-    if kind == "background":
-        return [f"{key}{part}" for part in BACKGROUND_SIBLINGS]
-
-    base, _, suffix = key.partition(".")
-    tail = f".{suffix}" if suffix else ""
-    return [f"{base}{part}{tail}" for part in WIDGET_SIBLINGS]
+    base, _, slot = key.partition(".")
+    tail = f".{slot}" if slot else ""
+    parts = BACKGROUND_SIBLINGS if kind == "background" else WIDGET_SIBLINGS
+    return [f"{base}{part}{tail}" for part in parts]
 
 
 def _move_keys(item: MenuItemOverride, override: Override) -> int:
@@ -183,15 +181,15 @@ def _stale_siblings(kind: str, key: str, element: Any) -> list[str]:
     A user's own path is stored under a picker-generated name no override matches, so a
     slot naming a skin element only holds what the picker put there.
     """
-    if kind == "background":
-        names = [f"{key}Type"]
-        if element.path:
-            names += [f"{key}Path", f"{key}PlaylistType"]
-        return names
+    base, _, slot = key.partition(".")
+    tail = f".{slot}" if slot else ""
 
-    base, _, suffix = key.partition(".")
-    tail = f".{suffix}" if suffix else ""
-    return [f"{base}{part}{tail}" for part in ("Path", "Type", "Target", "Source")]
+    if kind == "background":
+        parts = ["Type"] + (["Path", "PlaylistType"] if element.path else [])
+    else:
+        parts = ["Path", "Type", "Target", "Source"]
+
+    return [f"{base}{part}{tail}" for part in parts]
 
 
 def _move_values(item: MenuItemOverride, override: Override, kind: str, known: Any) -> int:

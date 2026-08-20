@@ -414,7 +414,8 @@ class PropertiesMixin:
                 continue
 
             if bg.type in (BackgroundType.PLAYLIST, BackgroundType.LIVE_PLAYLIST) and not bg.path:
-                current_playlist = self._get_item_property(item, f"{prefix}Path")
+                base, suffix = _split_suffix(prefix)
+                current_playlist = self._get_item_property(item, f"{base}Path{suffix}")
                 result = self._pick_playlist(
                     bg.sources, bg.label if bg.sources else "", current_playlist
                 )
@@ -435,10 +436,12 @@ class PropertiesMixin:
         """Set background properties on item with auto-populated values."""
         self._log(f"Setting background properties for {prefix}: {bg.name}")
 
+        base, suffix = _split_suffix(prefix)
+
         related: dict[str, str | None] = {
-            f"{prefix}Label": bg.label,
-            f"{prefix}Path": bg.path,
-            f"{prefix}Type": bg.type_name,
+            f"{base}Label{suffix}": bg.label,
+            f"{base}Path{suffix}": bg.path,
+            f"{base}Type{suffix}": bg.type_name,
         }
 
         self._set_item_property(item, prefix, bg.name, related, apply_suffix=False)
@@ -455,6 +458,8 @@ class PropertiesMixin:
         """Set background properties with a user-browsed custom path."""
         self._log(f"Setting custom background for {prefix}: {bg.name} -> {custom_path}")
 
+        base, suffix = _split_suffix(prefix)
+
         if bg.type in (BackgroundType.BROWSE, BackgroundType.MULTI):
             label = custom_label if custom_label else custom_path
             value = custom_path
@@ -463,12 +468,12 @@ class PropertiesMixin:
             value = bg.name
 
         related: dict[str, str | None] = {
-            f"{prefix}Label": label,
-            f"{prefix}Path": custom_path,
-            f"{prefix}Type": bg.type_name,
+            f"{base}Label{suffix}": label,
+            f"{base}Path{suffix}": custom_path,
+            f"{base}Type{suffix}": bg.type_name,
         }
         if playlist_type:
-            related[f"{prefix}PlaylistType"] = playlist_type
+            related[f"{base}PlaylistType{suffix}"] = playlist_type
 
         self._set_item_property(item, prefix, value, related, apply_suffix=False)
 
@@ -476,11 +481,13 @@ class PropertiesMixin:
         """Clear all background properties for a prefix."""
         self._log(f"Clearing background properties for {prefix}")
 
+        base, suffix = _split_suffix(prefix)
+
         related: dict[str, str | None] = {
-            f"{prefix}Label": None,
-            f"{prefix}Path": None,
-            f"{prefix}Type": None,
-            f"{prefix}PlaylistType": None,
+            f"{base}Label{suffix}": None,
+            f"{base}Path{suffix}": None,
+            f"{base}Type{suffix}": None,
+            f"{base}PlaylistType{suffix}": None,
         }
 
         self._set_item_property(item, prefix, "", related, apply_suffix=False)
