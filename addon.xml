@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.2~beta14" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.2~beta15" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.2"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
-3.0.2~beta14
-  - Add: an icons attribute on a menu leaves icons out of its include
-  - Add: icon overrides name a source folder, so a skin's own icons replace the Kodi defaults, packed or loose
-  - Fix: widget and background labels follow a language change
-  - Fix: browsing to a location keeps the icon it was picked with
-  - Fix: the skin reloads only when a rebuild changes the includes
+3.0.2~beta15
+  - Add: skins can retire a widget, background or property in an overrides block and point saved menus at its replacement
+  - Fix: widget and background labels in numbered slots follow a language change
+  - Fix: view selections survive a menu save
 
-3.0.2~beta1 - beta13
+3.0.2~beta1 - beta14
   - Add: skins can restyle the DialogSelect pickers with a skinshortcuts-picker property and ListItem metadata
-  - Add: a rename attribute on a widget picker button prompts for a custom widget label
+  - Add: icon overrides name a source folder, so a skin's own icons replace the Kodi defaults, packed or loose
+  - Add: an icons attribute on a menu leaves icons out of its include
   - Add: skins can define the management dialog context menu, the buttons it lists and where it opens
   - Fix: property conditions combine + and | as Kodi does, and an expression reference expands as a single term
   - Fix: widgets keep the type the skin declared and open in the window their content lives in
   - Fix: the includes file is written with unix line endings on every platform
-  - Fix: the widget and shortcut pickers open without stalling the interface
+  - Fix: the skin reloads only when a rebuild changes the includes
         </news>
         <platform>all</platform>
         <license>GPL-2.0-only</license>
