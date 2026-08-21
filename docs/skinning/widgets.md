@@ -17,6 +17,7 @@ The `widgets.xml` file defines widgets that users can assign to menu items.
 * [Widget Menus](#widget-menus)
 * [Widget Picker Button](#widget-picker-button)
 * [Standalone Widget Picker](#standalone-widget-picker)
+* [Retired Names](#retired-names)
 
 ---
 
@@ -647,6 +648,12 @@ The "None" option is always shown at the top of the picker.
   <label>$INFO[Skin.String(HubWidget1.Label)]</label>
 </control>
 ```
+
+---
+
+## Retired Names
+
+An `<overrides>` block moves menus the user already saved onto a renamed widget, or clears them when a widget is dropped. See [Retired Names](overrides.md).
 
 ---
 

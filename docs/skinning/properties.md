@@ -14,6 +14,7 @@ The `properties.xml` file defines custom properties, button mappings, and fallba
 * [Fallbacks](#fallbacks)
 * [Includes](#includes)
 * [Suffix Transforms](#suffix-transforms)
+* [Retired Names](#retired-names)
 
 ---
 
@@ -390,6 +391,12 @@ Button mappings with `suffix="true"` automatically use the dialog's suffix.
   </fallbacks>
 </properties>
 ```
+
+---
+
+## Retired Names
+
+An `<overrides>` block moves menus the user already saved onto a renamed property, or clears them when a property is dropped. See [Retired Names](overrides.md).
 
 ---
 

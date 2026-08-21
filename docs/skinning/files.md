@@ -38,7 +38,7 @@ skin.name/
 | `<groupings>` | Shortcut picker categories |
 | `<icons>` | Icon picker sources |
 | `<dialogs>` | Subdialog definitions |
-| `<overrides>` | Action replacements |
+| `<overrides>` | Action replacements, icon replacements, and retired item names |
 | `<contextmenu>` | Context menu toggle and rows |
 
 See [Menus](menus.md) for full reference.
@@ -51,6 +51,7 @@ See [Menus](menus.md) for full reference.
 |---------|---------|
 | `<widget>` | Widget definitions |
 | `<groupings>` | Widget picker categories |
+| `<overrides>` | Retired widget names |
 
 See [Widgets](widgets.md) for full reference.
 
@@ -61,6 +62,7 @@ See [Widgets](widgets.md) for full reference.
 | Section | Purpose |
 |---------|---------|
 | `<background>` | Background definitions |
+| `<overrides>` | Retired background names |
 
 See [Backgrounds](backgrounds.md) for full reference.
 
@@ -74,6 +76,7 @@ See [Backgrounds](backgrounds.md) for full reference.
 | `<property>` | Property definitions |
 | `<buttons>` | Button-to-property mappings |
 | `<fallbacks>` | Default value rules |
+| `<overrides>` | Retired property names |
 
 See [Properties](properties.md) for full reference.
 

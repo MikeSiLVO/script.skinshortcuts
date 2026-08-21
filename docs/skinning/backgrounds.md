@@ -19,6 +19,7 @@ The `backgrounds.xml` file defines background options that users can assign to m
 * [Sources](#sources)
 * [Conditions](#conditions)
 * [Output Properties](#output-properties)
+* [Retired Names](#retired-names)
 
 ---
 
@@ -424,6 +425,12 @@ Access via `ListItem.Property(name)`:
 For static/property types, `backgroundPath` contains the defined path. For browse/multi types, it contains the user-selected path. For playlist types, your skin handles the slideshow logic using the path.
 
 > **See also:** [Built-in Properties](builtin-properties.md) for complete property reference
+
+---
+
+## Retired Names
+
+An `<overrides>` block moves menus the user already saved onto a renamed background, or clears them when a background is dropped. See [Retired Names](overrides.md).
 
 ---
 
