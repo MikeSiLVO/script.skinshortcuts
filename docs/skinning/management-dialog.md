@@ -274,9 +274,9 @@ Properties with options also get a `{name}Label` property with the resolved labe
 
 ## Picker Properties
 
-The content, widget, and shortcut pickers use Kodi's shared `DialogSelect`. While one is open, the
-script marks which picker it is and stamps each option's metadata onto its list item, so a skin can
-give the picker a richer layout (for example, the path as a secondary label).
+Every picker the script opens uses Kodi's shared `DialogSelect`. While one is open, the script
+marks which picker it is and stamps each option's metadata onto its list item, so a skin can give
+the picker a richer layout (for example, the path as a secondary label).
 
 ### Which picker is open
 
@@ -297,6 +297,11 @@ the rest of `DialogSelect`.
 | `playlist` | Playlist source |
 | `property` | Property value |
 | `restore` | Restore a deleted item |
+
+The value is whichever select dialog is on screen, not the flow that opened it. Picking a browsable
+add-on in the widget picker closes that select and opens a fresh one, so the marker moves from
+`widget` to `browse` while the listing is up and back to `widget` on return. Sub-flows behave the
+same way, and a gate written for one value drops out of the rest.
 
 ### Option metadata
 
@@ -381,9 +386,9 @@ committed). There is no `type` here, a directory listing has no content/category
 In the skin's `DialogSelect.xml`, gated so it only affects Skin Shortcuts pickers:
 
 ```xml
-<!-- path as a secondary label on the shortcut and widget pickers -->
+<!-- path as a secondary label on any picker row that carries one -->
 <control type="label">
-    <visible>String.IsEqual(Window(home).Property(skinshortcuts-picker),shortcut) | String.IsEqual(Window(home).Property(skinshortcuts-picker),widget)</visible>
+    <visible>!String.IsEmpty(Window(home).Property(skinshortcuts-picker)) + !String.IsEmpty(ListItem.Property(path))</visible>
     <label>$INFO[ListItem.Property(path)]</label>
 </control>
 ```
