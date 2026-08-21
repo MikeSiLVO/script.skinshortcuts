@@ -582,7 +582,8 @@ class MenuManager:
         """Generate userdata by diffing working copy against defaults."""
         self._cleanup_orphaned_menus()
 
-        userdata = UserData()
+        # views are set outside this dialog; a menu save must not drop them
+        userdata = UserData(views=self.config.userdata.views)
 
         default_menus = {m.name: m for m in self.config.default_menus}
 
