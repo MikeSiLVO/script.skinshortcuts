@@ -71,6 +71,7 @@ from ..models import (
     Action,
     Background,
     BackgroundGroup,
+    BackgroundType,
     Content,
     Input,
     MenuItem,
@@ -217,6 +218,16 @@ def stamp_picker_props(
     props["name"] = item.name
     for key, value in props.items():
         listitem.setProperty(key, value)
+
+
+def _drills_down(item: object) -> bool:
+    """Leaf that opens another dialog rather than committing on click."""
+    if isinstance(item, Background):
+        if item.type in (BackgroundType.BROWSE, BackgroundType.MULTI):
+            return True
+        playlist = (BackgroundType.PLAYLIST, BackgroundType.LIVE_PLAYLIST)
+        return item.type in playlist and not item.path
+    return isinstance(item, (Shortcut, Widget)) and bool(item.browse and item.path)
 
 
 def _content_folder_path(content: Content) -> str:
@@ -793,14 +804,9 @@ class PickersMixin:
                 if isinstance(vis_item, group_types):
                     label = f"{label} >"
                     icon = vis_item.icon if vis_item.icon else default_group_icon
-                elif (
-                    isinstance(vis_item, (Shortcut, Widget))
-                    and not is_placeholder
-                    and self._is_browsable(vis_item)
-                ):
-                    label = f"{label} >"
-                    icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 else:
+                    if not is_placeholder and _drills_down(vis_item):
+                        label = f"{label} >"
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 listitem = xbmcgui.ListItem(label, offscreen=True)
                 listitem.setArt({"icon": resolve_label(overrides.get(icon, icon))})
@@ -926,14 +932,9 @@ class PickersMixin:
                 if isinstance(vis_item, group_types):
                     label = f"{label} >"
                     icon = vis_item.icon if vis_item.icon else default_group_icon
-                elif (
-                    isinstance(vis_item, (Shortcut, Widget))
-                    and not is_placeholder
-                    and self._is_browsable(vis_item)
-                ):
-                    label = f"{label} >"
-                    icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 else:
+                    if not is_placeholder and _drills_down(vis_item):
+                        label = f"{label} >"
                     icon = vis_item.icon if vis_item.icon else default_leaf_icon
                 listitem = xbmcgui.ListItem(label, offscreen=True)
                 listitem.setArt({"icon": resolve_label(overrides.get(icon, icon))})

@@ -550,7 +550,7 @@ class PropertiesMixin:
         listitems = []
         for source in sources:
             label = resolve_label(source.label) if source.label else source.path
-            listitem = xbmcgui.ListItem(label, offscreen=True)
+            listitem = xbmcgui.ListItem(f"{label} >", offscreen=True)
             if source.icon:
                 listitem.setArt({"icon": source.icon})
             listitems.append(listitem)
