@@ -759,8 +759,10 @@ class PickersMixin:
         content_resolver: Callable[[Content], list] | None = None,
         create_folder_group: Callable[[str, list, str, str], Any] | None = None,
         custom_action: tuple[str, str, Callable[[], Any | None]] | None = None,
+        positions: dict[str, int] | None = None,
     ) -> Any | None | Literal[False]:
         """Hierarchical picker with back navigation. False when the user picks "None"."""
+        positions = {} if positions is None else positions
         start = time.monotonic()
         visible_items = self._filter_picker_items(
             items, item_props, leaf_types, group_types, content_resolver, create_folder_group
@@ -774,13 +776,14 @@ class PickersMixin:
             xbmcgui.Dialog().notification(LANGUAGE(32141), LANGUAGE(32064))
             return None
 
-        preselect = -1
         offset = 1 if show_none else 0
+        preselect = positions.get("", -1)
 
-        for i, vis_item in enumerate(visible_items):
-            if hasattr(vis_item, "name") and vis_item.name == current_value:
-                preselect = i + offset
-                break
+        if preselect == -1:
+            for i, vis_item in enumerate(visible_items):
+                if hasattr(vis_item, "name") and vis_item.name == current_value:
+                    preselect = i + offset
+                    break
 
         overrides = self._icon_overrides()
 
@@ -841,6 +844,7 @@ class PickersMixin:
                 continue
 
             preselect = selected
+            positions[""] = selected
             selected_item = visible_items[selected - offset]
 
             if isinstance(selected_item, Input):
@@ -887,6 +891,8 @@ class PickersMixin:
                 default_group_icon=default_group_icon,
                 content_resolver=content_resolver,
                 create_folder_group=create_folder_group,
+                positions=positions,
+                level=f"/{selected}",
             )
 
             if result is not None:
@@ -903,6 +909,8 @@ class PickersMixin:
         default_group_icon: str,
         content_resolver: Callable[[Content], list] | None = None,
         create_folder_group: Callable[[str, list, str, str], Any] | None = None,
+        positions: dict[str, int],
+        level: str,
     ) -> Any | None:
         """Pick from items within a group with back navigation."""
         start = time.monotonic()
@@ -917,7 +925,7 @@ class PickersMixin:
             return None
 
         overrides = self._icon_overrides()
-        preselect = -1
+        preselect = positions.get(level, -1)
         while True:
             listitems = []
             for vis_item in visible_items:
@@ -950,6 +958,7 @@ class PickersMixin:
                 return None  # Go back
 
             preselect = selected
+            positions[level] = selected
             selected_item = visible_items[selected]
 
             if isinstance(selected_item, Input):
@@ -996,6 +1005,8 @@ class PickersMixin:
                 default_group_icon=default_group_icon,
                 content_resolver=content_resolver,
                 create_folder_group=create_folder_group,
+                positions=positions,
+                level=f"{level}/{selected}",
             )
 
             if result is not None:
@@ -1257,7 +1268,10 @@ class PickersMixin:
         return (shortcut.path, window)
 
     def _pick_background(
-        self, item_props: dict[str, str], current_value: str = ""
+        self,
+        item_props: dict[str, str],
+        current_value: str = "",
+        positions: dict[str, int] | None = None,
     ) -> Background | None | Literal[False]:
         """Pick a background from groupings. False when the user picks "None"."""
         if not self.manager:
@@ -1278,4 +1292,5 @@ class PickersMixin:
             default_group_icon="DefaultFolder.png",
             show_none=True,
             current_value=current_value,
+            positions=positions,
         )

@@ -163,7 +163,10 @@ class PropertiesMixin:
         ) -> Widget | None | Literal[False]: ...
 
         def _pick_background(
-            self, item_props: dict[str, str], current_value: str = ""
+            self,
+            item_props: dict[str, str],
+            current_value: str = "",
+            positions: dict[str, int] | None = None,
         ) -> Background | None | Literal[False]: ...
 
     def _check_requires(self, item: MenuItem, requires_name: str) -> bool:
@@ -374,9 +377,10 @@ class PropertiesMixin:
         prefix = prop_name
         current_bg = self._get_item_property(item, prefix)
         item_props = self._get_item_properties(item)
+        positions: dict[str, int] = {}
 
         while True:
-            bg = self._pick_background(item_props, current_value=current_bg)
+            bg = self._pick_background(item_props, current_bg, positions)
 
             if bg is None:
                 return
