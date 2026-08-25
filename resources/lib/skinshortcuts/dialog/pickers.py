@@ -186,12 +186,7 @@ def stamp_picker_props(
     item_props: dict[str, str] | None = None,
     content_resolver: Callable[[Content], list] | None = None,
 ) -> None:
-    """Stamp an option's metadata as ListItem properties for DialogSelect layouts.
-
-    name/path/type are uniform across every picker; widget and background also carry
-    their prefixed props (widget*, background*) verbatim from the model. Groups get a
-    path only when a real one exists.
-    """
+    """Stamp an option's metadata as ListItem properties for DialogSelect layouts."""
     if isinstance(item, Widget):
         props = item.to_properties()
         props["path"] = item.path
@@ -369,7 +364,6 @@ class PickersMixin:
         if shortcut.action_play:
             action = self._choose_playlist_action(shortcut)
             return [action] if action else None
-        # Browse mode resolves to a single action
         if shortcut.browse and shortcut.path:
             return [shortcut.get_action()]
         return shortcut.actions if shortcut.actions else None
@@ -490,7 +484,6 @@ class PickersMixin:
         """Widget picker with back navigation over widgets, groups, and content.
 
         Returns the chosen Widget, None if cancelled, False if "None" picked.
-        slot is the widget slot being edited (e.g. "widget", "widget.2").
         """
         current_widget = item_props.get(slot, "")
         items = self._filter_widgets_by_slot(items, slot)
@@ -639,10 +632,7 @@ class PickersMixin:
         return mapped or self._map_target_to_window(content_target)
 
     def _pick_widget_type(self, addon_type: str) -> str | None:
-        """Pick a widget content type for an addon category.
-
-        addon_type is video, audio, executable, pictures or games.
-        """
+        """Pick a widget content type for an addon category."""
         # one possible type, nothing to ask
         if addon_type in ("pictures", "games"):
             return addon_type
@@ -831,7 +821,7 @@ class PickersMixin:
             )
 
             if selected == -1:
-                return None  # Cancelled
+                return None
 
             if show_none and selected == 0:
                 return False
@@ -1023,11 +1013,7 @@ class PickersMixin:
         parent_label: str = "",
         parent_icon: str = "",
     ) -> list:
-        """Filter and resolve picker items by condition and visibility.
-
-        parent_label and parent_icon are the fallbacks for an addons content
-        placeholder. Raw, so a language switch still moves the committed label.
-        """
+        """Filter and resolve picker items by condition and visibility."""
         visible_items = []
 
         for item in items:
@@ -1050,7 +1036,6 @@ class PickersMixin:
                     if placeholder:
                         placeholder.icon = overrides.get(placeholder.icon, placeholder.icon)
                     if item.folder and (resolved or placeholder) and create_folder_group:
-                        # Wrap in one folder like a <group>, placeholder as its first child.
                         if placeholder:
                             resolved = [placeholder, *resolved]
                         visible_items.append(
@@ -1228,10 +1213,7 @@ class PickersMixin:
         )
 
     def _filter_widgets_by_slot(self, items: list, slot: str) -> list:
-        """Filter widget items by slot. Widgets with no slot show for all slots.
-        Widgets with a specific slot only show when that slot is being edited.
-        Recurses into WidgetGroups.
-        """
+        """Filter widget items by slot. Widgets with no slot show for all slots."""
         from ..models.widget import Widget, WidgetGroup
 
         filtered = []
