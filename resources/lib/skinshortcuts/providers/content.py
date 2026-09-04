@@ -114,6 +114,59 @@ def scan_playlist_files(directory: str) -> list[tuple[str, str]]:
     return playlists
 
 
+def library_node_type(path: str) -> str:
+    """Widget type a library:// node declares; empty when there is none."""
+    if not path.startswith("library://"):
+        return ""
+
+    rest = path[len("library://") :].strip("/")
+    host, _, remainder = rest.partition("/")
+    if not host or not remainder:
+        return ""
+
+    base = ""
+    for candidate in (
+        f"special://profile/library/{host}/",
+        # a profile without its own databases reads master's library folder
+        f"special://masterprofile/library/{host}/",
+        f"special://xbmc/system/library/{host}/",
+    ):
+        if xbmcvfs.exists(candidate):
+            base = candidate
+            break
+    if not base:
+        return ""
+
+    node = base + remainder
+    # a folder of nodes, no type of its own
+    if xbmcvfs.exists(node + "/"):
+        return ""
+
+    try:
+        f = xbmcvfs.File(node)
+        try:
+            content = f.read()
+        finally:
+            f.close()
+
+        import xml.etree.ElementTree as ET
+
+        root = ET.fromstring(content)
+    except Exception:
+        return ""
+
+    if root.tag != "node":
+        return ""
+
+    node_type = root.get("type", "")
+    if node_type == "filter":
+        # <group> rows are genres, actors and the like; <content> is only their domain
+        return (root.findtext("group") or root.findtext("content") or "").strip()
+    if node_type == "folder" and (root.findtext("path") or "").startswith("addons://"):
+        return "addons"
+    return ""
+
+
 def _collection(result: dict | None, key: str) -> list:
     """Return result[key] as a list.
 

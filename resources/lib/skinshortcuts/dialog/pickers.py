@@ -80,7 +80,7 @@ from ..models import (
     Widget,
     WidgetGroup,
 )
-from ..providers import ContentProvider, get_browse_provider
+from ..providers import ContentProvider, get_browse_provider, library_node_type
 
 if TYPE_CHECKING:
     from ..manager import MenuManager
@@ -701,8 +701,7 @@ class PickersMixin:
     def _browse_widget_path(self, widget: Widget) -> Widget | None:
         """Browse into a widget's path and let user select location.
 
-        A skin-declared type wins; only ask when nothing was declared, since a
-        plugin:// path's content type can't be read off the addon category.
+        A plugin:// path has to ask, its content type can't be read off the addon category.
         """
         result = self._browse_directory(widget.path, resolve_label(widget.label), icon=widget.icon)
         if result is None:
@@ -718,7 +717,9 @@ class PickersMixin:
         elif widget.target in ("pictures", "games"):
             addon_type = widget.target
 
-        widget_type = widget.type or self._pick_widget_type(addon_type)
+        widget_type = (
+            widget.type or library_node_type(path) or self._pick_widget_type(addon_type)
+        )
         if widget_type is None:
             return None
 
