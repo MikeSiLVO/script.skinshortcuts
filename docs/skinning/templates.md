@@ -839,7 +839,7 @@ All dynamic expressions work within items templates:
   <controls>
     <control type="group" id="$MATH[$PARENT[index] * 1000 + 600 + idx]">
       <visible>String.IsEqual(Container(9000).ListItem.Property(name),$PARENT[name])</visible>
-      <limit>$IF[$PROPERTY[widgetLimit] THEN $PROPERTY[widgetLimit] ELSE 25]</limit>
+      <limit>$IF[widgetLimit THEN $PROPERTY[widgetLimit] ELSE 25]</limit>
     </control>
   </controls>
 </template>

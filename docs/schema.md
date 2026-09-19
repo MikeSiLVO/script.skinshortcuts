@@ -526,7 +526,7 @@ Defines templates for generating skin includes. For detailed documentation, see 
       <control type="group" id="$MATH[$PARENT[index] * 1000 + 600 + $PROPERTY[index]]">
         <include content="$PROPERTY[widgetInclude]">
           <param name="path">$PROPERTY[widgetPath]</param>
-          <param name="limit">$IF[$PROPERTY[widgetLimit] THEN $PROPERTY[widgetLimit] ELSE 25]</param>
+          <param name="limit">$IF[widgetLimit THEN $PROPERTY[widgetLimit] ELSE 25]</param>
         </include>
       </control>
     </controls>
