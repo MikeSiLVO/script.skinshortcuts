@@ -303,6 +303,9 @@ class SkinConfig:
                     derived[f"widgetType{tail}"] = widget.type
                     derived[f"widgetTarget{tail}"] = widget.target
                     derived[f"widgetSource{tail}"] = widget.source
+                    derived[f"widgetLimit{tail}"] = str(widget.limit or "")
+                    derived[f"widgetSortBy{tail}"] = widget.sort_by
+                    derived[f"widgetSortOrder{tail}"] = widget.sort_order
 
         return {k: v for k, v in derived.items() if v}
 

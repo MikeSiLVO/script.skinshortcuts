@@ -382,10 +382,7 @@ class IncludesBuilder:
         return actions
 
     def _is_template_only(self, prop_name: str) -> bool:
-        """Whether a property is template_only: built but not emitted to includes.
-
-        Numeric slot variants (widgetSortby.2) inherit the base property's flag.
-        """
+        """Whether a property is built but not emitted; slot variants inherit the base flag."""
         if not self.property_schema:
             return False
         prop = self.property_schema.get_property(prop_name)

@@ -72,6 +72,12 @@ Set when a widget is assigned to a menu item.
 | `widgetTarget` | Widget target | Target window (videos, music, etc.) |
 | `widgetType` | Widget type | Content type (movies, episodes, etc.) |
 | `widgetSource` | Widget source | Source type (library, playlist, addon) |
+| `widgetLimit` | Widget limit | Item count from the widget's `<limit>` |
+| `widgetSortBy` | Widget sort field | Field from the widget's `<sortby>` |
+| `widgetSortOrder` | Widget sort direction | Direction from the widget's `<sortorder>` |
+
+The last three appear only for widgets that declare those elements, and the script does not act on
+them. Pass them to a container yourself, as attributes on `<content>` or through a template.
 
 ### Multiple Widgets
 
@@ -79,7 +85,7 @@ For additional widget slots, use suffixed properties:
 
 | Slot | Properties |
 |------|------------|
-| Widget 2 | `widget.2`, `widgetPath.2`, `widgetType.2`, `widgetTarget.2`, `widgetLabel.2`, `widgetSource.2` |
+| Widget 2 | `widget.2`, `widgetPath.2`, `widgetType.2`, `widgetTarget.2`, `widgetLabel.2`, `widgetSource.2`, `widgetLimit.2`, `widgetSortBy.2`, `widgetSortOrder.2` |
 | Widget 3 | `widget.3`, `widgetPath.3`, ... |
 
 ### Usage

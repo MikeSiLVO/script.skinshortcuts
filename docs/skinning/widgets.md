@@ -377,7 +377,10 @@ When a widget is assigned to a menu item, these core properties are set:
 | `widgetSortBy` | Sort field (from `<sortby>`) |
 | `widgetSortOrder` | Sort direction (from `<sortorder>`) |
 
-`widgetLimit`, `widgetSortBy`, and `widgetSortOrder` are set only when adding a widget in a `type="widgets"` menu, where the widget's `<limit>`/`<sortby>`/`<sortorder>` are carried onto the item.
+`widgetLimit`, `widgetSortBy` and `widgetSortOrder` appear only for widgets that declare `<limit>`,
+`<sortby>` or `<sortorder>`. The script carries the values through and does nothing with them; the
+skin decides what they mean, usually as attributes on a container's `<content>` or through a
+template property.
 
 Additional skin-specific properties can be configured via [properties.xml](properties.md).
 

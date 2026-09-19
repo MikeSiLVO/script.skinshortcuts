@@ -334,6 +334,9 @@ class PropertiesMixin:
             f"{base}Type{suffix}": widget.type or "",
             f"{base}Target{suffix}": widget.target or "",
             f"{base}Source{suffix}": widget.source or "",
+            f"{base}Limit{suffix}": str(widget.limit or ""),
+            f"{base}SortBy{suffix}": widget.sort_by or "",
+            f"{base}SortOrder{suffix}": widget.sort_order or "",
         }
 
         self._set_item_property(item, prefix, widget.name, related, apply_suffix=False)
@@ -353,6 +356,9 @@ class PropertiesMixin:
             f"{base}Type{suffix}": None,
             f"{base}Target{suffix}": None,
             f"{base}Source{suffix}": None,
+            f"{base}Limit{suffix}": None,
+            f"{base}SortBy{suffix}": None,
+            f"{base}SortOrder{suffix}": None,
         }
 
         self._set_item_property(item, prefix, "", related, apply_suffix=False)
