@@ -5,7 +5,7 @@ from __future__ import annotations
 import contextlib
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Literal, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Callable, Literal
 
 try:
     import xbmc
@@ -23,29 +23,6 @@ def _check_visible(visible: str) -> bool:
     if not IN_KODI:
         return True
     return xbmc.getCondVisibility(visible)
-
-
-@runtime_checkable
-class PickerItem(Protocol):
-    """Protocol for leaf items in picker hierarchy (Shortcut, Widget, Background)."""
-
-    name: str
-    label: str
-    icon: str
-    condition: str
-    visible: str
-
-
-@runtime_checkable
-class PickerGroup(Protocol):
-    """Protocol for group items in picker hierarchy."""
-
-    name: str
-    label: str
-    icon: str
-    condition: str
-    visible: str
-    items: list
 
 
 from ..constants import (

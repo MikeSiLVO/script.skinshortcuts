@@ -30,10 +30,8 @@ Initialize manager. Loads config and creates working copy.
 | Method | Returns | Description |
 |--------|---------|-------------|
 | `get_menu_ids()` | list[str] | All menu names |
-| `get_all_menus()` | list[Menu] | All menus from working copy |
 | `get_menu_items(menu_id)` | list[MenuItem] | Items for a menu |
 | `get_widgets()` | list[tuple[str,str]] | Available widgets as (name, label) |
-| `get_backgrounds()` | list[tuple[str,str]] | Available backgrounds as (name, label) |
 
 ### Item Operations
 
@@ -60,8 +58,6 @@ All return bool. Update working copy.
 | `set_disabled(menu_id, item_id, disabled)` | Set disabled state |
 | `set_submenu(menu_id, item_id, submenu)` | Set or clear submenu template reference |
 | `set_visible(menu_id, item_id, visible)` | Set runtime visibility condition (used by shortcut picker) |
-| `set_widget(menu_id, item_id, widget)` | Set widget property (delegates to set_custom_property) |
-| `set_background(menu_id, item_id, background)` | Set background property (delegates to set_custom_property) |
 | `set_custom_property(menu_id, item_id, name, value)` | Set custom property |
 
 ### Submenu Operations

@@ -23,7 +23,7 @@ Top-level container.
 | `fallbacks` | dict[str, PropertyFallback] | Fallback rules by property |
 | `buttons` | dict[int, ButtonMapping] | Button mappings by ID |
 
-**Methods:** `get_property()`, `get_button()`, `get_property_for_button()`
+**Methods:** `get_property()`, `get_property_for_button()`
 
 ### SchemaProperty
 

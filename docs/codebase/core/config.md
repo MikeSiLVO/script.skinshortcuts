@@ -49,7 +49,6 @@ Load configuration from shortcuts directory.
 | `get_default_menu(name)` | Menu | Get original skin default |
 | `get_widget(name)` | Widget | Get widget by name |
 | `get_background(name)` | Background | Get background by name |
-| `get_subdialog(button_id)` | SubDialog | Get subdialog definition |
 | `build_includes(output_path)` | None | Build and write includes.xml |
 
 ### Properties

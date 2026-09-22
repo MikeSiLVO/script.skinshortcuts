@@ -70,10 +70,6 @@ class MenuManager:
         """Get all available menu names."""
         return [menu.name for menu in self.config.menus]
 
-    def get_all_menus(self) -> list[Menu]:
-        """Get all menus from working copy."""
-        return list(self.working.values())
-
     def get_menu_items(self, menu_id: str) -> list[MenuItem]:
         """Get items for a menu from working copy."""
         if menu_id in self.working:
@@ -84,17 +80,17 @@ class MenuManager:
         """Get available widgets as (name, label) tuples."""
         return [(w.name, w.label) for w in self.config.widgets]
 
-    def get_backgrounds(self) -> list[tuple[str, str]]:
-        """Get available backgrounds as (name, label) tuples."""
-        return [(b.name, b.label) for b in self.config.backgrounds]
-
     def _get_working_item(self, menu_id: str, item_name: str) -> MenuItem | None:
         """Get item from working copy."""
-        if menu_id in self.working:
-            for item in self.working[menu_id].items:
-                if item.name == item_name:
-                    return item
-        return None
+        menu = self.working.get(menu_id)
+        return menu.get_item(item_name) if menu else None
+
+    def _default_item(self, menu_id: str, item_id: str) -> MenuItem | None:
+        """The skin default for an item, per-item submenu keys read from their template."""
+        default_menu = self.config.get_default_menu(menu_id)
+        if default_menu is None and "/" in menu_id:
+            default_menu = self._template_for_submenu_key(menu_id)
+        return default_menu.get_item(item_id) if default_menu else None
 
     def _ensure_working_menu(self, menu_id: str) -> Menu:
         """Ensure menu exists in working copy, create if needed."""
@@ -251,18 +247,7 @@ class MenuManager:
 
     def reset_item(self, menu_id: str, item_id: str) -> bool:
         """Reset an item to its skin default values."""
-        default_menu = self.config.get_default_menu(menu_id)
-        if default_menu is None and "/" in menu_id:
-            default_menu = self._template_for_submenu_key(menu_id)
-        if not default_menu:
-            return False
-
-        default_item = None
-        for item in default_menu.items:
-            if item.name == item_id:
-                default_item = item
-                break
-
+        default_item = self._default_item(menu_id, item_id)
         if not default_item:
             return False
 
@@ -288,22 +273,19 @@ class MenuManager:
 
         if "/" in menu_id:
             parent_name, _, item_name = menu_id.partition("/")
-            parent = self.working.get(parent_name)
-            if parent:
-                for item in parent.items:
-                    if item.name == item_name:
-                        template_name = self.submenu_template(item)
-                        template = self.config.get_default_menu(template_name)
-                        if template is not None:
-                            seeded = copy.deepcopy(template)
-                            seeded.name = menu_id
-                            self.working[menu_id] = seeded
-                        elif menu_id in self.working:
-                            self.working[menu_id].items.clear()
-                        else:
-                            self.working[menu_id] = Menu(name=menu_id, is_submenu=True)
-                        self._changed = True
-                        return True
+            item = self._get_working_item(parent_name, item_name)
+            if item:
+                template = self.config.get_default_menu(self.submenu_template(item))
+                if template is not None:
+                    seeded = copy.deepcopy(template)
+                    seeded.name = menu_id
+                    self.working[menu_id] = seeded
+                elif menu_id in self.working:
+                    self.working[menu_id].items.clear()
+                else:
+                    self.working[menu_id] = Menu(name=menu_id, is_submenu=True)
+                self._changed = True
+                return True
 
         if menu_id in self.working:
             self.working[menu_id].items.clear()
@@ -351,18 +333,7 @@ class MenuManager:
         if not working_item:
             return False
 
-        default_menu = self.config.get_default_menu(menu_id)
-        if default_menu is None and "/" in menu_id:
-            default_menu = self._template_for_submenu_key(menu_id)
-        if not default_menu:
-            return False
-
-        default_item = None
-        for item in default_menu.items:
-            if item.name == item_id:
-                default_item = item
-                break
-
+        default_item = self._default_item(menu_id, item_id)
         if not default_item:
             return False
 
@@ -449,14 +420,6 @@ class MenuManager:
     def set_submenu(self, menu_id: str, item_id: str, submenu: str | None) -> bool:
         """Set or clear the submenu template reference for an item."""
         return self._set_item_property(menu_id, item_id, "submenu", submenu)
-
-    def set_widget(self, menu_id: str, item_id: str, widget: str | None) -> bool:
-        """Set the widget for an item."""
-        return self.set_custom_property(menu_id, item_id, "widget", widget)
-
-    def set_background(self, menu_id: str, item_id: str, background: str | None) -> bool:
-        """Set the background for an item."""
-        return self.set_custom_property(menu_id, item_id, "background", background)
 
     def set_disabled(self, menu_id: str, item_id: str, disabled: bool) -> bool:
         """Set the disabled state for an item."""
@@ -586,14 +549,8 @@ class MenuManager:
     def _template_for_submenu_key(self, key: str) -> Menu | None:
         """Resolve the submenu template a per-item working key was seeded from."""
         parent_name, _, item_name = key.partition("/")
-        parent = self.working.get(parent_name)
-        if not parent:
-            return None
-        for item in parent.items:
-            if item.name == item_name:
-                template_name = self.submenu_template(item)
-                return self.config.get_default_menu(template_name)
-        return None
+        item = self._get_working_item(parent_name, item_name)
+        return self.config.get_default_menu(self.submenu_template(item)) if item else None
 
     def _diff_menu(self, working: Menu, default: Menu | None) -> MenuOverride | None:
         """Generate diff for a single menu."""

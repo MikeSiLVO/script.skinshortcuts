@@ -67,10 +67,6 @@ Routes by `content.source`:
 
 For `addons`, both JSON-RPC content values and Kodi window names are accepted (e.g., `audio` or `music` both work).
 
-### clear_cache()
-
-Clear internal cache.
-
 ***
 
 ## Internal Methods

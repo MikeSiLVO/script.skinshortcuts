@@ -245,13 +245,6 @@ class SkinConfig:
                 return menu
         return None
 
-    def get_subdialog(self, button_id: int) -> SubDialog | None:
-        """Get subdialog definition by button ID."""
-        for subdialog in self.subdialogs:
-            if subdialog.button_id == button_id:
-                return subdialog
-        return None
-
     def build_includes(self, output_path: str | Path) -> None:
         """Build and write includes.xml (including templates if present)."""
         self.build_includes_from_menus(output_path, self.menus)

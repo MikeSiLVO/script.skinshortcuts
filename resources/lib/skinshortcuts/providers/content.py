@@ -205,10 +205,6 @@ class ContentProvider:
                 r.icon = self._icon_overrides.get(r.icon, r.icon)
         return result
 
-    def clear_cache(self) -> None:
-        """Clear the content cache."""
-        self._cache.clear()
-
     def _resolve_sources(self, target: str) -> list[ResolvedShortcut]:
         """Resolve media sources; an empty target defaults to video."""
         cache_key = f"sources_{target}"

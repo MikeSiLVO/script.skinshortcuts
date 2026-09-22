@@ -553,7 +553,3 @@ class ItemsMixin:
                     listitem = self._get_selected_listitem()
                     if listitem:
                         listitem.setProperty(rel_prop_name, "")
-
-    def _edit_submenu(self) -> None:
-        """Edit submenu - implemented by SubdialogsMixin."""
-        raise NotImplementedError

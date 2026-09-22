@@ -81,10 +81,6 @@ class PropertySchema:
         """Get property by name."""
         return self.properties.get(name)
 
-    def get_button(self, button_id: int) -> ButtonMapping | None:
-        """Get button mapping by ID."""
-        return self.buttons.get(button_id)
-
     def get_property_for_button(
         self, button_id: int
     ) -> tuple[SchemaProperty | None, ButtonMapping | None]:
