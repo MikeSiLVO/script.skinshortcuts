@@ -16,6 +16,7 @@ try:
 except ImportError:
     IN_KODI = False
 
+from .conditions import check_visible
 from .constants import DEFAULT_ICON
 from .log import get_logger
 from .models.menu import Action, IconOverrides, Menu, MenuItem
@@ -220,15 +221,6 @@ def save_userdata(userdata: UserData, path: str | None = None) -> bool:
         return False
 
 
-def _check_dialog_visible(condition: str) -> bool:
-    """Check if a Kodi visibility condition passes for dialog filtering."""
-    if not condition:
-        return True
-    if not IN_KODI:
-        return True
-    return xbmc.getCondVisibility(condition)
-
-
 def merge_menu(
     default_menu: Menu, override: MenuOverride | None,
     icon_overrides: IconOverrides | None = None,
@@ -238,7 +230,7 @@ def merge_menu(
         # No user customization - filter by dialog_visible
         filtered_items = [
             item for item in default_menu.items
-            if _check_dialog_visible(item.dialog_visible)
+            if check_visible(item.dialog_visible)
         ]
         return Menu(
             name=default_menu.name,
@@ -262,7 +254,7 @@ def merge_menu(
     for item in default_menu.items:
         if item.name in override.removed and not item.required:
             continue
-        if item.dialog_visible and not _check_dialog_visible(item.dialog_visible):
+        if item.dialog_visible and not check_visible(item.dialog_visible):
             continue
         items.append(item)
 

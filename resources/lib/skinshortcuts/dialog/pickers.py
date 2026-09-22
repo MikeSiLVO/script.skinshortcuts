@@ -16,15 +16,6 @@ except ImportError:
     IN_KODI = False
 
 
-def _check_visible(visible: str) -> bool:
-    """Check a Kodi visibility condition; empty passes."""
-    if not visible:
-        return True
-    if not IN_KODI:
-        return True
-    return xbmc.getCondVisibility(visible)
-
-
 from ..constants import (
     ADDONS_SOURCE_MAP,
     TARGET_MAP,
@@ -32,7 +23,7 @@ from ..constants import (
     extract_path_from_action,
     extract_window_from_action,
 )
-from ..conditions import evaluate_condition
+from ..conditions import check_visible, evaluate_condition
 from ..loaders.menu import load_groupings
 from ..localize import LANGUAGE, resolve_label
 from ..log import get_logger
@@ -112,7 +103,7 @@ def _group_count(
     """Rows a group will show; empty when a content element cannot be counted."""
     total = 0
     for child in getattr(item, "items", []):
-        if not _check_visible(getattr(child, "visible", "")):
+        if not check_visible(getattr(child, "visible", "")):
             continue
         condition = getattr(child, "condition", "")
         if condition and not evaluate_condition(condition, item_props):
@@ -953,7 +944,7 @@ class PickersMixin:
             if isinstance(item, Content):
                 if item.condition and not evaluate_condition(item.condition, item_props):
                     continue
-                if item.visible and not _check_visible(item.visible):
+                if item.visible and not check_visible(item.visible):
                     continue
                 if content_resolver:
                     start = time.monotonic()
@@ -982,7 +973,7 @@ class PickersMixin:
                         if resolved:
                             visible_items.extend(resolved)
             elif isinstance(item, (Input, *leaf_types, *group_types)):
-                if not _check_visible(getattr(item, "visible", "")):
+                if not check_visible(getattr(item, "visible", "")):
                     continue
                 condition = getattr(item, "condition", "")
                 if condition and not evaluate_condition(condition, item_props):

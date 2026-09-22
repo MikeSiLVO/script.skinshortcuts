@@ -4,6 +4,13 @@ from __future__ import annotations
 
 import re
 
+try:
+    import xbmc
+
+    IN_KODI = True
+except ImportError:
+    IN_KODI = False
+
 _CONDITION_MATCH_PATTERN = re.compile(r"^(!?)([a-zA-Z_][a-zA-Z0-9_\.]*)(=|~)(.*)$")
 
 # Keyword to symbol mappings (applied with word boundaries)
@@ -249,3 +256,10 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
     else:
         result = bool(val)
     return not result if negated else result
+
+
+def check_visible(condition: str) -> bool:
+    """Check a Kodi visibility condition; empty passes, as does anything outside Kodi."""
+    if not condition or not IN_KODI:
+        return True
+    return xbmc.getCondVisibility(condition)

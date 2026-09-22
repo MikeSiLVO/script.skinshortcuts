@@ -6,6 +6,7 @@ import copy
 import uuid
 from pathlib import Path
 
+from .conditions import check_visible
 from .config import SkinConfig
 from .localize import resolve_label
 from .log import get_logger
@@ -15,7 +16,6 @@ from .userdata import (
     MenuItemOverride,
     MenuOverride,
     UserData,
-    _check_dialog_visible,
     save_userdata,
 )
 
@@ -365,7 +365,7 @@ class MenuManager:
         for item in default_menu.items:
             if item.name in working_names:
                 continue
-            if item.dialog_visible and not _check_dialog_visible(item.dialog_visible):
+            if item.dialog_visible and not check_visible(item.dialog_visible):
                 continue
             removed.append(item)
         return removed
@@ -571,7 +571,7 @@ class MenuManager:
         for name, default_item in default_items.items():
             if name not in working_items:
                 # Skip items filtered by dialog_visible - they weren't user-removed
-                if default_item.dialog_visible and not _check_dialog_visible(
+                if default_item.dialog_visible and not check_visible(
                     default_item.dialog_visible
                 ):
                     continue
