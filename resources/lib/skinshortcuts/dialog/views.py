@@ -316,14 +316,13 @@ def _get_video_addons() -> list[tuple[str, str]]:
         },
     }
 
-    response = xbmc.executeJSONRPC(json.dumps(request))
-    data = json.loads(response)
+    try:
+        response = json.loads(xbmc.executeJSONRPC(json.dumps(request)))
+    except (ValueError, TypeError):
+        return []
 
-    addons = []
-    if "result" in data and "addons" in data["result"]:
-        for addon in data["result"]["addons"]:
-            addons.append((addon["addonid"], addon["name"]))
-
+    found = (response.get("result") or {}).get("addons") or []
+    addons = [(addon["addonid"], addon["name"]) for addon in found]
     return sorted(addons, key=lambda x: x[1].lower())
 
 
