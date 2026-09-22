@@ -143,10 +143,7 @@ def _browse_source_menu(
         for content in config.content_rules:
             current_view = userdata.get_view(source, content.name)
 
-            if source == "library":
-                default_id = content.library_default
-            else:
-                default_id = content.plugin_default or content.library_default
+            default_id = content.get_default(is_plugin=source != "library")
 
             view_id = current_view or default_id
             view_label = ""
@@ -181,7 +178,7 @@ def _browse_plugins_menu(config: ViewConfig, userdata: UserData) -> bool:
 
         for content in config.content_rules:
             current_view = userdata.get_view("plugins", content.name)
-            default_id = content.plugin_default or content.library_default
+            default_id = content.get_default(is_plugin=True)
 
             view_id = current_view or default_id
             view_label = ""
@@ -265,12 +262,12 @@ def _pick_view_for_content(
     current_view = userdata.get_view(source, content.name)
 
     if source == "library":
-        default_view = content.library_default
+        default_view = content.get_default(is_plugin=False)
     elif source == "plugins":
-        default_view = content.plugin_default or content.library_default
+        default_view = content.get_default(is_plugin=True)
     else:
         generic_view = userdata.get_view("plugins", content.name)
-        default_view = generic_view or content.plugin_default or content.library_default
+        default_view = generic_view or content.get_default(is_plugin=True)
 
     preselect = -1
     items = []
