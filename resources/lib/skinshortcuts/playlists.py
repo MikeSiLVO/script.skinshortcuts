@@ -127,6 +127,23 @@ def unpack_multipath(path: str) -> list[str]:
     return [unquote(part) for part in path[len(prefix):].split("/") if part]
 
 
+def parse_smart_playlist(path: str) -> tuple[str, str]:
+    """Parse a smart playlist (.xsp file) for name and type; empty strings when unreadable."""
+    import xml.etree.ElementTree as ET
+
+    try:
+        f = xbmcvfs.File(path)
+        try:
+            content = f.read()
+        finally:
+            f.close()
+        root = ET.fromstring(content)
+    except Exception as e:
+        log.debug(f"Unreadable playlist {path}: {e}")
+        return "", ""
+    return root.findtext("name") or "", root.get("type") or ""
+
+
 def build_smartplaylist_xml(
     media_type: str,
     name: str,

@@ -10,7 +10,7 @@ import xbmc
 import xbmcvfs
 
 from ..log import get_logger
-from ..playlists import playlists_base_path, unpack_multipath
+from ..playlists import parse_smart_playlist, playlists_base_path, unpack_multipath
 from .browse import normalize_image
 
 if TYPE_CHECKING:
@@ -313,7 +313,8 @@ class ContentProvider:
             playlist_type = ""
 
             if filepath.endswith(".xsp"):
-                playlist_type, playlist_name = self._parse_smart_playlist(filepath)
+                playlist_name, playlist_type = parse_smart_playlist(filepath)
+                playlist_type = playlist_type or "unknown"
                 if playlist_name:
                     display_label = playlist_name
                 if playlist_type in music_types:
@@ -342,25 +343,6 @@ class ContentProvider:
             )
 
         return shortcuts
-
-    def _parse_smart_playlist(self, filepath: str) -> tuple[str, str]:
-        """Parse a smart playlist (.xsp file) for type and name."""
-        try:
-            f = xbmcvfs.File(filepath)
-            try:
-                content = f.read()
-            finally:
-                f.close()
-
-            import xml.etree.ElementTree as ET
-
-            root = ET.fromstring(content)
-            playlist_type = root.get("type") or "unknown"
-            name_elem = root.find("name")
-            name = name_elem.text if name_elem is not None and name_elem.text else ""
-            return playlist_type, name
-        except Exception:
-            return "unknown", ""
 
     def _resolve_addons(self, target: str) -> list[ResolvedShortcut]:
         """Resolve installed addons by content type. Empty target defaults to video."""
