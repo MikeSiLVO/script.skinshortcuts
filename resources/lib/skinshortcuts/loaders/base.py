@@ -6,12 +6,15 @@ import re
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable, Iterator
 from pathlib import Path
+from typing import TypeVar
 
 from ..exceptions import ConfigError
 from ..log import get_logger, notify
 from ..models.override import Override
 
 log = get_logger("loaders.base")
+
+T = TypeVar("T")
 
 NO_SUFFIX_PROPERTIES = frozenset({
     "name",
@@ -154,10 +157,10 @@ def warn_duplicate_names(names: Iterable[str], kind: str, path: str, scope: str 
         seen.add(name)
 
 
-def leaf_names(items: Iterable, leaf_type: type, group_type: type) -> Iterator[str]:
-    """Every leaf name in a picker hierarchy, nested groups included."""
+def iter_leaves(items: Iterable, leaf_type: type[T], group_type: type) -> Iterator[T]:
+    """Every leaf in a picker hierarchy in document order, nested groups included."""
     for item in items:
         if isinstance(item, group_type):
-            yield from leaf_names(item.items, leaf_type, group_type)
+            yield from iter_leaves(item.items, leaf_type, group_type)
         elif isinstance(item, leaf_type):
-            yield item.name
+            yield item

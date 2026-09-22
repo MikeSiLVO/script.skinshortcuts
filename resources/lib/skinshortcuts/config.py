@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import copy
 from dataclasses import dataclass, field
+from itertools import chain
 from pathlib import Path
 
 from .builders.includes import IncludesBuilder
 from .loaders.background import load_backgrounds
+from .loaders.base import iter_leaves
 from .loaders.menu import load_menus
 from .loaders.property import load_properties
 from .loaders.template import load_templates
@@ -20,7 +22,7 @@ from .models.override import Override
 from .models.property import PropertySchema
 from .models.template import TemplateSchema
 from .models.views import ViewConfig
-from .models.widget import Widget, WidgetConfig
+from .models.widget import Widget, WidgetConfig, WidgetGroup
 from .userdata import (
     UserData,
     _create_item_from_override,
@@ -186,50 +188,14 @@ class SkinConfig:
         )
 
     def get_widget(self, widget_name: str) -> Widget | None:
-        """Get widget by name."""
-        for widget in self.widgets:
-            if widget.name == widget_name:
-                return widget
-
-        return self._find_widget_in_groupings(widget_name, self.widget_groupings)
-
-    def _find_widget_in_groupings(self, widget_name: str, groups: list) -> Widget | None:
-        """Recursively search for a widget within groupings."""
-        from .models.widget import WidgetGroup
-
-        for group in groups:
-            if not isinstance(group, WidgetGroup):
-                continue
-            for item in group.items:
-                if isinstance(item, Widget) and item.name == widget_name:
-                    return item
-                if isinstance(item, WidgetGroup):
-                    result = self._find_widget_in_groupings(widget_name, [item])
-                    if result:
-                        return result
-        return None
+        """Get widget by name, top level first, then nested in groupings."""
+        nested = iter_leaves(self.widget_groupings, Widget, WidgetGroup)
+        return next((w for w in chain(self.widgets, nested) if w.name == widget_name), None)
 
     def get_background(self, bg_name: str) -> Background | None:
-        """Get background by name."""
-        for bg in self.backgrounds:
-            if bg.name == bg_name:
-                return bg
-
-        return self._find_background_in_groupings(bg_name, self.background_groupings)
-
-    def _find_background_in_groupings(self, bg_name: str, groups: list) -> Background | None:
-        """Recursively search for a background within groupings."""
-        for group in groups:
-            if not isinstance(group, BackgroundGroup):
-                continue
-            for item in group.items:
-                if isinstance(item, Background) and item.name == bg_name:
-                    return item
-                if isinstance(item, BackgroundGroup):
-                    result = self._find_background_in_groupings(bg_name, [item])
-                    if result:
-                        return result
-        return None
+        """Get background by name, top level first, then nested in groupings."""
+        nested = iter_leaves(self.background_groupings, Background, BackgroundGroup)
+        return next((b for b in chain(self.backgrounds, nested) if b.name == bg_name), None)
 
     def get_menu(self, menu_name: str) -> Menu | None:
         """Get menu by name."""

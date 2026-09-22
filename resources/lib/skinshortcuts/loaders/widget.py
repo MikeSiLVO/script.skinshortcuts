@@ -14,7 +14,7 @@ from .base import (
     get_bool,
     get_int,
     get_text,
-    leaf_names,
+    iter_leaves,
     parse_content,
     parse_name_overrides,
     parse_xml,
@@ -49,7 +49,8 @@ def load_widgets(path: str | Path) -> WidgetConfig:
             if content:
                 groupings.append(content)
 
-    warn_duplicate_names(leaf_names(groupings, Widget, WidgetGroup), "widget", str(path))
+    names = (w.name for w in iter_leaves(groupings, Widget, WidgetGroup))
+    warn_duplicate_names(names, "widget", str(path))
 
     return WidgetConfig(
         widgets=widgets,

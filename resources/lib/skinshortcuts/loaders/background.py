@@ -18,7 +18,7 @@ from .base import (
     get_attr,
     get_bool,
     get_text,
-    leaf_names,
+    iter_leaves,
     parse_content,
     parse_name_overrides,
     parse_xml,
@@ -72,7 +72,9 @@ def load_backgrounds(
                 groupings.append(group)
 
     warn_duplicate_names(
-        leaf_names(groupings, Background, BackgroundGroup), "background", str(path)
+        (b.name for b in iter_leaves(groupings, Background, BackgroundGroup)),
+        "background",
+        str(path),
     )
 
     return BackgroundConfig(

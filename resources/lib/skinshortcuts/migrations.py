@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+from itertools import chain
 from typing import Any
 
+from .loaders.base import iter_leaves
 from .log import get_logger
 from .models.background import Background, BackgroundConfig, BackgroundGroup
 from .models.override import Override
@@ -39,15 +40,10 @@ def apply_overrides(
     known_properties = set(property_schema.properties) | {
         b.property_name for b in property_schema.buttons.values() if b.property_name
     }
-    known_widgets = {
-        w.name: w for w in _leaves(widgets.widgets, widgets.groupings, Widget, WidgetGroup)
-    }
-    known_backgrounds = {
-        b.name: b
-        for b in _leaves(
-            backgrounds.backgrounds, backgrounds.groupings, Background, BackgroundGroup
-        )
-    }
+    known_widgets = _by_name(widgets.widgets, widgets.groupings, Widget, WidgetGroup)
+    known_backgrounds = _by_name(
+        backgrounds.backgrounds, backgrounds.groupings, Background, BackgroundGroup
+    )
 
     plan = (
         [(o, "property", known_properties) for o in property_schema.overrides]
@@ -112,16 +108,12 @@ def _apply_one(userdata: UserData, override: Override, kind: str, known: Any) ->
     return count
 
 
-def _leaves(flat: list, groupings: list, leaf_type: type, group_type: type) -> Iterator[Any]:
-    """Every leaf, top level and nested inside groups."""
-    yield from flat
-    stack = list(groupings)
-    while stack:
-        node = stack.pop()
-        if isinstance(node, group_type):
-            stack.extend(node.items)
-        elif isinstance(node, leaf_type):
-            yield node
+def _by_name(flat: list, groupings: list, leaf_type: type, group_type: type) -> dict[str, Any]:
+    """Leaves by name, top level first; a repeated name keeps its first."""
+    known: dict[str, Any] = {}
+    for leaf in chain(flat, iter_leaves(groupings, leaf_type, group_type)):
+        known.setdefault(leaf.name, leaf)
+    return known
 
 
 def _slot_keys(properties: dict[str, str], name: str) -> list[str]:
