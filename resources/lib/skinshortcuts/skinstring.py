@@ -51,12 +51,12 @@ class _StandalonePicker(PickersMixin):
         pass
 
     def _log(self, msg: str) -> None:
-        """Send picker logging to this module's logger."""
+        """Log through this module's logger."""
         log.debug(msg)
 
 
 def pick_widget_skinstring(shortcuts_path: str, params: dict[str, str]) -> None:
-    """Open widget picker and store result in skin strings."""
+    """Pick a widget and store the result in skin strings."""
     if not IN_KODI:
         return
 

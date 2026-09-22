@@ -28,11 +28,7 @@ _PROPERTY_PATTERN = re.compile(r"([a-zA-Z_][a-zA-Z0-9_\.]*)([=~])")
 
 
 def apply_suffix_transform(text: str, suffix: str) -> str:
-    """Apply suffix transform to property names in conditions/from attributes.
-
-    Transforms property names (before = or ~) but not values.
-    Skips properties in NO_SUFFIX_PROPERTIES.
-    """
+    """Apply a suffix to the property names in a condition, leaving the values alone."""
     if not suffix or not text:
         return text
 
@@ -47,12 +43,7 @@ def apply_suffix_transform(text: str, suffix: str) -> str:
 
 
 def apply_suffix_to_from(from_value: str, suffix: str) -> str:
-    """Apply suffix to a from attribute value.
-
-    E.g., "widgetPath" -> "widgetPath.2"
-
-    Skips built-ins like index, name, menu, id.
-    """
+    """Apply a suffix to a from attribute value, except for the built-in sources."""
     if not suffix or not from_value:
         return from_value
 
@@ -116,7 +107,6 @@ def get_bool(elem: ET.Element, attr: str, default: bool = False) -> bool:
 
 def parse_content(elem: ET.Element):
     """Parse a content reference element."""
-    # Import here to avoid circular dependency
     from ..models.menu import Content
 
     source = get_attr(elem, "source")

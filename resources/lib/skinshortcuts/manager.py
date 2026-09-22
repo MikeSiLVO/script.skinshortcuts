@@ -31,13 +31,9 @@ def _is_derived(derived: dict[str, str], key: str, value: str) -> bool:
 
 
 class MenuManager:
-    """Manages menu operations with working copy and diff-based save.
-
-    Edits land in the working copy; save diffs it against defaults for minimal userdata.
-    """
+    """Manages menu edits in a working copy, saved as a minimal diff against the defaults."""
 
     def __init__(self, shortcuts_path: str | Path, userdata_path: str | None = None):
-        """Initialize manager."""
         self.shortcuts_path = Path(shortcuts_path)
         self.userdata_path = userdata_path
 
@@ -57,10 +53,7 @@ class MenuManager:
         self._changed = False
 
     def _referenced_submenu_templates(self) -> set[str]:
-        """Set of submenu template names referenced by any item (defaults or userdata).
-
-        Referenced ones seed per-item copies; the rest stay under their template name.
-        """
+        """Set of submenu template names any item references, the seeds for per-item copies."""
         referenced: set[str] = set()
         for menu in self.config.default_menus:
             for item in menu.items:
@@ -120,7 +113,7 @@ class MenuManager:
         return item.submenu or ""
 
     def ensure_item_submenu(self, parent_menu_name: str, item: MenuItem) -> Menu:
-        """Return the per-item submenu, seeding from template on first access."""
+        """Ensure the item has its own submenu, seeded from the template on first access."""
         key = self.submenu_key(parent_menu_name, item.name)
         if key not in self.working:
             template_name = self.submenu_template(item)
@@ -135,10 +128,7 @@ class MenuManager:
         return self.working[key]
 
     def drop_per_item_submenu(self, parent_menu_name: str, item_name: str) -> None:
-        """Discard the per-item submenu so the next access reseeds from the template.
-
-        Needed when the item's shortcut or submenu reference changes.
-        """
+        """Discard the per-item submenu so the next access reseeds from the template."""
         key = self.submenu_key(parent_menu_name, item_name)
         if key in self.working:
             del self.working[key]
@@ -231,7 +221,7 @@ class MenuManager:
         return new_item
 
     def _item_name_exists(self, menu: Menu, name: str) -> bool:
-        """Check if an item name already exists in a menu."""
+        """Whether an item name already exists in a menu."""
         return any(item.name == name for item in menu.items)
 
     def remove_item(self, menu_id: str, item_id: str) -> bool:
@@ -356,7 +346,7 @@ class MenuManager:
         return changed
 
     def is_item_modified(self, menu_id: str, item_id: str) -> bool:
-        """Check if an item differs from its skin default."""
+        """Whether an item differs from its skin default."""
         working_item = self._get_working_item(menu_id, item_id)
         if not working_item:
             return False
@@ -410,7 +400,7 @@ class MenuManager:
         return removed
 
     def has_removed_items(self, menu_id: str) -> bool:
-        """Check if menu has removed items that can be restored."""
+        """Whether the menu has removed items that can be restored."""
         return bool(self.get_removed_items(menu_id))
 
     def move_item(self, menu_id: str, item_id: str, direction: int) -> bool:
@@ -507,7 +497,7 @@ class MenuManager:
         return True
 
     def has_changes(self) -> bool:
-        """Check if there are unsaved changes."""
+        """Whether there are unsaved changes."""
         return self._changed
 
     def save(self) -> bool:

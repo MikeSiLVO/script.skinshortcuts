@@ -23,10 +23,7 @@ if TYPE_CHECKING:
 
 
 class SubdialogsMixin:
-    """Mixin providing subdialog management - submenu editing, widget slots.
-
-    Requires DialogBaseMixin first.
-    """
+    """Mixin providing subdialog management - submenu editing, widget slots."""
 
     menu_id: str
     shortcuts_path: str
@@ -51,7 +48,7 @@ class SubdialogsMixin:
         def clearProperty(self, key: str) -> None: ...
 
     def _run_child_dialog(self, menu_id: str, dialog_mode: str = "", **kwargs) -> None:
-        """Create, run, and clean up a child ManagementDialog."""
+        """Run a child ManagementDialog modally, sharing this dialog's loaded objects."""
         if self.manager and menu_id not in self.manager.working:
             self.manager._ensure_working_menu(menu_id)
 
@@ -80,12 +77,7 @@ class SubdialogsMixin:
         self.clearProperty("additionalDialog")
 
     def _edit_submenu(self) -> None:
-        """Spawn child dialog to edit submenu for selected item.
-
-        Context-aware: checks the submenu's type attribute to determine behavior.
-        - type="widgets" → widget picker mode, requires allow.widgets
-        - no type → shortcut picker mode, requires allow.submenus
-        """
+        """Spawn a child dialog for the item's submenu, widget or shortcut mode by its type."""
         item = self._get_selected_item()
         if not item:
             return
@@ -113,11 +105,7 @@ class SubdialogsMixin:
         self._run_child_dialog(submenu_id, "widgets" if is_widget_submenu else "")
 
     def _spawn_subdialog(self, subdialog: SubDialog) -> None:
-        """Spawn a child dialog for a subdialog definition.
-
-        If subdialog has `menu` but no `mode`, opens the menu directly.
-        Otherwise opens the subdialog, and after it closes, evaluates onclose actions.
-        """
+        """Spawn a subdialog, then run its onclose actions; a menu-only one just opens the menu."""
         item = self._get_selected_item()
         if not item:
             return
@@ -136,11 +124,7 @@ class SubdialogsMixin:
             self._handle_onclose(subdialog, item)
 
     def _handle_onclose(self, subdialog: SubDialog, item: MenuItem) -> None:
-        """Handle onclose actions after a subdialog closes.
-
-        Evaluates each onclose action's condition against the current item state.
-        The first matching action is executed.
-        """
+        """Handle a closed subdialog's onclose actions, running the first whose condition holds."""
         if not self.manager:
             return
 
@@ -164,12 +148,7 @@ class SubdialogsMixin:
     def _resolve_menu_reference(
         self, menu_ref: str, item: MenuItem, subdialog: SubDialog
     ) -> str:
-        """Resolve a menu reference from an onclose action.
-
-        Handles special placeholders:
-        - {customWidget} or {customWidget.N} - get/create custom widget menu
-        - {item}.X - legacy format, converted to explicit reference
-        """
+        """Resolve an onclose menu reference, creating a custom widget menu the first time."""
         if not self.manager:
             return ""
 
@@ -191,7 +170,6 @@ class SubdialogsMixin:
 
             return menu_id
 
-        # Handle legacy {item}.customwidget format - convert to explicit reference
         if "{item}" in menu_ref and ".customwidget" in menu_ref:
             resolved = menu_ref.replace("{item}", item.name)
             suffix = ""

@@ -327,10 +327,7 @@ class IncludesBuilder:
         ]
 
     def _widget_submenu_for_item(self, item: MenuItem) -> Menu | None:
-        """The item's widgets submenu, found via a {item}.X subdialog ref.
-
-        Matched by widget content, not menu_type; runtime submenus have none.
-        """
+        """The item's widgets submenu, found by widget content since runtime ones have no type."""
         cw_ids = {
             value
             for key, value in item.properties.items()
@@ -368,7 +365,7 @@ class IncludesBuilder:
         return paths
 
     def _get_all_actions(self, exclude: set[str]) -> set[str]:
-        """Collect all item actions (lowercased) from menus not in exclude set."""
+        """Get all item actions (lowercased) from menus not in exclude set."""
         actions: set[str] = set()
         for menu in self.menus:
             if menu.name in exclude:
@@ -394,17 +391,14 @@ class IncludesBuilder:
 
     @staticmethod
     def _add_property(parent: ET.Element, name: str, value: str) -> None:
-        """Append a property element, skipping empty values."""
+        """Add a property element, skipping empty values."""
         if value:
             prop = ET.SubElement(parent, "property")
             prop.set("name", name)
             prop.text = value
 
     def write(self, path: str | Path, indent: bool = True) -> None:
-        """Write includes XML to file.
-
-        Binary handle so ElementTree writes LF; given a filename Windows gets CRLF.
-        """
+        """Write includes XML to file through a binary handle, so ElementTree writes LF not CRLF."""
         root = self.build()
         if indent:
             _indent_xml(root)

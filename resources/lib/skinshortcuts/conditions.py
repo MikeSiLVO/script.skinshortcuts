@@ -1,28 +1,4 @@
-"""Condition evaluation utilities for Skin Shortcuts.
-
-Evaluates property conditions using a simple expression language:
-
-Operators (symbol and keyword forms):
-- Equality: propertyName=value or propertyName EQUALS value
-- Contains: propertyName~value or propertyName CONTAINS value
-- Empty check: propertyName EMPTY
-- List membership: propertyName IN value1,value2,value3
-- AND: condition1 + condition2 or condition1 AND condition2
-- OR: condition1 | condition2 or condition1 OR condition2
-- NOT: !condition or NOT condition
-- Grouping: [condition1 | condition2]
-- Compact OR: propertyName=value1 | value2 | value3
-
-Compact OR Notes:
-    The property name cascades from the most recent full condition:
-        prop=a | other=b | c  ->  prop=a | other=b | other=c
-
-Negation Precedence:
-    Negation applies to the adjacent condition only:
-        !prop=a | b  ->  (!prop=a) | (prop=b)
-    For group negation, use brackets:
-        ![prop=a | b]  ->  !(prop=a | prop=b)
-"""
+"""Condition evaluation utilities for Skin Shortcuts."""
 
 from __future__ import annotations
 
@@ -41,22 +17,14 @@ _KEYWORD_REPLACEMENTS = [
 
 
 def _normalize_keywords(condition: str) -> str:
-    """Convert keyword operators to symbol equivalents.
-
-    Converts: AND->+, OR->|, NOT->!, EQUALS->=, CONTAINS->~
-    Uses word boundaries to avoid replacing within values.
-    """
+    """Normalize keyword operators (AND, OR, NOT, EQUALS, CONTAINS) to their symbols."""
     for pattern, replacement in _KEYWORD_REPLACEMENTS:
         condition = pattern.sub(replacement, condition)
     return condition
 
 
 def expand_compact_or(condition: str) -> str:
-    """Expand compact OR syntax to full form.
-
-    "widgetType=movies | episodes | tvshows" becomes
-    "widgetType=movies | widgetType=episodes | widgetType=tvshows"
-    """
+    """Expand compact OR syntax, so "a=x | y" becomes "a=x | a=y"."""
     if not condition:
         return condition
 
@@ -162,7 +130,6 @@ def evaluate_condition(condition: str, properties: dict[str, str]) -> bool:
     if not condition:
         return True
 
-    # Convert keywords to symbols (AND->+, OR->|, etc.)
     condition = _normalize_keywords(condition)
 
     if "|" in condition:
@@ -171,7 +138,7 @@ def evaluate_condition(condition: str, properties: dict[str, str]) -> bool:
 
 
 def _is_wrapped_in_brackets(text: str) -> bool:
-    """Check if text is wrapped in matching brackets (not just starts/ends with them)."""
+    """Whether text is wrapped in matching brackets (not just starts/ends with them)."""
     if not text.startswith("[") or not text.endswith("]"):
         return False
     depth = 0
@@ -233,14 +200,12 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
         result = _evaluate_expanded(condition[1:-1], properties)
         return not result if negated else result
 
-    # EMPTY operator: propertyName EMPTY
     if condition.endswith(" EMPTY"):
         prop_name = condition[:-6].strip()
         actual = properties.get(prop_name, "")
         result = actual == ""
         return not result if negated else result
 
-    # IN operator: propertyName IN value1,value2,value3
     if " IN " in condition:
         prop_name, values_str = condition.split(" IN ", 1)
         prop_name = prop_name.strip()
@@ -254,7 +219,6 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
         prop_name, value = condition.split("=", 1)
         prop_name = prop_name.strip()
         value = value.strip()
-        # Check if left side is a property name or a literal value
         if prop_name in properties:
             actual = properties[prop_name]
         elif prop_name.lower() in ("true", "false"):

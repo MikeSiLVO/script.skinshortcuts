@@ -174,11 +174,7 @@ def _parse_enable_on(value: str) -> list[int]:
 
 
 def _parse_submenu_path(root) -> bool:
-    """Parse the global submenuPath setting from <submenuPath>.
-
-    Returns True when set to "all": emit the numbered submenuPath.N tail for
-    every widget submenu. Off unless explicitly enabled.
-    """
+    """Parse <submenuPath>; True when "all" opts every widget submenu into the .N tail."""
     elem = root.find("submenuPath")
     if elem is None:
         return False
@@ -267,11 +263,7 @@ def _parse_overrides(root) -> list[Override]:
 
 
 def _parse_icon_overrides(root, _picker_sources: list[IconSource]) -> IconOverrides:
-    """Parse icon overrides from <overrides><icons>.
-
-    Source is opt-in, not inherited from the root <icons>, which is usually a flat icon
-    library rather than a substitution map.
-    """
+    """Parse icon overrides from <overrides><icons>; its source is opt-in, not the root <icons>."""
     overrides_elem = root.find("overrides")
     if overrides_elem is None:
         return IconOverrides()
@@ -511,10 +503,7 @@ def _parse_allow(elem) -> MenuAllow:
 def load_groupings(
     path: str | Path, menu_id: str = ""
 ) -> list[Shortcut | ShortcutGroup | Content | Input]:
-    """Load shortcut groupings from menus.xml file.
-
-    load_menus returns these inside the full MenuConfig; prefer it.
-    """
+    """Load shortcut groupings from a menus.xml file."""
     path = Path(path)
     if not path.exists():
         return []
@@ -650,7 +639,6 @@ def _parse_shortcut(
     shortcut_path = get_text(elem, "path") or ""
     browse = get_attr(elem, "browse") or ""
 
-    # Must have either action(s) or (browse + path)
     if not actions and not (browse and shortcut_path):
         return None
 

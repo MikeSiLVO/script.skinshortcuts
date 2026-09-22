@@ -281,6 +281,13 @@ propertyName=value1 | propertyName=value2 | propertyName=value3
 <option condition="widgetType=movies | widgetType=episodes | widgetType=tvshows">
 ```
 
+The property name comes from the most recent full condition, so a list written after a second property uses that one:
+
+```xml
+<!-- widgetType=movies, or widgetStyle=Panel, or widgetStyle=List -->
+<option condition="widgetType=movies | widgetStyle=Panel | List">
+```
+
 Each value is an OR term like any other, so AND still binds tighter. Bracket the list to apply an AND to the whole of it:
 
 ```xml

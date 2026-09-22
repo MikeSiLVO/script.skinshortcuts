@@ -275,11 +275,7 @@ class SkinConfig:
         builder.write(output_path)
 
     def derived_item_properties(self, item: MenuItem) -> dict[str, str]:
-        """Widget/background sub-properties derivable from the item's assigned names.
-
-        Covers numbered slots, so what the skin owns is recomputed rather than stored.
-        Labels stay in $LOCALIZE form so a language change reaches the menu.
-        """
+        """Widget/background sub-properties the item's names imply; labels stay $LOCALIZE."""
         derived: dict[str, str] = {}
 
         for key, name in item.properties.items():

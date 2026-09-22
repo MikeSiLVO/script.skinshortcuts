@@ -1,8 +1,4 @@
-"""Content provider for dynamic shortcut resolution.
-
-Resolves <content> elements to actual shortcuts at runtime by querying
-Kodi's JSON-RPC API and filesystem.
-"""
+"""Content provider, resolving <content> elements to shortcuts through JSON-RPC."""
 
 from __future__ import annotations
 
@@ -85,11 +81,7 @@ class ResolvedShortcut:
 
 
 def _expand_playlist_dirs(directory: str) -> list[str]:
-    """Expand a multipath alias to its component dirs; other dirs pass through.
-
-    Appending a filename to the alias itself won't open; on a component dir it
-    stays a resolvable special:// path.
-    """
+    """Expand a multipath alias to component dirs, since a filename appended to it won't open."""
     translated = xbmcvfs.translatePath(directory)
     if not translated.startswith("multipath://"):
         return [directory]
@@ -168,10 +160,7 @@ def library_node_type(path: str) -> str:
 
 
 def _collection(result: dict | None, key: str) -> list:
-    """Return result[key] as a list.
-
-    Kodi could return null, missing, or empty.
-    """
+    """Return result[key] as a list, whether Kodi sent null, nothing or an empty one."""
     if not result:
         return []
     return result.get(key) or []
@@ -186,10 +175,7 @@ class ContentProvider:
         self._icon_overrides = icon_overrides or {}
 
     def resolve(self, content: Content) -> list[ResolvedShortcut]:
-        """Resolve a content reference to a list of shortcuts.
-
-        The picker checks condition and visible before calling this.
-        """
+        """Resolve a content reference to a list of shortcuts."""
         source = content.source.lower()
         target = content.target.lower() if content.target else ""
 
@@ -224,7 +210,7 @@ class ContentProvider:
         self._cache.clear()
 
     def _resolve_sources(self, target: str) -> list[ResolvedShortcut]:
-        """Resolve media sources. Empty target defaults to video for backward compat."""
+        """Resolve media sources; an empty target defaults to video."""
         cache_key = f"sources_{target}"
         if cache_key in self._cache:
             return self._cache[cache_key]
@@ -317,11 +303,7 @@ class ContentProvider:
     def _scan_playlist_directory(
         self, directory: str, default_window: str, target: str = ""
     ) -> list[ResolvedShortcut]:
-        """Scan a directory for playlist files and convert to shortcuts.
-
-        `target` is the normalized form ("video", "music", or "") from
-        `_resolve_playlists`; unknown values are already rejected upstream.
-        """
+        """Scan a directory for playlist files and convert them to shortcuts."""
         shortcuts = []
         filter_video = target == "video"
         filter_music = target == "music"
@@ -675,12 +657,7 @@ class ContentProvider:
         return shortcuts
 
     def _collect_nodes_for_type(self, lib_type: str) -> list[ResolvedShortcut]:
-        """Collect top-level library nodes for a single library type.
-
-        Uses Kodi's Files.GetDirectory so user-customized nodes (via addons like
-        plugin.library.node.editor) are merged with system defaults, and hidden
-        nodes are excluded.
-        """
+        """Collect top-level library nodes for one library type, as the user has customized them."""
         is_music = lib_type == "music"
         media = "music" if is_music else "video"
         window = "music" if is_music else "videos"
@@ -864,10 +841,7 @@ class ContentProvider:
         return shortcuts
 
     def _get_video_directors(self, media_type: str) -> list[ResolvedShortcut]:
-        """Get directors from video library.
-
-        Episodes carry them, so a tvshow query goes through episodes.
-        """
+        """Get directors from the video library; episodes carry them, so tvshows query those."""
         if media_type == "movie":
             result = self._jsonrpc(
                 "VideoLibrary.GetMovies", {"properties": ["director"]}

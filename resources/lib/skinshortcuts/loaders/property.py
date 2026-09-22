@@ -1,7 +1,4 @@
-"""Property loader for Skin Shortcuts.
-
-Parses properties.xml with Kodi-style includes and suffix transforms.
-"""
+"""Property loader, parsing properties.xml with Kodi-style includes and suffix transforms."""
 
 from __future__ import annotations
 
@@ -97,11 +94,7 @@ class PropertyLoader:
     def _check_rename_buttons(
         self, properties: dict[str, SchemaProperty], buttons: dict[int, ButtonMapping]
     ) -> None:
-        """Log buttons where rename="true" is a no-op.
-
-        Effective type can come from either the button or the property, so this
-        runs once both are parsed rather than inside _parse_button.
-        """
+        """Check for buttons where rename="true" is a no-op, once buttons and properties are in."""
         for button in buttons.values():
             if not button.rename:
                 continue
@@ -170,7 +163,6 @@ class PropertyLoader:
         prop_type = (elem.get("type") or "").strip()  # "widget", "background", "toggle"
 
         requires = (elem.get("requires") or "").strip()
-        # Also support nested <requires> element for backwards compat during transition
         if not requires:
             requires_elem = elem.find("requires")
             if requires_elem is not None:

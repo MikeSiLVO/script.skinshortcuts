@@ -125,10 +125,7 @@ def _leaves(flat: list, groupings: list, leaf_type: type, group_type: type) -> I
 
 
 def _slot_keys(properties: dict[str, str], name: str) -> list[str]:
-    """The property key plus its numbered slots, so widget also covers widget.2.
-
-    The slot must be a number, or background.2Label would read as a slot of background.
-    """
+    """The property key plus its numbered slots."""
     return [k for k in properties if k == name or _slot_of(k, name).isdigit()]
 
 
@@ -140,7 +137,7 @@ def _slot_of(key: str, name: str) -> str:
 
 
 def _sibling_names(kind: str, key: str) -> list[str]:
-    """The baked keys the dialog writes beside a stored widget or background name."""
+    """The keys the dialog writes beside a stored widget or background name."""
     base, _, slot = key.partition(".")
     tail = f".{slot}" if slot else ""
     parts = BACKGROUND_SIBLINGS if kind == "background" else WIDGET_SIBLINGS
@@ -176,11 +173,7 @@ def _move_keys(item: MenuItemOverride, override: Override) -> int:
 
 
 def _stale_siblings(kind: str, key: str, element: Any) -> list[str]:
-    """Baked keys the new definition supplies again; a user-set label is not one of them.
-
-    A user's own path is stored under a picker-generated name no override matches, so a
-    slot naming a skin element only holds what the picker put there.
-    """
+    """Sibling keys the new definition supplies again; a user-set label is not one of them."""
     base, _, slot = key.partition(".")
     tail = f".{slot}" if slot else ""
 

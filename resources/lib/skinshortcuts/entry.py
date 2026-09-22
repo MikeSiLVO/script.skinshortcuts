@@ -79,11 +79,7 @@ def _warn_unsupported(marker: Path) -> None:
 
 
 def _skin_supported(shortcuts_path: str, *, menus_only: bool = False) -> bool:
-    """True if the skin has v3 config; otherwise warn (unless ignored) and return False.
-
-    Clears a stale ignore marker once the skin is supported.
-    menus_only: manage edits menus only; views.xml is a separate runscript.
-    """
+    """True if the skin has v3 config, clearing a stale ignore marker; else warn unless ignored."""
     path = Path(shortcuts_path)
     marker = _unsupported_marker()
     if (path / MENUS_FILE).exists() or (not menus_only and (path / VIEWS_FILE).exists()):
@@ -410,7 +406,6 @@ def main() -> None:
                     key, value = arg.split("=", 1)
                     _store(key, value)
 
-    # Pair props with values by position; unpaired prop defaults to "true" (boolean flag)
     window_props = {
         name: prop_values[i] if i < len(prop_values) else "true"
         for i, name in enumerate(prop_names)

@@ -39,7 +39,7 @@ def get_hash_file_path() -> str:
 
 
 def hash_file(path: str | Path) -> str | None:
-    """Generate MD5 hash for a file."""
+    """Hash a file with MD5; None when it cannot be read."""
     path = Path(path)
     if not path.exists():
         return None
@@ -124,7 +124,7 @@ def write_hashes(hashes: dict[str, str | None]) -> bool:
 
 
 def needs_rebuild(shortcuts_path: str | Path, output_paths: list[str] | None = None) -> bool:
-    """Check if menu needs to be rebuilt by comparing hashes."""
+    """Whether a config or output file's hash differs from the stored one, or none is stored."""
     stored = read_stored_hashes()
 
     if not stored:

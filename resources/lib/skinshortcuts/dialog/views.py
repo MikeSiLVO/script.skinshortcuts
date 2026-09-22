@@ -73,7 +73,7 @@ def _set_dialog_property(active: bool) -> None:
 
 
 def _browse_main_menu(config: ViewConfig, userdata: UserData) -> bool:
-    """Show the main browse menu."""
+    """Browse the main menu: library, plugins, and each plugin with overrides."""
     changed = False
 
     while True:
@@ -257,7 +257,7 @@ def _pick_view_for_content(
     content: ViewContent,
     source: str,
 ) -> bool:
-    """Show view picker dialog for a content type."""
+    """Pick a view for a content type from those its rule lists."""
     views = config.get_views_for_content(content.name)
     if not views:
         return False

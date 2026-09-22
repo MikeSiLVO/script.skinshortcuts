@@ -1,9 +1,4 @@
-"""Smart playlist (.xsp) generation for source shortcuts.
-
-Turns a Kodi source into a path-filtered library view (Movies, TV shows, Songs,
-...) instead of a plain file listing: write a smart playlist, point the shortcut
-at it.
-"""
+"""Smart playlist (.xsp) generation, turning a source shortcut into a library view."""
 
 from __future__ import annotations
 
@@ -28,11 +23,7 @@ DEFAULT_PLAYLISTS_PATH = "special://profile/playlists/"
 
 
 def _playlist_dir() -> str:
-    """Per-skin folder for generated source playlists.
-
-    addon_data is shared across skins, so playlists are namespaced by skin (like
-    {skin}.userdata.json) to avoid name clashes and keep the folder organised.
-    """
+    """Per-skin folder for generated source playlists; addon_data itself is shared."""
     return f"{DATA_DIR}{PLAYLISTS_SUBDIR}/{xbmc.getSkinDir()}/"
 
 
@@ -65,28 +56,21 @@ _PROBE_METHODS: dict[str, str] = {
 
 @dataclass(frozen=True)
 class DisplayOption:
-    """A choice in the source "Display..." dialog.
-
-    label_id is a Kodi core string when core=True, else an add-on string.
-    media_type empty = Files view (no playlist). exclude flips the path rule.
-    """
+    """A choice in the source "Display..." dialog."""
 
     label_id: int
-    core: bool
-    media_type: str
-    exclude: bool = False
+    core: bool  # label_id is a Kodi core string, else an add-on one
+    media_type: str  # empty = Files view, no playlist
+    exclude: bool = False  # flips the path rule
 
 
 @dataclass(frozen=True)
 class SortOption:
-    """A choice in the sort dialog (all labels are Kodi core strings).
-
-    field empty = no <order> (library default); direction empty for random/default.
-    """
+    """A choice in the sort dialog, all labels being Kodi core strings."""
 
     label_id: int
-    field: str
-    direction: str = ""
+    field: str  # empty = no <order>, so the library default
+    direction: str = ""  # empty for random or default
 
 
 FILES_VIEW = DisplayOption(32079, False, "")
@@ -136,10 +120,7 @@ SORT_OPTIONS: list[SortOption] = [
 
 
 def unpack_multipath(path: str) -> list[str]:
-    """Expand a multipath:// source into its real component folders.
-
-    A path rule matches real folders only; plain paths return as a single-item list.
-    """
+    """Expand a multipath:// source into the real folders a path rule can match."""
     prefix = "multipath://"
     if not path.startswith(prefix):
         return [path]
@@ -155,12 +136,8 @@ def build_smartplaylist_xml(
     sort_field: str = "",
     sort_order: str = "ascending",
 ) -> str:
-    """Build a path-filtered smart playlist as an .xsp XML string.
-
-    paths are real folders (multipath already expanded). Include ORs startswith
-    rules (match=one); exclude ANDs doesnotcontain rules (match=all). No <group>
-    is written, so movie set grouping follows the user's Kodi setting.
-    """
+    """Build a path-filtered smart playlist as an .xsp XML string, over real folders."""
+    # no <group> written, so movie set grouping follows the user's Kodi setting
     operator = "doesnotcontain" if exclude else "startswith"
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -187,11 +164,7 @@ def playlist_filename(menu: str, item: str) -> str:
 
 
 def save_playlist(menu: str, item: str, xml: str) -> str:
-    """Write the .xsp to addon_data; return its special:// path for the shortcut action.
-
-    The name is per-item, so editing a shortcut overwrites its own file instead of
-    leaving an orphan.
-    """
+    """Save the .xsp to addon_data, returning the special:// path a shortcut action takes."""
     path = _playlist_dir() + playlist_filename(menu, item)
     real = xbmcvfs.translatePath(path)
     Path(real).parent.mkdir(parents=True, exist_ok=True)
@@ -216,12 +189,8 @@ def _probe_total(method: str, filt: dict) -> int:
 
 
 def path_has_content(media_type: str, paths: list[str], *, exclude: bool = False) -> bool:
-    """Whether the library holds rows the playlist would show. Fail-fast for the picker.
-
-    Mirrors the playlist filter: include = any path has rows; exclude = anything
-    outside the path(s) remains. The path filter can match more than the playlist for
-    show containers, so a populated source is never reported empty.
-    """
+    """Whether the library holds rows the playlist would show, as a fail-fast for the picker."""
+    # filter can match wider than the playlist, so a populated source never reads as empty
     method = _PROBE_METHODS.get(media_type)
     if not method:
         return False
@@ -236,11 +205,7 @@ def path_has_content(media_type: str, paths: list[str], *, exclude: bool = False
 
 
 def cleanup_orphan_playlists(actions: list[str]) -> None:
-    """Delete source-*.xsp files in addon_data that no current action references.
-
-    Stable per-item names mean an edited shortcut overwrites its own file; this clears
-    the files left behind when a shortcut is deleted or pointed away from a playlist.
-    """
+    """Delete source-*.xsp files in addon_data that no current action references."""
     plist_dir = _playlist_dir()
     try:
         _, files = xbmcvfs.listdir(plist_dir)
@@ -253,11 +218,7 @@ def cleanup_orphan_playlists(actions: list[str]) -> None:
 
 
 def detect_domain(source_media: str, paths: list[str]) -> str | None:
-    """The library domain a source belongs to, or None if it has no scanned content.
-
-    A video source is configured as one content type, so the first probe with rows
-    wins. None means the source is not in the library and only Files view applies.
-    """
+    """The library domain a source belongs to, or None when it has no scanned content."""
     for domain, probe_type in _DOMAIN_DETECT.get(source_media, []):
         if path_has_content(probe_type, paths):
             return domain
@@ -265,7 +226,6 @@ def detect_domain(source_media: str, paths: list[str]) -> str | None:
 
 
 def display_options(source_media: str, paths: list[str]) -> list[DisplayOption]:
-    """The "Display..." choices for a source: Files view, then the detected domain's
-    views. Just Files view when the source is not in the library."""
+    """The "Display..." choices for a source: Files view, then any detected domain's views."""
     domain = detect_domain(source_media, paths)
     return [FILES_VIEW, *DOMAIN_VIEWS[domain]] if domain else [FILES_VIEW]

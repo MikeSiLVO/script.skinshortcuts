@@ -88,10 +88,8 @@ class ViewExpressionBuilder:
 
         if library_view in self._view_conditions:
             if library_view == generic_plugin_view and not plugin_overrides:
-                # Same view for both, no overrides - just use content visible
                 self._view_conditions[library_view].append(f"[{visible}]")
             else:
-                # Different views or has overrides - need source check
                 self._view_conditions[library_view].append(
                     f"[{visible} + String.IsEmpty(Container.PluginName)]"
                 )

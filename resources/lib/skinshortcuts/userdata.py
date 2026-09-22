@@ -39,7 +39,7 @@ class MenuItemOverride:
 
     name: str
     label: str | None = None
-    actions: list[Action] | None = None  # List of actions (with optional conditions)
+    actions: list[Action] | None = None
     icon: str | None = None
     disabled: bool | None = None
     properties: dict[str, str] = field(default_factory=dict)  # Includes widget/background
@@ -55,7 +55,7 @@ class MenuOverride:
     """User overrides for a menu."""
 
     items: list[MenuItemOverride] = field(default_factory=list)
-    removed: list[str] = field(default_factory=list)  # Names of removed items
+    removed: list[str] = field(default_factory=list)
 
 
 def _menu_override_to_dict(override: MenuOverride) -> dict[str, Any]:
@@ -163,7 +163,6 @@ class UserData:
                         if isinstance(act, dict):
                             actions.append(Action(**act))
                         else:
-                            # Legacy: plain string action
                             actions.append(Action(action=act))
                 items.append(MenuItemOverride(**item_data, actions=actions))
             removed = menu_data.get("removed", [])

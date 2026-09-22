@@ -17,7 +17,7 @@ except ImportError:
 
 
 def _check_visible(visible: str) -> bool:
-    """Evaluate a Kodi visibility condition."""
+    """Check a Kodi visibility condition; empty passes."""
     if not visible:
         return True
     if not IN_KODI:
@@ -92,7 +92,7 @@ def _ms(start: float) -> float:
 
 
 def _log_slow_resolve(content: Content, rows: int, start: float) -> None:
-    """Name the <content> element when resolving it takes long enough to notice."""
+    """Log the <content> element when resolving it takes long enough to notice."""
     elapsed = _ms(start)
     if elapsed >= SLOW_RESOLVE_MS:
         log.debug(
@@ -102,7 +102,7 @@ def _log_slow_resolve(content: Content, rows: int, start: float) -> None:
 
 
 def picker_kind(leaf_types: tuple) -> str:
-    """skinshortcuts-picker value for a hierarchy picker, from what it is picking."""
+    """The skinshortcuts-picker value for a hierarchy picker, from what it is picking."""
     if Widget in leaf_types:
         return "widget"
     if Background in leaf_types:
@@ -112,11 +112,7 @@ def picker_kind(leaf_types: tuple) -> str:
 
 @contextlib.contextmanager
 def picker_context(kind: str):
-    """Set Window(Home).Property(skinshortcuts-picker)=kind for the duration of the block.
-
-    Marker goes on Home, not the dialog: while select() is up the active window is
-    DialogSelect, so a bare Window.Property() would resolve there, not against our dialog.
-    """
+    """Set skinshortcuts-picker on Home for the block, since DialogSelect is the active window."""
     home = xbmcgui.Window(10000)
     home.setProperty("skinshortcuts-picker", kind)
     try:
@@ -226,13 +222,7 @@ def _content_folder_path(content: Content) -> str:
 def _browse_placeholder_for_content(
     content: Content, *, as_widget: bool = False, parent_label: str = "", parent_icon: str = ""
 ) -> Shortcut | Widget | None:
-    """Create a "Create menu item to here" placeholder for an addons content section.
-
-    Shortcut or Widget pointing at addons://sources/<type>/, so a menu item can
-    commit to the addon category root with no addons of that type installed. The
-    picker shows this row as string 32058, so the label and icon set here are the
-    ones the committed item gets.
-    """
+    """Placeholder Shortcut or Widget at the addons category root, commits with none installed."""
     if content.source.lower() != "addons":
         return None
 
@@ -266,10 +256,7 @@ def _browse_placeholder_for_content(
 
 
 class PickersMixin:
-    """Mixin providing picker dialogs for shortcuts and widgets.
-
-    Requires DialogBaseMixin first.
-    """
+    """Mixin providing picker dialogs for shortcuts and widgets."""
 
     menu_id: str
     shortcuts_path: str
@@ -359,7 +346,7 @@ class PickersMixin:
         return shortcut.actions if shortcut.actions else None
 
     def _choose_playlist_action(self, shortcut: Shortcut) -> str | None:
-        """Show dialog asking what to do with a playlist shortcut."""
+        """Choose what to do with a playlist shortcut, through a dialog."""
         if shortcut.action_party:
             result = xbmcgui.Dialog().yesnocustom(
                 LANGUAGE(32040),
@@ -385,12 +372,7 @@ class PickersMixin:
         return shortcut.action_play if result else shortcut.action
 
     def _source_playlist_action(self, shortcut: Shortcut, item: MenuItem) -> str | None:
-        """Pick how to show a source: Files view, or a path-filtered library playlist.
-
-        Returns the action string, or None if cancelled. The option list is built from
-        the source's detected library domain; an exclude with no remaining content falls
-        back to Files view rather than an empty playlist.
-        """
+        """Pick how to show a source: Files view, or a path-filtered library playlist."""
         paths = unpack_multipath(shortcut.path)
         options = display_options(shortcut.source_media, paths)
         if len(options) == 1:
@@ -471,10 +453,7 @@ class PickersMixin:
         item_props: dict[str, str],
         slot: str = "",
     ) -> Widget | None | Literal[False]:
-        """Widget picker with back navigation over widgets, groups, and content.
-
-        Returns the chosen Widget, None if cancelled, False if "None" picked.
-        """
+        """Pick a widget from groupings. False when the user picks "None"."""
         current_widget = item_props.get(slot, "")
         items = self._filter_widgets_by_slot(items, slot)
 
@@ -547,17 +526,14 @@ class PickersMixin:
         return self._content_provider
 
     def _resolve_content_to_widgets(self, content: Content) -> list[Widget]:
-        """Resolve a Content reference to a list of Widget objects for the picker.
-
-        Script-only addons resolve to a launcher, which lists nothing, so they are
-        offered as shortcuts but never as widget content.
-        """
+        """Resolve a Content reference to a list of Widget objects for the picker."""
         resolved = self._get_content_provider().resolve(content)
 
         source = content.source.rstrip("s") if content.source.endswith("s") else content.source
 
         widgets = []
         for item in resolved:
+            # a RunAddon launcher lists nothing
             if content.source.lower() == "addons" and not item.browse_path:
                 continue
 
@@ -610,12 +586,7 @@ class PickersMixin:
         return window
 
     def _widget_target_window(self, item: ResolvedShortcut, content_target: str) -> str:
-        """Window the provider put this item in, falling back to the content target.
-
-        Per item, because one content block can span windows: source="nodes"
-        target="library" resolves to a video entry and a music entry. A favourite
-        can name any window at all, so anything non-media takes the fallback.
-        """
+        """The item's own window, as a content block can span several, else the content target."""
         window = item.browse_window or extract_window_from_action(item.action)
         mapped = TARGET_MAP.get(window.lower()) if window else None
 
@@ -682,17 +653,11 @@ class PickersMixin:
         return type_to_target.get(widget_type, default)
 
     def _is_browsable(self, obj) -> bool:
-        """Object is opted in for browse-into via `browse` + `path`.
-
-        Works for both Widget (`browse` is bool) and Shortcut (`browse` is window name).
-        """
+        """Whether a Widget or Shortcut opted in to browse-into with both browse and path set."""
         return bool(obj.browse and obj.path)
 
     def _browse_widget_path(self, widget: Widget) -> Widget | None:
-        """Browse into a widget's path and let user select location.
-
-        A plugin:// path has to ask, its content type can't be read off the addon category.
-        """
+        """Browse into a widget's path, asking the content type when nothing declares it."""
         result = self._browse_directory(widget.path, resolve_label(widget.label), icon=widget.icon)
         if result is None:
             return None
@@ -742,7 +707,7 @@ class PickersMixin:
         custom_action: tuple[str, str, Callable[[], Any | None]] | None = None,
         positions: dict[str, int] | None = None,
     ) -> Any | None | Literal[False]:
-        """Hierarchical picker with back navigation. False when the user picks "None"."""
+        """Pick from a hierarchy with back navigation. False when the user picks "None"."""
         positions = {} if positions is None else positions
         start = time.monotonic()
         visible_items = self._filter_picker_items(
@@ -1108,11 +1073,7 @@ class PickersMixin:
         title: str = "",
         icon: str = "",
     ) -> tuple[str, str, str] | None:
-        """Browse a path, navigating into folders, returning the picked location.
-
-        A "Use this location" row sits at the top; picking it or a file returns
-        (path, label, icon), None if cancelled.
-        """
+        """Browse into folders from a path until a file or the "Use this location" row is picked."""
         browse_provider = get_browse_provider()
         browse_provider.set_icon_overrides(self._icon_overrides())
         current_path = path
@@ -1230,10 +1191,7 @@ class PickersMixin:
         return filtered
 
     def _get_browse_info_from_shortcut(self, shortcut: Shortcut) -> tuple[str, str] | None:
-        """Extract browsable path and target window from a shortcut.
-
-        Returns (path, window) if the shortcut opted in via `browse` + `<path>`, else None.
-        """
+        """Get the browsable path and target window from a shortcut, None unless it opted in."""
         if not self._is_browsable(shortcut):
             return None
 

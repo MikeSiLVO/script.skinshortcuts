@@ -75,10 +75,7 @@ def _browse_path(browse_type: int, title: str, start: str = "") -> str:
 
 
 class ItemsMixin:
-    """Mixin providing item operations - add, delete, move, label, icon, action.
-
-    Requires DialogBaseMixin first.
-    """
+    """Mixin providing item operations - add, delete, move, label, icon, action."""
 
     menu_id: str
     manager: MenuManager | None
@@ -195,7 +192,7 @@ class ItemsMixin:
         )
 
     def _make_unique_item_name(self, base_name: str) -> str:
-        """Generate a unique item name by appending a counter suffix if needed."""
+        """Make a unique item name by appending a counter suffix if needed."""
         existing_names = {item.name for item in self.items}
 
         if base_name not in existing_names:
@@ -251,7 +248,7 @@ class ItemsMixin:
             self._rebuild_list(focus_index=new_index)
 
     def _set_label(self) -> None:
-        """Change the label of selected item."""
+        """Set the label of the selected item."""
         if not self.manager:
             return
 
@@ -278,7 +275,7 @@ class ItemsMixin:
             self._refresh_selected_item()
 
     def _set_icon(self) -> None:
-        """Browse for a new icon using icon sources from menus.xml."""
+        """Set the icon by browsing from the icon sources in menus.xml."""
         if not self.manager:
             return
 
@@ -358,7 +355,7 @@ class ItemsMixin:
         self._refresh_selected_item()
 
     def _restore_deleted_item(self) -> None:
-        """Show picker to restore a previously deleted item."""
+        """Restore a previously deleted item chosen from a picker."""
         if not self.manager:
             return
 
@@ -447,7 +444,7 @@ class ItemsMixin:
             selected = picker_select("browse", title, listitems, useDetails=True)
 
             if selected == -1:
-                return None  # Cancelled
+                return None
 
             source = visible_sources[selected]
             path = source.path
@@ -525,10 +522,7 @@ class ItemsMixin:
         related: Mapping[str, str | None] | None = None,
         apply_suffix: bool = True,
     ) -> None:
-        """Unified property setter for menu items.
-
-        Writes the manager for persistence and the local item for the UI.
-        """
+        """Set an item property in the manager for persistence and on the local item for the UI."""
         if not self.manager:
             return
 

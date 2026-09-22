@@ -35,10 +35,7 @@ def skin_has_image(path: str) -> bool:
 
 @dataclass
 class IconOverrides:
-    """Kodi default icon names mapped to the replacements a skin ships.
-
-    An expression source resolves for the lookup and stays unresolved in the output.
-    """
+    """Kodi default icon names mapped to the replacements a skin ships."""
 
     source: str = ""
     explicit: dict[str, str] = field(default_factory=dict)
@@ -142,15 +139,15 @@ class Protection:
     message: str = ""
 
     def protects_delete(self) -> bool:
-        """Return True if this protection applies to deletion."""
+        """True when the protection covers deletion."""
         return self.type in ("delete", "all")
 
     def protects_action(self) -> bool:
-        """Return True if this protection applies to action changes."""
+        """True when the protection covers action changes."""
         return self.type in ("action", "all")
 
     def protects_disable(self) -> bool:
-        """Return True if this protection applies to disabling."""
+        """True when the protection covers disabling."""
         return self.type in ("disable", "all")
 
 
@@ -218,7 +215,7 @@ class MenuItem:
     dialog_visible: str = ""  # Filter in management dialog (visible= attribute)
     disabled: bool = False
     required: bool = False  # If True, item cannot be deleted
-    protection: Protection | None = None  # Optional protection against delete/modify
+    protection: Protection | None = None
 
     properties: dict[str, str] = field(default_factory=dict)
     submenu: str | None = None
