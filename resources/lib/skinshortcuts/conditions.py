@@ -11,6 +11,7 @@ try:
 except ImportError:
     IN_KODI = False
 
+_OPERATOR_PATTERN = re.compile(r"[=~]")
 _CONDITION_MATCH_PATTERN = re.compile(r"^(!?)([a-zA-Z_][a-zA-Z0-9_\.]*)(=|~)(.*)$")
 
 # Keyword to symbol mappings (applied with word boundaries)
@@ -222,26 +223,19 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
         result = any(_matches(actual, v) for v in values)
         return not result if negated else result
 
-    if "=" in condition:
-        prop_name, value = condition.split("=", 1)
-        prop_name = prop_name.strip()
-        value = value.strip()
-        if prop_name in properties:
-            actual = properties[prop_name]
+    operator = _OPERATOR_PATTERN.search(condition)
+    if operator:
+        prop_name = condition[: operator.start()].strip()
+        value = condition[operator.end() :].strip()
+        if operator.group() == "~":
+            result = value in properties.get(prop_name, "")
+        elif prop_name in properties:
+            result = _matches(properties[prop_name], value)
         elif prop_name.lower() in ("true", "false"):
             # Literal boolean comparison (e.g., from $IF after $PROPERTY substitution)
-            actual = prop_name
+            result = _matches(prop_name, value)
         else:
-            actual = ""
-        result = _matches(actual, value)
-        return not result if negated else result
-
-    if "~" in condition:
-        prop_name, value = condition.split("~", 1)
-        prop_name = prop_name.strip()
-        value = value.strip()
-        actual = properties.get(prop_name, "")
-        result = value in actual
+            result = _matches("", value)
         return not result if negated else result
 
     # Literal boolean value (e.g., from $PROPERTY substitution)
