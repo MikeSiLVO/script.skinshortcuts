@@ -71,6 +71,7 @@ def _parse_smart_playlist(filepath: str) -> tuple[str, str]:
 
 
 from ..conditions import evaluate_condition
+from ..constants import BACKGROUND_SIBLINGS, WIDGET_EXTRAS, WIDGET_SIBLINGS
 from ..loaders.widget import load_widgets
 from ..loaders.base import apply_suffix_transform
 from ..localize import LANGUAGE, resolve_label
@@ -342,14 +343,7 @@ class PropertiesMixin:
         base, suffix = _split_suffix(prefix)
 
         related: dict[str, str | None] = {
-            f"{base}Label{suffix}": None,
-            f"{base}Path{suffix}": None,
-            f"{base}Type{suffix}": None,
-            f"{base}Target{suffix}": None,
-            f"{base}Source{suffix}": None,
-            f"{base}Limit{suffix}": None,
-            f"{base}SortBy{suffix}": None,
-            f"{base}SortOrder{suffix}": None,
+            f"{base}{part}{suffix}": None for part in WIDGET_SIBLINGS + WIDGET_EXTRAS
         }
 
         self._set_item_property(item, prefix, "", related, apply_suffix=False)
@@ -480,10 +474,7 @@ class PropertiesMixin:
         base, suffix = _split_suffix(prefix)
 
         related: dict[str, str | None] = {
-            f"{base}Label{suffix}": None,
-            f"{base}Path{suffix}": None,
-            f"{base}Type{suffix}": None,
-            f"{base}PlaylistType{suffix}": None,
+            f"{base}{part}{suffix}": None for part in BACKGROUND_SIBLINGS
         }
 
         self._set_item_property(item, prefix, "", related, apply_suffix=False)

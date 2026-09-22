@@ -5,6 +5,7 @@ from __future__ import annotations
 from itertools import chain
 from typing import Any
 
+from .constants import BACKGROUND_SIBLINGS, WIDGET_EXTRAS, WIDGET_SIBLINGS
 from .loaders.base import iter_leaves
 from .log import get_logger
 from .models.background import Background, BackgroundConfig, BackgroundGroup
@@ -14,11 +15,6 @@ from .models.widget import Widget, WidgetConfig, WidgetGroup
 from .userdata import MenuItemOverride, UserData
 
 log = get_logger("Migrations")
-
-WIDGET_SIBLINGS = ("Label", "Path", "Type", "Target", "Source")
-BACKGROUND_SIBLINGS = ("Label", "Path", "Type", "PlaylistType")
-# baked onto a widget the user added, never derived back, so not siblings to drop
-WIDGET_EXTRAS = ("Limit", "SortBy", "SortOrder")
 
 # keys the widget and background machinery writes; renaming one strips a user's stored pick
 RESERVED = (

@@ -21,6 +21,10 @@ DEFAULT_ICON = "DefaultShortcut.png"
 DEFAULT_TARGET = "videos"
 DEFAULT_VIEW_PREFIX = "ShortcutView_"
 
+WIDGET_SIBLINGS = ("Label", "Path", "Type", "Target", "Source")
+BACKGROUND_SIBLINGS = ("Label", "Path", "Type", "PlaylistType")
+WIDGET_EXTRAS = ("Limit", "SortBy", "SortOrder")
+
 PROPERTY_TYPES = frozenset(
     {
         "select",
