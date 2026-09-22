@@ -348,7 +348,7 @@ When one property should override another based on a toggle, use mutually exclus
 <!-- Override: when "useCustomSort" toggle is set, use fixed value -->
 <property name="sortby" condition="useCustomSort">custom_value</property>
 <!-- Default: otherwise read from the item property -->
-<property name="sortby" condition="!useCustomSort" from="widgetSortby" />
+<property name="sortby" condition="!useCustomSort" from="widgetSortBy" />
 ```
 
 The `!useCustomSort` negation keeps the two branches mutually exclusive. Without it, the first property sets the value and the second's `from` would always overwrite (since `from` always wins when set).
