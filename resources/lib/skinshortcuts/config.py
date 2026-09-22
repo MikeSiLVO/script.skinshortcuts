@@ -262,13 +262,15 @@ class SkinConfig:
                     derived[f"widgetSortBy{tail}"] = widget.sort_by
                     derived[f"widgetSortOrder{tail}"] = widget.sort_order
 
-        return {k: v for k, v in derived.items() if v}
+        return {self.property_schema.declared_name(k): v for k, v in derived.items() if v}
 
     def resolve_item_properties(self, menu: Menu) -> None:
         """Fill widget/background sub-properties, keeping any the user set."""
         for item in menu.items:
+            present = {k.lower() for k in item.properties}
             for key, value in self.derived_item_properties(item).items():
-                item.properties.setdefault(key, value)
+                if key.lower() not in present:
+                    item.properties[key] = value
 
 
 def _apply_action_overrides(menu: Menu, overrides: list[Override]) -> None:

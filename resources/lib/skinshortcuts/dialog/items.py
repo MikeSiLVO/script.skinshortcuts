@@ -522,11 +522,14 @@ class ItemsMixin:
         related: Mapping[str, str | None] | None = None,
         apply_suffix: bool = True,
     ) -> None:
-        """Set an item property in the manager for persistence and on the local item for the UI."""
+        """Set an item property in the manager and on the local item, under its declared name."""
         if not self.manager:
             return
 
+        schema = self.property_schema
         prop_name = self._suffixed_name(name) if apply_suffix else name
+        if schema:
+            prop_name = schema.declared_name(prop_name)
 
         self.manager.set_custom_property(self.menu_id, item.name, prop_name, value)
         if value:
@@ -542,6 +545,8 @@ class ItemsMixin:
         if related:
             for rel_name, rel_value in related.items():
                 rel_prop_name = self._suffixed_name(rel_name) if apply_suffix else rel_name
+                if schema:
+                    rel_prop_name = schema.declared_name(rel_prop_name)
                 self.manager.set_custom_property(
                     self.menu_id, item.name, rel_prop_name, rel_value
                 )

@@ -78,8 +78,18 @@ class PropertySchema:
     overrides: list[Override] = field(default_factory=list)
 
     def get_property(self, name: str) -> SchemaProperty | None:
-        """Get property by name."""
-        return self.properties.get(name)
+        """Get property by name, ignoring case."""
+        prop = self.properties.get(name)
+        if prop is None:
+            folded = name.lower()
+            prop = next((p for k, p in self.properties.items() if k.lower() == folded), None)
+        return prop
+
+    def declared_name(self, name: str) -> str:
+        """The name as properties.xml declares it, slot kept; unknown names pass through."""
+        base, dot, slot = name.partition(".")
+        prop = self.get_property(base)
+        return f"{prop.name}{dot}{slot}" if prop else name
 
     def get_property_for_button(
         self, button_id: int
@@ -89,5 +99,5 @@ class PropertySchema:
         if not button:
             return None, None
 
-        prop = self.properties.get(button.property_name)
+        prop = self.get_property(button.property_name)
         return prop, button

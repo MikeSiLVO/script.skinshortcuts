@@ -380,7 +380,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             return False
         widget_requires = ("widget", "widgetPath", "widgetStyle")
         base_name = prop_name.split(".")[0] if "." in prop_name else prop_name
-        prop = self.property_schema.properties.get(base_name)
+        prop = self.property_schema.get_property(base_name)
         if prop and prop.requires in widget_requires:
             return True
         for button in self.property_schema.buttons.values():
