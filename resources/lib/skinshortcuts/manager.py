@@ -403,7 +403,7 @@ class MenuManager:
 
     def set_label(self, menu_id: str, item_id: str, label: str) -> bool:
         """Set the label for an item."""
-        return self._set_item_property(menu_id, item_id, "label", label)
+        return self._set_item_field(menu_id, item_id, "label", label)
 
     def set_action(self, menu_id: str, item_id: str, action: str | list[Action]) -> bool:
         """Set the action(s) for an item."""
@@ -411,23 +411,23 @@ class MenuManager:
             actions = [Action(action=action)]
         else:
             actions = [Action(action=a.action, condition=a.condition) for a in action]
-        return self._set_item_property(menu_id, item_id, "actions", actions)
+        return self._set_item_field(menu_id, item_id, "actions", actions)
 
     def set_icon(self, menu_id: str, item_id: str, icon: str) -> bool:
         """Set the icon for an item."""
-        return self._set_item_property(menu_id, item_id, "icon", icon)
+        return self._set_item_field(menu_id, item_id, "icon", icon)
 
     def set_submenu(self, menu_id: str, item_id: str, submenu: str | None) -> bool:
         """Set or clear the submenu template reference for an item."""
-        return self._set_item_property(menu_id, item_id, "submenu", submenu)
+        return self._set_item_field(menu_id, item_id, "submenu", submenu)
 
     def set_disabled(self, menu_id: str, item_id: str, disabled: bool) -> bool:
         """Set the disabled state for an item."""
-        return self._set_item_property(menu_id, item_id, "disabled", disabled)
+        return self._set_item_field(menu_id, item_id, "disabled", disabled)
 
     def set_visible(self, menu_id: str, item_id: str, visible: str) -> bool:
         """Set the runtime visibility condition for an item."""
-        return self._set_item_property(menu_id, item_id, "visible", visible)
+        return self._set_item_field(menu_id, item_id, "visible", visible)
 
     def set_custom_property(
         self, menu_id: str, item_id: str, prop_name: str, value: str | None
@@ -446,10 +446,10 @@ class MenuManager:
         self._changed = True
         return True
 
-    def _set_item_property(
+    def _set_item_field(
         self, menu_id: str, item_id: str, prop: str, value: str | bool | list[Action] | None
     ) -> bool:
-        """Set a property on an item in working copy."""
+        """Set a field on an item in working copy."""
         item = self._get_working_item(menu_id, item_id)
         if not item:
             return False
