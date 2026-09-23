@@ -7,7 +7,7 @@ import re
 import xml.etree.ElementTree as ET
 from typing import TYPE_CHECKING
 
-from ..conditions import NO_SUFFIX_PROPERTIES, evaluate_condition, suffix_condition
+from ..conditions import NO_SUFFIX_PROPERTIES, evaluate_condition, lookup, suffix_condition
 from ..constants import extract_path_from_action
 from ..expressions import process_if_expressions, process_math_expressions
 from ..loaders.base import apply_suffix_to_from
@@ -244,7 +244,7 @@ class TemplateBuilder:
 
         for prop in submenu_tpl.properties:
             if prop.from_source:
-                value = context.get(prop.from_source, "")
+                value = lookup(prop.from_source, context) or ""
             elif prop.value:
                 value = prop.value
                 if "$PARENT[" in value and parent_item is not None:
@@ -306,7 +306,7 @@ class TemplateBuilder:
     def _substitute_submenu_text(self, text: str, context: dict[str, str]) -> str:
         """Substitute $PROPERTY[...] and $EXP[...] in submenu template text."""
         def replace_property(m: re.Match[str]) -> str:
-            return context.get(m.group(1), "")
+            return lookup(m.group(1), context) or ""
 
         def replace_exp(m: re.Match[str]) -> str:
             exp_name = m.group(1)
@@ -888,12 +888,7 @@ class TemplateBuilder:
         """Substitute $PROPERTY[...] in text during context building."""
 
         def replace_property(match: re.Match) -> str:
-            name = match.group(1)
-            if name in context:
-                return context[name]
-            if name in item.properties:
-                return item.properties[name]
-            return ""
+            return lookup(match.group(1), context, item.properties) or ""
 
         return _PROPERTY_PATTERN.sub(replace_property, text)
 
@@ -907,15 +902,11 @@ class TemplateBuilder:
 
         def replace_parent(match: re.Match) -> str:
             name = match.group(1)
-            if parent_context and name in parent_context:
-                return parent_context[name]
-            if name == "label":
+            if name == "label" and not (parent_context and name in parent_context):
                 return parent_item.label
-            if name == "name":
+            if name == "name" and not (parent_context and name in parent_context):
                 return parent_item.name
-            if name in parent_item.properties:
-                return parent_item.properties[name]
-            return ""
+            return lookup(name, parent_context or {}, parent_item.properties) or ""
 
         return _PARENT_PATTERN.sub(replace_parent, text)
 
@@ -951,9 +942,7 @@ class TemplateBuilder:
         """Get value from a source (built-in or item property)."""
         if source in ("index", "name", "menu", "id", "idprefix"):
             return context.get(source, "")
-        if source in context:
-            return context[source]
-        return item.properties.get(source, "")
+        return lookup(source, context, item.properties) or ""
 
     def _apply_property_group(
         self,
@@ -1590,25 +1579,16 @@ class TemplateBuilder:
 
             def replace_parent(match: re.Match) -> str:
                 prop_name = match.group(1)
-                if parent_context and prop_name in parent_context:
-                    return parent_context[prop_name]
-                if prop_name == "label":
+                if prop_name == "label" and not (parent_context and prop_name in parent_context):
                     return parent_item.label
-                if prop_name == "name":
+                if prop_name == "name" and not (parent_context and prop_name in parent_context):
                     return parent_item.name
-                if prop_name in parent_item.properties:
-                    return parent_item.properties[prop_name]
-                return ""
+                return lookup(prop_name, parent_context or {}, parent_item.properties) or ""
 
             text = _PARENT_PATTERN.sub(replace_parent, text)
 
         def replace_property(match: re.Match) -> str:
-            name = match.group(1)
-            if name in context:
-                return context[name]
-            if name in item.properties:
-                return item.properties[name]
-            return ""
+            return lookup(match.group(1), context, item.properties) or ""
 
         text = _PROPERTY_PATTERN.sub(replace_property, text)
 

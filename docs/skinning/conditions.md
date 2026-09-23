@@ -101,6 +101,8 @@ visible="!String.IsEmpty(Window(Home).Property(SomeProperty))"
 
 ## Property Condition Syntax
 
+Property names match regardless of case, so `widgetSortBy` and `widgetSortby` read the same property. The same holds for `from=`, `$PROPERTY[...]`, `$PARENT[...]` and `$MATH[...]` in templates.
+
 ### Property Exists (Truthy)
 
 Check if property has any non-empty value:

@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
+from typing import TypeVar
 
 try:
     import xbmc
@@ -23,6 +25,8 @@ NO_SUFFIX_PROPERTIES = frozenset({
     "suffix",
 })
 
+V = TypeVar("V")
+
 _OPERATOR_PATTERN = re.compile(r"[=~]")
 _NOSUFFIX_PATTERN = re.compile(r"\{NOSUFFIX:[^}]+\}")
 _HELD_PATTERN = re.compile(r"\x00(\d+)\x00")
@@ -37,6 +41,19 @@ _KEYWORD_REPLACEMENTS = [
     (re.compile(r"\bEQUALS\b"), "="),
     (re.compile(r"\bCONTAINS\b"), "~"),
 ]
+
+
+def lookup(name: str, *sources: Mapping[str, V]) -> V | None:
+    """The value under a property name, exact across the sources, then ignoring case."""
+    for source in sources:
+        if name in source:
+            return source[name]
+    folded = name.lower()
+    for source in sources:
+        for key, value in source.items():
+            if key.lower() == folded:
+                return value
+    return None
 
 
 def _normalize_keywords(condition: str) -> str:
@@ -225,7 +242,7 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
 
     if condition.endswith(" EMPTY"):
         prop_name = condition[:-6].strip()
-        actual = properties.get(prop_name, "")
+        actual = lookup(prop_name, properties) or ""
         result = actual == ""
         return not result if negated else result
 
@@ -233,7 +250,7 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
         prop_name, values_str = condition.split(" IN ", 1)
         prop_name = prop_name.strip()
         values_str = values_str.strip()
-        actual = properties.get(prop_name, "")
+        actual = lookup(prop_name, properties) or ""
         values = [v.strip() for v in values_str.split(",")]
         result = any(_matches(actual, v) for v in values)
         return not result if negated else result
@@ -242,10 +259,11 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
     if operator:
         prop_name = condition[: operator.start()].strip()
         value = condition[operator.end() :].strip()
+        actual = lookup(prop_name, properties)
         if operator.group() == "~":
-            result = value in properties.get(prop_name, "")
-        elif prop_name in properties:
-            result = _matches(properties[prop_name], value)
+            result = value in (actual or "")
+        elif actual is not None:
+            result = _matches(actual, value)
         elif prop_name.lower() in ("true", "false"):
             # Literal boolean comparison (e.g., from $IF after $PROPERTY substitution)
             result = _matches(prop_name, value)
@@ -259,7 +277,7 @@ def _evaluate_single(condition: str, properties: dict[str, str]) -> bool:
         return not result if negated else result
 
     # Property name only: truthy if non-empty (but "false" string is falsy)
-    val = properties.get(condition, "")
+    val = lookup(condition, properties) or ""
     if val.lower() in ("true", "false"):
         result = val.lower() == "true"
     else:

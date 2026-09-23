@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from .conditions import evaluate_condition
+from .conditions import evaluate_condition, lookup
 from .log import get_logger, notify
 
 log = get_logger("Expressions")
@@ -162,7 +162,7 @@ class MathEvaluator:
                 break
 
         name = self.expr[start : self.pos]
-        value = self.variables.get(name, "0")
+        value = lookup(name, self.variables) or "0"
 
         try:
             return float(value) if value else 0.0

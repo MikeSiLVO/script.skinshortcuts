@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from ..conditions import lookup
 from .override import Override
 
 
@@ -79,11 +80,7 @@ class PropertySchema:
 
     def get_property(self, name: str) -> SchemaProperty | None:
         """Get property by name, ignoring case."""
-        prop = self.properties.get(name)
-        if prop is None:
-            folded = name.lower()
-            prop = next((p for k, p in self.properties.items() if k.lower() == folded), None)
-        return prop
+        return lookup(name, self.properties)
 
     def declared_name(self, name: str) -> str:
         """The name as properties.xml declares it, slot kept; unknown names pass through."""

@@ -17,6 +17,12 @@ Main entry point. Returns True if condition matches (empty conditions return Tru
 
 ***
 
+## lookup(name, *sources) → str | None
+
+A property value by exact name across the sources in order, then ignoring case in the same order; `None` when absent. Every property read in conditions and the template builder goes through it.
+
+***
+
 ## suffix_condition(condition, suffix) → str
 
 Suffixes every property name the evaluator would read: `=`, `~`, `EMPTY`, `IN` and bare checks. Normalizes keywords and expands compact OR first, then walks the same split the evaluator uses. Leaves alone:
