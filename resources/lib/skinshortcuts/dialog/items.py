@@ -182,6 +182,8 @@ class ItemsMixin:
             properties["widgetSource"] = widget.source
         if widget.label:
             properties["widgetLabel"] = widget.label
+        if self.property_schema:
+            properties = {self.property_schema.declared_name(k): v for k, v in properties.items()}
 
         return MenuItem(
             name=widget.name,
