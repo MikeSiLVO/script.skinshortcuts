@@ -523,13 +523,13 @@ class ContentProvider:
     def _resolve_commands(self) -> list[ResolvedShortcut]:
         """Resolve system commands."""
         commands = [
-            ("$LOCALIZE[13012]", "Quit()", "DefaultProgram.png"),  # Quit
-            ("$LOCALIZE[13005]", "Reboot()", "DefaultProgram.png"),  # Reboot
-            ("$LOCALIZE[13009]", "Powerdown()", "DefaultProgram.png"),  # Power off
-            ("$LOCALIZE[13014]", "Suspend()", "DefaultProgram.png"),  # Suspend
-            ("$LOCALIZE[13015]", "Hibernate()", "DefaultProgram.png"),  # Hibernate
-            ("$LOCALIZE[13016]", "RestartApp()", "DefaultProgram.png"),  # Restart
-            ("$LOCALIZE[20183]", "ReloadSkin()", "DefaultProgram.png"),  # Reload skin
+            ("$LOCALIZE[13012]", "Quit()", "DefaultProgram.png"),
+            ("$LOCALIZE[13013]", "Reboot()", "DefaultProgram.png"),
+            ("$LOCALIZE[13016]", "Powerdown()", "DefaultProgram.png"),
+            ("$LOCALIZE[13011]", "Suspend()", "DefaultProgram.png"),
+            ("$LOCALIZE[13010]", "Hibernate()", "DefaultProgram.png"),
+            ("$LOCALIZE[13313]", "RestartApp()", "DefaultProgram.png"),
+            ("$LOCALIZE[20183]", "ReloadSkin()", "DefaultProgram.png"),
         ]
 
         return [
