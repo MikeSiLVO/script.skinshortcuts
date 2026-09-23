@@ -6,7 +6,7 @@ from itertools import chain
 from typing import Any
 
 from .constants import BACKGROUND_SIBLINGS, WIDGET_EXTRAS, WIDGET_SIBLINGS
-from .loaders.base import iter_leaves
+from .loaders.base import iter_nested
 from .log import get_logger
 from .models.background import Background, BackgroundConfig, BackgroundGroup
 from .models.override import Override
@@ -36,8 +36,8 @@ def apply_overrides(
     known_properties = set(property_schema.properties) | {
         b.property_name for b in property_schema.buttons.values() if b.property_name
     }
-    known_widgets = _by_name(widgets.widgets, widgets.groupings, Widget, WidgetGroup)
-    known_backgrounds = _by_name(
+    known_widgets = _definitions_by_name(widgets.widgets, widgets.groupings, Widget, WidgetGroup)
+    known_backgrounds = _definitions_by_name(
         backgrounds.backgrounds, backgrounds.groupings, Background, BackgroundGroup
     )
 
@@ -104,11 +104,13 @@ def _apply_one(userdata: UserData, override: Override, kind: str, known: Any) ->
     return count
 
 
-def _by_name(flat: list, groupings: list, leaf_type: type, group_type: type) -> dict[str, Any]:
-    """Leaves by name, top level first; a repeated name keeps its first."""
+def _definitions_by_name(
+    flat: list, groupings: list, item_type: type, group_type: type
+) -> dict[str, Any]:
+    """Definitions by name, top level first; a repeated name keeps its first."""
     known: dict[str, Any] = {}
-    for leaf in chain(flat, iter_leaves(groupings, leaf_type, group_type)):
-        known.setdefault(leaf.name, leaf)
+    for definition in chain(flat, iter_nested(groupings, item_type, group_type)):
+        known.setdefault(definition.name, definition)
     return known
 
 

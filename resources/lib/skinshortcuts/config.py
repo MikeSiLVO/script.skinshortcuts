@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .builders.includes import IncludesBuilder
 from .loaders.background import load_backgrounds
-from .loaders.base import iter_leaves
+from .loaders.base import iter_nested
 from .loaders.menu import load_menus
 from .loaders.property import load_properties
 from .loaders.template import load_templates
@@ -189,12 +189,12 @@ class SkinConfig:
 
     def get_widget(self, widget_name: str) -> Widget | None:
         """Get widget by name, top level first, then nested in groupings."""
-        nested = iter_leaves(self.widget_groupings, Widget, WidgetGroup)
+        nested = iter_nested(self.widget_groupings, Widget, WidgetGroup)
         return next((w for w in chain(self.widgets, nested) if w.name == widget_name), None)
 
     def get_background(self, bg_name: str) -> Background | None:
         """Get background by name, top level first, then nested in groupings."""
-        nested = iter_leaves(self.background_groupings, Background, BackgroundGroup)
+        nested = iter_nested(self.background_groupings, Background, BackgroundGroup)
         return next((b for b in chain(self.backgrounds, nested) if b.name == bg_name), None)
 
     def get_menu(self, menu_name: str) -> Menu | None:

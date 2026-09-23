@@ -128,10 +128,10 @@ def warn_duplicate_names(names: Iterable[str], kind: str, path: str, scope: str 
         seen.add(name)
 
 
-def iter_leaves(items: Iterable, leaf_type: type[T], group_type: type) -> Iterator[T]:
-    """Every leaf in a picker hierarchy in document order, nested groups included."""
+def iter_nested(items: Iterable, item_type: type[T], group_type: type) -> Iterator[T]:
+    """Every item of a type in a picker hierarchy in document order, nested groups included."""
     for item in items:
         if isinstance(item, group_type):
-            yield from iter_leaves(item.items, leaf_type, group_type)
-        elif isinstance(item, leaf_type):
+            yield from iter_nested(item.items, item_type, group_type)
+        elif isinstance(item, item_type):
             yield item
