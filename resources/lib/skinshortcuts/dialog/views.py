@@ -84,7 +84,7 @@ def _browse_main_menu(config: ViewConfig, userdata: UserData) -> bool:
         items[0].setArt({"icon": "DefaultFolder.png"})
         items[1].setArt({"icon": "DefaultAddonProgram.png"})
 
-        plugin_overrides = _get_all_addon_overrides(userdata)
+        plugin_overrides = _get_all_plugin_overrides(userdata)
         if plugin_overrides:
             for plugin_id in sorted(plugin_overrides):
                 item = xbmcgui.ListItem(f"{LANGUAGE(32189) % plugin_id} >", offscreen=True)
@@ -123,7 +123,7 @@ def _browse_main_menu(config: ViewConfig, userdata: UserData) -> bool:
                 changed = True
         else:
             if _confirm_reset(LANGUAGE(32188)):
-                _clear_all_addon_views(userdata)
+                _clear_all_plugin_views(userdata)
                 changed = True
 
     return changed
@@ -213,24 +213,24 @@ def _browse_plugins_menu(config: ViewConfig, userdata: UserData) -> bool:
 
 
 def _add_plugin_override(config: ViewConfig, userdata: UserData) -> bool:
-    """Add a plugin override by browsing installed addons."""
-    addons = _get_video_addons()
-    if not addons:
+    """Add a plugin override by browsing installed plugins."""
+    plugins = _get_video_plugins()
+    if not plugins:
         xbmcgui.Dialog().notification(LANGUAGE(32167), LANGUAGE(32168))
         return False
 
     items = []
-    for addon_id, addon_name in addons:
-        item = xbmcgui.ListItem(addon_name, offscreen=True)
-        item.setArt({"icon": f"special://home/addons/{addon_id}/icon.png"})
-        item.setProperty("addon_id", addon_id)
+    for plugin_id, plugin_name in plugins:
+        item = xbmcgui.ListItem(plugin_name, offscreen=True)
+        item.setArt({"icon": f"special://home/addons/{plugin_id}/icon.png"})
+        item.setProperty("addon_id", plugin_id)
         items.append(item)
 
     selected = xbmcgui.Dialog().select(LANGUAGE(32169), items, useDetails=True)
     if selected == -1:
         return False
 
-    plugin_id = addons[selected][0]
+    plugin_id = plugins[selected][0]
 
     content_items = []
     for content in config.content_rules:
@@ -298,8 +298,8 @@ def _pick_view_for_content(
     return True
 
 
-def _get_video_addons() -> list[tuple[str, str]]:
-    """Get list of installed video addons."""
+def _get_video_plugins() -> list[tuple[str, str]]:
+    """Get list of installed video plugins."""
     if not IN_KODI:
         return []
 
@@ -322,17 +322,17 @@ def _get_video_addons() -> list[tuple[str, str]]:
         return []
 
     found = (response.get("result") or {}).get("addons") or []
-    addons = [(addon["addonid"], addon["name"]) for addon in found]
-    return sorted(addons, key=lambda x: x[1].lower())
+    plugins = [(plugin["addonid"], plugin["name"]) for plugin in found]
+    return sorted(plugins, key=lambda x: x[1].lower())
 
 
-def _get_all_addon_overrides(userdata: UserData) -> list[str]:
-    """Get list of addon IDs with view overrides."""
-    addons = []
+def _get_all_plugin_overrides(userdata: UserData) -> list[str]:
+    """Get list of plugin IDs with view overrides."""
+    plugins = []
     for source in userdata.views:
         if source not in ("library", "plugins"):
-            addons.append(source)
-    return addons
+            plugins.append(source)
+    return plugins
 
 
 def _clear_plugin_views(userdata: UserData, plugin_id: str) -> None:
@@ -340,12 +340,12 @@ def _clear_plugin_views(userdata: UserData, plugin_id: str) -> None:
     userdata.views.pop(plugin_id, None)
 
 
-def _clear_all_addon_views(userdata: UserData) -> None:
-    """Clear generic plugin default and all addon-specific overrides."""
+def _clear_all_plugin_views(userdata: UserData) -> None:
+    """Clear generic plugin default and all plugin-specific overrides."""
     userdata.views.pop("plugins", None)
-    addons = [k for k in userdata.views if k not in ("library", "plugins")]
-    for addon_id in addons:
-        del userdata.views[addon_id]
+    plugins = [k for k in userdata.views if k not in ("library", "plugins")]
+    for plugin_id in plugins:
+        del userdata.views[plugin_id]
 
 
 def _confirm_reset(message: str) -> bool:

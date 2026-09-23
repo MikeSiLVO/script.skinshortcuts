@@ -141,8 +141,8 @@ class UserData:
         """Clear all view selections."""
         self.views.clear()
 
-    def get_addon_overrides(self, content: str) -> dict[str, str]:
-        """Get all addon-specific view overrides for a content type."""
+    def get_plugin_overrides(self, content: str) -> dict[str, str]:
+        """Get all plugin-specific view overrides for a content type."""
         overrides = {}
         for source, selections in self.views.items():
             if source not in ("library", "plugins") and content in selections:
