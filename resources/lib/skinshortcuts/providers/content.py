@@ -530,8 +530,18 @@ class ContentProvider:
             ("$LOCALIZE[13016]", "Powerdown()", "System.CanPowerDown"),
             ("$LOCALIZE[13011]", "Suspend()", "System.CanSuspend"),
             ("$LOCALIZE[13010]", "Hibernate()", "System.CanHibernate"),
-            ("$LOCALIZE[13313]", "RestartApp()", ""),
+            ("$LOCALIZE[13313]", "RestartApp()", "System.Platform.Windows | System.Platform.Linux"),
             ("$LOCALIZE[20183]", "ReloadSkin()", ""),
+            (
+                "$LOCALIZE[20126]",
+                "System.LogOff",
+                "System.HasLoginScreen | Integer.IsGreater(System.ProfileCount,1)",
+            ),
+            ("$ADDON[script.skinshortcuts 32046]", "UpdateLibrary(video)", ""),
+            ("$ADDON[script.skinshortcuts 32047]", "UpdateLibrary(music)", ""),
+            ("$ADDON[script.skinshortcuts 32055]", "CleanLibrary(video)", ""),
+            ("$ADDON[script.skinshortcuts 32056]", "CleanLibrary(music)", ""),
+            ("$LOCALIZE[360]", "ActivateScreensaver", ""),
         ]
 
         return [
