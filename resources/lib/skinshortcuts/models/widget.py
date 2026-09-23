@@ -35,7 +35,7 @@ class Widget:
     browse: bool = False  # Opt-in: allow browse-into during picker
 
     def to_properties(self, prefix: str = "widget") -> dict[str, str]:
-        """Convert to property dictionary for skin access."""
+        """Convert to property dictionary for the picker's DialogSelect rows."""
         props = {
             f"{prefix}": self.name,
             f"{prefix}Label": self.label,

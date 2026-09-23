@@ -216,7 +216,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         self.items.append(placeholder)
 
     def _display_items(self) -> None:
-        """Display items in the list control. Called once during onInit."""
+        """Display items in the list control, plus the edited item in 212 for a subdialog."""
         self._rebuild_list(focus_index=self._selected_index)
         if self.dialog_mode:
             self._populate_subdialog_list()

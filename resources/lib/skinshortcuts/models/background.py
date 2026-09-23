@@ -68,7 +68,7 @@ class Background:
         return self.type.name.lower().replace("_", "-")
 
     def to_properties(self) -> dict[str, str]:
-        """Convert to property dictionary for skin access."""
+        """Convert to property dictionary for the picker's DialogSelect rows."""
         return {
             "background": self.name,
             "backgroundPath": self.path,
