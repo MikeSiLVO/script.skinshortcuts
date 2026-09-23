@@ -65,15 +65,15 @@ def _parse_rules(root, path: str, views: list[View]) -> list[ViewContent]:
     content_rules = []
 
     for elem in rules_elem.findall("content"):
-        content = _parse_content(elem, path, view_ids)
+        content = _parse_content_rule(elem, path, view_ids)
         if content:
             content_rules.append(content)
 
     return content_rules
 
 
-def _parse_content(elem, path: str, valid_view_ids: set[str]) -> ViewContent | None:
-    """Parse a content element."""
+def _parse_content_rule(elem, path: str, valid_view_ids: set[str]) -> ViewContent | None:
+    """Parse a content element into a view content rule."""
     name = get_attr(elem, "name")
     if not name:
         raise ViewConfigError(path, "Content rule missing 'name' attribute")

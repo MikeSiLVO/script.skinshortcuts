@@ -48,4 +48,4 @@ Raises `ViewConfigError` on validation failure.
 |----------|---------|
 | `_parse_views(root, path)` | Parse view definitions |
 | `_parse_rules(root, path, views)` | Parse content rules |
-| `_parse_content(elem, path, valid_view_ids)` | Parse single content element |
+| `_parse_content_rule(elem, path, valid_view_ids)` | Parse a content element into a view content rule |
