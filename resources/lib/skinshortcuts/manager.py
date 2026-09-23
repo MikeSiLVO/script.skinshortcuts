@@ -123,7 +123,7 @@ class MenuManager:
                 self.working[key] = Menu(name=key, is_submenu=True)
         return self.working[key]
 
-    def drop_per_item_submenu(self, parent_menu_name: str, item_name: str) -> None:
+    def drop_item_submenu(self, parent_menu_name: str, item_name: str) -> None:
         """Discard the per-item submenu so the next access reseeds from the template."""
         key = self.submenu_key(parent_menu_name, item_name)
         if key in self.working:

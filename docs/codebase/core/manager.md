@@ -69,7 +69,7 @@ Each item linked to a `<submenu>` template has its own working copy, keyed by `{
 | `submenu_key(parent, item_name)` | str | Compute the per-item working key |
 | `submenu_template(item)` | str | Template name to seed from (`item.submenu`, or empty string if unbound) |
 | `ensure_item_submenu(parent, item)` | Menu | Return the per-item submenu, seeding from template on first access |
-| `drop_per_item_submenu(parent, item_name)` | None | Discard per-item submenu so next access reseeds from template |
+| `drop_item_submenu(parent, item_name)` | None | Discard per-item submenu so next access reseeds from template |
 
 ### Custom Widget Operations
 

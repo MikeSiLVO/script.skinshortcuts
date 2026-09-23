@@ -300,7 +300,7 @@ class PickersMixin:
             if new_submenu != previous_submenu:
                 self.manager.set_submenu(self.menu_id, item.name, new_submenu)
                 item.submenu = new_submenu
-                self.manager.drop_per_item_submenu(self.menu_id, item.name)
+                self.manager.drop_item_submenu(self.menu_id, item.name)
 
             self._refresh_selected_item()
 
