@@ -13,10 +13,9 @@ except ImportError:
     IN_KODI = False
 
 from ..constants import extract_path_from_action, get_shortcuts_path
-from ..conditions import evaluate_condition
+from ..conditions import evaluate_condition, suffix_condition
 from ..loaders.menu import load_menus
 from ..loaders.property import load_properties
-from ..loaders.base import apply_suffix_transform
 from ..localize import resolve_label
 from ..log import get_logger
 from ..manager import MenuManager
@@ -457,7 +456,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             for rule in fallback.rules:
                 condition = rule.condition
                 if condition and self.property_suffix:
-                    condition = apply_suffix_transform(condition, self.property_suffix)
+                    condition = suffix_condition(condition, self.property_suffix)
                 if not condition or evaluate_condition(condition, props):
                     props[effective_prop_name] = rule.value
                     break

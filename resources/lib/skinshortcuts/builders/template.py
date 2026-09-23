@@ -7,10 +7,10 @@ import re
 import xml.etree.ElementTree as ET
 from typing import TYPE_CHECKING
 
-from ..conditions import evaluate_condition
+from ..conditions import NO_SUFFIX_PROPERTIES, evaluate_condition, suffix_condition
 from ..constants import extract_path_from_action
 from ..expressions import process_if_expressions, process_math_expressions
-from ..loaders.base import NO_SUFFIX_PROPERTIES, apply_suffix_to_from, apply_suffix_transform
+from ..loaders.base import apply_suffix_to_from
 from ..log import get_logger, notify
 from ..models.template import BuildMode, TemplateProperty
 
@@ -565,7 +565,7 @@ class TemplateBuilder:
             if condition:
                 condition = self._expand_expressions(condition)
                 if effective_suffix:
-                    condition = self._apply_suffix_to_condition(condition, effective_suffix)
+                    condition = suffix_condition(condition, effective_suffix)
                 if not self._eval_condition(condition, item, context):
                     continue
             self._apply_preset(ref, item, context, effective_suffix)
@@ -576,7 +576,7 @@ class TemplateBuilder:
             if condition:
                 condition = self._expand_expressions(condition)
                 if effective_suffix:
-                    condition = self._apply_suffix_to_condition(condition, effective_suffix)
+                    condition = suffix_condition(condition, effective_suffix)
                 if not self._eval_condition(condition, item, context):
                     continue
             self._apply_preset_group(ref, item, context, effective_suffix)
@@ -587,7 +587,7 @@ class TemplateBuilder:
             if condition:
                 condition = self._expand_expressions(condition)
                 if effective_suffix:
-                    condition = self._apply_suffix_to_condition(condition, effective_suffix)
+                    condition = suffix_condition(condition, effective_suffix)
                 if not self._eval_condition(condition, item, context):
                     continue
             prop_group = self.schema.get_property_group(ref.name)
@@ -760,11 +760,10 @@ class TemplateBuilder:
 
         for var_ref in var_group.references:
             condition = var_ref.condition
-            if suffix and condition:
-                condition = apply_suffix_transform(condition, suffix)
-
             if condition:
                 condition = self._expand_expressions(condition)
+                if suffix:
+                    condition = suffix_condition(condition, suffix)
                 if not self._eval_condition(condition, item, context):
                     continue
 
@@ -865,7 +864,7 @@ class TemplateBuilder:
         if prop.condition:
             condition = self._expand_expressions(prop.condition)
             if suffix:
-                condition = self._apply_suffix_to_condition(condition, suffix)
+                condition = suffix_condition(condition, suffix)
             if not self._eval_condition(condition, item, context):
                 return None
 
@@ -932,7 +931,7 @@ class TemplateBuilder:
             if val.condition:
                 condition = self._expand_expressions(val.condition)
                 if suffix:
-                    condition = self._apply_suffix_to_condition(condition, suffix)
+                    condition = suffix_condition(condition, suffix)
                 if not self._eval_condition(condition, item, context):
                     continue
 
@@ -973,7 +972,7 @@ class TemplateBuilder:
                     from_source = apply_suffix_to_from(from_source, suffix)
                 if condition:
                     condition = self._expand_expressions(condition)
-                    condition = self._apply_suffix_to_condition(condition, suffix)
+                    condition = suffix_condition(condition, suffix)
 
             modified_prop = TemplateProperty(
                 name=prop.name,
@@ -1008,7 +1007,7 @@ class TemplateBuilder:
             if row.condition:
                 condition = self._expand_expressions(row.condition)
                 if suffix:
-                    condition = self._apply_suffix_to_condition(condition, suffix)
+                    condition = suffix_condition(condition, suffix)
                 if self._eval_condition(condition, item, context):
                     for attr_name, attr_value in row.values.items():
                         if attr_name not in context:
@@ -1038,7 +1037,7 @@ class TemplateBuilder:
             if child.condition:
                 condition = self._expand_expressions(child.condition)
                 if suffix:
-                    condition = self._apply_suffix_to_condition(condition, suffix)
+                    condition = suffix_condition(condition, suffix)
                 if not self._eval_condition(condition, item, context):
                     continue
 
@@ -1069,7 +1068,7 @@ class TemplateBuilder:
             if row.condition:
                 condition = self._expand_expressions(row.condition)
                 if suffix:
-                    condition = self._apply_suffix_to_condition(condition, suffix)
+                    condition = suffix_condition(condition, suffix)
                 if self._eval_condition(condition, item, context):
                     return row.values
             else:
@@ -1101,59 +1100,15 @@ class TemplateBuilder:
 
                 for rule in fallback.rules:
                     if rule.condition:
-                        condition = rule.condition
+                        condition = self._expand_expressions(rule.condition)
                         if suffix:
-                            condition = apply_suffix_transform(condition, suffix)
+                            condition = suffix_condition(condition, suffix)
                         if self._eval_condition(condition, item, context):
                             context[suffixed_prop] = rule.value
                             break
                     else:
                         context[suffixed_prop] = rule.value
                         break
-
-    def _apply_suffix_to_condition(self, condition: str, suffix: str) -> str:
-        """Apply suffix to property names in a condition."""
-        nosuffix_pattern = re.compile(r"\{NOSUFFIX:([^}]+)\}")
-        preserved: list[str] = []
-
-        def extract_nosuffix(match: re.Match) -> str:
-            preserved.append(match.group(1))
-            return f"__NOSUFFIX_{len(preserved) - 1}__"
-
-        condition = nosuffix_pattern.sub(extract_nosuffix, condition)
-
-        separators = {"=", "~", "|", "+", "[", "]", "!"}
-        reserved = ("index", "name", "menu", "id", "idprefix", "suffix")
-
-        result = []
-        # After = or ~ we are consuming a value list; `|` continues the list,
-        # but + [ ] ! start a new condition term with a fresh property name.
-        in_value = False
-        parts = re.split(r"([=~|+\[\]!])", condition)
-        for part in parts:
-            part = part.strip()
-            if not part:
-                continue
-            if part in separators:
-                if part in ("=", "~"):
-                    in_value = True
-                elif part in ("+", "[", "]", "!"):
-                    in_value = False
-                result.append(part)
-                continue
-            if part in reserved or part.startswith("__NOSUFFIX_"):
-                result.append(part)
-                continue
-            if not in_value:
-                part = f"{part}{suffix}"
-            result.append(part)
-
-        transformed = "".join(result)
-
-        for i, content in enumerate(preserved):
-            transformed = transformed.replace(f"__NOSUFFIX_{i}__", content)
-
-        return transformed
 
     def _strip_nosuffix_markers(self, condition: str) -> str:
         """Strip {NOSUFFIX:...} markers, keeping only the content."""
@@ -1164,7 +1119,7 @@ class TemplateBuilder:
         for cond in conditions:
             expanded = self._expand_expressions(cond)
             if suffix:
-                expanded = self._apply_suffix_to_condition(expanded, suffix)
+                expanded = suffix_condition(expanded, suffix)
             if not self._eval_condition(expanded, item, {}):
                 return False
         return True

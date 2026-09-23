@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-import re
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 from typing import TypeVar
 
+from ..conditions import NO_SUFFIX_PROPERTIES
 from ..exceptions import ConfigError
 from ..log import get_logger, notify
 from ..models.override import Override
@@ -15,35 +15,6 @@ from ..models.override import Override
 log = get_logger("loaders.base")
 
 T = TypeVar("T")
-
-NO_SUFFIX_PROPERTIES = frozenset({
-    "name",
-    "label",
-    "disabled",
-    "default",
-    "menu",
-    "index",
-    "id",
-    "idprefix",
-})
-
-_PROPERTY_PATTERN = re.compile(r"([a-zA-Z_][a-zA-Z0-9_\.]*)([=~])")
-
-
-def apply_suffix_transform(text: str, suffix: str) -> str:
-    """Apply a suffix to the property names in a condition, leaving the values alone."""
-    if not suffix or not text:
-        return text
-
-    def replace_property(match: re.Match) -> str:
-        prop_name = match.group(1)
-        operator = match.group(2)
-        if prop_name in NO_SUFFIX_PROPERTIES:
-            return f"{prop_name}{operator}"
-        return f"{prop_name}{suffix}{operator}"
-
-    return _PROPERTY_PATTERN.sub(replace_property, text)
-
 
 def apply_suffix_to_from(from_value: str, suffix: str) -> str:
     """Apply a suffix to a from attribute value, except for the built-in sources."""

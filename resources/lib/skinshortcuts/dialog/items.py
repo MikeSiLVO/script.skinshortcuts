@@ -13,8 +13,7 @@ try:
 except ImportError:
     IN_KODI = False
 
-from ..conditions import evaluate_condition
-from ..loaders.base import apply_suffix_transform
+from ..conditions import evaluate_condition, suffix_condition
 from ..localize import LANGUAGE, resolve_label
 from ..models.background import BrowseSource
 from ..models.menu import Action, ContextMenu, ContextMenuButton, IconSource, MenuItem
@@ -481,7 +480,7 @@ class ItemsMixin:
 
         rows = []
         for button in buttons:
-            condition = apply_suffix_transform(button.condition, self.property_suffix)
+            condition = suffix_condition(button.condition, self.property_suffix)
             if condition and not evaluate_condition(condition, props):
                 continue
             if button.visible and not xbmc.getCondVisibility(button.visible):

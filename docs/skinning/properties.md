@@ -304,6 +304,8 @@ With `suffix=".2"`:
 <option value="Panel" condition="widgetType.2=movies" />
 ```
 
+Every property name in the condition gets the suffix, in `=`, `~`, `EMPTY`, `IN` and bare checks alike. Built-in names such as `name`, `index` and `suffix` stay as they are, and so does a name that already carries a slot, such as `widgetType.3`.
+
 ### In Button Mappings
 
 ```xml

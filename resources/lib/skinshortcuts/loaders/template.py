@@ -33,7 +33,8 @@ from ..models.template import (
     VariableGroupReference,
     VariableReference,
 )
-from .base import apply_suffix_to_from, apply_suffix_transform, get_bool
+from ..conditions import suffix_condition
+from .base import apply_suffix_to_from, get_bool
 
 log = get_logger("TemplateLoader")
 
@@ -305,7 +306,7 @@ class TemplateLoader:
             if from_source:
                 from_source = apply_suffix_to_from(from_source, suffix)
             if condition:
-                condition = apply_suffix_transform(condition, suffix)
+                condition = suffix_condition(condition, suffix)
 
         return TemplateProperty(
             name=name,
@@ -327,7 +328,7 @@ class TemplateLoader:
             condition = (value_elem.get("condition") or "").strip()
 
             if suffix and condition:
-                condition = apply_suffix_transform(condition, suffix)
+                condition = suffix_condition(condition, suffix)
 
             values.append(TemplateProperty(name=name, value=value, condition=condition))
 

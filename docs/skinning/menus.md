@@ -916,7 +916,7 @@ Rows are listed in the order written. A row is dropped when its `condition` or `
 
 The `disabled` state of the item is available to `condition` as `disabled=True` or `disabled=False`. Button 313 already picks its own default label from that state, so it only needs a `label` when you want different wording.
 
-In a subdialog, `condition` reads the item the subdialog is editing and follows its property suffix, so `condition="widgetType=custom"` checks `widgetType.2` in a `.2` slot. Only `=` and `~` comparisons are suffixed; write `EMPTY`, `IN` and bare property checks against the slot you mean.
+In a subdialog, `condition` reads the item the subdialog is editing and follows its property suffix, so `condition="widgetType=custom"` checks `widgetType.2` in a `.2` slot. Every property name follows the suffix, whatever the operator. A name that already carries a slot, such as `widgetType.3`, is read as written.
 
 `condition` reads stored values, so a property left unset reads empty even when a [fallback](properties.md#fallbacks) would supply a value. `visible` is evaluated by Kodi against container 211, which carries the fallback-resolved value and does not track the edited item in a subdialog. Gate subdialog rows on `Window.Property(skinshortcuts-dialog)` rather than on `Container(211).ListItem`.
 

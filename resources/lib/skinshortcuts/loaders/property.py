@@ -16,7 +16,8 @@ from ..models.property import (
     SchemaOption,
     SchemaProperty,
 )
-from .base import apply_suffix_transform, get_bool, parse_name_overrides
+from ..conditions import suffix_condition
+from .base import get_bool, parse_name_overrides
 
 log = get_logger("PropertyLoader")
 
@@ -143,7 +144,7 @@ class PropertyLoader:
         new_elem.tail = elem.tail
 
         if suffix and "condition" in new_elem.attrib:
-            new_elem.attrib["condition"] = apply_suffix_transform(
+            new_elem.attrib["condition"] = suffix_condition(
                 new_elem.attrib["condition"], suffix
             )
 

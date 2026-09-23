@@ -17,9 +17,8 @@ except ImportError:
     IN_KODI = False
 
 
-from ..conditions import evaluate_condition
+from ..conditions import evaluate_condition, suffix_condition
 from ..constants import BACKGROUND_SIBLINGS, WIDGET_EXTRAS, WIDGET_SIBLINGS
-from ..loaders.base import apply_suffix_transform
 from ..loaders.widget import load_widgets
 from ..localize import LANGUAGE, resolve_label
 from ..models.background import Background, BackgroundType, PlaylistSource
@@ -597,7 +596,7 @@ class PropertiesMixin:
         for opt in prop.options:
             condition = opt.condition
             if condition and use_suffix:
-                condition = apply_suffix_transform(condition, self.property_suffix)
+                condition = suffix_condition(condition, self.property_suffix)
             if not condition or evaluate_condition(condition, item_props):
                 visible_options.append(opt)
 
@@ -618,7 +617,7 @@ class PropertiesMixin:
                 for icon_variant in opt.icons:
                     icon_cond = icon_variant.condition
                     if icon_cond and use_suffix:
-                        icon_cond = apply_suffix_transform(icon_cond, self.property_suffix)
+                        icon_cond = suffix_condition(icon_cond, self.property_suffix)
                     if not icon_cond or evaluate_condition(icon_cond, item_props):
                         icon = icon_variant.path
                         break
