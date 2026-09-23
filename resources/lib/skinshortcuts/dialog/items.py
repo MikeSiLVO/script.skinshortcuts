@@ -67,7 +67,7 @@ def _default_context_labels(item: MenuItem) -> dict[int, str]:
     }
 
 
-def _browse_path(browse_type: int, title: str, start: str = "") -> str:
+def _browse_for_file(browse_type: int, title: str, start: str = "") -> str:
     """Browse for a file, unwrapping the image:// form Kodi's image browser returns."""
     result = xbmcgui.Dialog().browse(browse_type, title, "files", defaultt=start)
     return normalize_image(result) if isinstance(result, str) else ""
@@ -424,9 +424,9 @@ class ItemsMixin:
 
         if not visible_sources:
             if default_path:
-                result = _browse_path(browse_type, title, default_path)
+                result = _browse_for_file(browse_type, title, default_path)
                 return result if result and result != default_path else None
-            return _browse_path(browse_type, title) or None
+            return _browse_for_file(browse_type, title) or None
 
         while True:
             listitems = []
@@ -449,9 +449,9 @@ class ItemsMixin:
             path = source.path
 
             if path.lower() == "browse":
-                result = _browse_path(browse_type, title)
+                result = _browse_for_file(browse_type, title)
             else:
-                result = _browse_path(browse_type, title, path)
+                result = _browse_for_file(browse_type, title, path)
 
             if result and result != path:
                 return result
