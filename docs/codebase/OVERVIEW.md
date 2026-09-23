@@ -16,7 +16,7 @@ entry.py (RunScript entry point)
     │
     ├── show_management_dialog() ──► dialog/ ──► manager.py ──► userdata.py
     │
-    └── reset_all_menus() / clear_custom_menu()
+    └── reset_all() / clear_custom_widget()
 ```
 
 ***
@@ -63,7 +63,7 @@ RunScript(script.skinshortcuts,type=manage,menu=mainmenu)
 
 # Reset all menus
 RunScript(script.skinshortcuts,type=resetall)
-    → entry.reset_all_menus() → delete userdata → rebuild
+    → entry.reset_all() → delete userdata → rebuild
 
 # Clear custom widget menu
 RunScript(script.skinshortcuts,type=clear,menu=movies.customwidget)

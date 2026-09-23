@@ -92,7 +92,7 @@ RunScript(script.skinshortcuts,...)
         ├── build_includes() → SkinConfig.load() → build_includes()
         ├── show_management_dialog() → ManagementDialog
         ├── view_select() → show_view_browser() / show_view_picker()
-        ├── reset_all_menus() / reset_menus() / reset_views()
+        ├── reset_all() / reset_menus() / reset_views()
         └── clear_custom_menu()
 ```
 

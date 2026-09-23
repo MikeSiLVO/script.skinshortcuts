@@ -254,8 +254,8 @@ def clear_custom_widget(
         return False
 
 
-def reset_all_menus(shortcuts_path: str | None = None) -> bool:
-    """Reset all menus to skin defaults by deleting skin's userdata."""
+def reset_all(shortcuts_path: str | None = None) -> bool:
+    """Reset menus and views to skin defaults by deleting the skin's userdata."""
     if not IN_KODI:
         return False
 
@@ -456,7 +456,7 @@ def _dispatch(args: dict[str, str]) -> None:
         else:
             log.debug("No changes saved, skipping rebuild")
     elif action == "resetall":
-        reset_all_menus(args.get("path"))
+        reset_all(args.get("path"))
     elif action == "resetmenus":
         reset_menus(args.get("path"))
     elif action == "resetviews":

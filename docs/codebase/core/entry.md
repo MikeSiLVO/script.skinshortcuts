@@ -50,7 +50,7 @@ Build includes.xml. Uses hash-based skip unless force=True. Writes to all skin r
 
 Clear custom widget menu for an item. Removes the menu contents and optionally clears related properties.
 
-### reset_all_menus(shortcuts_path) → bool
+### reset_all(shortcuts_path) → bool
 
 Reset all menus and views to skin defaults (deletes userdata). Shows confirmation dialog.
 
