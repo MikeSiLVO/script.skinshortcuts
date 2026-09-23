@@ -78,6 +78,8 @@ class ResolvedShortcut:
     browse_window: str = ""
     # marks a source shortcut; the playlist flow acts on video/music, the rest get Files view
     source_media: str = ""
+    # picker filter, not the picked item's runtime visibility
+    visible: str = ""
 
 
 def _expand_playlist_dirs(directory: str) -> list[str]:
@@ -523,18 +525,18 @@ class ContentProvider:
     def _resolve_commands(self) -> list[ResolvedShortcut]:
         """Resolve system commands."""
         commands = [
-            ("$LOCALIZE[13012]", "Quit()", "DefaultProgram.png"),
-            ("$LOCALIZE[13013]", "Reboot()", "DefaultProgram.png"),
-            ("$LOCALIZE[13016]", "Powerdown()", "DefaultProgram.png"),
-            ("$LOCALIZE[13011]", "Suspend()", "DefaultProgram.png"),
-            ("$LOCALIZE[13010]", "Hibernate()", "DefaultProgram.png"),
-            ("$LOCALIZE[13313]", "RestartApp()", "DefaultProgram.png"),
-            ("$LOCALIZE[20183]", "ReloadSkin()", "DefaultProgram.png"),
+            ("$LOCALIZE[13012]", "Quit()", "System.ShowExitButton"),
+            ("$LOCALIZE[13013]", "Reboot()", "System.CanReboot"),
+            ("$LOCALIZE[13016]", "Powerdown()", "System.CanPowerDown"),
+            ("$LOCALIZE[13011]", "Suspend()", "System.CanSuspend"),
+            ("$LOCALIZE[13010]", "Hibernate()", "System.CanHibernate"),
+            ("$LOCALIZE[13313]", "RestartApp()", ""),
+            ("$LOCALIZE[20183]", "ReloadSkin()", ""),
         ]
 
         return [
-            ResolvedShortcut(label=label, action=action, icon=icon)
-            for label, action, icon in commands
+            ResolvedShortcut(label=label, action=action, icon="DefaultProgram.png", visible=visible)
+            for label, action, visible in commands
         ]
 
     def _resolve_settings(self) -> list[ResolvedShortcut]:

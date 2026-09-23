@@ -521,11 +521,13 @@ class PickersMixin:
         return widgets
 
     def _resolve_content_to_shortcuts(self, content: Content) -> list[Shortcut]:
-        """Resolve a Content reference to a list of Shortcut objects for the picker."""
+        """Resolve a Content reference to Shortcut objects for the picker, dropping hidden ones."""
         resolved = self._get_content_provider().resolve(content)
 
         shortcuts = []
         for item in resolved:
+            if not check_visible(item.visible):
+                continue
             shortcut = Shortcut(
                 name=f"dynamic-{content.source}-{len(shortcuts)}",
                 label=item.label,
