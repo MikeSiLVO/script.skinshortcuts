@@ -310,7 +310,7 @@ class PickersMixin:
             action = self._choose_playlist_action(shortcut)
             return [Action(action=action)] if action else None
         if shortcut.browse and shortcut.path:
-            return [Action(action=shortcut.get_action())]
+            return [Action(action=shortcut.resolved_action())]
         return shortcut.actions if shortcut.actions else None
 
     def _choose_playlist_action(self, shortcut: Shortcut) -> str | None:
@@ -344,7 +344,7 @@ class PickersMixin:
         paths = unpack_multipath(shortcut.path)
         options = display_options(shortcut.source_media, paths)
         if len(options) == 1:
-            return shortcut.get_action()  # not a library source -> Files view, no dialog
+            return shortcut.resolved_action()  # not a library source -> Files view, no dialog
 
         labels = [
             xbmc.getLocalizedString(o.label_id) if o.core else LANGUAGE(o.label_id)
@@ -355,7 +355,7 @@ class PickersMixin:
             return None
         option = options[choice]
         if not option.media_type:
-            return shortcut.get_action()
+            return shortcut.resolved_action()
 
         # only an exclude can legitimately come back empty
         if option.exclude and not path_has_content(option.media_type, paths, exclude=True):
@@ -365,7 +365,7 @@ class PickersMixin:
                 nolabel=xbmc.getLocalizedString(222),
                 yeslabel=LANGUAGE(32079),
             )
-            return shortcut.get_action() if use_files else None
+            return shortcut.resolved_action() if use_files else None
 
         sort = self._pick_sort()
         if sort is None:

@@ -177,8 +177,8 @@ class Shortcut:
             return self.primary_action
         return display_action(self.actions)
 
-    def get_action(self) -> str:
-        """Get the resolved primary action string."""
+    def resolved_action(self) -> str:
+        """The action a pick commits: ActivateWindow for a browse shortcut, else the primary."""
         if self.browse and self.path:
             from ..constants import WINDOW_MAP
 

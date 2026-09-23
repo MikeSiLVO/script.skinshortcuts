@@ -71,7 +71,7 @@
 
 **Properties:** `action` - Returns `primary_action` if set, otherwise last action in list
 
-**Methods:** `get_action()` - Returns primary action or constructs from browse+path
+**Methods:** `resolved_action()` - Returns primary action or constructs from browse+path
 
 ### ShortcutGroup
 
