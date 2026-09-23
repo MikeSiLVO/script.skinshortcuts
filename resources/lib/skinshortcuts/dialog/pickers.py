@@ -54,14 +54,14 @@ PLACEHOLDER_PREFIX = "content-placeholder-"
 SLOW_RESOLVE_MS = 250
 
 
-def _ms(start: float) -> float:
+def _elapsed_ms(start: float) -> float:
     """Elapsed milliseconds, for the picker's timing lines."""
     return (time.monotonic() - start) * 1000
 
 
 def _log_slow_resolve(content: Content, rows: int, start: float) -> None:
     """Log the <content> element when resolving it takes long enough to notice."""
-    elapsed = _ms(start)
+    elapsed = _elapsed_ms(start)
     if elapsed >= SLOW_RESOLVE_MS:
         log.debug(
             f"slow content: source={content.source} target={content.target} "
@@ -683,7 +683,7 @@ class PickersMixin:
         )
         log.debug(
             f"picker: {picker_kind(leaf_types)} root rows={len(visible_items)} "
-            f"built in {_ms(start):.0f}ms"
+            f"built in {_elapsed_ms(start):.0f}ms"
         )
 
         if not visible_items:
@@ -832,7 +832,9 @@ class PickersMixin:
             group.items, item_props, leaf_types, group_types, content_resolver,
             create_folder_group, parent_label=group.label, parent_icon=group.icon,
         )
-        log.debug(f"picker: {group.name} rows={len(visible_items)} built in {_ms(start):.0f}ms")
+        log.debug(
+            f"picker: {group.name} rows={len(visible_items)} built in {_elapsed_ms(start):.0f}ms"
+        )
 
         if not visible_items:
             xbmcgui.Dialog().notification(LANGUAGE(32141), LANGUAGE(32142))
