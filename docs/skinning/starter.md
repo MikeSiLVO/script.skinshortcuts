@@ -121,7 +121,7 @@ Goes inside `<menus>` in `shortcuts/menus.xml`. The `<shortcut>` elements are fi
     <content source="settings" />
   </group>
 
-  <group name="power" label="$LOCALIZE[33060]" icon="DefaultAddonNone.png">
+  <group name="commands" label="$ADDON[script.skinshortcuts 32057]" icon="DefaultAddonNone.png">
     <content source="commands" />
   </group>
 </groupings>

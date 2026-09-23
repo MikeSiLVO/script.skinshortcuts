@@ -631,7 +631,7 @@ Valid `target` values depend on the `source` attribute. Values are based on Kodi
 | `pvr` | `tv`, `radio` | PVR channel types |
 | `library` | See [Library Target Values](widgets.md#library-target-values) | Genre, year, studio, tag, actor queries |
 | `favourites` | (none) | No target needed |
-| `commands` | (none) | No target needed |
+| `commands` | (none) | Power, log off, library update and clean, screensaver; each listed only where the system can run it |
 | `settings` | (none) | No target needed |
 
 #### `nodes` and `sources` overlap for music
