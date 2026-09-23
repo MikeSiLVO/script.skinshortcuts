@@ -65,7 +65,7 @@ Route property button click to appropriate handler based on property type from s
 
 ## Requires Checking
 
-### `_check_requires`(item, requires_name) → bool
+### `_requires_met`(item, requires_name) → bool
 
 Check if a property requirement is satisfied. Used by property handlers to determine if a property can be set.
 

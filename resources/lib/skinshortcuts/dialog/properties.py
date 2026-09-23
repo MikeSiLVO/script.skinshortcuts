@@ -105,8 +105,8 @@ class PropertiesMixin:
             positions: dict[str, int] | None = None,
         ) -> Background | None | Literal[False]: ...
 
-    def _check_requires(self, item: MenuItem, requires_name: str) -> bool:
-        """Check if a required property is satisfied."""
+    def _requires_met(self, item: MenuItem, requires_name: str) -> bool:
+        """Whether a required property is set; a widget or background also counts by its path."""
         if item.properties.get(requires_name, ""):
             return True
 
@@ -142,7 +142,7 @@ class PropertiesMixin:
             requires_name = requires
             if button.suffix and self.property_suffix:
                 requires_name = f"{requires}{self.property_suffix}"
-            if not self._check_requires(item, requires_name):
+            if not self._requires_met(item, requires_name):
                 xbmcgui.Dialog().notification(
                     LANGUAGE(32183),
                     LANGUAGE(32184) % requires_name,
