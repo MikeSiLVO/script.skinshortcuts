@@ -25,7 +25,7 @@ from .models.views import ViewConfig
 from .models.widget import Widget, WidgetConfig, WidgetGroup
 from .userdata import (
     UserData,
-    _create_item_from_override,
+    _create_item_from_diff,
     load_userdata,
     merge_menu,
 )
@@ -107,10 +107,10 @@ class SkinConfig:
             for item in menu.items:
                 if item.submenu and item.submenu in template_map:
                     referenced_templates.add(item.submenu)
-        for menu_override in userdata.menus.values():
-            for item_override in menu_override.items:
-                if item_override.submenu and item_override.submenu in template_map:
-                    referenced_templates.add(item_override.submenu)
+        for menu_diff in userdata.menus.values():
+            for item_diff in menu_diff.items:
+                if item_diff.submenu and item_diff.submenu in template_map:
+                    referenced_templates.add(item_diff.submenu)
 
         menus = []
         skin_menu_names = set()
@@ -123,15 +123,15 @@ class SkinConfig:
                 if menu.name in referenced_templates:
                     continue
                 # source="N" lookups read flat keys; merge user customizations there too
-                override = userdata.menus.get(menu.name)
+                diff = userdata.menus.get(menu.name)
                 merged = (
-                    merge_menu(menu, override, menu_config.icon_overrides) if override else menu
+                    merge_menu(menu, diff, menu_config.icon_overrides) if diff else menu
                 )
                 _apply_action_overrides(merged, menu_config.action_overrides)
                 menus.append(merged)
                 continue
-            override = userdata.menus.get(menu.name)
-            merged = merge_menu(menu, override, menu_config.icon_overrides)
+            diff = userdata.menus.get(menu.name)
+            merged = merge_menu(menu, diff, menu_config.icon_overrides)
             _apply_action_overrides(merged, menu_config.action_overrides)
             menus.append(merged)
 
@@ -139,24 +139,24 @@ class SkinConfig:
                 template_name = item.submenu or ""
                 template = template_map.get(template_name) if template_name else None
                 key = f"{merged.name}/{item.name}"
-                instance_override = userdata.menus.get(key)
+                instance_diff = userdata.menus.get(key)
                 if template is None:
                     # No template means item owns its submenu without seed defaults.
-                    if instance_override is None:
+                    if instance_diff is None:
                         continue
                     instance = Menu(name=key, is_submenu=True)
-                    for item_override in instance_override.items:
+                    for item_diff in instance_diff.items:
                         instance.items.append(
-                            _create_item_from_override(item_override, menu_config.icon_overrides)
+                            _create_item_from_diff(item_diff, menu_config.icon_overrides)
                         )
                 else:
-                    instance = merge_menu(template, instance_override, menu_config.icon_overrides)
+                    instance = merge_menu(template, instance_diff, menu_config.icon_overrides)
                     instance.name = key
                     instance.template_origin = template_name
                 _apply_action_overrides(instance, menu_config.action_overrides)
                 menus.append(instance)
 
-        for menu_name, menu_override in userdata.menus.items():
+        for menu_name, menu_diff in userdata.menus.items():
             if menu_name in skin_menu_names:
                 continue
             # Per-item submenu entries already expanded above; skip duplicates.
@@ -165,9 +165,9 @@ class SkinConfig:
                 if parent_name in skin_menu_names:
                     continue
             user_menu = Menu(name=menu_name, is_submenu=True)
-            for item_override in menu_override.items:
+            for item_diff in menu_diff.items:
                 user_menu.items.append(
-                    _create_item_from_override(item_override, menu_config.icon_overrides)
+                    _create_item_from_diff(item_diff, menu_config.icon_overrides)
                 )
             menus.append(user_menu)
 

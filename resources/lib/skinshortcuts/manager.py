@@ -13,8 +13,8 @@ from .log import get_logger
 from .models.menu import Action, Menu, MenuItem
 from .playlists import cleanup_orphan_playlists
 from .userdata import (
-    MenuItemOverride,
-    MenuOverride,
+    MenuItemDiff,
+    MenuDiff,
     UserData,
     save_userdata,
 )
@@ -59,10 +59,10 @@ class MenuManager:
             for item in menu.items:
                 if item.submenu:
                     referenced.add(item.submenu)
-        for menu_override in self.config.userdata.menus.values():
-            for item_override in menu_override.items:
-                if item_override.submenu:
-                    referenced.add(item_override.submenu)
+        for menu_diff in self.config.userdata.menus.values():
+            for item_diff in menu_diff.items:
+                if item_diff.submenu:
+                    referenced.add(item_diff.submenu)
         submenu_names = {m.name for m in self.config.default_menus if m.is_submenu}
         return referenced & submenu_names
 
@@ -540,9 +540,9 @@ class MenuManager:
             default_menu = default_menus.get(menu_id)
             if default_menu is None and "/" in menu_id:
                 default_menu = self._template_for_submenu_key(menu_id)
-            menu_override = self._diff_menu(working_menu, default_menu)
-            if menu_override:
-                userdata.menus[menu_id] = menu_override
+            menu_diff = self._diff_menu(working_menu, default_menu)
+            if menu_diff:
+                userdata.menus[menu_id] = menu_diff
 
         return userdata
 
@@ -552,18 +552,18 @@ class MenuManager:
         item = self._get_working_item(parent_name, item_name)
         return self.config.get_default_menu(self.submenu_template(item)) if item else None
 
-    def _diff_menu(self, working: Menu, default: Menu | None) -> MenuOverride | None:
+    def _diff_menu(self, working: Menu, default: Menu | None) -> MenuDiff | None:
         """Generate diff for a single menu."""
-        override = MenuOverride()
+        diff = MenuDiff()
 
         if default is None:
             for idx, item in enumerate(working.items):
                 if item.is_placeholder:
                     continue
-                item_override = self._item_to_override(item, is_new=True)
-                item_override.position = idx
-                override.items.append(item_override)
-            return override if override.items else None
+                item_diff = self._item_to_diff(item, is_new=True)
+                item_diff.position = idx
+                diff.items.append(item_diff)
+            return diff if diff.items else None
 
         default_items = {item.name: item for item in default.items}
         working_items = {item.name: item for item in working.items if not item.is_placeholder}
@@ -575,7 +575,7 @@ class MenuManager:
                     default_item.dialog_visible
                 ):
                     continue
-                override.removed.append(name)
+                diff.removed.append(name)
 
         for idx, working_item in enumerate(working.items):
             if working_item.is_placeholder:
@@ -583,9 +583,9 @@ class MenuManager:
             default_item = default_items.get(working_item.name)
 
             if default_item is None:
-                item_override = self._item_to_override(working_item, is_new=True)
-                item_override.position = idx
-                override.items.append(item_override)
+                item_diff = self._item_to_diff(working_item, is_new=True)
+                item_diff.position = idx
+                diff.items.append(item_diff)
             else:
                 default_idx = next(
                     (i for i, d in enumerate(default.items) if d.name == working_item.name),
@@ -596,17 +596,17 @@ class MenuManager:
 
                 if item_diff or position_changed:
                     if item_diff is None:
-                        item_diff = MenuItemOverride(name=working_item.name)
+                        item_diff = MenuItemDiff(name=working_item.name)
                     item_diff.position = idx
-                    override.items.append(item_diff)
+                    diff.items.append(item_diff)
 
-        if not override.items and not override.removed:
+        if not diff.items and not diff.removed:
             return None
-        return override
+        return diff
 
-    def _diff_item(self, working: MenuItem, default: MenuItem) -> MenuItemOverride | None:
+    def _diff_item(self, working: MenuItem, default: MenuItem) -> MenuItemDiff | None:
         """Diff for a single item, changed fields only."""
-        diff = MenuItemOverride(name=working.name)
+        diff = MenuItemDiff(name=working.name)
         has_changes = False
 
         if working.label != default.label:
@@ -651,9 +651,9 @@ class MenuManager:
 
         return diff if has_changes else None
 
-    def _item_to_override(self, item: MenuItem, is_new: bool = False) -> MenuItemOverride:
-        """Convert full item to override format."""
-        return MenuItemOverride(
+    def _item_to_diff(self, item: MenuItem, is_new: bool = False) -> MenuItemDiff:
+        """Convert full item to diff format."""
+        return MenuItemDiff(
             name=item.name,
             label=item.label,
             actions=item.actions,

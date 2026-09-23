@@ -42,7 +42,7 @@ Merge default menu with user overrides.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `menus` | dict[str, MenuOverride] | Overrides by menu name |
+| `menus` | dict[str, MenuDiff] | Overrides by menu name |
 | `views` | dict[str, dict[str, str]] | View selections: source → content → view_id |
 
 **View Sources:**
@@ -59,14 +59,14 @@ Merge default menu with user overrides.
 | `clear_all_views()` | Clear all view selections |
 | `get_addon_overrides(content)` | Get addon-specific view overrides for content type |
 
-### MenuOverride
+### MenuDiff
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `items` | list[MenuItemOverride] | Item overrides |
+| `items` | list[MenuItemDiff] | Item overrides |
 | `removed` | list[str] | Removed item names |
 
-### MenuItemOverride
+### MenuItemDiff
 
 | Field | Type | Description |
 |-------|------|-------------|

@@ -12,7 +12,7 @@ from .models.background import Background, BackgroundConfig, BackgroundGroup
 from .models.override import Override
 from .models.property import PropertySchema
 from .models.widget import Widget, WidgetConfig, WidgetGroup
-from .userdata import MenuItemOverride, UserData
+from .userdata import MenuItemDiff, UserData
 
 log = get_logger("Migrations")
 
@@ -134,7 +134,7 @@ def _sibling_names(kind: str, key: str) -> list[str]:
     return [f"{base}{part}{tail}" for part in parts]
 
 
-def _move_keys(item: MenuItemOverride, override: Override) -> int:
+def _move_keys(item: MenuItemDiff, override: Override) -> int:
     """Rename a stored property, or drop it when the skin retired it outright."""
     changed = 0
     for key in _slot_keys(item.properties, override.replace):
@@ -175,7 +175,7 @@ def _stale_siblings(kind: str, key: str, element: Any) -> list[str]:
     return [f"{base}{part}{tail}" for part in parts]
 
 
-def _move_values(item: MenuItemOverride, override: Override, kind: str, known: Any) -> int:
+def _move_values(item: MenuItemDiff, override: Override, kind: str, known: Any) -> int:
     """Point a stored widget or background name at its replacement, or clear it."""
     changed = 0
     for key in _slot_keys(item.properties, kind):
