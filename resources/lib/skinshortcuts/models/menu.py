@@ -225,7 +225,7 @@ class MenuItem:
 
     @property
     def action(self) -> str:
-        """Primary action for display (last unconditional action)."""
+        """Primary action for display: last unconditional one, else the first."""
         return display_action(self.actions)
 
     @action.setter
