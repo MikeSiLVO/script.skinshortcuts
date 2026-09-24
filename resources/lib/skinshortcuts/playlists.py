@@ -39,6 +39,8 @@ def playlists_base_path() -> str:
         response = json.loads(xbmc.executeJSONRPC(json.dumps(request)))
     except (ValueError, TypeError):
         return DEFAULT_PLAYLISTS_PATH
+    if "error" in response:
+        log.warning(f"JSON-RPC error for {request['method']}: {response['error']}")
     base = (response.get("result") or {}).get("value") or ""
     if not base:
         return DEFAULT_PLAYLISTS_PATH
@@ -202,6 +204,8 @@ def _probe_total(method: str, filt: dict) -> int:
         response = json.loads(xbmc.executeJSONRPC(json.dumps(request)))
     except (ValueError, TypeError):
         return 0
+    if "error" in response:
+        log.warning(f"JSON-RPC error for {method}: {response['error']}")
     return (response.get("result") or {}).get("limits", {}).get("total", 0)
 
 
