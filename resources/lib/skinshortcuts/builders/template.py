@@ -617,7 +617,7 @@ class TemplateBuilder:
         raw_name = self._variable_output_name(var_def)
         if parent_item is not None:
             output_name = self._substitute_text(
-                raw_name, context, item, None, parent_context, parent_item
+                raw_name, context, item, parent_context, parent_item
             )
         else:
             output_name = self._substitute_property_refs(raw_name, item, context)
@@ -837,16 +837,16 @@ class TemplateBuilder:
         """Substitute $EXP/$PROPERTY/$MATH/$IF in variable content, $PARENT[] in items scope."""
         if elem.text:
             elem.text = self._substitute_text(
-                elem.text, context, item, None, parent_context, parent_item
+                elem.text, context, item, parent_context, parent_item
             )
         if elem.tail:
             elem.tail = self._substitute_text(
-                elem.tail, context, item, None, parent_context, parent_item
+                elem.tail, context, item, parent_context, parent_item
             )
         for attr, value in list(elem.attrib.items()):
             elem.set(
                 attr,
-                self._substitute_text(value, context, item, None, parent_context, parent_item),
+                self._substitute_text(value, context, item, parent_context, parent_item),
             )
         for child in elem:
             self._substitute_variable_content(
@@ -1257,11 +1257,11 @@ class TemplateBuilder:
                 return
 
         if elem.text:
-            elem.text = self._substitute_text(elem.text, context, item, menu)
+            elem.text = self._substitute_text(elem.text, context, item)
         if elem.tail:
-            elem.tail = self._substitute_text(elem.tail, context, item, menu)
+            elem.tail = self._substitute_text(elem.tail, context, item)
         for attr, value in list(elem.attrib.items()):
-            elem.set(attr, self._substitute_text(value, context, item, menu))
+            elem.set(attr, self._substitute_text(value, context, item))
 
         self._handle_include_substitution(elem)
 
@@ -1274,9 +1274,7 @@ class TemplateBuilder:
         self._handle_skinshortcuts_include(
             elem, context, item, menu, variable_map, output_suffix
         )
-        self._handle_skinshortcuts_items(
-            elem, context, item, menu, variable_map, output_suffix
-        )
+        self._handle_skinshortcuts_items(elem, context, item, variable_map, output_suffix)
         self._handle_skinshortcuts_onclick(elem, item, menu)
 
         for child in children_to_remove:
@@ -1342,7 +1340,6 @@ class TemplateBuilder:
         elem: ET.Element,
         context: dict[str, str],
         item: MenuItem,
-        _menu: Menu,
         variable_map: dict[str, ET.Element] | None = None,
         output_suffix: str = "",
     ) -> None:
@@ -1566,7 +1563,6 @@ class TemplateBuilder:
         text: str,
         context: dict[str, str],
         item: MenuItem,
-        _menu: Menu | None = None,
         parent_context: dict[str, str] | None = None,
         parent_item: MenuItem | None = None,
     ) -> str:

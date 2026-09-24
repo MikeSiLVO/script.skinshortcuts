@@ -50,7 +50,7 @@ def load_menus(path: str | Path) -> MenuConfig:
     path_str = str(path)
 
     icon_sources = _parse_icons(root)
-    icon_overrides = _parse_icon_overrides(root, icon_sources)
+    icon_overrides = _parse_icon_overrides(root)
 
     menus = _parse_menus(root, path_str, icon_overrides)
     groupings = _parse_shortcut_groupings(root, path_str, icon_overrides=icon_overrides)
@@ -262,7 +262,7 @@ def _parse_overrides(root) -> list[Override]:
     return overrides
 
 
-def _parse_icon_overrides(root, _picker_sources: list[IconSource]) -> IconOverrides:
+def _parse_icon_overrides(root) -> IconOverrides:
     """Parse icon overrides from <overrides><icons>; its source is opt-in, not the root <icons>."""
     overrides_elem = root.find("overrides")
     if overrides_elem is None:
@@ -615,7 +615,7 @@ def _parse_shortcut_group(
 
 def _parse_shortcut(
     elem,
-    _path: str,
+    path: str,
     icon_overrides: IconOverrides | None = None,
 ) -> Shortcut | None:
     """Parse a shortcut element."""
@@ -623,7 +623,7 @@ def _parse_shortcut(
     shortcut_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
     if not shortcut_name or not label:
-        log.warning(f"Shortcut in {_path} missing 'name' or 'label', skipping")
+        log.warning(f"Shortcut in {path} missing 'name' or 'label', skipping")
         return None
 
     actions = []
