@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from ..conditions import with_defaults
 from ..constants import extract_path_from_action
 
 if TYPE_CHECKING:
@@ -303,7 +304,7 @@ class IncludesBuilder:
             if submenu and submenu.items:
                 builtins["hasSubmenu"] = "True"
 
-            all_properties = {**menu.defaults.properties, **item.properties}
+            all_properties = with_defaults(menu.defaults.properties, item.properties)
             all_properties.update(self._submenu_paths_for_item(item, menu))
 
             # a skin value of the same name replaces the default, in the default's slot

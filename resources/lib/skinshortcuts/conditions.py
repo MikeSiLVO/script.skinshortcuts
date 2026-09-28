@@ -56,6 +56,13 @@ def lookup(name: str, *sources: Mapping[str, V]) -> V | None:
     return None
 
 
+def with_defaults(defaults: Mapping[str, str], properties: Mapping[str, str]) -> dict[str, str]:
+    """Properties over the defaults, replacing a default whose name differs only in case."""
+    own = {key.lower() for key in properties}
+    kept = {key: value for key, value in defaults.items() if key.lower() not in own}
+    return {**kept, **properties}
+
+
 def _normalize_keywords(condition: str) -> str:
     """Normalize keyword operators (AND, OR, NOT, EQUALS, CONTAINS) to their symbols."""
     for pattern, replacement in _KEYWORD_REPLACEMENTS:

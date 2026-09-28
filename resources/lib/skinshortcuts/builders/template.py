@@ -7,7 +7,13 @@ import re
 import xml.etree.ElementTree as ET
 from typing import TYPE_CHECKING
 
-from ..conditions import NO_SUFFIX_PROPERTIES, evaluate_condition, lookup, suffix_condition
+from ..conditions import (
+    NO_SUFFIX_PROPERTIES,
+    evaluate_condition,
+    lookup,
+    suffix_condition,
+    with_defaults,
+)
 from ..constants import extract_path_from_action
 from ..expressions import process_if_expressions, process_math_expressions
 from ..loaders.base import apply_suffix_to_from
@@ -524,7 +530,7 @@ class TemplateBuilder:
         menu: Menu,
     ) -> dict[str, str]:
         """Build property context for a menu item, the output's suffix applied to each ref."""
-        context: dict[str, str] = {**menu.defaults.properties, **item.properties}
+        context = with_defaults(menu.defaults.properties, item.properties)
 
         context["index"] = str(idx)
         context["name"] = item.name
@@ -1511,7 +1517,7 @@ class TemplateBuilder:
         submenu: Menu,
     ) -> dict[str, str]:
         """Build property context for a submenu item; parent properties come via $PARENT[...]."""
-        context: dict[str, str] = {**submenu.defaults.properties, **sub_item.properties}
+        context = with_defaults(submenu.defaults.properties, sub_item.properties)
         context["index"] = str(sub_idx)
         context["name"] = sub_item.name
         context["menu"] = submenu.name
