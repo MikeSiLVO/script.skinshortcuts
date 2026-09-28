@@ -308,8 +308,10 @@ class IncludesBuilder:
             all_properties.update(self._submenu_paths_for_item(item, menu))
 
             # a skin value of the same name replaces the default, in the default's slot
+            folded = {key.lower(): key for key in all_properties}
             for key, value in builtins.items():
-                self._add_property(elem, key, all_properties.pop(key, value))
+                skin_key = folded.get(key.lower(), key)
+                self._add_property(elem, key, all_properties.pop(skin_key, value))
 
             for key, value in all_properties.items():
                 if self._is_template_only(key):
