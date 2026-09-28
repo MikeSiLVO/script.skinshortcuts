@@ -820,6 +820,10 @@ class TemplateBuilder:
             for group_ref in template.variable_groups:
                 self._collect_group_variables(group_ref.name, names, seen)
 
+        for items_def in self.schema.items_templates.values():
+            for group_ref in items_def.variable_groups:
+                self._collect_group_variables(group_ref.name, names, seen)
+
         for name in sorted(names - set(variable_map)):
             placeholder = ET.Element("variable")
             placeholder.set("name", name)
