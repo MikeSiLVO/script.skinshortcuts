@@ -689,10 +689,10 @@ class TemplateBuilder:
             n = int(expr)
             return [""] + [f".{i}" for i in range(2, n + 1)]
         suffixes: list[str] = []
-        if expr in item.properties:
+        if lookup(expr, item.properties) is not None:
             suffixes.append("")
         for i in range(2, 100):
-            if f"{expr}.{i}" in item.properties:
+            if lookup(f"{expr}.{i}", item.properties) is not None:
                 suffixes.append(f".{i}")
         return suffixes
 
@@ -1094,7 +1094,7 @@ class TemplateBuilder:
             for suffix in suffixes_in_use:
                 suffixed_prop = f"{prop_name}{suffix}" if suffix else prop_name
 
-                if suffixed_prop in context or suffixed_prop in item.properties:
+                if lookup(suffixed_prop, context, item.properties) is not None:
                     continue
 
                 for rule in fallback.rules:
