@@ -1181,7 +1181,7 @@ class TemplateBuilder:
             if expr:
                 expanded = self._expand_expressions(expr.value)
                 if expr.nosuffix:
-                    return f"{{NOSUFFIX:{expanded}}}"
+                    return f"{{NOSUFFIX:{self._strip_nosuffix_markers(expanded)}}}"
                 return expanded
             return match.group(0)
 
