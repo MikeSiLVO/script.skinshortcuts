@@ -453,9 +453,9 @@ Compute numeric values using property variables:
 | `()` | Grouping | `(id - 1) * 100` |
 
 **Notes:**
-- Property values are automatically converted to numbers
+- Property values are converted to numbers; a missing or non-numeric property counts as 0
 - Returns integers when possible, floats otherwise
-- Invalid expressions return the original text unchanged
+- An invalid expression is left as its bare text, without `$MATH[...]`, and shows an Expression Error notification
 
 ### $IF - Conditional Expressions
 
