@@ -71,7 +71,7 @@ def _normalize_keywords(condition: str) -> str:
 
 
 def expand_compact_or(condition: str) -> str:
-    """Expand compact OR syntax, so "a=x | y" becomes "a=x | a=y"."""
+    """Expand compact OR syntax: "a=x | y" becomes "a=x | a=y"."""
     if not condition:
         return condition
 
@@ -87,7 +87,7 @@ def expand_compact_or(condition: str) -> str:
         if is_negated:
             and_part = and_part[1:].strip()
 
-        if and_part.startswith("[") and and_part.endswith("]"):
+        if _is_wrapped_in_brackets(and_part):
             inner = and_part[1:-1].strip()
             expanded_inner = _expand_or_segment(inner)
             if is_negated:
