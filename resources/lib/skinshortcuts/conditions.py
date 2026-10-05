@@ -32,6 +32,7 @@ _NOSUFFIX_PATTERN = re.compile(r"\{NOSUFFIX:[^}]+\}")
 _HELD_PATTERN = re.compile(r"\x00(\d+)\x00")
 _SLOT_PATTERN = re.compile(r"\.\d+$")
 _CONDITION_MATCH_PATTERN = re.compile(r"^(!?)([a-zA-Z_][a-zA-Z0-9_\.]*)\s*(=|~)\s*(.*)$")
+_KEYWORD_TERM_PATTERN = re.compile(r"^!?[a-zA-Z_][a-zA-Z0-9_\.]*\s+(?:IN\s+.+|EMPTY)$")
 
 # Keyword to symbol mappings (applied with word boundaries)
 _KEYWORD_REPLACEMENTS = [
@@ -130,7 +131,7 @@ def _split_preserving_brackets(text: str, delimiter: str) -> list[str]:
 
 
 def _expand_or_segment(segment: str) -> str:
-    """Expand a single OR segment."""
+    """Expand a single OR segment, a bare value taking the property of the comparison before it."""
     parts = _split_preserving_brackets(segment, "|")
     if len(parts) <= 1:
         return segment
@@ -150,6 +151,10 @@ def _expand_or_segment(segment: str) -> str:
             if _is_wrapped_in_brackets(stripped):
                 negation = part[: len(part) - len(stripped)]
                 part = f"{negation}[{expand_compact_or(stripped[1:-1])}]"
+            result_parts.append(part)
+            continue
+
+        if _KEYWORD_TERM_PATTERN.match(part):
             result_parts.append(part)
             continue
 
