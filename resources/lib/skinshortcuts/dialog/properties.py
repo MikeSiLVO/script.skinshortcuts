@@ -125,7 +125,7 @@ class PropertiesMixin:
         return False
 
     def _handle_property_button(self, button_id: int) -> bool:
-        """Handle a property button click from the schema."""
+        """Handle a property button click by the type the button or its property declares."""
         if not self.property_schema or not self.manager:
             return False
 
@@ -176,7 +176,10 @@ class PropertiesMixin:
         if prop is None:
             notify(
                 "Property Button Error",
-                f"button {button_id}: '{button.property_name}' not defined",
+                f"'{button.property_name}' not defined",
+                f"properties.xml: <button id=\"{button_id}\" property=\"{button.property_name}\"> "
+                "names a property with no <property> definition; button does nothing; define "
+                "the property or correct the button",
             )
             return True
 

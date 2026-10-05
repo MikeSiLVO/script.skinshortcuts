@@ -22,9 +22,11 @@ is read once from the addon's `debug` setting; otherwise it is False.
 | Function | Returns | Description |
 |----------|---------|-------------|
 | `get_logger(component="")` | Logger | Cached logger for the named component |
-| `notify(heading, message)` | None | Fire a Kodi notification; no-op outside Kodi |
+| `notify(heading, message, detail)` | None | Log the detail at warning and fire a Kodi notification ending in "(see log)" |
 
 `get_logger` caches one `Logger` per component name in `_loggers`.
+
+`notify` writes each distinct detail line once per run (`_logged`) and each distinct heading and message once (`_notified`). Outside Kodi the detail still prints and the toast is skipped. Skinner-facing errors use it: heading `<Feature> Error`, message led by the offending name, detail as `<file>: <what was written>; <what the script did>; <how to fix>`.
 
 ***
 

@@ -5,9 +5,7 @@ from __future__ import annotations
 import re
 
 from .conditions import evaluate_condition, lookup
-from .log import get_logger, notify
-
-log = get_logger("Expressions")
+from .log import notify
 
 
 class MathEvaluator:
@@ -19,7 +17,7 @@ class MathEvaluator:
         self.expr = ""
 
     def evaluate(self, expr: str) -> str:
-        """Evaluate a math expression and return result as string."""
+        """Evaluate a math expression; one that fails is reported and returned unchanged."""
         self.expr = expr.strip()
         self.pos = 0
 
@@ -32,8 +30,11 @@ class MathEvaluator:
                 return str(int(result))
             return str(result)
         except (ValueError, ZeroDivisionError) as e:
-            log.debug(f"Math eval failed for '{expr}': {e}")
-            notify("Expression Error", f"$MATH failed: {expr}")
+            notify(
+                "Expression Error",
+                "$MATH failed",
+                f"templates.xml: $MATH[{expr}] failed ({e}); left as bare text; fix the expression",
+            )
             return expr
 
     def _skip_whitespace(self) -> None:

@@ -135,7 +135,7 @@ class TemplateBuilder:
         submenu_tpl: SubmenuTemplate,
         include_map: dict[str, ET.Element],
     ) -> None:
-        """Build a submenu template."""
+        """Build a submenu template into its include, from a named menu or by level."""
         if not submenu_tpl.controls:
             return
 
@@ -149,8 +149,12 @@ class TemplateBuilder:
         if submenu_tpl.name:
             menu = self._menu_map.get(submenu_tpl.name)
             if not menu:
-                log.debug(f"Named menu '{submenu_tpl.name}' not found for submenu template")
-                notify("Submenu Template Error", f"menu '{submenu_tpl.name}' not found")
+                notify(
+                    "Submenu Template Error",
+                    f"menu '{submenu_tpl.name}' not found",
+                    f"templates.xml: <submenu name=\"{submenu_tpl.name}\"> names a menu that is "
+                    "not defined; template skipped; define the menu or correct the name",
+                )
                 return
             self._build_submenu_named(submenu_tpl, menu, include_elem)
         elif submenu_tpl.level > 0:
@@ -1357,8 +1361,13 @@ class TemplateBuilder:
         for i, child, insert_name in reversed(children_to_replace):
             items_def = self.schema.get_items_template(insert_name)
             if not items_def:
-                log.debug(f"Items definition '{insert_name}' not found")
-                notify("Items Template Error", f"'{insert_name}' not defined")
+                notify(
+                    "Items Template Error",
+                    f"'{insert_name}' not defined",
+                    f"templates.xml: <skinshortcuts insert=\"{insert_name}\"/> has no "
+                    f"<template items=\"{insert_name}\">; insert removed; define the items "
+                    "template or correct the insert name",
+                )
                 elem.remove(child)
                 continue
 
