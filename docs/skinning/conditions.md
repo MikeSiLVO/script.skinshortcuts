@@ -171,6 +171,8 @@ propertyName~value
 
 Avoid values that contain a whole-word, uppercase operator keyword (AND, OR, NOT, EQUALS, CONTAINS) bounded by non-word characters such as `.`, `/`, or spaces. Keyword-to-symbol conversion is applied to the whole condition string before parsing, so such values get corrupted (for example `widgetPath=plugin.AND.test` becomes `widgetPath=plugin.+.test` and never matches). Lowercase forms and keywords joined to other characters by letters, digits, or underscores (for example `plugin_AND_test`) are unaffected.
 
+The same goes for a value with ` IN ` inside it or ` EMPTY` at its end: the comparison is read as a list or empty check instead, so `label=Films IN HD` never matches.
+
 ---
 
 ## Operators
