@@ -7,7 +7,6 @@ from collections.abc import Iterable, Iterator
 from pathlib import Path
 from typing import TypeVar
 
-from ..conditions import NO_SUFFIX_PROPERTIES
 from ..exceptions import ConfigError
 from ..log import get_logger, notify
 from ..models.override import Override
@@ -15,16 +14,6 @@ from ..models.override import Override
 log = get_logger("loaders.base")
 
 T = TypeVar("T")
-
-def apply_suffix_to_from(from_value: str, suffix: str) -> str:
-    """Apply a suffix to a from attribute value, except for the built-in sources."""
-    if not suffix or not from_value:
-        return from_value
-
-    if from_value in NO_SUFFIX_PROPERTIES:
-        return from_value
-
-    return f"{from_value}{suffix}"
 
 
 def parse_xml(path: str | Path, expected_root: str, error_class: type[ConfigError]) -> ET.Element:

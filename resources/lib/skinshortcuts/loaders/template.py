@@ -33,8 +33,8 @@ from ..models.template import (
     VariableGroupReference,
     VariableReference,
 )
-from ..conditions import suffix_condition
-from .base import apply_suffix_to_from, get_bool
+from ..conditions import suffix_condition, suffix_property
+from .base import get_bool
 
 log = get_logger("TemplateLoader")
 
@@ -292,7 +292,7 @@ class TemplateLoader:
         return TemplateParam(name=name, default=default)
 
     def _parse_property(self, elem: ET.Element, suffix: str = "") -> TemplateProperty | None:
-        """Parse a property element."""
+        """Parse a property element; one with no name is skipped with a warning."""
         name = (elem.get("name") or "").strip()
         if not name:
             log.warning(f"{self.path}: <{elem.tag}> missing 'name' attribute, skipping")
@@ -303,8 +303,7 @@ class TemplateLoader:
         condition = (elem.get("condition") or "").strip()
 
         if suffix:
-            if from_source:
-                from_source = apply_suffix_to_from(from_source, suffix)
+            from_source = suffix_property(from_source, suffix)
             if condition:
                 condition = suffix_condition(condition, suffix)
 

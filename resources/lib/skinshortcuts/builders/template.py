@@ -8,15 +8,14 @@ import xml.etree.ElementTree as ET
 from typing import TYPE_CHECKING
 
 from ..conditions import (
-    NO_SUFFIX_PROPERTIES,
     evaluate_condition,
     lookup,
     suffix_condition,
+    suffix_property,
     with_defaults,
 )
 from ..constants import extract_path_from_action
 from ..expressions import process_if_expressions, process_math_expressions
-from ..loaders.base import apply_suffix_to_from
 from ..log import get_logger, notify
 from ..models.template import BuildMode, TemplateProperty
 
@@ -698,7 +697,7 @@ class TemplateBuilder:
 
     @staticmethod
     def _apply_iterate_to_text(text: str, suffix: str, index: int, as_name: str) -> str:
-        """Apply loop-locals and auto-suffix other $PROPERTY refs."""
+        """Apply one iterate slot: fill its Index and Suffix, suffix the other $PROPERTY names."""
         if not text:
             return text
         index_key = f"{as_name}Index"
@@ -710,9 +709,7 @@ class TemplateBuilder:
                 return str(index)
             if name == suffix_key:
                 return suffix
-            if name in NO_SUFFIX_PROPERTIES or not suffix:
-                return match.group(0)
-            return f"$PROPERTY[{name}{suffix}]"
+            return f"$PROPERTY[{suffix_property(name, suffix)}]"
 
         return _PROPERTY_PATTERN.sub(replace, text)
 
@@ -879,9 +876,7 @@ class TemplateBuilder:
                 return None
 
         if prop.from_source:
-            source = prop.from_source
-            if suffix:
-                source = apply_suffix_to_from(source, suffix)
+            source = suffix_property(prop.from_source, suffix)
             return self._get_from_source(source, item, context, suffix)
 
         value = prop.value
@@ -961,14 +956,13 @@ class TemplateBuilder:
         context: dict[str, str],
         suffix: str = "",
     ) -> None:
-        """Apply properties from a property group to context."""
+        """Apply properties from a property group; a literal only fills an unset name."""
         for prop in prop_group.properties:
             from_source = prop.from_source
             condition = prop.condition
 
             if suffix:
-                if from_source:
-                    from_source = apply_suffix_to_from(from_source, suffix)
+                from_source = suffix_property(from_source, suffix)
                 if condition:
                     condition = self._expand_expressions(condition)
                     condition = suffix_condition(condition, suffix)

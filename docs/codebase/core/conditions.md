@@ -23,12 +23,19 @@ A property value by exact name across the sources in order, then ignoring case i
 
 ***
 
+## suffix_property(name, suffix) → str
+
+Appends the suffix to one property name: `"widgetPath"` + `".2"` → `"widgetPath.2"`. Template `from` values and iterate `$PROPERTY[...]` references go through it, as does every name `suffix_condition` rewrites. Leaves alone:
+
+- `NO_SUFFIX_PROPERTIES` built-ins (`name`, `label`, `disabled`, `default`, `menu`, `index`, `id`, `idprefix`, `suffix`), in any case
+- names that already carry a `.N` slot
+
+***
+
 ## suffix_condition(condition, suffix) → str
 
-Suffixes every property name the evaluator would read: `=`, `~`, `EMPTY`, `IN` and bare checks. Normalizes keywords and expands compact OR first, then walks the same split the evaluator uses. Leaves alone:
+Suffixes every property name the evaluator would read: `=`, `~`, `EMPTY`, `IN` and bare checks. Normalizes keywords and expands compact OR first, then walks the same split the evaluator uses. Names go through `suffix_property`; also left alone:
 
-- `NO_SUFFIX_PROPERTIES` built-ins (`name`, `label`, `disabled`, `default`, `menu`, `index`, `id`, `idprefix`, `suffix`)
-- names that already carry a `.N` slot
 - unexpanded `$...[...]` references
 - `{NOSUFFIX:...}` content, returned wrapped in brackets
 

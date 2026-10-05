@@ -304,6 +304,15 @@ def check_visible(condition: str) -> bool:
     return xbmc.getCondVisibility(condition)
 
 
+def suffix_property(name: str, suffix: str) -> str:
+    """Suffix a property name, leaving built-ins and names that already carry a slot."""
+    if not suffix or not name or _SLOT_PATTERN.search(name):
+        return name
+    if name.lower() in NO_SUFFIX_PROPERTIES:
+        return name
+    return f"{name}{suffix}"
+
+
 def suffix_condition(condition: str, suffix: str) -> str:
     """Suffix each property name the evaluator reads, leaving values and slots alone."""
     if not suffix or not condition:
@@ -343,15 +352,9 @@ def _suffix_term(term: str, suffix: str) -> str:
 
     def slot(name: str) -> str:
         name = name.strip()
-        if (
-            not name
-            or name in NO_SUFFIX_PROPERTIES
-            or name.startswith("$")
-            or "\x00" in name
-            or _SLOT_PATTERN.search(name)
-        ):
+        if name.startswith("$") or "\x00" in name:
             return name
-        return f"{name}{suffix}"
+        return suffix_property(name, suffix)
 
     if term.endswith(" EMPTY"):
         return f"{slot(term[:-6])} EMPTY"
