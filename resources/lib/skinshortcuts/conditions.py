@@ -31,7 +31,7 @@ _OPERATOR_PATTERN = re.compile(r"[=~]")
 _NOSUFFIX_PATTERN = re.compile(r"\{NOSUFFIX:[^}]+\}")
 _HELD_PATTERN = re.compile(r"\x00(\d+)\x00")
 _SLOT_PATTERN = re.compile(r"\.\d+$")
-_CONDITION_MATCH_PATTERN = re.compile(r"^(!?)([a-zA-Z_][a-zA-Z0-9_\.]*)(=|~)(.*)$")
+_CONDITION_MATCH_PATTERN = re.compile(r"^(!?)([a-zA-Z_][a-zA-Z0-9_\.]*)\s*(=|~)\s*(.*)$")
 
 # Keyword to symbol mappings (applied with word boundaries)
 _KEYWORD_REPLACEMENTS = [
