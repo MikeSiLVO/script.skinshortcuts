@@ -71,11 +71,12 @@ class MathEvaluator:
             if self.pos >= len(self.expr):
                 break
 
-            # Check for // (floor division) first
             if self.expr[self.pos : self.pos + 2] == "//":
                 self.pos += 2
                 right = self._parse_unary()
-                left = float(int(left) // int(right))
+                if right == 0:
+                    raise ZeroDivisionError("Floor division by zero")
+                left = left // right
             elif self.expr[self.pos] == "*":
                 self.pos += 1
                 left = left * self._parse_unary()
