@@ -485,6 +485,11 @@ class TemplateBuilder:
         variable_map: dict[str, ET.Element],
     ) -> None:
         """Build one output's template controls and variables, its suffix applied throughout."""
+        if template.controls is not None:
+            for name in sorted(self._find_insert_names(template.controls)):
+                if not self.schema.get_items_template(name):
+                    self._warn_missing_insert(name)
+
         for menu in self.menus:
             if template.menu and menu.name != template.menu:
                 continue
@@ -1144,6 +1149,17 @@ class TemplateBuilder:
 
         return False
 
+    @staticmethod
+    def _warn_missing_insert(name: str) -> None:
+        """Warn that an insert names no items template."""
+        notify(
+            "Items Template Error",
+            f"'{name}' not defined",
+            f"templates.xml: <skinshortcuts insert=\"{name}\"/> has no "
+            f"<template items=\"{name}\">; nothing is inserted; define the items template "
+            "or correct the insert name",
+        )
+
     def _find_insert_names(self, elem: ET.Element) -> set[str]:
         """Find all skinshortcuts insert names in an element tree."""
         names: set[str] = set()
@@ -1361,13 +1377,7 @@ class TemplateBuilder:
         for i, child, insert_name in reversed(children_to_replace):
             items_def = self.schema.get_items_template(insert_name)
             if not items_def:
-                notify(
-                    "Items Template Error",
-                    f"'{insert_name}' not defined",
-                    f"templates.xml: <skinshortcuts insert=\"{insert_name}\"/> has no "
-                    f"<template items=\"{insert_name}\">; insert removed; define the items "
-                    "template or correct the insert name",
-                )
+                self._warn_missing_insert(insert_name)
                 elem.remove(child)
                 continue
 
