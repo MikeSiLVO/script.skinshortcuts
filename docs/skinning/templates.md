@@ -467,6 +467,8 @@ $IF[condition THEN trueValue ELSE falseValue]
 $IF[cond1 THEN val1 ELIF cond2 THEN val2 ELSE val3]
 ```
 
+`THEN`, `ELIF` and `ELSE` must be uppercase, and are reserved inside values: an uppercase `ELSE` in a value, or in a property the value reads, ends the clause there. A clause with no `THEN` is ignored and shows an Expression Error notification.
+
 **Examples:**
 
 ```xml

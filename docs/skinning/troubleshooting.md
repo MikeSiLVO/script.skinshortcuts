@@ -28,6 +28,7 @@ Enable either, reproduce the problem, then read the log.
 | Submenu Template Error: menu '\<name>' not found | A submenu template references a named menu that isn't defined | Correct the name, or define that menu in `menus.xml` |
 | Items Template Error: '\<name>' not defined | A `<skinshortcuts insert="...">` references an items template that doesn't exist | Define the items template, or correct the insert name |
 | Expression Error: $MATH failed | A `$MATH[...]` expression has invalid syntax or divides by zero | Fix the expression shown in the log line, checking operators and parentheses |
+| Expression Error: $IF clause has no THEN | A `$IF[...]` clause has no uppercase `THEN`, often a lowercase or misspelled keyword | Write `THEN`, `ELIF` and `ELSE` in uppercase |
 | Menu / Widget / Background / View Error: '\<name>' defined twice | Two menus, widgets, backgrounds or views share a name or id; only one can be reached | Give each a unique name |
 | Menu Error: item '\<name>' defined twice in menu '\<menu>' | Two items in one menu share a name | Give each item a unique name |
 | View Error: content '\<name>' defined twice | Two content rules in `views.xml` share a name | Give each rule a unique name |

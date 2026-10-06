@@ -189,17 +189,21 @@ def evaluate_if(expr: str, properties: dict[str, str]) -> str:
     while remaining:
         remaining = remaining.strip()
 
-        then_match = re.search(r"\bTHEN\b", remaining, re.IGNORECASE)
+        then_match = re.search(r"\bTHEN\b", remaining)
         if not then_match:
-            if clauses and remaining:
-                else_value = remaining
+            notify(
+                "Expression Error",
+                "$IF clause has no THEN",
+                f"templates.xml: $IF[{expr}] has a clause with no THEN, '{remaining}'; clause "
+                "ignored; write THEN, ELIF and ELSE in uppercase",
+            )
             break
 
         condition = remaining[: then_match.start()].strip()
         after_then = remaining[then_match.end() :].strip()
 
-        elif_match = re.search(r"\bELIF\b", after_then, re.IGNORECASE)
-        else_match = re.search(r"\bELSE\b", after_then, re.IGNORECASE)
+        elif_match = re.search(r"\bELIF\b", after_then)
+        else_match = re.search(r"\bELSE\b", after_then)
 
         end_pos = len(after_then)
         next_keyword = None
