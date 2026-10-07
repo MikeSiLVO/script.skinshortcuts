@@ -889,7 +889,7 @@ With corresponding items templates:
 
 ### Empty Submenus
 
-If a submenu doesn't exist or has no items, the insert marker produces no output. Other sibling elements in the template are unaffected.
+If a submenu doesn't exist or has no items, its insert marker produces no output. When every insert in the template is empty for an item, that item produces no output from the template, controls and variables included. When at least one insert has items, the rest of the template builds as normal.
 
 ### Disabled Items
 
