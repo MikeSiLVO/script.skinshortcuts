@@ -1304,16 +1304,16 @@ class TemplateBuilder:
             elem.remove(child)
 
     def _handle_include_substitution(self, elem: ET.Element) -> None:
-        """Handle $INCLUDE[...] in element text as <include> child elements."""
-        if elem.text:
-            match = _INCLUDE_PATTERN.search(elem.text)
-            if match:
-                include_name = match.group(1)
-                include_elem = ET.Element("include")
-                include_elem.text = include_name
-                include_elem.tail = elem.text[match.end() :]
-                elem.text = elem.text[: match.start()]
-                elem.insert(0, include_elem)
+        """Handle each $INCLUDE[...] in element text as an <include> child element."""
+        if not elem.text:
+            return
+        parts = _INCLUDE_PATTERN.split(elem.text)
+        elem.text = parts[0]
+        for index, name in enumerate(parts[1::2]):
+            include_elem = ET.Element("include")
+            include_elem.text = name
+            include_elem.tail = parts[2 * index + 2]
+            elem.insert(index, include_elem)
 
     def _handle_skinshortcuts_include(
         self,
