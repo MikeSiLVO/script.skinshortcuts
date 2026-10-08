@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from ..conditions import lookup, with_defaults
+from ..conditions import lookup, slot_suffixes, with_defaults
 from ..constants import extract_path_from_action
 
 if TYPE_CHECKING:
@@ -206,7 +206,7 @@ class IncludesBuilder:
             if parent_item.disabled:
                 continue
 
-            for suffix in ["", ".2", ".3", ".4", ".5", ".6", ".7", ".8", ".9", ".10"]:
+            for suffix in slot_suffixes("customWidget", parent_item.properties):
                 prop_name = f"customWidget{suffix}"
                 cw_menu_ref = lookup(prop_name, parent_item.properties)
                 if not cw_menu_ref:

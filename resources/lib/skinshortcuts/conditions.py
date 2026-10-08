@@ -64,6 +64,19 @@ def with_defaults(defaults: Mapping[str, str], properties: Mapping[str, str]) ->
     return {**kept, **properties}
 
 
+def slot_suffixes(name: str, properties: Mapping[str, str]) -> list[str]:
+    """Suffixes of the slots a property holds, ignoring case: '' for the base, then by slot."""
+    folded = name.lower()
+    slots: dict[int, str] = {}
+    for key in properties:
+        head, dot, slot = key.rpartition(".")
+        if key.lower() == folded:
+            slots.setdefault(1, "")
+        elif dot and head.lower() == folded and slot.isdecimal() and int(slot) > 1:
+            slots.setdefault(int(slot), f".{slot}")
+    return [slots[number] for number in sorted(slots)]
+
+
 def _normalize_keywords(condition: str) -> str:
     """Normalize keyword operators (AND, OR, NOT, EQUALS, CONTAINS) to their symbols."""
     for pattern, replacement in _KEYWORD_REPLACEMENTS:

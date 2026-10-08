@@ -23,6 +23,12 @@ A property value by exact name across the sources in order, then ignoring case i
 
 ***
 
+## slot_suffixes(name, properties) → list[str]
+
+The slots a property holds, matched in any case: `""` for the base name, then `".N"` for each `name.N` key with N of 2 or more, in slot order. Custom widget includes are built from it.
+
+***
+
 ## suffix_property(name, suffix) → str
 
 Appends the suffix to one property name: `"widgetPath"` + `".2"` → `"widgetPath.2"`. Template `from` values and iterate `$PROPERTY[...]` references go through it, as does every name `suffix_condition` rewrites. Leaves alone:
