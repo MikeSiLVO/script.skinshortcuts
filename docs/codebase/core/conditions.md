@@ -25,7 +25,7 @@ A property value by exact name across the sources in order, then ignoring case i
 
 ## slot_suffixes(name, properties) → list[str]
 
-The slots a property holds, matched in any case: `""` for the base name, then `".N"` for each `name.N` key with N of 2 or more, in slot order. Custom widget includes are built from it.
+The slots a property holds, matched in any case: `""` for the base name, then `".N"` for each `name.N` key with N of 2 or more, in slot order. Custom widget includes and `iterate` over a property name use it.
 
 ***
 

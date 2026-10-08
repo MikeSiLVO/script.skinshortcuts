@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 from ..conditions import (
     evaluate_condition,
     lookup,
+    slot_suffixes,
     suffix_condition,
     suffix_property,
     with_defaults,
@@ -697,13 +698,7 @@ class TemplateBuilder:
         """Resolve an iterate expression to its suffix list, by count or by the slots present."""
         if expr.isdigit():
             return [f".{i}" if i > 1 else "" for i in range(1, int(expr) + 1)]
-        suffixes: list[str] = []
-        if lookup(expr, item.properties) is not None:
-            suffixes.append("")
-        for i in range(2, 100):
-            if lookup(f"{expr}.{i}", item.properties) is not None:
-                suffixes.append(f".{i}")
-        return suffixes
+        return slot_suffixes(expr, item.properties)
 
     @staticmethod
     def _apply_iterate_to_text(text: str, suffix: str, index: int, as_name: str) -> str:
