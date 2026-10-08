@@ -280,7 +280,7 @@ class TemplateBuilder:
         menu: Menu,
         parent_item: MenuItem | None = None,
     ) -> ET.Element | None:
-        """Process controls from a submenu template."""
+        """Process controls from a submenu template, expanding each insert into its items."""
         result = copy.deepcopy(elem)
 
         if result.text:
@@ -292,6 +292,7 @@ class TemplateBuilder:
             if attr_name.startswith("_"):
                 continue
             result.set(attr_name, self._substitute_submenu_text(attr_value, context))
+        self._handle_include_substitution(result)
 
         insert_attr = result.get("_skinshortcuts_insert")
         if insert_attr or result.tag == "skinshortcuts":
@@ -443,7 +444,7 @@ class TemplateBuilder:
         context: dict[str, str],
         item: MenuItem,
     ) -> None:
-        """Substitute $PROPERTY/$EXP/$MATH/$IF in raw controls, leaving visibility markers alone."""
+        """Substitute $PROPERTY/$EXP/$MATH/$IF/$INCLUDE in raw controls, not visibility markers."""
         for child in elem:
             if (
                 child.tag == "skinshortcuts"
@@ -457,6 +458,7 @@ class TemplateBuilder:
                 child.tail = self._substitute_text(child.tail, context, item)
             for attr, value in list(child.attrib.items()):
                 child.set(attr, self._substitute_text(value, context, item))
+            self._handle_include_substitution(child)
             self._substitute_raw_controls(child, context, item)
 
     def _resolve_raw_visibility(
