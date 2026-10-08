@@ -95,7 +95,6 @@ class ItemsMixin:
 
         def _get_selected_index(self) -> int: ...
         def _get_selected_item(self) -> MenuItem | None: ...
-        def _get_selected_listitem(self) -> xbmcgui.ListItem | None: ...
         def _rebuild_list(self, focus_index: int | None = None) -> None: ...
         def _refresh_selected_item(self) -> None: ...
         def _update_deleted_property(self) -> None: ...
@@ -538,10 +537,6 @@ class ItemsMixin:
         else:
             if prop_name in item.properties:
                 del item.properties[prop_name]
-            listitem = self._get_selected_listitem()
-            if listitem:
-                listitem.setProperty(prop_name, "")
-                listitem.setProperty(f"{prop_name}Label", "")
 
         if related:
             for rel_name, rel_value in related.items():
@@ -556,6 +551,3 @@ class ItemsMixin:
                 else:
                     if rel_prop_name in item.properties:
                         del item.properties[rel_prop_name]
-                    listitem = self._get_selected_listitem()
-                    if listitem:
-                        listitem.setProperty(rel_prop_name, "")

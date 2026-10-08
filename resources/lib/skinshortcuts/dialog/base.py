@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -51,6 +52,42 @@ def _display_label(value: str) -> str:
     return resolve_label(value) if value.startswith("$") else value
 
 
+@dataclass
+class _ListItemValues:
+    """Labels, icon and properties a ListItem shows."""
+
+    label: str
+    label2: str
+    icon: str = ""
+    properties: dict[str, str] = field(default_factory=dict)
+
+
+def _create_listitem(values: _ListItemValues) -> xbmcgui.ListItem:
+    """Create a ListItem with the labels, icon and properties set."""
+    # not offscreen: cached ListItems are rewritten in place while bound
+    listitem = xbmcgui.ListItem(label=values.label, label2=values.label2)
+    _write_listitem(listitem, values, _ListItemValues(values.label, values.label2))
+    return listitem
+
+
+def _write_listitem(
+    listitem: xbmcgui.ListItem, values: _ListItemValues, shown: _ListItemValues
+) -> None:
+    """Write a ListItem's labels, icon and properties, calling a setter only for a changed value."""
+    if values.label != shown.label:
+        listitem.setLabel(values.label)
+    if values.label2 != shown.label2:
+        listitem.setLabel2(values.label2)
+    if values.icon != shown.icon:
+        listitem.setArt({"thumb": values.icon, "icon": values.icon})
+    for name, value in values.properties.items():
+        if value != shown.properties.get(name, ""):
+            listitem.setProperty(name, value)
+    for name, value in shown.properties.items():
+        if value and name not in values.properties:
+            listitem.setProperty(name, "")
+
+
 class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     """Core dialog functionality - initialization, list management, event routing."""
 
@@ -78,7 +115,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     _skin_path: str
 
     def __init__(self, *args, **kwargs):
-        """Read dialog state from kwargs; a child reuses the parent's shared objects."""
+        """Read dialog state; a child reuses the parent's shared objects."""
         super().__init__(*args)
         self.menu_id = kwargs.get("menu_id", "mainmenu")
         self.shortcuts_path = kwargs.get("shortcuts_path", get_shortcuts_path())
@@ -86,6 +123,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         self._shared_manager = kwargs.get("manager")
         self.manager = None
         self.items = []
+        self._listitem_cache: dict[int, tuple[xbmcgui.ListItem, _ListItemValues]] = {}
 
         self._content_provider = kwargs.get("content_provider")
 
@@ -231,14 +269,13 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
 
         subdialog_list.reset()
 
-        # Use _selected_index directly - list control may not have updated yet after selectItem()
         item = None
         if self._selected_index is not None and 0 <= self._selected_index < len(self.items):
             item = self.items[self._selected_index]
         else:
             item = self._get_selected_item()
         if item:
-            listitem = self._create_listitem(item)
+            listitem = _create_listitem(self._listitem_values(item))
             subdialog_list.addItem(listitem)
             subdialog_list.selectItem(0)
             self._log(f"Populated subdialog list (212) with item: {item.name}")
@@ -258,68 +295,70 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         except RuntimeError:
             return
 
-        list_control.reset()
+        # build first; list shows empty from reset() until addItems()
+        listitems: list[str | xbmcgui.ListItem] = [self._listitem_for(item) for item in self.items]
+        live = {id(item) for item in self.items}
+        self._listitem_cache = {k: v for k, v in self._listitem_cache.items() if k in live}
 
-        # addItem re-sends the whole list on every call
-        list_control.addItems([self._create_listitem(item) for item in self.items])
+        list_control.reset()
+        list_control.addItems(listitems)
 
         if focus_index is not None and 0 <= focus_index < len(self.items):
             list_control.selectItem(focus_index)
 
-    def _create_listitem(self, item: MenuItem) -> xbmcgui.ListItem:
-        """Create a ListItem from a MenuItem."""
-        display_label = resolve_label(item.label)
-        # not offscreen: _refresh_selected_item rewrites these in place while bound
-        listitem = xbmcgui.ListItem(label=display_label)
-        self._populate_listitem(listitem, item)
+    def _listitem_for(self, item: MenuItem) -> xbmcgui.ListItem:
+        """The ListItem for a MenuItem, reused across rebuilds and updated in place."""
+        values = self._listitem_values(item)
+        cached = self._listitem_cache.get(id(item))
+        if cached:
+            listitem, shown = cached
+            _write_listitem(listitem, values, shown)
+        else:
+            listitem = _create_listitem(values)
+        self._listitem_cache[id(item)] = (listitem, values)
         return listitem
 
-    def _populate_listitem(self, listitem: xbmcgui.ListItem, item: MenuItem) -> None:
-        """Populate a ListItem with all properties from a MenuItem."""
-        listitem.setLabel(resolve_label(item.label))
-        listitem.setLabel2(item.action or "")
-        listitem.setProperty("name", item.name)
-        listitem.setProperty("action", item.action or "")
-        listitem.setProperty("path", extract_path_from_action(item.action) if item.action else "")
-        listitem.setProperty("originalAction", item.original_action or item.action or "")
-        listitem.setProperty("skinshortcuts-disabled", "True" if item.disabled else "False")
-        listitem.setProperty("skinshortcuts-isRequired", "True" if item.required else "False")
-        listitem.setProperty("skinshortcuts-isProtected", "True" if item.protection else "False")
+    def _listitem_values(self, item: MenuItem) -> _ListItemValues:
+        """Everything a ListItem shows for a MenuItem."""
+        props: dict[str, str] = {}
 
-        if item.icon:
-            icon = _display_label(item.icon)
-            listitem.setArt({"thumb": icon, "icon": icon})
+        def put(name: str, value: str) -> None:
+            props[name.lower()] = value
+
+        put("name", item.name)
+        put("action", item.action or "")
+        put("path", extract_path_from_action(item.action) if item.action else "")
+        put("originalAction", item.original_action or item.action or "")
+        put("skinshortcuts-disabled", "True" if item.disabled else "False")
+        put("skinshortcuts-isRequired", "True" if item.required else "False")
+        put("skinshortcuts-isProtected", "True" if item.protection else "False")
 
         widget_name = item.properties.get("widget", "")
         has_widget = bool(widget_name or item.properties.get("widgetPath"))
         if has_widget:
-            listitem.setProperty("widget", widget_name)
-            listitem.setProperty(
-                "widgetLabel", _display_label(item.properties.get("widgetLabel", ""))
-            )
-            listitem.setProperty("widgetPath", item.properties.get("widgetPath", ""))
-            listitem.setProperty("widgetType", item.properties.get("widgetType", ""))
-            listitem.setProperty("widgetTarget", item.properties.get("widgetTarget", ""))
-            listitem.setProperty("widgetSource", item.properties.get("widgetSource", ""))
+            put("widget", widget_name)
+            put("widgetLabel", _display_label(item.properties.get("widgetLabel", "")))
+            put("widgetPath", item.properties.get("widgetPath", ""))
+            put("widgetType", item.properties.get("widgetType", ""))
+            put("widgetTarget", item.properties.get("widgetTarget", ""))
+            put("widgetSource", item.properties.get("widgetSource", ""))
         else:
-            listitem.setProperty("widget", "")
-            listitem.setProperty("widgetLabel", "")
-            listitem.setProperty("widgetPath", "")
-            listitem.setProperty("widgetType", "")
-            listitem.setProperty("widgetTarget", "")
-            listitem.setProperty("widgetSource", "")
+            put("widget", "")
+            put("widgetLabel", "")
+            put("widgetPath", "")
+            put("widgetType", "")
+            put("widgetTarget", "")
+            put("widgetSource", "")
 
         background_name = item.properties.get("background", "")
         if background_name:
-            listitem.setProperty("background", background_name)
-            listitem.setProperty(
-                "backgroundLabel", _display_label(item.properties.get("backgroundLabel", ""))
-            )
-            listitem.setProperty("backgroundPath", item.properties.get("backgroundPath", ""))
+            put("background", background_name)
+            put("backgroundLabel", _display_label(item.properties.get("backgroundLabel", "")))
+            put("backgroundPath", item.properties.get("backgroundPath", ""))
         else:
-            listitem.setProperty("background", "")
-            listitem.setProperty("backgroundLabel", "")
-            listitem.setProperty("backgroundPath", "")
+            put("background", "")
+            put("backgroundLabel", "")
+            put("backgroundPath", "")
 
         effective_props = self._get_effective_properties(item)
         for prop_name, prop_value in effective_props.items():
@@ -345,15 +384,15 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 else:
                     slot_widget = has_widget
                 if not slot_widget:
-                    listitem.setProperty(prop_name, "")
-                    listitem.setProperty(f"{prop_name}Label", "")
+                    put(prop_name, "")
+                    put(f"{prop_name}Label", "")
                     continue
             if prop_name.split(".")[0].endswith("Label"):
                 prop_value = _display_label(prop_value)
-            listitem.setProperty(prop_name, prop_value)
+            put(prop_name, prop_value)
             resolved_label = self._get_property_label(prop_name, prop_value)
             if resolved_label:
-                listitem.setProperty(f"{prop_name}Label", resolved_label)
+                put(f"{prop_name}Label", resolved_label)
 
         if self.manager:
             template = (
@@ -365,13 +404,18 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             instance = self.manager.config.get_menu(instance_key)
             effective = instance if (instance and instance.items) else template
             if effective and effective.items:
-                listitem.setProperty("hasSubmenu", "true")
-                listitem.setProperty("submenu", item.submenu or "")
+                put("hasSubmenu", "true")
+                put("submenu", item.submenu or "")
 
-            is_modified = False
-            if self.manager:
-                is_modified = self.manager.is_item_modified(self.menu_id, item.name)
-            listitem.setProperty("isResettable", "true" if is_modified else "")
+            is_modified = self.manager.is_item_modified(self.menu_id, item.name)
+            put("isResettable", "true" if is_modified else "")
+
+        return _ListItemValues(
+            label=resolve_label(item.label),
+            label2=item.action or "",
+            icon=_display_label(item.icon) if item.icon else "",
+            properties=props,
+        )
 
     def _is_widget_dependent(self, prop_name: str) -> bool:
         """Whether a property depends on a widget being set."""
@@ -387,23 +431,16 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 return True
         return False
 
-    def _get_selected_listitem(self) -> xbmcgui.ListItem | None:
-        """Get the currently selected ListItem from the control."""
-        try:
-            list_control = self._list(CONTROL_LIST)
-            return list_control.getSelectedItem()
-        except RuntimeError:
-            return None
-
     def _refresh_selected_item(self) -> None:
         """Refresh the selected item's ListItem from our local item state."""
         index = self._get_selected_index()
         if index < 0 or index >= len(self.items):
             return
 
-        listitem = self._get_selected_listitem()
-        if listitem:
-            self._populate_listitem(listitem, self.items[index])
+        if id(self.items[index]) in self._listitem_cache:
+            self._listitem_for(self.items[index])
+        else:
+            self._rebuild_list(focus_index=index)
 
         if self.dialog_mode:
             self._populate_subdialog_list()
