@@ -692,10 +692,9 @@ class TemplateBuilder:
 
     @staticmethod
     def _resolve_iterate_suffixes(expr: str, item: MenuItem) -> list[str]:
-        """Resolve an iterate expression to its suffix list."""
+        """Resolve an iterate expression to its suffix list, by count or by the slots present."""
         if expr.isdigit():
-            n = int(expr)
-            return [""] + [f".{i}" for i in range(2, n + 1)]
+            return [f".{i}" if i > 1 else "" for i in range(1, int(expr) + 1)]
         suffixes: list[str] = []
         if lookup(expr, item.properties) is not None:
             suffixes.append("")
