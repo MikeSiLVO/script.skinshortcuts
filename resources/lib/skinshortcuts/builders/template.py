@@ -364,11 +364,11 @@ class TemplateBuilder:
         include: ET.Element,
         variable_map: dict[str, ET.Element],
     ) -> None:
-        """Output build="true" controls, grouped per resolved output when properties transform."""
+        """Build raw controls, with variables per output group when properties transform."""
         if template.controls is None:
             return
 
-        matching = self._collect_raw_matching_items(template)
+        matching = self._collect_raw_matching_items(template, output)
 
         if not template.has_transformations:
             for child in template.controls:
@@ -416,7 +416,7 @@ class TemplateBuilder:
                 )
 
     def _collect_raw_matching_items(
-        self, template: Template
+        self, template: Template, output: TemplateOutput
     ) -> list[tuple[MenuItem, Menu, int]]:
         """Collect menu items matching a raw template's filters."""
         matching: list[tuple[MenuItem, Menu, int]] = []
@@ -434,7 +434,7 @@ class TemplateBuilder:
             for idx, item in enumerate(menu.items, start=1):
                 if item.disabled:
                     continue
-                if not self._check_conditions(template.conditions, item):
+                if not self._check_conditions(template.conditions, item, output.suffix):
                     continue
                 matching.append((item, menu, idx))
         return matching
