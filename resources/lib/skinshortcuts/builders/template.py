@@ -83,7 +83,6 @@ class TemplateBuilder:
         include_map: dict[str, ET.Element] = {}
         variable_map: dict[str, ET.Element] = {}
 
-        # templateonly: "true" = never generate, "auto" = skip if unassigned
         template_only_settings: dict[str, str] = {}
 
         for template in self.schema.templates:
@@ -100,9 +99,7 @@ class TemplateBuilder:
 
                 include_elem = include_map[include_name]
                 if template.build == BuildMode.RAW:
-                    self._build_raw_template(
-                        template, output, include_elem, variable_map
-                    )
+                    self._build_raw_template(template, output, include_elem)
                 else:
                     self._build_template_into(
                         template, output, include_elem, variable_map
@@ -358,13 +355,9 @@ class TemplateBuilder:
                     container.append(cloned)
 
     def _build_raw_template(
-        self,
-        template: Template,
-        output: TemplateOutput,
-        include: ET.Element,
-        variable_map: dict[str, ET.Element],
+        self, template: Template, output: TemplateOutput, include: ET.Element
     ) -> None:
-        """Build raw controls, with variables per output group when properties transform."""
+        """Build raw controls, one copy per distinct resolved form when properties transform."""
         if template.controls is None:
             return
 
@@ -377,15 +370,7 @@ class TemplateBuilder:
                 include.append(cloned)
             return
 
-        groups: dict[
-            str,
-            tuple[
-                ET.Element,
-                list[tuple[MenuItem, Menu, int]],
-                dict[str, str],
-                MenuItem,
-            ],
-        ] = {}
+        groups: dict[str, tuple[ET.Element, list[tuple[MenuItem, Menu, int]]]] = {}
 
         for item, menu, idx in matching:
             context = self._build_context(template, output, item, idx, menu)
@@ -396,24 +381,13 @@ class TemplateBuilder:
             key: str = ET.tostring(resolved, encoding="unicode")  # type: ignore[assignment]
 
             if key not in groups:
-                groups[key] = (resolved, [], context, item)
+                groups[key] = (resolved, [])
             groups[key][1].append((item, menu, idx))
 
-        for resolved_controls, items, context, representative in groups.values():
+        for resolved_controls, items in groups.values():
             for child in list(resolved_controls):
                 self._resolve_raw_visibility(child, items)
                 include.append(child)
-
-            for var_def in template.variables:
-                var_elem = self._build_variable(var_def, context, representative)
-                if var_elem is not None:
-                    self._add_variable(var_elem, variable_map)
-
-            for group_ref in template.variable_groups:
-                effective_suffix = self._combine_suffixes(output.suffix, group_ref.suffix)
-                self._build_variable_group(
-                    group_ref, context, representative, variable_map, effective_suffix
-                )
 
     def _collect_raw_matching_items(
         self, template: Template, output: TemplateOutput

@@ -26,6 +26,7 @@ Enable either, reproduce the problem, then read the log.
 | Background Error: '\<name>' has path and source | A browse or multi background defines both; the fixed path is ignored | Keep one: a fixed `<path>` or a dynamic `<source>` |
 | Property Button Error: '\<name>' not defined | A `<button>` in `properties.xml` points at a property that has no `<property>` definition | Define the property, or correct the button's `property` attribute |
 | Submenu Template Error: menu '\<name>' not found | A submenu template references a named menu that isn't defined | Correct the name, or define that menu in `menus.xml` |
+| Template Error: raw template '\<name>' has \<variables> / \<variableGroup> | A `build="true"` template declares `<variables>` or a `<variableGroup>` reference, which raw templates do not build | Move them to a menu template |
 | Items Template Error: '\<name>' not defined | A `<skinshortcuts insert="...">` references an items template that doesn't exist | Define the items template, or correct the insert name |
 | Expression Error: $MATH failed | A `$MATH[...]` expression has invalid syntax or divides by zero | Fix the expression shown in the log line, checking operators and parentheses |
 | Expression Error: $IF clause has no THEN | A `$IF[...]` clause has no uppercase `THEN`, often a lowercase or misspelled keyword | Write `THEN`, `ELIF` and `ELSE` in uppercase |

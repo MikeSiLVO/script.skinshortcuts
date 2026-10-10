@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from ..exceptions import TemplateConfigError
-from ..log import get_logger
+from ..log import get_logger, notify
 from ..models.template import (
     BuildMode,
     Expression,
@@ -348,7 +348,7 @@ class TemplateLoader:
         return Preset(name=name, rows=rows)
 
     def _parse_template(self, elem: ET.Element) -> Template:
-        """Parse a template element."""
+        """Parse a template element; a raw one declaring variables is reported."""
         outputs: list[TemplateOutput] = []
         for output_elem in elem.findall("output"):
             output_include = (output_elem.get("include") or "").strip()
@@ -430,6 +430,17 @@ class TemplateLoader:
                 var_def = self._parse_variable_definition(var_elem)
                 if var_def:
                     variables.append(var_def)
+
+        if build == BuildMode.RAW:
+            name = include or outputs[0].include
+            for tag, declared in (("variables", variables), ("variableGroup", variable_groups)):
+                if declared:
+                    notify(
+                        "Template Error",
+                        f"raw template '{name}' has <{tag}>",
+                        f"templates.xml: <template include=\"{name}\" build=\"true\"> declares "
+                        f"<{tag}>, which raw templates do not build; move it to a menu template",
+                    )
 
         controls = elem.find("controls")
 

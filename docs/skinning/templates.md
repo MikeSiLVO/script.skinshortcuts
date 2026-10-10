@@ -313,6 +313,8 @@ If 3 items use the global skin string fallback and 1 item has a custom `backgrou
 
 Without properties defined, raw mode outputs controls once with all visibility OR'd (no per-item processing).
 
+Raw templates do not build `<variables>` or `<variableGroup>` references. Declare variables in a menu template.
+
 ---
 
 ## Properties
