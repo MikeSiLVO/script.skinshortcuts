@@ -28,6 +28,7 @@ Enable either, reproduce the problem, then read the log.
 | Submenu Template Error: menu '\<name>' not found | A submenu template references a named menu that isn't defined | Correct the name, or define that menu in `menus.xml` |
 | Template Error: raw template '\<name>' has \<variables> / \<variableGroup> | A `build="true"` template declares `<variables>` or a `<variableGroup>` reference, which raw templates do not build | Move them to a menu template |
 | Items Template Error: '\<name>' not defined | A `<skinshortcuts insert="...">` references an items template that doesn't exist | Define the items template, or correct the insert name |
+| Expression / Include / Variable Group Error: '\<name>' is circular | A `$EXP`, `<skinshortcuts include>` or `<variableGroup>` reaches itself through other references; the log lists the loop | Remove one reference in the loop |
 | Expression Error: $MATH failed | A `$MATH[...]` expression has invalid syntax or divides by zero | Fix the expression shown in the log line, checking operators and parentheses |
 | Expression Error: $IF clause has no THEN | A `$IF[...]` clause has no uppercase `THEN`, often a lowercase or misspelled keyword | Write `THEN`, `ELIF` and `ELSE` in uppercase |
 | Menu / Widget / Background / View Error: '\<name>' defined twice | Two menus, widgets, backgrounds or views share a name or id; only one can be reached | Give each a unique name |

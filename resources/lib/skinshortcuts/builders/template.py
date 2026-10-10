@@ -59,6 +59,7 @@ class TemplateBuilder:
         self.menus = menus
         self.property_schema = property_schema
         self._menu_map: dict[str, Menu] = {m.name: m for m in menus}
+        self._include_chain: list[str] = []
         self._assigned_templates: set[str] = self._collect_assigned_templates()
 
     def _collect_assigned_templates(self) -> set[str]:
@@ -717,8 +718,13 @@ class TemplateBuilder:
         override_suffix: str = "",
         parent_context: dict[str, str] | None = None,
         parent_item: MenuItem | None = None,
+        _chain: tuple[str, ...] = (),
     ) -> None:
         """Build variables from a variableGroup reference."""
+        if group_ref.name in _chain:
+            written = f'<variableGroup content="{group_ref.name}"/>'
+            self._warn_circular("Variable Group", written, _chain, group_ref.name)
+            return
         if group_ref.condition:
             condition = self._expand_expressions(group_ref.condition)
             if not self._eval_condition(condition, item, context):
@@ -737,7 +743,8 @@ class TemplateBuilder:
                 name=nested_ref.name, suffix=suffix, condition=""
             )
             self._build_variable_group(
-                nested_group_ref, context, item, variable_map, "", parent_context, parent_item
+                nested_group_ref, context, item, variable_map, "", parent_context, parent_item,
+                (*_chain, group_ref.name),
             )
 
         for var_ref in var_group.references:
@@ -1120,6 +1127,17 @@ class TemplateBuilder:
         return False
 
     @staticmethod
+    def _warn_circular(kind: str, written: str, chain: tuple[str, ...], name: str) -> None:
+        """Warn that a reference leads back to itself, naming every step of the loop."""
+        loop = " -> ".join((*chain[chain.index(name):], name))
+        notify(
+            f"{kind} Error",
+            f"'{name}' is circular",
+            f"templates.xml: {written} leads back to itself ({loop}); the repeated reference is "
+            "left out; remove one reference in the loop",
+        )
+
+    @staticmethod
     def _warn_missing_insert(name: str) -> None:
         """Warn that an insert names no items template."""
         notify(
@@ -1156,14 +1174,17 @@ class TemplateBuilder:
 
         return evaluate_condition(condition, properties)
 
-    def _expand_expressions(self, condition: str) -> str:
+    def _expand_expressions(self, condition: str, _chain: tuple[str, ...] = ()) -> str:
         """Expand $EXP[name] in a condition, wrapping nosuffix values in {NOSUFFIX:...} markers."""
 
         def replace_exp(match: re.Match) -> str:
             name = match.group(1)
             expr = self.schema.get_expression(name)
+            if expr and name in _chain:
+                self._warn_circular("Expression", f"$EXP[{name}]", _chain, name)
+                return match.group(0)
             if expr:
-                expanded = self._expand_expressions(expr.value)
+                expanded = self._expand_expressions(expr.value, (*_chain, name))
                 if expr.nosuffix:
                     return f"{{NOSUFFIX:{self._strip_nosuffix_markers(expanded)}}}"
                 return expanded
@@ -1305,10 +1326,19 @@ class TemplateBuilder:
 
         for i, child, include_name, wrap in reversed(children_to_replace):
             include_def = self.schema.get_include(include_name)
+            if include_name in self._include_chain:
+                written = f'<skinshortcuts include="{include_name}"/>'
+                self._warn_circular("Include", written, tuple(self._include_chain), include_name)
+                elem.remove(child)
+                continue
             if include_def and include_def.controls is not None:
-                expanded = self._process_controls(
-                    include_def.controls, context, item, menu, variable_map, output_suffix
-                )
+                self._include_chain.append(include_name)
+                try:
+                    expanded = self._process_controls(
+                        include_def.controls, context, item, menu, variable_map, output_suffix
+                    )
+                finally:
+                    self._include_chain.pop()
                 if expanded is not None:
                     tail = child.tail
                     elem.remove(child)
