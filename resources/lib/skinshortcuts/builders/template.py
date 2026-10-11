@@ -1137,6 +1137,30 @@ class TemplateBuilder:
             "left out; remove one reference in the loop",
         )
 
+    def _warn_missing_include(self, name: str) -> None:
+        """Warn that an include marker names no include, suggesting a close match."""
+        from difflib import get_close_matches
+
+        close = get_close_matches(name, list(self.schema.includes), n=1)
+        hint = f"; did you mean '{close[0]}'?" if close else ""
+        notify(
+            "Include Error",
+            f"'{name}' not defined",
+            f"templates.xml: <skinshortcuts include=\"{name}\"/> names no <include> in "
+            f"<includes>; the marker is left out; define the include or correct the name{hint}",
+        )
+
+    @staticmethod
+    def _warn_no_container(menu_name: str) -> None:
+        """Warn that a visibility marker's menu has no container to test items against."""
+        notify(
+            "Template Error",
+            f"menu '{menu_name}' has no container",
+            f"templates.xml: <skinshortcuts>visibility</skinshortcuts> for menu '{menu_name}', "
+            "which has no container; the marker is left out; add container=\"<list id>\" to "
+            "that <menu> in menus.xml",
+        )
+
     @staticmethod
     def _warn_missing_insert(name: str) -> None:
         """Warn that an insert names no items template."""
@@ -1237,10 +1261,9 @@ class TemplateBuilder:
                         f"ListItem.Property(name),{item.name})"
                     )
                 else:
-                    log.warning(
-                        f"<skinshortcuts>visibility in template for menu "
-                        f"'{menu.name}' but menu has no container attribute"
-                    )
+                    self._warn_no_container(menu.name)
+                    elem.set("_skinshortcuts_remove", "true")
+                    return
             elif elem.text and elem.text.strip() == "onclick":
                 elem.set("_skinshortcuts_onclick", "true")
                 elem.text = ""
@@ -1255,7 +1278,11 @@ class TemplateBuilder:
                     return
 
                 include_def = self.schema.get_include(include_name)
-                if include_def and include_def.controls is not None:
+                if include_def is None:
+                    self._warn_missing_include(include_name)
+                    elem.set("_skinshortcuts_remove", "true")
+                    return
+                if include_def.controls is not None:
                     elem.set("_skinshortcuts_include", include_name)
                     wrap_attr = elem.get("wrap") or ""
                     wrap = wrap_attr.lower() == "true"
