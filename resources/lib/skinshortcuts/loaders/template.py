@@ -348,7 +348,7 @@ class TemplateLoader:
         return Preset(name=name, rows=rows)
 
     def _parse_template(self, elem: ET.Element) -> Template:
-        """Parse a template element; a raw one declaring variables is reported."""
+        """Parse a template element; a raw one reports variables and drops include markers."""
         outputs: list[TemplateOutput] = []
         for output_elem in elem.findall("output"):
             output_include = (output_elem.get("include") or "").strip()
@@ -431,6 +431,9 @@ class TemplateLoader:
                 if var_def:
                     variables.append(var_def)
 
+        controls = elem.find("controls")
+        controls = copy.deepcopy(controls) if controls is not None else None
+
         if build == BuildMode.RAW:
             name = include or outputs[0].include
             for tag, declared in (("variables", variables), ("variableGroup", variable_groups)):
@@ -441,8 +444,17 @@ class TemplateLoader:
                         f"templates.xml: <template include=\"{name}\" build=\"true\"> declares "
                         f"<{tag}>, which raw templates do not build; move it to a menu template",
                     )
-
-        controls = elem.find("controls")
+            for parent in list(controls.iter()) if controls is not None else []:
+                for child in list(parent):
+                    if child.tag == "skinshortcuts" and child.get("include"):
+                        notify(
+                            "Template Error",
+                            f"raw template '{name}' has <skinshortcuts include>",
+                            f"templates.xml: <template include=\"{name}\" build=\"true\"> uses "
+                            f"<skinshortcuts include=\"{child.get('include')}\"/>, which raw "
+                            "templates do not expand; the marker is left out; use a Kodi <include>",
+                        )
+                        parent.remove(child)
 
         return Template(
             include=include,
@@ -458,7 +470,7 @@ class TemplateLoader:
             property_groups=property_groups,
             preset_refs=preset_refs,
             preset_group_refs=preset_group_refs,
-            controls=copy.deepcopy(controls) if controls is not None else None,
+            controls=controls,
             variables=variables,
             variable_groups=variable_groups,
         )

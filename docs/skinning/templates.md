@@ -313,7 +313,7 @@ If 3 items use the global skin string fallback and 1 item has a custom `backgrou
 
 Without properties defined, raw mode outputs controls once with all visibility OR'd (no per-item processing).
 
-Raw templates do not build `<variables>` or `<variableGroup>` references. Declare variables in a menu template.
+Raw templates do not build `<variables>`, `<variableGroup>` references or `<skinshortcuts include>` markers. Declare variables in a menu template, and use a Kodi `<include>` for shared controls.
 
 ---
 
@@ -1309,7 +1309,7 @@ Reusable control snippets:
 </includes>
 ```
 
-Use in controls via the `<skinshortcuts>` tag:
+Use in a menu template's controls via the `<skinshortcuts>` tag:
 
 ```xml
 <controls>
