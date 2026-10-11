@@ -28,7 +28,7 @@ Enable either, reproduce the problem, then read the log.
 | Submenu Template Error: menu '\<name>' not found | A submenu template references a named menu that isn't defined | Correct the name, or define that menu in `menus.xml` |
 | Template Error: raw template '\<name>' has \<variables> / \<variableGroup> | A `build="true"` template declares `<variables>` or a `<variableGroup>` reference, which raw templates do not build | Move them to a menu template |
 | Include Error: '\<name>' not defined | A `<skinshortcuts include="...">` names an include that isn't in `<includes>` | Define the include, or correct the name (the log suggests a close match) |
-| Template Error: menu '\<name>' has no container | A template uses `<skinshortcuts>visibility</skinshortcuts>` for a menu without `container` | Add `container="<list id>"` to that `<menu>` in `menus.xml` |
+| Template Error: menu '\<name>' has no container | A visibility marker, or a `build="true"` template with `menu=`, reads a menu without `container` | Add `container="<list id>"` to that `<menu>` in `menus.xml` |
 | Items Template Error: '\<name>' not defined | A `<skinshortcuts insert="...">` references an items template that doesn't exist | Define the items template, or correct the insert name |
 | Expression / Include / Variable Group Error: '\<name>' is circular | A `$EXP`, `<skinshortcuts include>` or `<variableGroup>` reaches itself through other references; the log lists the loop | Remove one reference in the loop |
 | Expression Error: $MATH failed | A `$MATH[...]` expression has invalid syntax or divides by zero | Fix the expression shown in the log line, checking operators and parentheses |

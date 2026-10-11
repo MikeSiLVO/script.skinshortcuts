@@ -400,11 +400,8 @@ class TemplateBuilder:
                 continue
             if not menu.container:
                 if template.menu:
-                    log.warning(
-                        f"build=\"true\" template matched no items: menu '{menu.name}' has no "
-                        f"container attribute, which raw mode needs to build item visibility. "
-                        f"Add container= to the menu, or drop build=\"true\" to iterate items."
-                    )
+                    written = f'<template include="{output.include}" build="true">'
+                    self._warn_no_container(menu.name, written, "no items match")
                 continue
             for idx, item in enumerate(menu.items, start=1):
                 if item.disabled:
@@ -1151,14 +1148,13 @@ class TemplateBuilder:
         )
 
     @staticmethod
-    def _warn_no_container(menu_name: str) -> None:
-        """Warn that a visibility marker's menu has no container to test items against."""
+    def _warn_no_container(menu_name: str, written: str, outcome: str) -> None:
+        """Warn that a menu a template reads has no container to test items against."""
         notify(
             "Template Error",
             f"menu '{menu_name}' has no container",
-            f"templates.xml: <skinshortcuts>visibility</skinshortcuts> for menu '{menu_name}', "
-            "which has no container; the marker is left out; add container=\"<list id>\" to "
-            "that <menu> in menus.xml",
+            f"templates.xml: {written} reads menu '{menu_name}', which has no container; "
+            f"{outcome}; add container=\"<list id>\" to that <menu> in menus.xml",
         )
 
     @staticmethod
@@ -1261,7 +1257,8 @@ class TemplateBuilder:
                         f"ListItem.Property(name),{item.name})"
                     )
                 else:
-                    self._warn_no_container(menu.name)
+                    written = "<skinshortcuts>visibility</skinshortcuts>"
+                    self._warn_no_container(menu.name, written, "the marker is left out")
                     elem.set("_skinshortcuts_remove", "true")
                     return
             elif elem.text and elem.text.strip() == "onclick":
