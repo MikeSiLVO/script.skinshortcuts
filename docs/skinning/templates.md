@@ -1348,6 +1348,12 @@ Template for submenu generation:
 | `level` | Any value > 0 enables iteration over main menu items' direct submenus (looked up as `mainmenu/{item.name}`). The numeric value is not a depth selector; values above 1 behave the same as 1. |
 | `name` | Match a single menu by exact name. When empty, the `level` attribute (>0) drives iteration over main menu items' submenus instead; with empty name and level 0, the submenu template produces no output. |
 
+### Supported Content
+
+A submenu template builds `<property>` (literal, `from=` and `condition=`) and `<var>`, `$PROPERTY`, `$EXP` and `$MATH` in its controls, and `<skinshortcuts insert>` markers. It does not build `<propertyGroup>`, `<preset>`, `<presetGroup>`, `<variableGroup>`, `<variables>` or `<condition>`, and leaves `$IF` and `$PARENT` as written; each is reported. A `<skinshortcuts include>` marker is reported and left out; use a Kodi `<include>` instead.
+
+An items template it inserts keeps its `filter`. Its `<condition>` tests the main menu item, so a named submenu template ignores it, and its `<variableGroup>` references are not built.
+
 ---
 
 ## Conditions

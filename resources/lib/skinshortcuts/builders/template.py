@@ -345,7 +345,7 @@ class TemplateBuilder:
         parent_context: dict[str, str] | None = None,
         parent_item: MenuItem | None = None,
     ) -> None:
-        """Expand items iteration in a submenu template, warning on an untestable condition."""
+        """Expand items iteration in a submenu template, warning on what it ignores."""
         if items_def.condition:
             if parent_item is None:
                 notify(
@@ -358,6 +358,14 @@ class TemplateBuilder:
                 )
             elif not self._eval_condition(items_def.condition, parent_item, parent_context or {}):
                 return
+        if items_def.variable_groups:
+            notify(
+                "Submenu Template Error",
+                f"'{items_def.name}' variableGroups are not built",
+                f"templates.xml: <template items=\"{items_def.name}\"> declares <variableGroup> "
+                "and is inserted by a submenu template, which builds no variables; they are "
+                "ignored; insert it from a menu template",
+            )
 
         for idx, item in enumerate(menu.items, start=1):
             if item.disabled:

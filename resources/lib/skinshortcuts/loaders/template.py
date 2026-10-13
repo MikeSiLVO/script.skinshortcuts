@@ -38,6 +38,30 @@ from .base import get_bool
 
 log = get_logger("TemplateLoader")
 
+_SUBMENU_UNSUPPORTED = {
+    "propertyGroup": "move its values into <property> elements",
+    "preset": "use <property> or <var> elements",
+    "presetGroup": "use <property> or <var> elements",
+    "variableGroup": "build the variables from a menu template",
+    "variables": "build the variables from a menu template",
+    "condition": "put a condition on each <property> instead",
+}
+_SUBMENU_TEXT_FIXES = {
+    "$IF": "use a Kodi $VAR with conditions",
+    "$PARENT": "read the main item with Container(<main list>).ListItem.Property(...)",
+}
+
+
+def _drop_include_markers(controls: ET.Element | None) -> list[str]:
+    """Drop each <skinshortcuts include> marker from the tree, returning their names."""
+    dropped: list[str] = []
+    for parent in list(controls.iter()) if controls is not None else []:
+        for child in list(parent):
+            if child.tag == "skinshortcuts" and child.get("include"):
+                dropped.append(child.get("include") or "")
+                parent.remove(child)
+    return dropped
+
 
 class TemplateLoader:
     """Loads template schema from templates.xml."""
@@ -444,17 +468,14 @@ class TemplateLoader:
                         f"templates.xml: <template include=\"{name}\" build=\"true\"> declares "
                         f"<{tag}>, which raw templates do not build; move it to a menu template",
                     )
-            for parent in list(controls.iter()) if controls is not None else []:
-                for child in list(parent):
-                    if child.tag == "skinshortcuts" and child.get("include"):
-                        notify(
-                            "Template Error",
-                            f"raw template '{name}' has <skinshortcuts include>",
-                            f"templates.xml: <template include=\"{name}\" build=\"true\"> uses "
-                            f"<skinshortcuts include=\"{child.get('include')}\"/>, which raw "
-                            "templates do not expand; the marker is left out; use a Kodi <include>",
-                        )
-                        parent.remove(child)
+            for marker in _drop_include_markers(controls):
+                notify(
+                    "Template Error",
+                    f"raw template '{name}' has <skinshortcuts include>",
+                    f"templates.xml: <template include=\"{name}\" build=\"true\"> uses "
+                    f"<skinshortcuts include=\"{marker}\"/>, which raw templates do not "
+                    "expand; the marker is left out; use a Kodi <include>",
+                )
 
         return Template(
             include=include,
@@ -476,7 +497,7 @@ class TemplateLoader:
         )
 
     def _parse_submenu(self, elem: ET.Element) -> SubmenuTemplate:
-        """Parse a submenu element."""
+        """Parse a submenu element, reporting unbuilt features and dropping include markers."""
         include = (elem.get("include") or "").strip()
         level_str = (elem.get("level") or "0").strip()
         try:
@@ -487,7 +508,7 @@ class TemplateLoader:
 
         properties = []
         vars_list = []
-        property_groups = []
+        ignored: list[str] = []
 
         for child in elem:
             if child.tag == "property":
@@ -498,12 +519,36 @@ class TemplateLoader:
                 var = self._parse_var(child)
                 if var:
                     vars_list.append(var)
-            elif child.tag == "propertyGroup":
-                ref = self._parse_property_group_ref(child)
-                if ref:
-                    property_groups.append(ref)
+            elif child.tag in _SUBMENU_UNSUPPORTED and child.tag not in ignored:
+                ignored.append(child.tag)
+
+        written = f'<submenu include="{include}">'
+        for tag in ignored:
+            notify(
+                "Submenu Template Error",
+                f"'{include}' uses <{tag}>",
+                f"templates.xml: {written} contains <{tag}>, which submenu templates do not "
+                f"build; it is ignored; {_SUBMENU_UNSUPPORTED[tag]}",
+            )
 
         controls = elem.find("controls")
+        controls = copy.deepcopy(controls) if controls is not None else None
+        text = "" if controls is None else ET.tostring(controls, encoding="unicode")
+        for token, fix in _SUBMENU_TEXT_FIXES.items():
+            if f"{token}[" in text:
+                notify(
+                    "Submenu Template Error",
+                    f"'{include}' uses {token}",
+                    f"templates.xml: {written} uses {token}[...] in its controls, which "
+                    f"submenu templates leave as written; {fix}",
+                )
+        for marker in _drop_include_markers(controls):
+            notify(
+                "Submenu Template Error",
+                f"'{include}' uses <skinshortcuts include>",
+                f"templates.xml: {written} uses <skinshortcuts include=\"{marker}\"/>, which "
+                "submenu templates do not expand; the marker is left out; use a Kodi <include>",
+            )
 
         return SubmenuTemplate(
             include=include,
@@ -511,8 +556,7 @@ class TemplateLoader:
             name=name,
             properties=properties,
             vars=vars_list,
-            property_groups=property_groups,
-            controls=copy.deepcopy(controls) if controls is not None else None,
+            controls=controls,
         )
 
     def _parse_items_template(self, elem: ET.Element, name: str) -> ItemsDefinition | None:

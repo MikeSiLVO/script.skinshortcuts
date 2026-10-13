@@ -67,7 +67,7 @@ Top-level container.
 | `include` | str | Output include name |
 | `level` | int | Submenu level |
 | `name` | str | Menu name filter |
-| `properties`, `vars`, `property_groups`, `controls` | | Same as Template |
+| `properties`, `vars`, `controls` | | Same as Template |
 
 ***
 
