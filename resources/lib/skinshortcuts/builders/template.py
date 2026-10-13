@@ -345,9 +345,24 @@ class TemplateBuilder:
         parent_context: dict[str, str] | None = None,
         parent_item: MenuItem | None = None,
     ) -> None:
-        """Expand items iteration within a submenu template."""
+        """Expand items iteration in a submenu template, warning on an untestable condition."""
+        if items_def.condition:
+            if parent_item is None:
+                notify(
+                    "Submenu Template Error",
+                    f"'{items_def.name}' condition has no item to test",
+                    f"templates.xml: <template items=\"{items_def.name}\"> has "
+                    f"<condition>{items_def.condition}</condition> and is inserted by a named "
+                    "<submenu>, which has no parent item; the condition is ignored; insert it "
+                    "from a level-based submenu template or a menu template",
+                )
+            elif not self._eval_condition(items_def.condition, parent_item, parent_context or {}):
+                return
+
         for idx, item in enumerate(menu.items, start=1):
             if item.disabled:
+                continue
+            if items_def.filter and not self._eval_condition(items_def.filter, item, {}):
                 continue
 
             sub_context = self._build_items_context(item, idx, menu)
