@@ -250,7 +250,15 @@ class TemplateBuilder:
         """Apply a submenu template's property and var transforms; $PARENT[] reads the main item."""
         parent_context = dict(context)
 
+        resolved_props: set[str] = set()
         for prop in submenu_tpl.properties:
+            if prop.name in resolved_props:
+                continue
+            if prop.condition and not evaluate_condition(
+                self._expand_expressions(prop.condition), context
+            ):
+                continue
+            resolved_props.add(prop.name)
             if prop.from_source:
                 value = lookup(prop.from_source, context) or ""
             elif prop.value:
@@ -265,7 +273,7 @@ class TemplateBuilder:
         for var in submenu_tpl.vars:
             for val in var.values:
                 if val.condition:
-                    if evaluate_condition(val.condition, context):
+                    if evaluate_condition(self._expand_expressions(val.condition), context):
                         context[var.name] = val.value
                         break
                 else:
