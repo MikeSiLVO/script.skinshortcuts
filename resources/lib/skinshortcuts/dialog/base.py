@@ -252,26 +252,21 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             self._log("Container 212 not found in skin - subdialog list not populated")
             return
 
-        subdialog_list.reset()
-
-        item = None
         if self._selected_index is not None and 0 <= self._selected_index < len(self.items):
             item = self.items[self._selected_index]
         else:
             item = self._get_selected_item()
-        if item:
-            listitem = _create_listitem(self._listitem_values(item))
-            subdialog_list.addItem(listitem)
-            subdialog_list.selectItem(0)
-            self._log(f"Populated subdialog list (212) with item: {item.name}")
-
-    def _clear_subdialog_list(self) -> None:
-        """Clear Container 212 after subdialog closes."""
-        try:
-            subdialog_list = self._list(CONTROL_SUBDIALOG_LIST)
+        if not item:
             subdialog_list.reset()
-        except RuntimeError:
-            pass
+            return
+
+        stale = subdialog_list.size()
+        subdialog_list.addItem(_create_listitem(self._listitem_values(item)))
+        # add before remove; an empty 212 hides the controls reading it and drops their focus
+        for _ in range(stale):
+            subdialog_list.removeItem(0)
+        subdialog_list.selectItem(0)
+        self._log(f"Populated subdialog list (212) with item: {item.name}")
 
     def _rebuild_list(self, focus_index: int | None = None) -> None:
         """Rebuild the list from self.items; _refresh_selected_item also repopulates 212."""
