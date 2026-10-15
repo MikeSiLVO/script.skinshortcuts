@@ -64,32 +64,18 @@ class _ListItemValues:
 
 def _create_listitem(values: _ListItemValues) -> xbmcgui.ListItem:
     """Create a ListItem with the labels, icon and properties set."""
-    # not offscreen: cached ListItems are rewritten in place while bound
-    listitem = xbmcgui.ListItem(label=values.label, label2=values.label2)
-    _write_listitem(listitem, values, _ListItemValues(values.label, values.label2))
+    # offscreen setters skip the GUI lock; a row in the list is replaced, never written
+    listitem = xbmcgui.ListItem(label=values.label, label2=values.label2, offscreen=True)
+    if values.icon:
+        listitem.setArt({"thumb": values.icon, "icon": values.icon})
+    for name, value in values.properties.items():
+        if value:
+            listitem.setProperty(name, value)
     return listitem
 
 
-def _write_listitem(
-    listitem: xbmcgui.ListItem, values: _ListItemValues, shown: _ListItemValues
-) -> None:
-    """Write a ListItem's labels, icon and properties, calling a setter only for a changed value."""
-    if values.label != shown.label:
-        listitem.setLabel(values.label)
-    if values.label2 != shown.label2:
-        listitem.setLabel2(values.label2)
-    if values.icon != shown.icon:
-        listitem.setArt({"thumb": values.icon, "icon": values.icon})
-    for name, value in values.properties.items():
-        if value != shown.properties.get(name, ""):
-            listitem.setProperty(name, value)
-    for name, value in shown.properties.items():
-        if value and name not in values.properties:
-            listitem.setProperty(name, "")
-
-
 class DialogBaseMixin(xbmcgui.WindowXMLDialog):
-    """Core dialog functionality - initialization, list management, event routing."""
+    """Core dialog functionality: initialization, list management, event routing."""
 
 
     menu_id: str
@@ -123,7 +109,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         self._shared_manager = kwargs.get("manager")
         self.manager = None
         self.items = []
-        self._listitem_cache: dict[int, tuple[xbmcgui.ListItem, _ListItemValues]] = {}
 
         self._content_provider = kwargs.get("content_provider")
 
@@ -289,34 +274,22 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             pass
 
     def _rebuild_list(self, focus_index: int | None = None) -> None:
-        """Rebuild the list from self.items; a property change wants _refresh_selected_item."""
+        """Rebuild the list from self.items; _refresh_selected_item also repopulates 212."""
         try:
             list_control = self._list(CONTROL_LIST)
         except RuntimeError:
             return
 
         # build first; list shows empty from reset() until addItems()
-        listitems: list[str | xbmcgui.ListItem] = [self._listitem_for(item) for item in self.items]
-        live = {id(item) for item in self.items}
-        self._listitem_cache = {k: v for k, v in self._listitem_cache.items() if k in live}
+        listitems: list[str | xbmcgui.ListItem] = [
+            _create_listitem(self._listitem_values(item)) for item in self.items
+        ]
 
         list_control.reset()
         list_control.addItems(listitems)
 
         if focus_index is not None and 0 <= focus_index < len(self.items):
             list_control.selectItem(focus_index)
-
-    def _listitem_for(self, item: MenuItem) -> xbmcgui.ListItem:
-        """The ListItem for a MenuItem, reused across rebuilds and updated in place."""
-        values = self._listitem_values(item)
-        cached = self._listitem_cache.get(id(item))
-        if cached:
-            listitem, shown = cached
-            _write_listitem(listitem, values, shown)
-        else:
-            listitem = _create_listitem(values)
-        self._listitem_cache[id(item)] = (listitem, values)
-        return listitem
 
     def _listitem_values(self, item: MenuItem) -> _ListItemValues:
         """Everything a ListItem shows for a MenuItem."""
@@ -432,15 +405,12 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         return False
 
     def _refresh_selected_item(self) -> None:
-        """Refresh the selected item's ListItem from our local item state."""
+        """Refresh the list on the selected item, plus Container 212 for a subdialog."""
         index = self._get_selected_index()
         if index < 0 or index >= len(self.items):
             return
 
-        if id(self.items[index]) in self._listitem_cache:
-            self._listitem_for(self.items[index])
-        else:
-            self._rebuild_list(focus_index=index)
+        self._rebuild_list(focus_index=index)
 
         if self.dialog_mode:
             self._populate_subdialog_list()
