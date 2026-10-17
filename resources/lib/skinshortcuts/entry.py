@@ -64,8 +64,8 @@ def _unsupported_marker() -> Path:
     return Path(data) / f"{xbmc.getSkinDir()}.unsupported-ack"
 
 
-def _warn_unsupported(marker: Path, built: bool, manage: bool) -> None:
-    """Warn the skin is built for v2; only a built skin off manage offers ignore, which marks it."""
+def _warn_unsupported(marker: Path, built: bool, user_action: bool) -> None:
+    """Warn the skin is built for v2; only an automatic warning on a built skin offers ignore."""
     skin, addons = xbmc.getLocalizedString(166), xbmc.getLocalizedString(24001)
     if not built:
         picked = xbmcgui.Dialog().yesno(
@@ -75,32 +75,34 @@ def _warn_unsupported(marker: Path, built: bool, manage: bool) -> None:
         return
     choice = xbmcgui.Dialog().yesnocustom(
         "Skin Shortcuts", LANGUAGE(32200),
-        customlabel=addons if manage else LANGUAGE(32202),
+        customlabel=addons if user_action else LANGUAGE(32202),
         nolabel=xbmc.getLocalizedString(222), yeslabel=skin,
     )
     if choice == 1:
         xbmc.executebuiltin(SKIN_SETTING)
-    elif choice == 2 and manage:
+    elif choice == 2 and user_action:
         xbmc.executebuiltin(ADDON_BROWSER)
     elif choice == 2:
         marker.parent.mkdir(parents=True, exist_ok=True)
         marker.touch()
 
 
-def _skin_supported(shortcuts_path: str, *, manage: bool = False) -> bool:
-    """True with v3 config; else warn, a built skin once per session unless ignored or managing."""
+def _skin_supported(
+    shortcuts_path: str, *, menus_only: bool = False, user_action: bool = False
+) -> bool:
+    """True with v3 config; else warn, a built skin once per session unless ignored or clicked."""
     path = Path(shortcuts_path)
     marker = _unsupported_marker()
-    if (path / MENUS_FILE).exists() or (not manage and (path / VIEWS_FILE).exists()):
+    if (path / MENUS_FILE).exists() or (not menus_only and (path / VIEWS_FILE).exists()):
         marker.unlink(missing_ok=True)
         return True
     built = any((Path(out) / INCLUDES_FILE).exists() for out in get_output_paths())
     win = xbmcgui.Window(10000)
     warned = win.getProperty("skinshortcuts-unsupported-warned")
-    if built and not manage and (warned or marker.exists()):
+    if built and not user_action and (warned or marker.exists()):
         return False
     win.setProperty("skinshortcuts-unsupported-warned", "1")
-    _warn_unsupported(marker, built, manage)
+    _warn_unsupported(marker, built, user_action)
     return False
 
 
@@ -438,8 +440,16 @@ def main() -> None:
 
 
 def _dispatch(args: dict[str, str]) -> None:
-    """Dispatch the action named by the type parameter, building includes by default."""
+    """Dispatch the named action, building by default; on a v2 skin only the build runs."""
     action = args.get("type", "buildxml")
+    if action != "buildxml":
+        # v2 skins run hidesubmenu from a list onback; every Back press would raise the modal
+        supported = _skin_supported(
+            args.get("path") or get_shortcuts_path(),
+            menus_only=action == "manage", user_action=action != "hidesubmenu",
+        )
+        if not supported:
+            return
 
     if action == "buildxml":
         shortcuts_path = args.get("path")
@@ -448,9 +458,6 @@ def _dispatch(args: dict[str, str]) -> None:
         build_includes(shortcuts_path, output_path, force)
     elif action == "manage":
         shortcuts_path = args.get("path") or get_shortcuts_path()
-        if not _skin_supported(shortcuts_path, manage=True):
-            return
-
         from .dialog import show_management_dialog
 
         menu_id = args.get("menu", "mainmenu")
