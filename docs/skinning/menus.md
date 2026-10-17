@@ -124,6 +124,9 @@ lists: a submenu named `{item name}.{suffix}` that an items template iterates, r
 rather than the `submenu` attribute. Setting both stops the template finding it. See
 [Per-Item Widget Submenu](widgets.md#per-item-widget-submenu).
 
+Submenus are one level deep. Inside a submenu, button 405 does nothing and the context menu leaves
+it out.
+
 ### Attributes
 
 In addition to the attributes shared with `<menu>`:

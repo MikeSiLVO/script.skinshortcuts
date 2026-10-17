@@ -90,6 +90,11 @@ class SubdialogsMixin:
         if not self.manager:
             return
 
+        menu = self.manager.working.get(self.menu_id)
+        if menu and menu.is_submenu:
+            self._log(f"No submenu for '{item.name}': submenus are one level deep")
+            return
+
         template = (
             self.manager.config.get_default_menu(item.submenu) if item.submenu else None
         )

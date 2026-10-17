@@ -484,9 +484,13 @@ class ItemsMixin:
         ]
         props = self._get_item_properties(item)
         defaults = _default_context_labels(item)
+        menu = self.manager.working.get(self.menu_id) if self.manager else None
+        in_submenu = bool(menu and menu.is_submenu)
 
         rows = []
         for button in buttons:
+            if in_submenu and button.button_id == CONTROL_EDIT_SUBMENU:
+                continue
             condition = suffix_condition(button.condition, self.property_suffix)
             if condition and not evaluate_condition(condition, props):
                 continue
