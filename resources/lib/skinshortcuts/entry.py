@@ -23,6 +23,8 @@ from .log import get_logger
 
 log = get_logger("Entry")
 
+SKIN_SETTING = "ActivateWindow(InterfaceSettings,lookandfeel.skin)"
+
 
 def get_output_paths() -> list[str]:
     """Get paths for includes.xml output by parsing skin's addon.xml."""
@@ -62,17 +64,18 @@ def _unsupported_marker() -> Path:
 
 
 def _warn_unsupported(marker: Path) -> None:
-    """Modal once per session: switch skins, ignore (marks the skin so it won't warn) or cancel."""
+    """Warn once per session, offering the skin setting or an ignore that marks the skin."""
     win = xbmcgui.Window(10000)
     if win.getProperty("skinshortcuts-unsupported-warned"):
         return
     win.setProperty("skinshortcuts-unsupported-warned", "1")
     choice = xbmcgui.Dialog().yesnocustom(
         "Skin Shortcuts", LANGUAGE(32200),
-        customlabel=LANGUAGE(32202), nolabel=xbmc.getLocalizedString(222), yeslabel=LANGUAGE(32201),
+        customlabel=LANGUAGE(32202), nolabel=xbmc.getLocalizedString(222),
+        yeslabel=xbmc.getLocalizedString(166),
     )
     if choice == 1:
-        xbmc.executebuiltin("ActivateWindow(Settings)")
+        xbmc.executebuiltin(SKIN_SETTING)
     elif choice == 2:
         marker.parent.mkdir(parents=True, exist_ok=True)
         marker.touch()
