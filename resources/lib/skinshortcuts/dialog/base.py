@@ -194,12 +194,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         if self.dialog_mode:
             self.setProperty("skinshortcuts-dialog", self.dialog_mode)
 
-        # Mirror to Home so visibility checks work when a native dialog takes focus
-        if self.dialog_mode:
-            home = xbmcgui.Window(10000)
-            home.setProperty("skinshortcuts-dialog", self.dialog_mode)
-            if self.property_suffix:
-                home.setProperty("skinshortcuts-suffix", self.property_suffix)
+        self._mirror_to_home()
 
         self._load_items()
         self._log(f"Loaded {len(self.items)} items for menu '{self.menu_id}'")
@@ -212,6 +207,18 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 self._log(f"Set focus to control {self._setfocus}")
             except RuntimeError:
                 pass
+
+    def _mirror_to_home(self) -> None:
+        """Mirror the dialog mode and suffix to Home, for a native dialog over this one."""
+        home = xbmcgui.Window(10000)
+        for key, value in (
+            ("skinshortcuts-dialog", self.dialog_mode),
+            ("skinshortcuts-suffix", self.property_suffix),
+        ):
+            if value:
+                home.setProperty(key, value)
+            else:
+                home.clearProperty(key)
 
     def _log(self, msg: str) -> None:
         """Log debug message."""

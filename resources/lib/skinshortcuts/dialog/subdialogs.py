@@ -40,6 +40,8 @@ class SubdialogsMixin:
         def _get_selected_item(self) -> MenuItem | None: ...
         def _get_item_properties(self, item: MenuItem) -> dict[str, str]: ...
         def _refresh_selected_item(self) -> None: ...
+        def _mirror_to_home(self) -> None:
+            """Mirror the dialog mode and suffix to Home, for a native dialog over this one."""
         def _log(self, msg: str) -> None: ...
         def _get_content_provider(self) -> ContentProvider: ...
 
@@ -47,11 +49,9 @@ class SubdialogsMixin:
         def clearProperty(self, key: str) -> None: ...
 
     def _run_child_dialog(self, menu_id: str, dialog_mode: str = "", **kwargs) -> None:
-        """Run a child ManagementDialog modally, sharing this dialog's loaded objects."""
+        """Run a child ManagementDialog on this dialog's objects, then restore its Home mirror."""
         if self.manager and menu_id not in self.manager.working:
             self.manager._ensure_working_menu(menu_id)
-
-        self.setProperty("additionalDialog", "true")
 
         from . import ManagementDialog
 
@@ -70,10 +70,13 @@ class SubdialogsMixin:
             dialog_mode=dialog_mode,
             **kwargs,
         )
-        child.doModal()
-        del child
-
-        self.clearProperty("additionalDialog")
+        self.setProperty("additionalDialog", "true")
+        try:
+            child.doModal()
+        finally:
+            del child
+            self.clearProperty("additionalDialog")
+            self._mirror_to_home()
 
     def _edit_submenu(self) -> None:
         """Edit the item's submenu in a widget or shortcut child dialog, then refresh its row."""
