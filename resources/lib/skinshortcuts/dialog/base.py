@@ -241,11 +241,9 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def _display_items(self) -> None:
         """Display items in the list control, plus the edited item in 212 for a subdialog."""
         self._rebuild_list(focus_index=self._selected_index)
-        if self.dialog_mode:
-            self._populate_subdialog_list()
 
-    def _populate_subdialog_list(self) -> None:
-        """Populate Container 212 with the current item so subdialog controls don't fight 211."""
+    def _populate_subdialog_list(self, index: int) -> None:
+        """Populate 212 with the edited item, else with the row 211 selects."""
         try:
             subdialog_list = self._list(CONTROL_SUBDIALOG_LIST)
         except RuntimeError:
@@ -254,9 +252,9 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
 
         if self._selected_index is not None and 0 <= self._selected_index < len(self.items):
             item = self.items[self._selected_index]
+        elif 0 <= index < len(self.items):
+            item = self.items[index]
         else:
-            item = self._get_selected_item()
-        if not item:
             return
 
         stale = subdialog_list.size()
@@ -268,7 +266,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         self._log(f"Populated subdialog list (212) with item: {item.name}")
 
     def _rebuild_list(self, focus_index: int | None = None) -> None:
-        """Rebuild the list from self.items; _refresh_selected_item also repopulates 212."""
+        """Rebuild the list from self.items on the given row or row 0, plus 212 in a subdialog."""
         try:
             list_control = self._list(CONTROL_LIST)
         except RuntimeError:
@@ -284,6 +282,10 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
 
         if focus_index is not None and 0 <= focus_index < len(self.items):
             list_control.selectItem(focus_index)
+        else:
+            focus_index = 0
+        if self.dialog_mode:
+            self._populate_subdialog_list(focus_index)
 
     def _listitem_values(self, item: MenuItem) -> _ListItemValues:
         """Everything a ListItem shows for a MenuItem."""
@@ -398,15 +400,12 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         return False
 
     def _refresh_selected_item(self) -> None:
-        """Refresh the list on the selected item, plus Container 212 for a subdialog."""
+        """Refresh the list on the selected item, plus 212 for a subdialog."""
         index = self._get_selected_index()
         if index < 0 or index >= len(self.items):
             return
 
         self._rebuild_list(focus_index=index)
-
-        if self.dialog_mode:
-            self._populate_subdialog_list()
 
     def _get_selected_index(self) -> int:
         """Get the currently selected list index."""
