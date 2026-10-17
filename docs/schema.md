@@ -732,6 +732,7 @@ defaults to the active skin's `shortcuts` folder.
 | `resetviews` | - | Reset every view selection |
 | `resetall` | - | Delete all user data for the skin, menus and views alike |
 | `clear` | `menu`, `item`, `suffix`, `property` | Clear an item's custom widget menu, and reset the named property if given |
+| `playchannel` | `channel` | Play a PVR channel by its ID. Shortcuts picked from a `pvr` content source use it |
 
 ```
 RunScript(script.skinshortcuts,type=buildxml)

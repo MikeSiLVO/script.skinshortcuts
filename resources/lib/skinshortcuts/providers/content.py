@@ -514,7 +514,10 @@ class ContentProvider:
                 shortcuts.append(
                     ResolvedShortcut(
                         label=display_label,
-                        action=f"PlayPvrChannel({channel_id})",
+                        action=(
+                            "RunScript(script.skinshortcuts,type=playchannel,"
+                            f"channel={channel_id})"
+                        ),
                         icon=thumb or "DefaultTVShows.png",
                     )
                 )

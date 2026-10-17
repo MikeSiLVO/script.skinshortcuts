@@ -23,6 +23,7 @@ Main entry point. Parses arguments and routes to appropriate action.
 | `reset` | Reset specific menu (follows submenu references if `submenus=true`) |
 | `clear` | Clear custom widget menu |
 | `skinstring` | Open widget picker, store result in skin strings |
+| `playchannel` | Play a PVR channel by ID through `Player.Open` |
 
 ### Parameters
 
@@ -37,6 +38,8 @@ Main entry point. Parses arguments and routes to appropriate action.
 **clear:** `menu`, `item`, `suffix`, `property`, `path`
 
 **skinstring:** `skinPath`, `skinLabel`, `skinType`, `skinTarget`, `path`
+
+**playchannel:** `channel`, `path`
 
 ***
 
@@ -65,6 +68,10 @@ Reset all view selections to defaults, preserving menus. Shows confirmation dial
 ### view_select(content, plugin, shortcuts_path) → bool
 
 Open view selection dialog. If `content` provided, opens direct picker. If `plugin` also provided, sets plugin-specific override.
+
+### play_channel(channel)
+
+Play a PVR channel by ID with JSON-RPC `Player.Open`. Kodi has no builtin that plays a channel by ID, so PVR shortcuts run this action. An unknown ID logs a warning.
 
 ***
 

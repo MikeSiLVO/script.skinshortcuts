@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -390,6 +391,25 @@ def reset_menus(shortcuts_path: str | None = None) -> bool:
     return True
 
 
+def play_channel(channel: str) -> None:
+    """Play a PVR channel by its ID, logging a warning when it does not play."""
+    if not channel.isdigit():
+        log.warning(f"playchannel: '{channel}' is not a channel ID")
+        return
+    request = {
+        "jsonrpc": "2.0",
+        "method": "Player.Open",
+        "params": {"item": {"channelid": int(channel)}},
+        "id": 1,
+    }
+    response = json.loads(xbmc.executeJSONRPC(json.dumps(request)))
+    if "error" in response:
+        log.warning(
+            f"PVR channel {channel} did not play: {response['error'].get('message')}; "
+            "if the channel list changed, pick the channel again"
+        )
+
+
 def main() -> None:
     """Main entry point for RunScript."""
     log.debug("Skin Shortcuts started")
@@ -533,6 +553,8 @@ def _dispatch(args: dict[str, str]) -> None:
 
         shortcuts_path = args.get("path") or get_shortcuts_path()
         pick_widget_skinstring(shortcuts_path, args)
+    elif action == "playchannel":
+        play_channel(args.get("channel", ""))
     else:
         log.warning(f"Unknown action: {action}")
 
