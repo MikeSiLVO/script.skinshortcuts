@@ -97,6 +97,8 @@ class ItemsMixin:
         def _get_selected_item(self) -> MenuItem | None: ...
         def _rebuild_list(self, focus_index: int | None = None) -> None: ...
         def _refresh_selected_item(self) -> None: ...
+        def close(self) -> None:
+            """Close the dialog, saving changes and clearing the Home properties onInit set."""
         def _update_deleted_property(self) -> None: ...
         def _load_items(self) -> None: ...
         def _inject_empty_placeholder(self) -> None: ...
@@ -205,7 +207,7 @@ class ItemsMixin:
         return f"{base_name}-{counter}"
 
     def _delete_item(self) -> None:
-        """Delete the selected item."""
+        """Delete the selected item, closing a subdialog opened for it."""
         if not self.manager:
             return
 
@@ -226,6 +228,9 @@ class ItemsMixin:
 
         index = self._get_selected_index()
         self.manager.remove_item(self.menu_id, item.name)
+        if self.dialog_mode and self._selected_index is not None:
+            self.close()
+            return
 
         if not self.items:
             self._inject_empty_placeholder()
@@ -242,9 +247,10 @@ class ItemsMixin:
         if not item:
             return
 
-        index = self._get_selected_index()
-        new_index = index + direction
         if self.manager.move_item(self.menu_id, item.name, direction):
+            new_index = self.items.index(item)
+            if self.dialog_mode and self._selected_index is not None:
+                self._selected_index = new_index
             self._rebuild_list(focus_index=new_index)
 
     def _set_label(self) -> None:
