@@ -24,6 +24,7 @@ from .log import get_logger
 log = get_logger("Entry")
 
 SKIN_SETTING = "ActivateWindow(InterfaceSettings,lookandfeel.skin)"
+ADDON_BROWSER = "ActivateWindow(AddonBrowser,addons://)"
 
 
 def get_output_paths() -> list[str]:
@@ -63,16 +64,22 @@ def _unsupported_marker() -> Path:
     return Path(data) / f"{xbmc.getSkinDir()}.unsupported-ack"
 
 
-def _warn_unsupported(marker: Path) -> None:
-    """Warn once per session, offering the skin setting or an ignore that marks the skin."""
+def _warn_unsupported(marker: Path, built: bool) -> None:
+    """Warn once per session with ignore; no includes yet, warn always and open skin or add-ons."""
+    skin, addons = xbmc.getLocalizedString(166), xbmc.getLocalizedString(24001)
+    if not built:
+        picked = xbmcgui.Dialog().yesno(
+            "Skin Shortcuts", LANGUAGE(32200), nolabel=skin, yeslabel=addons
+        )
+        xbmc.executebuiltin(ADDON_BROWSER if picked else SKIN_SETTING)
+        return
     win = xbmcgui.Window(10000)
     if win.getProperty("skinshortcuts-unsupported-warned"):
         return
     win.setProperty("skinshortcuts-unsupported-warned", "1")
     choice = xbmcgui.Dialog().yesnocustom(
         "Skin Shortcuts", LANGUAGE(32200),
-        customlabel=LANGUAGE(32202), nolabel=xbmc.getLocalizedString(222),
-        yeslabel=xbmc.getLocalizedString(166),
+        customlabel=LANGUAGE(32202), nolabel=xbmc.getLocalizedString(222), yeslabel=skin,
     )
     if choice == 1:
         xbmc.executebuiltin(SKIN_SETTING)
@@ -82,14 +89,15 @@ def _warn_unsupported(marker: Path) -> None:
 
 
 def _skin_supported(shortcuts_path: str, *, menus_only: bool = False) -> bool:
-    """True if the skin has v3 config, clearing a stale ignore marker; else warn unless ignored."""
+    """True when v3 config exists, clearing a stale marker; else warn unless ignored and built."""
     path = Path(shortcuts_path)
     marker = _unsupported_marker()
     if (path / MENUS_FILE).exists() or (not menus_only and (path / VIEWS_FILE).exists()):
         marker.unlink(missing_ok=True)
         return True
-    if not marker.exists():
-        _warn_unsupported(marker)
+    built = any((Path(out) / INCLUDES_FILE).exists() for out in get_output_paths())
+    if not (built and marker.exists()):
+        _warn_unsupported(marker, built)
     return False
 
 

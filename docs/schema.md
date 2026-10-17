@@ -33,7 +33,7 @@ All under `userdata/addon_data/script.skinshortcuts/`, namespaced per skin:
 |------|---------|
 | `{skin_id}.userdata.json` | User customizations, merged with skin defaults at build time |
 | `{skin_id}.hashes` | Config file hashes, used to skip a rebuild when nothing changed |
-| `{skin_id}.unsupported-ack` | Written when the user dismisses the unsupported-skin warning for this skin |
+| `{skin_id}.unsupported-ack` | Written when the user picks Ignore on the unsupported-skin warning for this skin |
 | `playlists/{skin_id}/source-*.xsp` | Smart playlists generated for source shortcuts |
 
 ***
