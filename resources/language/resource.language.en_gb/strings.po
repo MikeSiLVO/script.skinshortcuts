@@ -769,7 +769,7 @@ msgid "%s (reset)"
 msgstr ""
 
 msgctxt "#32191"
-msgid "Reset all menus to skin defaults?[CR]All customizations will be removed."
+msgid "Reset all menus and views to skin defaults?[CR]All customizations will be removed."
 msgstr ""
 
 msgctxt "#32192"
