@@ -257,7 +257,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         else:
             item = self._get_selected_item()
         if not item:
-            subdialog_list.reset()
             return
 
         stale = subdialog_list.size()
