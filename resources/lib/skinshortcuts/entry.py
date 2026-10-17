@@ -255,14 +255,14 @@ def clear_custom_widget(
 
 
 def reset_all(shortcuts_path: str | None = None) -> bool:
-    """Reset menus and views to skin defaults by deleting the skin's userdata."""
+    """Reset menus and views to skin defaults after confirming, by deleting the skin's userdata."""
     if not IN_KODI:
         return False
 
     import xbmcgui
 
     if not xbmcgui.Dialog().yesno(
-        xbmc.getLocalizedString(186),  # "Reset"
+        xbmc.getLocalizedString(13007),
         LANGUAGE(32191),
     ):
         return False
@@ -319,14 +319,14 @@ def view_select(
 
 
 def reset_views(shortcuts_path: str | None = None) -> bool:
-    """Reset all view selections to defaults."""
+    """Reset all view selections to defaults after confirming."""
     if not IN_KODI:
         return False
 
     import xbmcgui
 
     if not xbmcgui.Dialog().yesno(
-        xbmc.getLocalizedString(186),  # "Reset"
+        xbmc.getLocalizedString(13007),
         LANGUAGE(32192),
     ):
         return False
@@ -347,14 +347,14 @@ def reset_views(shortcuts_path: str | None = None) -> bool:
 
 
 def reset_menus(shortcuts_path: str | None = None) -> bool:
-    """Reset all menu selections to defaults (keeps view selections)."""
+    """Reset all menu selections to defaults after confirming, keeping view selections."""
     if not IN_KODI:
         return False
 
     import xbmcgui
 
     if not xbmcgui.Dialog().yesno(
-        xbmc.getLocalizedString(186),  # "Reset"
+        xbmc.getLocalizedString(13007),
         LANGUAGE(32193),
     ):
         return False
@@ -424,7 +424,7 @@ def main() -> None:
 
 
 def _dispatch(args: dict[str, str]) -> None:
-    """Run the action named by the type parameter, building includes by default."""
+    """Dispatch the action named by the type parameter, building includes by default."""
     action = args.get("type", "buildxml")
 
     if action == "buildxml":
@@ -477,7 +477,7 @@ def _dispatch(args: dict[str, str]) -> None:
                 if include_subs
                 else LANGUAGE(32195) % menu
             )
-            if xbmcgui.Dialog().yesno(xbmc.getLocalizedString(186), prompt_msg):
+            if xbmcgui.Dialog().yesno(xbmc.getLocalizedString(13007), prompt_msg):
                 from .manager import MenuManager
                 shortcuts_path = args.get("path") or get_shortcuts_path()
                 manager = MenuManager(shortcuts_path)
@@ -490,7 +490,7 @@ def _dispatch(args: dict[str, str]) -> None:
     elif action == "resetsubmenus":
         import xbmcgui
         if xbmcgui.Dialog().yesno(
-            xbmc.getLocalizedString(186),
+            xbmc.getLocalizedString(13007),
             LANGUAGE(32196),
         ):
             from .manager import MenuManager
