@@ -17,7 +17,7 @@ except ImportError:
     IN_KODI = False
 
 
-from ..conditions import evaluate_condition, suffix_condition
+from ..conditions import check_visible, evaluate_condition, suffix_condition
 from ..constants import BACKGROUND_SIBLINGS, WIDGET_EXTRAS, WIDGET_SIBLINGS
 from ..loaders.widget import load_widgets
 from ..localize import LANGUAGE, resolve_label
@@ -600,7 +600,9 @@ class PropertiesMixin:
             condition = opt.condition
             if condition and use_suffix:
                 condition = suffix_condition(condition, self.property_suffix)
-            if not condition or evaluate_condition(condition, item_props):
+            if condition and not evaluate_condition(condition, item_props):
+                continue
+            if check_visible(opt.visible):
                 visible_options.append(opt)
 
         if not visible_options:

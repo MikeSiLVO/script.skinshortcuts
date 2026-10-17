@@ -140,6 +140,7 @@ Widgets set via the shortcut picker (which set `widgetPath` but not `widget`) st
 | `value` | Yes | Stored value |
 | `label` | Yes | Display label (supports `$LOCALIZE[id]`) |
 | `condition` | No | Property condition for visibility |
+| `visible` | No | Kodi visibility condition; the option is listed only when it is true |
 
 ### `<icon>` Elements
 
