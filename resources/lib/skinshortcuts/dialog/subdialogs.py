@@ -76,7 +76,7 @@ class SubdialogsMixin:
         self.clearProperty("additionalDialog")
 
     def _edit_submenu(self) -> None:
-        """Spawn a child dialog for the item's submenu, widget or shortcut mode by its type."""
+        """Edit the item's submenu in a widget or shortcut child dialog, then refresh its row."""
         item = self._get_selected_item()
         if not item:
             return
@@ -102,6 +102,7 @@ class SubdialogsMixin:
         self.manager.ensure_item_submenu(self.menu_id, item)
         submenu_id = self.manager.submenu_key(self.menu_id, item.name)
         self._run_child_dialog(submenu_id, "widgets" if is_widget_submenu else "")
+        self._refresh_selected_item()
 
     def _spawn_subdialog(self, subdialog: SubDialog) -> None:
         """Spawn a subdialog, then run its onclose actions; a menu-only one just opens the menu."""

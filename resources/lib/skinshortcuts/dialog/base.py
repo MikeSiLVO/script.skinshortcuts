@@ -368,10 +368,9 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 if item.submenu
                 else None
             )
-            instance_key = self.manager.submenu_key(self.menu_id, item.name)
-            instance = self.manager.config.get_menu(instance_key)
-            effective = instance if (instance and instance.items) else template
-            if effective and effective.items:
+            instance = self.manager.working.get(self.manager.submenu_key(self.menu_id, item.name))
+            effective = instance if instance is not None else template
+            if effective and any(not entry.is_placeholder for entry in effective.items):
                 put("hasSubmenu", "true")
                 put("submenu", item.submenu or "")
 
