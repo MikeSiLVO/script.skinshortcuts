@@ -245,7 +245,7 @@ class PickersMixin:
         return IconOverrides()
 
     def _choose_shortcut(self) -> None:
-        """Choose a shortcut from groupings."""
+        """Choose a shortcut from groupings and apply it to the selected item."""
         if not self.manager:
             return
 
@@ -286,9 +286,8 @@ class PickersMixin:
                 self.manager.set_icon(self.menu_id, item.name, shortcut.icon)
                 item.icon = shortcut.icon
 
-            if shortcut.item_visible:
-                self.manager.set_visible(self.menu_id, item.name, shortcut.item_visible)
-                item.visible = shortcut.item_visible
+            self.manager.set_visible(self.menu_id, item.name, shortcut.item_visible)
+            item.visible = shortcut.item_visible
 
             previous_submenu = item.submenu
             new_submenu: str | None = None

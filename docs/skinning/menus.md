@@ -532,7 +532,7 @@ For pickers invoked directly via `RunScript`, paired `prop=NAME,value=VALUE` arg
 |---------|-------------|
 | `<action>` | Action string (for action mode). Multiple allowed. Supports `condition` (see [Conditional Actions](#conditional-actions)) and `primary="true"` to set which action is used for display properties (defaults to the last unconditional action) |
 | `<path>` | Content path (for browse mode) |
-| `<visible>` | Kodi visibility condition baked into the resulting menu item when this shortcut is picked. Multiple elements are joined with ` + ` |
+| `<visible>` | Kodi visibility condition set on the resulting menu item when this shortcut is picked, replacing the item's own; a shortcut without one clears it. Multiple elements are joined with ` + ` |
 
 The attribute and child element are independent: the attribute gates picker visibility, the child element travels with the picked item.
 
