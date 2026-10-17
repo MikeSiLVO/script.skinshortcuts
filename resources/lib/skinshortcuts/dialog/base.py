@@ -400,8 +400,11 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         return False
 
     def _refresh_selected_item(self) -> None:
-        """Refresh the list on the selected item, plus 212 for a subdialog."""
-        index = self._get_selected_index()
+        """Refresh the list on the selected item, or a subdialog's edited item plus 212."""
+        if self.dialog_mode and self._selected_index is not None:
+            index = self._selected_index
+        else:
+            index = self._get_selected_index()
         if index < 0 or index >= len(self.items):
             return
 
