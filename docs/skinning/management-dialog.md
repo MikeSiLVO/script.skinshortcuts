@@ -304,6 +304,8 @@ the rest of `DialogSelect`.
 | `playlist` | Playlist source |
 | `property` | Property value |
 | `restore` | Restore a deleted item |
+| `content` | Content type, in the view picker |
+| `view` | View for a content type |
 
 The value is whichever select dialog is on screen, not the flow that opened it. Picking a browsable
 add-on in the widget picker closes that select and opens a fresh one, so the marker moves from

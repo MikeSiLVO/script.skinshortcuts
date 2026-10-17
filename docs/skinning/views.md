@@ -234,6 +234,7 @@ Set view for specific addon:
 | Property | Window | Description |
 |----------|--------|-------------|
 | `SkinShortcuts.ViewDialog` | Home | Set to `true` while view dialog is open |
+| `skinshortcuts-picker` | Home | `content` on a content type list, `view` on a view list; see [Which picker is open](management-dialog.md#which-picker-is-open) |
 
 ---
 
