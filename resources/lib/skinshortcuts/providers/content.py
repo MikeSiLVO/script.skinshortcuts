@@ -475,12 +475,12 @@ class ContentProvider:
         return shortcuts
 
     def _resolve_pvr(self, target: str) -> list[ResolvedShortcut]:
-        """Resolve PVR channels."""
+        """Resolve TV or radio PVR channels; TV by default."""
         cache_key = f"pvr_{target}"
         if cache_key in self._cache:
             return self._cache[cache_key]
 
-        if target in ("tv", "television"):
+        if target in ("", "tv", "television"):
             if not xbmc.getCondVisibility("Pvr.HasTVChannels"):
                 return []
             channel_group = "alltv"

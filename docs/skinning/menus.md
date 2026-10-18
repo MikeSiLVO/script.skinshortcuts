@@ -631,7 +631,7 @@ Valid `target` values depend on the `source` attribute. Values are based on Kodi
 | `sources` | `video`, `music`, `pictures`, `files`, `programs` | Matches Kodi's Files.Media values |
 | `playlists` | `video`, `music` | Matches playlist directory names |
 | `nodes` | `video`, `music`, `library` | Library node types; `library` shows Videos and Music as two browsable entries to drill into |
-| `pvr` | `tv`, `radio` | PVR channel types |
+| `pvr` | `tv`, `radio` | PVR channel types; `tv` when no target is set |
 | `library` | See [Library Target Values](widgets.md#library-target-values) | Genre, year, studio, tag, actor queries |
 | `favourites` | (none) | No target needed |
 | `commands` | (none) | Power, log off, library update and clean, screensaver; each listed only where the system can run it |
