@@ -16,6 +16,7 @@ MenuManager provides the API for modifying menus through the management dialog. 
 - **defaults**: Immutable skin defaults (from config.default_menus)
 - **working**: Mutable working copy for all edits
 - **save**: Diffs working against defaults to generate minimal userdata
+- **hidden items**: Items a `visible=` condition hid at load are left out of working and put back, each after the item it followed, before the diff. Their stored edits, removals and positions carry over
 
 ***
 
