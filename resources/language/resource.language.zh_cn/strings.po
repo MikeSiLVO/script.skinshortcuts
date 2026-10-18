@@ -778,8 +778,8 @@ msgid "Reset all view selections to skin defaults?"
 msgstr "将所有视图选择重置为皮肤默认值？"
 
 msgctxt "#32193"
-msgid "Reset all menus to skin defaults?[CR]View selections will be preserved."
-msgstr "将所有菜单重置为皮肤默认值？[CR]视图选择将被保留。"
+msgid "Reset all menus to skin defaults?"
+msgstr "将所有菜单重置为皮肤默认值？"
 
 msgctxt "#32194"
 msgid "Reset '%s' and its submenus to skin defaults?"

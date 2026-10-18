@@ -778,8 +778,8 @@ msgid "Reset all view selections to skin defaults?"
 msgstr "Reimpostare tutte le impostazioni di visualizzazione ai valori predefiniti della skin?"
 
 msgctxt "#32193"
-msgid "Reset all menus to skin defaults?[CR]View selections will be preserved."
-msgstr "Reimpostare tutti i menu alle impostazioni predefinite della skin? [CR]Le selezioni della vista verranno mantenute."
+msgid "Reset all menus to skin defaults?"
+msgstr "Reimpostare tutti i menu alle impostazioni predefinite della skin?"
 
 msgctxt "#32194"
 msgid "Reset '%s' and its submenus to skin defaults?"

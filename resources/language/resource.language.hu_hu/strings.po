@@ -778,8 +778,8 @@ msgid "Reset all view selections to skin defaults?"
 msgstr "Visszaállítod az összes nézetkiválasztást az alapértelmezett felszín beállításokra?"
 
 msgctxt "#32193"
-msgid "Reset all menus to skin defaults?[CR]View selections will be preserved."
-msgstr "Visszaállítod az összes menüt az alapértelmezett kinézetre?[CR]A nézetben kiválasztott elemek megmaradnak."
+msgid "Reset all menus to skin defaults?"
+msgstr "Visszaállítod az összes menüt az alapértelmezett kinézetre?"
 
 msgctxt "#32194"
 msgid "Reset '%s' and its submenus to skin defaults?"
