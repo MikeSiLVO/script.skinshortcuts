@@ -787,6 +787,10 @@ Two property contexts are available within items templates:
 | `label` | Parent menu item label |
 | *custom* | Any property defined on the parent item |
 
+Slot suffixes do not apply inside items templates, since submenu items have no slots. The host
+template's output suffix is ignored there, and a `suffix=` on a `<preset>`, `<propertyGroup>` or
+`<variableGroup>` is ignored and reported.
+
 ### Condition vs Filter
 
 * `condition` on items template - Evaluated against the **parent** menu item. If false, the entire insert is skipped.

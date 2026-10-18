@@ -33,6 +33,7 @@ Enable either, reproduce the problem, then read the log.
 | Submenu Template Error: '\<name>' variableGroups are not built | An items template with `<variableGroup>` references is inserted by a submenu template, which builds no variables | Insert it from a menu template |
 | Submenu Template Error: '\<name>' condition has no item to test | An items template with a `<condition>` is inserted by a named `<submenu>`, which has no parent item; the condition is ignored | Insert it from a level-based submenu template or a menu template |
 | Items Template Error: '\<name>' not defined | A `<skinshortcuts insert="...">` references an items template that doesn't exist | Define the items template, or correct the insert name |
+| Items Template Error: '\<name>' uses suffix= | A `<preset>`, `<propertyGroup>` or `<variableGroup>` inside `<template items="...">` has `suffix=`, which is ignored there since submenu items have no slots | Remove `suffix=` |
 | Expression / Include / Variable Group Error: '\<name>' is circular | A `$EXP`, `<skinshortcuts include>` or `<variableGroup>` reaches itself through other references; the log lists the loop | Remove one reference in the loop |
 | Expression Error: $MATH failed | A `$MATH[...]` expression has invalid syntax or divides by zero | Fix the expression shown in the log line, checking operators and parentheses |
 | Expression Error: $IF clause has no THEN | A `$IF[...]` clause has no uppercase `THEN`, often a lowercase or misspelled keyword | Write `THEN`, `ELIF` and `ELSE` in uppercase |

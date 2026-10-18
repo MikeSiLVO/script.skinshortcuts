@@ -490,7 +490,7 @@ class TemplateBuilder:
         include: ET.Element,
         variable_map: dict[str, ET.Element],
     ) -> None:
-        """Build one output's template controls and variables, its suffix applied throughout."""
+        """Build one output's controls and variables, its suffix applied outside items templates."""
         if template.controls is not None:
             for name in sorted(self._find_insert_names(template.controls)):
                 if not self.schema.get_items_template(name):
@@ -514,7 +514,7 @@ class TemplateBuilder:
 
                 if template.controls is not None:
                     controls = self._process_controls(
-                        template.controls, context, item, menu, variable_map, output.suffix
+                        template.controls, context, item, menu, variable_map
                     )
                     if controls is not None:
                         for child in controls:
@@ -1250,11 +1250,10 @@ class TemplateBuilder:
         item: MenuItem,
         menu: Menu,
         variable_map: dict[str, ET.Element] | None = None,
-        output_suffix: str = "",
     ) -> ET.Element | None:
         """Process controls XML, applying substitutions."""
         result = copy.deepcopy(controls)
-        self._process_element(result, context, item, menu, variable_map, output_suffix)
+        self._process_element(result, context, item, menu, variable_map)
         self._remove_empty_elements(result)
 
         return result
@@ -1276,7 +1275,6 @@ class TemplateBuilder:
         item: MenuItem,
         menu: Menu,
         variable_map: dict[str, ET.Element] | None = None,
-        output_suffix: str = "",
     ) -> None:
         """Recursively process an element, applying substitutions."""
         if elem.tag == "skinshortcuts":
@@ -1337,14 +1335,12 @@ class TemplateBuilder:
 
         children_to_remove = []
         for child in elem:
-            self._process_element(child, context, item, menu, variable_map, output_suffix)
+            self._process_element(child, context, item, menu, variable_map)
             if child.get("_skinshortcuts_remove"):
                 children_to_remove.append(child)
 
-        self._handle_skinshortcuts_include(
-            elem, context, item, menu, variable_map, output_suffix
-        )
-        self._handle_skinshortcuts_items(elem, context, item, variable_map, output_suffix)
+        self._handle_skinshortcuts_include(elem, context, item, menu, variable_map)
+        self._handle_skinshortcuts_items(elem, context, item, variable_map)
         self._handle_skinshortcuts_onclick(elem, item, menu)
 
         for child in children_to_remove:
@@ -1369,7 +1365,6 @@ class TemplateBuilder:
         item: MenuItem,
         menu: Menu,
         variable_map: dict[str, ET.Element] | None = None,
-        output_suffix: str = "",
     ) -> None:
         """Handle <skinshortcuts include="..."/>, wrap="true" keeping a Kodi <include> wrapper."""
         children_to_replace = []
@@ -1390,7 +1385,7 @@ class TemplateBuilder:
                 self._include_chain.append(include_name)
                 try:
                     expanded = self._process_controls(
-                        include_def.controls, context, item, menu, variable_map, output_suffix
+                        include_def.controls, context, item, menu, variable_map
                     )
                 finally:
                     self._include_chain.pop()
@@ -1420,7 +1415,6 @@ class TemplateBuilder:
         context: dict[str, str],
         item: MenuItem,
         variable_map: dict[str, ET.Element] | None = None,
-        output_suffix: str = "",
     ) -> None:
         """Handle <skinshortcuts insert="X" /> iteration over the {item}.{source} submenu."""
         children_to_replace: list[tuple[int, ET.Element, str]] = []
@@ -1479,13 +1473,11 @@ class TemplateBuilder:
 
                 if variable_map is not None:
                     for group_ref in items_def.variable_groups:
-                        effective_suffix = self._combine_suffixes(output_suffix, group_ref.suffix)
                         self._build_variable_group(
                             group_ref,
                             sub_context,
                             sub_item,
                             variable_map,
-                            effective_suffix,
                             parent_context=context,
                             parent_item=item,
                         )

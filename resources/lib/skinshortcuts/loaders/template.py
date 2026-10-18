@@ -560,7 +560,7 @@ class TemplateLoader:
         )
 
     def _parse_items_template(self, elem: ET.Element, name: str) -> ItemsDefinition | None:
-        """Parse <template items="X"> into an ItemsDefinition."""
+        """Parse <template items="X"> into an ItemsDefinition, reporting and dropping suffix=."""
         source = (elem.get("source") or "").strip()
         filter_cond = (elem.get("filter") or "").strip()
 
@@ -596,6 +596,22 @@ class TemplateLoader:
                 ref = self._parse_variable_group_ref(child)
                 if ref:
                     variable_groups.append(ref)
+
+        refs = (
+            ("preset", preset_refs), ("propertyGroup", property_groups),
+            ("variableGroup", variable_groups),
+        )
+        for tag, tag_refs in refs:
+            for ref in tag_refs:
+                if ref.suffix:
+                    notify(
+                        "Items Template Error",
+                        f"'{name}' uses suffix=",
+                        f'templates.xml: <template items="{name}"> has <{tag} '
+                        f'content="{ref.name}" suffix="{ref.suffix}">; suffixes are ignored in '
+                        "items templates, whose items have no slots; remove suffix=",
+                    )
+                    ref.suffix = ""
 
         controls = elem.find("controls")
 
