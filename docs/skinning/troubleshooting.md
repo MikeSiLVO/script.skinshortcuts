@@ -40,3 +40,4 @@ Enable either, reproduce the problem, then read the log.
 | Menu / Widget / Background / View Error: '\<name>' defined twice | Two menus, widgets, backgrounds or views share a name or id; only one can be reached | Give each a unique name |
 | Menu Error: item '\<name>' defined twice in menu '\<menu>' | Two items in one menu share a name | Give each item a unique name |
 | View Error: content '\<name>' defined twice | Two content rules in `views.xml` share a name | Give each rule a unique name |
+| Template / Items Template / Submenu Template Error: '\<name>' defined twice | A `<var>` shares its name with another `<var>`, or with `<property>` elements, in the same template, property group, items or submenu template; the first definition is used | Keep one `<var>`, or only `<property>` elements |

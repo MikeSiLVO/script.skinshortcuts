@@ -969,8 +969,11 @@ class TemplateBuilder:
         context: dict[str, str],
         suffix: str = "",
     ) -> None:
-        """Apply properties from a property group; a literal only fills an unset name."""
+        """Apply a property group, first match per name; a literal only fills an unset name."""
+        resolved_props: set[str] = set()
         for prop in prop_group.properties:
+            if prop.name in resolved_props:
+                continue
             from_source = prop.from_source
             condition = prop.condition
 
@@ -987,7 +990,10 @@ class TemplateBuilder:
                 condition=condition,
             )
             value = self._resolve_property(modified_prop, item, context)
-            if value is not None and (from_source or prop.name not in context):
+            if value is None:
+                continue
+            resolved_props.add(prop.name)
+            if from_source or prop.name not in context:
                 context[prop.name] = value
 
         for var in prop_group.vars:

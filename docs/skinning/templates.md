@@ -355,9 +355,20 @@ When one property should override another based on a toggle, use mutually exclus
 <property name="sortby" condition="!useCustomSort" from="widgetSortBy" />
 ```
 
-The `!useCustomSort` negation keeps the two branches mutually exclusive. Without it, the first property sets the value and the second's `from` would always overwrite (since `from` always wins when set).
+The `!useCustomSort` negation keeps the two branches mutually exclusive, so their order does not matter. Without it, the first matching property wins, so the override has to come first.
 
 This pattern lets a skinner bind two UI controls to the same effective output: a full picker for the default property, plus a quick toggle that overrides it when enabled.
+
+### Precedence
+
+Within one list, the first matching `<property>` wins for a name. A list is a template's own
+elements, one property group, or one items or submenu template. A name takes either `<property>`
+elements or a single `<var>`, not both; a second definition is reported and the first is used.
+
+Lists apply in this order: template properties, vars, presets, preset groups, property groups. A
+`<property>`, a `<var>` or a property group `from=` replaces a value already set, the item's own
+included. A property group literal, a preset and a preset group only fill a name that is still
+unset.
 
 ### Built-in Sources
 
@@ -1056,7 +1067,7 @@ Reference:
 </template>
 ```
 
-All matched attributes become properties.
+All matched attributes become properties, except names already set (see [Precedence](#precedence)).
 
 ### Preset Reference Attributes
 

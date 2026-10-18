@@ -63,6 +63,29 @@ def _drop_include_markers(controls: ET.Element | None) -> list[str]:
     return dropped
 
 
+def _drop_duplicate_definitions(elem: ET.Element, heading: str, written: str) -> None:
+    """Drop and report each <var>, or <property> after a <var>, reusing a name; the first stays."""
+    property_names: set[str] = set()
+    var_names: set[str] = set()
+    for child in list(elem):
+        name = (child.get("name") or "").strip().lower()
+        if child.tag not in ("property", "var") or not name:
+            continue
+        if name in var_names or (child.tag == "var" and name in property_names):
+            notify(
+                heading,
+                f"'{child.get('name')}' defined twice",
+                f"templates.xml: {written} defines '{child.get('name')}' again with "
+                f"<{child.tag}>; the first definition is used; keep one <var>, or only "
+                "<property> elements",
+            )
+            elem.remove(child)
+        elif child.tag == "var":
+            var_names.add(name)
+        else:
+            property_names.add(name)
+
+
 class TemplateLoader:
     """Loads template schema from templates.xml."""
 
@@ -206,7 +229,7 @@ class TemplateLoader:
         return PresetGroup(name=name, children=children)
 
     def _parse_property_groups_section(self, root: ET.Element) -> None:
-        """Parse <propertyGroups> section."""
+        """Parse <propertyGroups> section, dropping and reporting duplicate definitions."""
         section = root.find("propertyGroups")
         if section is None:
             return
@@ -217,6 +240,7 @@ class TemplateLoader:
                     f"{self.path}: <{elem.tag}> definition missing 'name' attribute, skipping"
                 )
                 continue
+            _drop_duplicate_definitions(elem, "Template Error", f'<propertyGroup name="{name}">')
 
             properties = []
             for prop_elem in elem.findall("property"):
@@ -372,7 +396,7 @@ class TemplateLoader:
         return Preset(name=name, rows=rows)
 
     def _parse_template(self, elem: ET.Element) -> Template:
-        """Parse a template element; a raw one reports variables and drops include markers."""
+        """Parse a template, dropping duplicates; a raw one reports variables and drops markers."""
         outputs: list[TemplateOutput] = []
         for output_elem in elem.findall("output"):
             output_include = (output_elem.get("include") or "").strip()
@@ -413,6 +437,9 @@ class TemplateLoader:
             param = self._parse_param(param_elem)
             if param:
                 params.append(param)
+
+        name = include or outputs[0].include
+        _drop_duplicate_definitions(elem, "Template Error", f'<template include="{name}">')
 
         properties = []
         vars_list = []
@@ -459,7 +486,6 @@ class TemplateLoader:
         controls = copy.deepcopy(controls) if controls is not None else None
 
         if build == BuildMode.RAW:
-            name = include or outputs[0].include
             for tag, declared in (("variables", variables), ("variableGroup", variable_groups)):
                 if declared:
                     notify(
@@ -497,7 +523,7 @@ class TemplateLoader:
         )
 
     def _parse_submenu(self, elem: ET.Element) -> SubmenuTemplate:
-        """Parse a submenu element, reporting unbuilt features and dropping include markers."""
+        """Parse a submenu, reporting unbuilt features, dropping duplicates and include markers."""
         include = (elem.get("include") or "").strip()
         level_str = (elem.get("level") or "0").strip()
         try:
@@ -505,6 +531,8 @@ class TemplateLoader:
         except ValueError:
             level = 0
         name = (elem.get("name") or "").strip()
+        written = f'<submenu include="{include}">'
+        _drop_duplicate_definitions(elem, "Submenu Template Error", written)
 
         properties = []
         vars_list = []
@@ -522,7 +550,6 @@ class TemplateLoader:
             elif child.tag in _SUBMENU_UNSUPPORTED and child.tag not in ignored:
                 ignored.append(child.tag)
 
-        written = f'<submenu include="{include}">'
         for tag in ignored:
             notify(
                 "Submenu Template Error",
@@ -560,7 +587,7 @@ class TemplateLoader:
         )
 
     def _parse_items_template(self, elem: ET.Element, name: str) -> ItemsDefinition | None:
-        """Parse <template items="X"> into an ItemsDefinition, reporting and dropping suffix=."""
+        """Parse <template items="X">, reporting and dropping duplicates and suffix=."""
         source = (elem.get("source") or "").strip()
         filter_cond = (elem.get("filter") or "").strip()
 
@@ -568,6 +595,8 @@ class TemplateLoader:
         cond_elem = elem.find("condition")
         if cond_elem is not None:
             condition = (cond_elem.text or "").strip()
+
+        _drop_duplicate_definitions(elem, "Items Template Error", f'<template items="{name}">')
 
         properties = []
         vars_list = []
