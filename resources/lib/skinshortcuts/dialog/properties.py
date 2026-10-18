@@ -378,10 +378,13 @@ class PropertiesMixin:
         base, suffix = _split_suffix(prefix)
 
         related: dict[str, str | None] = {
+            f"{base}{part}{suffix}": None for part in BACKGROUND_SIBLINGS
+        }
+        related.update({
             f"{base}Label{suffix}": bg.label,
             f"{base}Path{suffix}": bg.path,
             f"{base}Type{suffix}": bg.type_name,
-        }
+        })
 
         self._set_item_property(item, prefix, bg.name, related, apply_suffix=False)
 
@@ -407,10 +410,13 @@ class PropertiesMixin:
             value = bg.name
 
         related: dict[str, str | None] = {
+            f"{base}{part}{suffix}": None for part in BACKGROUND_SIBLINGS
+        }
+        related.update({
             f"{base}Label{suffix}": label,
             f"{base}Path{suffix}": custom_path,
             f"{base}Type{suffix}": bg.type_name,
-        }
+        })
         if playlist_type:
             related[f"{base}PlaylistType{suffix}"] = playlist_type
 
