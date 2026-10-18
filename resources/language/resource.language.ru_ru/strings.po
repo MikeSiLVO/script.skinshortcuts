@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: translations@kodi.tv\n"
+"Report-Msgid-Bugs-To: noreply@noreply.com\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2026-08-21 01:16+0000\n"
 "Last-Translator: Andrei Stepanov <adem4ik@gmail.com>\n"
@@ -770,8 +770,8 @@ msgid "%s (reset)"
 msgstr "%s (сброс)"
 
 msgctxt "#32191"
-msgid "Reset all menus to skin defaults?[CR]All customizations will be removed."
-msgstr "Сбросить все меню до значений обложки по умолчанию?[CR]Все настройки будут удалены."
+msgid "Reset all menus and views to skin defaults?[CR]All customizations will be removed."
+msgstr ""
 
 msgctxt "#32192"
 msgid "Reset all view selections to skin defaults?"
@@ -809,10 +809,6 @@ msgctxt "#32200"
 msgid "This skin is built for Skin Shortcuts v2. Switch skins or downgrade the add-on."
 msgstr "Эта обложка создана для Skin Shortcuts v2. Смените обложку или откатите дополнение."
 
-msgctxt "#32201"
-msgid "Open settings"
-msgstr "Открыть настройки"
-
 msgctxt "#32202"
 msgid "Ignore for this skin"
 msgstr "Игнорировать для этой обложки"
@@ -836,6 +832,26 @@ msgstr "Исполнители не из этого источника"
 msgctxt "#32207"
 msgid "Enable shortcut"
 msgstr "Включить ярлык"
+
+msgctxt "#32208"
+msgid "Reset all menus"
+msgstr ""
+
+msgctxt "#32209"
+msgid "Reset all views"
+msgstr ""
+
+msgctxt "#32210"
+msgid "Reset menu"
+msgstr ""
+
+#~ msgctxt "#32191"
+#~ msgid "Reset all menus to skin defaults?[CR]All customizations will be removed."
+#~ msgstr "Сбросить все меню до значений обложки по умолчанию?[CR]Все настройки будут удалены."
+
+#~ msgctxt "#32201"
+#~ msgid "Open settings"
+#~ msgstr "Открыть настройки"
 
 #~ msgctxt "#32024"
 #~ msgid "Custom shortcut"
