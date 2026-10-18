@@ -135,15 +135,14 @@ class TemplateBuilder:
         include_map: dict[str, ET.Element],
     ) -> None:
         """Build a submenu template into its include, from a named menu or by level."""
-        if not submenu_tpl.controls:
-            return
-
         include_name = f"skinshortcuts-{submenu_tpl.include}"
         if include_name not in include_map:
             include_elem = ET.Element("include")
             include_elem.set("name", include_name)
             include_map[include_name] = include_elem
         include_elem = include_map[include_name]
+        if submenu_tpl.controls is None:
+            return
 
         if submenu_tpl.name:
             menu = self._menu_map.get(submenu_tpl.name)
