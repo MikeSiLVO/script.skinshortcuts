@@ -18,7 +18,7 @@ Stores user modifications to menus and view selections in JSON format. Provides 
 | Function | Returns | Description |
 |----------|---------|-------------|
 | `get_userdata_path()` | str | Path to userdata file for current skin |
-| `load_userdata(path=None)` | UserData | Load from JSON |
+| `load_userdata(path=None)` | UserData | Load from JSON; a damaged file gives defaults and is copied to `.bak` |
 | `save_userdata(userdata, path=None)` | bool | Save to JSON |
 
 ***

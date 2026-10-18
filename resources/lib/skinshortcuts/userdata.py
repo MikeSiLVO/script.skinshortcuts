@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -173,7 +174,7 @@ class UserData:
 
 
 def load_userdata(path: str | None = None) -> UserData:
-    """Load user data from JSON file."""
+    """Load user data from JSON file; a damaged one gives defaults and is kept as a .bak copy."""
     if path is None:
         path = get_userdata_path()
         log.debug(f"Userdata path: {path}")
@@ -182,8 +183,8 @@ def load_userdata(path: str | None = None) -> UserData:
         log.warning("No userdata path available")
         return UserData()
 
+    file_path = Path(path)
     try:
-        file_path = Path(path)
         if file_path.exists():
             log.debug(f"Loading userdata from: {file_path}")
             with open(file_path, encoding="utf-8") as f:
@@ -193,8 +194,15 @@ def load_userdata(path: str | None = None) -> UserData:
                 return userdata
         else:
             log.debug(f"Userdata file not found: {file_path}")
-    except (OSError, json.JSONDecodeError) as e:
+    except OSError as e:
         log.error(f"Failed to load userdata from {path}: {e}")
+    except (ValueError, TypeError, AttributeError) as e:
+        backup = file_path.with_name(f"{file_path.name}.bak")
+        shutil.copyfile(file_path, backup)
+        log.error(
+            f"{file_path}: unreadable userdata ({e}); using skin defaults, "
+            f"kept a copy as {backup.name}; fix or delete the file"
+        )
 
     return UserData()
 
