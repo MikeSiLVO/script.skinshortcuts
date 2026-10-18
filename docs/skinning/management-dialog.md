@@ -523,6 +523,7 @@ Prompts for confirmation, then deletes all userdata (menus and views) and rebuil
 ### Reset Menus Only
 
 ```xml
+<label>$ADDON[script.skinshortcuts 32208]</label>
 <onclick>RunScript(script.skinshortcuts,type=resetmenus)</onclick>
 ```
 
@@ -531,6 +532,7 @@ Prompts for confirmation, resets all menus to defaults but preserves view select
 ### Reset Views Only
 
 ```xml
+<label>$ADDON[script.skinshortcuts 32209]</label>
 <onclick>RunScript(script.skinshortcuts,type=resetviews)</onclick>
 ```
 
@@ -539,6 +541,7 @@ Prompts for confirmation, resets all view selections to defaults but preserves m
 ### Reset Single Menu
 
 ```xml
+<label>$ADDON[script.skinshortcuts 32210]</label>
 <onclick>RunScript(script.skinshortcuts,type=reset,menu=mainmenu)</onclick>
 ```
 

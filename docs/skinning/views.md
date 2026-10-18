@@ -224,6 +224,7 @@ Set view for specific addon:
 
 ```xml
 <!-- Reset all view selections -->
+<label>$ADDON[script.skinshortcuts 32209]</label>
 <onclick>RunScript(script.skinshortcuts,type=resetviews)</onclick>
 ```
 

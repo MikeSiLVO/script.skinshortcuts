@@ -831,3 +831,15 @@ msgstr ""
 msgctxt "#32207"
 msgid "Enable shortcut"
 msgstr ""
+
+msgctxt "#32208"
+msgid "Reset all menus"
+msgstr ""
+
+msgctxt "#32209"
+msgid "Reset all views"
+msgstr ""
+
+msgctxt "#32210"
+msgid "Reset menu"
+msgstr ""
