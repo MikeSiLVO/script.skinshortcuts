@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: translations@kodi.tv\n"
+"Report-Msgid-Bugs-To: noreply@noreply.com\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2026-08-13 08:20+0000\n"
 "Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
@@ -770,8 +770,8 @@ msgid "%s (reset)"
 msgstr "%s (reimposta)"
 
 msgctxt "#32191"
-msgid "Reset all menus to skin defaults?[CR]All customizations will be removed."
-msgstr "Reimpostare tutti i menu alle impostazioni predefinite della skin?[CR] Tutte le personalizzazioni verranno rimosse."
+msgid "Reset all menus and views to skin defaults?[CR]All customizations will be removed."
+msgstr ""
 
 msgctxt "#32192"
 msgid "Reset all view selections to skin defaults?"
@@ -809,10 +809,6 @@ msgctxt "#32200"
 msgid "This skin is built for Skin Shortcuts v2. Switch skins or downgrade the add-on."
 msgstr "Questa skin è compatibile con Skin Shortcuts v2. Cambia skin o effettua il downgrade dell'add-on."
 
-msgctxt "#32201"
-msgid "Open settings"
-msgstr "Apri impostazioni"
-
 msgctxt "#32202"
 msgid "Ignore for this skin"
 msgstr "Ignora per questa skin"
@@ -836,6 +832,26 @@ msgstr "Artisti non presenti in questa sorgente"
 msgctxt "#32207"
 msgid "Enable shortcut"
 msgstr "Abilita collegamento"
+
+msgctxt "#32208"
+msgid "Reset all menus"
+msgstr ""
+
+msgctxt "#32209"
+msgid "Reset all views"
+msgstr ""
+
+msgctxt "#32210"
+msgid "Reset menu"
+msgstr ""
+
+#~ msgctxt "#32191"
+#~ msgid "Reset all menus to skin defaults?[CR]All customizations will be removed."
+#~ msgstr "Reimpostare tutti i menu alle impostazioni predefinite della skin?[CR] Tutte le personalizzazioni verranno rimosse."
+
+#~ msgctxt "#32201"
+#~ msgid "Open settings"
+#~ msgstr "Apri impostazioni"
 
 #~ msgctxt "#32024"
 #~ msgid "Custom shortcut"

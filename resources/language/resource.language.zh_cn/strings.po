@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: translations@kodi.tv\n"
+"Report-Msgid-Bugs-To: noreply@noreply.com\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2026-08-21 01:16+0000\n"
 "Last-Translator: wabisabi926 <wabisabi926@foxmail.com>\n"
@@ -770,8 +770,8 @@ msgid "%s (reset)"
 msgstr "%s（已重置）"
 
 msgctxt "#32191"
-msgid "Reset all menus to skin defaults?[CR]All customizations will be removed."
-msgstr "将所有菜单重置为皮肤默认值？[CR]所有自定义将被移除。"
+msgid "Reset all menus and views to skin defaults?[CR]All customizations will be removed."
+msgstr ""
 
 msgctxt "#32192"
 msgid "Reset all view selections to skin defaults?"
@@ -809,10 +809,6 @@ msgctxt "#32200"
 msgid "This skin is built for Skin Shortcuts v2. Switch skins or downgrade the add-on."
 msgstr "此皮肤基于 Skin Shortcuts v2 构建。请切换皮肤或降级插件版本。"
 
-msgctxt "#32201"
-msgid "Open settings"
-msgstr "打开设置"
-
 msgctxt "#32202"
 msgid "Ignore for this skin"
 msgstr "对此皮肤忽略"
@@ -836,6 +832,26 @@ msgstr "此源中没有的艺术家"
 msgctxt "#32207"
 msgid "Enable shortcut"
 msgstr "启用快捷方式"
+
+msgctxt "#32208"
+msgid "Reset all menus"
+msgstr ""
+
+msgctxt "#32209"
+msgid "Reset all views"
+msgstr ""
+
+msgctxt "#32210"
+msgid "Reset menu"
+msgstr ""
+
+#~ msgctxt "#32191"
+#~ msgid "Reset all menus to skin defaults?[CR]All customizations will be removed."
+#~ msgstr "将所有菜单重置为皮肤默认值？[CR]所有自定义将被移除。"
+
+#~ msgctxt "#32201"
+#~ msgid "Open settings"
+#~ msgstr "打开设置"
 
 #~ msgctxt "#32024"
 #~ msgid "Custom shortcut"
