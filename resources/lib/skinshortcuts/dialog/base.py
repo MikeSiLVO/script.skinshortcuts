@@ -184,7 +184,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 self._subdialogs = {sd.button_id: sd for sd in menu_config.subdialogs}
 
         if not self.dialog_mode and self.manager:
-            menu = self.manager.config.get_menu(self.menu_id)
+            menu = self.manager.working.get(self.menu_id)
             if menu and menu.menu_type == "widgets":
                 self.dialog_mode = "widgets"
 
@@ -498,7 +498,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             self.setProperty("menuname", self.menu_id)
 
             if self.manager:
-                menu = self.manager.config.get_menu(self.menu_id)
+                menu = self.manager.working.get(self.menu_id)
                 if menu:
                     allow = menu.allow
                     self.setProperty("disableWidgets", "true" if not allow.widgets else "")
