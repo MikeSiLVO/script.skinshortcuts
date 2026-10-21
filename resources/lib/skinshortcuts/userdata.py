@@ -174,7 +174,7 @@ class UserData:
 
 
 def load_userdata(path: str | None = None) -> UserData:
-    """Load user data from JSON file; a damaged one gives defaults and is kept as a .bak copy."""
+    """Load user data from JSON file; a damaged one gives defaults and a .bak copy when writable."""
     if path is None:
         path = get_userdata_path()
         log.debug(f"Userdata path: {path}")
@@ -198,10 +198,14 @@ def load_userdata(path: str | None = None) -> UserData:
         log.error(f"Failed to load userdata from {path}: {e}")
     except (ValueError, TypeError, AttributeError) as e:
         backup = file_path.with_name(f"{file_path.name}.bak")
-        shutil.copyfile(file_path, backup)
+        try:
+            shutil.copyfile(file_path, backup)
+            kept = f"kept a copy as {backup.name}"
+        except OSError as copy_error:
+            kept = f"could not keep a copy ({copy_error})"
         log.error(
             f"{file_path}: unreadable userdata ({e}); using skin defaults, "
-            f"kept a copy as {backup.name}; fix or delete the file"
+            f"{kept}; fix or delete the file"
         )
 
     return UserData()
