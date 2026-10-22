@@ -107,12 +107,25 @@ def _skin_supported(
     return False
 
 
+def _wait_for_dialogs() -> bool:
+    """Wait until modal dialogs have closed and stayed closed; False when Kodi is exiting."""
+    monitor = xbmc.Monitor()
+    if xbmc.getCondVisibility("System.HasVisibleModalDialog"):
+        log.debug("Waiting for modal dialogs to close before reloading the skin")
+    clear = 0
+    while clear < 3:
+        if monitor.waitForAbort(0.1):
+            return False
+        clear = 0 if xbmc.getCondVisibility("System.HasVisibleModalDialog") else clear + 1
+    return True
+
+
 def build_includes(
     shortcuts_path: str | None = None,
     output_path: str | None = None,
     force: bool = False,
 ) -> bool:
-    """Build includes.xml from skin config files."""
+    """Build includes.xml from skin config files, reloading the skin when the output changes."""
     log.debug(f"build_includes called: path={shortcuts_path}, output={output_path}, force={force}")
 
     home = xbmcgui.Window(10000) if IN_KODI else None
@@ -198,7 +211,9 @@ def build_includes(
         log.debug("Saved config hashes")
 
         if IN_KODI and output_changed:
-            xbmc.executebuiltin("ReloadSkin()")
+            # Kodi drops a reload made while its startup dialogs are still open
+            if _wait_for_dialogs():
+                xbmc.executebuiltin("ReloadSkin()")
         elif IN_KODI:
             log.debug("Includes unchanged, skipping skin reload")
 
