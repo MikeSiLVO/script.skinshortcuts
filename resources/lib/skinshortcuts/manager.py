@@ -378,16 +378,7 @@ class MenuManager:
         if not default_item:
             return False
 
-        if working_item.label != default_item.label:
-            return True
-        if working_item.actions != default_item.actions:
-            return True
-        if working_item.icon != default_item.icon:
-            return True
-        if working_item.disabled != default_item.disabled:
-            return True
-
-        return working_item.properties != default_item.properties
+        return self._diff_item(working_item, default_item) is not None
 
     def get_removed_items(self, menu_id: str) -> list[MenuItem]:
         """Get default items that have been removed from working copy."""
