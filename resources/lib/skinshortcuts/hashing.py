@@ -16,6 +16,7 @@ except ImportError:
 
 from .constants import (
     BACKGROUNDS_FILE,
+    INCLUDES_FILE,
     MENUS_FILE,
     PROPERTIES_FILE,
     TEMPLATES_FILE,
@@ -124,7 +125,7 @@ def write_hashes(hashes: dict[str, str | None]) -> bool:
 
 
 def needs_rebuild(shortcuts_path: str | Path, output_paths: list[str] | None = None) -> bool:
-    """Whether a config or output file's hash differs from the stored one, or none is stored."""
+    """Whether nothing is stored, an output file is missing, or a file's hash has changed."""
     stored = read_stored_hashes()
 
     if not stored:
@@ -133,7 +134,7 @@ def needs_rebuild(shortcuts_path: str | Path, output_paths: list[str] | None = N
 
     if output_paths:
         for out_path in output_paths:
-            includes_file = Path(out_path) / "script-skinshortcuts-includes.xml"
+            includes_file = Path(out_path) / INCLUDES_FILE
             if not includes_file.exists():
                 log.debug(f"Rebuild needed: missing {includes_file}")
                 return True
