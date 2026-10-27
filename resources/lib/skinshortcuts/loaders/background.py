@@ -65,7 +65,7 @@ def load_backgrounds(
             backgrounds.append(bg)
             groupings.append(bg)
         elif child.tag == "group":
-            group = _parse_background_group(child, str(path))
+            group = _parse_background_group(child, str(path), overrides)
             if group:
                 groupings.append(group)
 
@@ -153,7 +153,9 @@ def _parse_background(
     )
 
 
-def _parse_background_group(elem, path: str) -> BackgroundGroup | None:
+def _parse_background_group(
+    elem, path: str, icon_overrides: IconOverrides | None = None
+) -> BackgroundGroup | None:
     """Parse a background group element (supports nested groups, backgrounds, and content)."""
     group_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
@@ -182,10 +184,10 @@ def _parse_background_group(elem, path: str) -> BackgroundGroup | None:
 
     for child in elem:
         if child.tag == "background":
-            bg = _parse_background(child, path)
+            bg = _parse_background(child, path, icon_overrides)
             items.append(bg)
         elif child.tag == "group":
-            nested = _parse_background_group(child, path)
+            nested = _parse_background_group(child, path, icon_overrides)
             if nested:
                 items.append(nested)
         elif child.tag == "content":
