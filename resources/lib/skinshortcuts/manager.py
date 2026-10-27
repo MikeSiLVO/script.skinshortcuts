@@ -40,33 +40,12 @@ class MenuManager:
 
         self.config = SkinConfig.load(shortcuts_path, load_user=True, userdata_path=userdata_path)
 
-        # referenced templates are seed sources; per-item copies live under "{parent}/{item}"
-        referenced_templates = self._referenced_submenu_templates()
-
-        self.working: dict[str, Menu] = {}
-        for menu in self.config.menus:
-            if menu.is_submenu and menu.name in referenced_templates:
-                continue
-            self.working[menu.name] = copy.deepcopy(menu)
+        self.working = {menu.name: copy.deepcopy(menu) for menu in self.config.menus}
         for menu in self.working.values():
             self.config.resolve_item_properties(menu)
         self._hidden = self._hidden_items()
 
         self._changed = False
-
-    def _referenced_submenu_templates(self) -> set[str]:
-        """Set of submenu template names any item references, the seeds for per-item copies."""
-        referenced: set[str] = set()
-        for menu in self.config.default_menus:
-            for item in menu.items:
-                if item.submenu:
-                    referenced.add(item.submenu)
-        for menu_diff in self.config.userdata.menus.values():
-            for item_diff in menu_diff.items:
-                if item_diff.submenu:
-                    referenced.add(item_diff.submenu)
-        submenu_names = {m.name for m in self.config.default_menus if m.is_submenu}
-        return referenced & submenu_names
 
     def get_menu_ids(self) -> list[str]:
         """Get all available menu names."""
@@ -523,12 +502,7 @@ class MenuManager:
         self.config = SkinConfig.load(
             self.shortcuts_path, load_user=True, userdata_path=self.userdata_path
         )
-        referenced_templates = self._referenced_submenu_templates()
-        self.working = {}
-        for menu in self.config.menus:
-            if menu.is_submenu and menu.name in referenced_templates:
-                continue
-            self.working[menu.name] = copy.deepcopy(menu)
+        self.working = {menu.name: copy.deepcopy(menu) for menu in self.config.menus}
         self._hidden = self._hidden_items()
         self._changed = False
 
