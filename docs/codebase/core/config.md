@@ -40,6 +40,7 @@ Load configuration from shortcuts directory.
 | `property_schema` | PropertySchema | Property schema |
 | `subdialogs` | list[SubDialog] | Subdialog definitions |
 | `icon_overrides` | dict[str, str] | Icon override map |
+| `action_overrides` | list[Override] | Action replacements, applied to copies at build time; `menus` keep the stored actions |
 
 ### Instance Methods
 

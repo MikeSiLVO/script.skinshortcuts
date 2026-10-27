@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import copy
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from itertools import chain
 from pathlib import Path
 
@@ -45,6 +45,7 @@ class SkinConfig:
     property_schema: PropertySchema = field(default_factory=PropertySchema)
     subdialogs: list[SubDialog] = field(default_factory=list)
     icon_overrides: IconOverrides = field(default_factory=IconOverrides)
+    action_overrides: list[Override] = field(default_factory=list)
     submenu_path_all: bool = False
     userdata_path: str | None = None
     migrated: int = 0
@@ -127,12 +128,10 @@ class SkinConfig:
                 merged = (
                     merge_menu(menu, diff, menu_config.icon_overrides) if diff else menu
                 )
-                _apply_action_overrides(merged, menu_config.action_overrides)
                 menus.append(merged)
                 continue
             diff = userdata.menus.get(menu.name)
             merged = merge_menu(menu, diff, menu_config.icon_overrides)
-            _apply_action_overrides(merged, menu_config.action_overrides)
             menus.append(merged)
 
             for item in merged.items:
@@ -141,7 +140,6 @@ class SkinConfig:
                 key = f"{merged.name}/{item.name}"
                 instance_diff = userdata.menus.get(key)
                 if template is None:
-                    # No template means item owns its submenu without seed defaults.
                     if instance_diff is None:
                         continue
                     instance = Menu(name=key, is_submenu=True)
@@ -153,13 +151,12 @@ class SkinConfig:
                     instance = merge_menu(template, instance_diff, menu_config.icon_overrides)
                     instance.name = key
                     instance.template_origin = template_name
-                _apply_action_overrides(instance, menu_config.action_overrides)
                 menus.append(instance)
 
         for menu_name, menu_diff in userdata.menus.items():
             if menu_name in skin_menu_names:
                 continue
-            # Per-item submenu entries already expanded above; skip duplicates.
+            # per-item submenu entries already expanded above; skip duplicates
             if "/" in menu_name:
                 parent_name, _, _ = menu_name.partition("/")
                 if parent_name in skin_menu_names:
@@ -183,6 +180,7 @@ class SkinConfig:
             property_schema=property_schema,
             subdialogs=menu_config.subdialogs,
             icon_overrides=menu_config.icon_overrides,
+            action_overrides=menu_config.action_overrides,
             submenu_path_all=menu_config.submenu_path_all,
             userdata_path=userdata_path,
             migrated=migrated,
@@ -219,9 +217,10 @@ class SkinConfig:
     def build_includes_from_menus(
         self, output_path: str | Path, menus: list[Menu]
     ) -> None:
-        """Build and write includes.xml from provided menus."""
+        """Build and write includes.xml; sub-properties filled in place, overrides on copies."""
         for menu in menus:
             self.resolve_item_properties(menu)
+        menus = [_apply_action_overrides(menu, self.action_overrides) for menu in menus]
 
         builder = IncludesBuilder(
             menus=menus,
@@ -274,15 +273,18 @@ class SkinConfig:
                     item.properties[key] = value
 
 
-def _apply_action_overrides(menu: Menu, overrides: list[Override]) -> None:
-    """Apply action overrides to all items in a menu."""
+def _apply_action_overrides(menu: Menu, overrides: list[Override]) -> Menu:
+    """Apply action overrides to a copy of the menu, one hop per action; the menu is unchanged."""
     if not overrides:
-        return
+        return menu
 
     override_map = {o.replace.lower(): o.value for o in overrides}
 
+    items = []
     for item in menu.items:
-        for action in item.actions:
-            action_lower = action.action.lower()
-            if action_lower in override_map:
-                action.action = override_map[action_lower]
+        actions = [
+            replace(action, action=override_map.get(action.action.lower(), action.action))
+            for action in item.actions
+        ]
+        items.append(replace(item, actions=actions) if actions != item.actions else item)
+    return replace(menu, items=items)
