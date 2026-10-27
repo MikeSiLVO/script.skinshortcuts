@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import uuid
+from dataclasses import replace
 from pathlib import Path
 
 from .conditions import check_visible
@@ -604,7 +605,7 @@ class MenuManager:
         return diff
 
     def _diff_item(self, working: MenuItem, default: MenuItem) -> MenuItemDiff | None:
-        """Diff for a single item, changed fields only."""
+        """Diff for a single item, changed fields only, None when unchanged."""
         diff = MenuItemDiff(name=working.name)
         has_changes = False
 
@@ -624,8 +625,9 @@ class MenuManager:
             diff.disabled = working.disabled
             has_changes = True
 
-        # derived props recompute on build; saving them would freeze the skin's paths and labels
-        derived = self.config.derived_item_properties(working)
+        # siblings follow the skin only on slots still holding the item's default pick
+        picks = {k: v for k, v in working.properties.items() if default.properties.get(k) == v}
+        derived = self.config.derived_item_properties(replace(working, properties=picks))
         diff_props = {
             k: v for k, v in working.properties.items()
             if default.properties.get(k) != v and not _is_derived(derived, k, v)
