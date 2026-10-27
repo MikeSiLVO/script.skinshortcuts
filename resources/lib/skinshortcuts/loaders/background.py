@@ -19,7 +19,6 @@ from .base import (
     get_bool,
     get_text,
     iter_nested,
-    parse_content,
     parse_name_overrides,
     parse_xml,
     warn_duplicate_names,
@@ -68,6 +67,8 @@ def load_backgrounds(
             group = _parse_background_group(child, str(path), overrides)
             if group:
                 groupings.append(group)
+        elif child.tag == "content":
+            _report_content(child, str(path))
 
     warn_duplicate_names(
         (b.name for b in iter_nested(groupings, Background, BackgroundGroup)),
@@ -153,10 +154,22 @@ def _parse_background(
     )
 
 
+def _report_content(elem, path: str, group: str = "") -> None:
+    """Report a <content> element, which backgrounds.xml does not support; the caller skips it."""
+    source = get_attr(elem, "source")
+    owner = f"group '{group}'" if group else "the root"
+    notify(
+        "Background Error",
+        f"'{group or 'backgrounds'}' uses <content>",
+        f"{path}: <content source=\"{source}\"> in {owner} is not supported; skipped; "
+        "use a playlist or browse background with <source>",
+    )
+
+
 def _parse_background_group(
     elem, path: str, icon_overrides: IconOverrides | None = None
 ) -> BackgroundGroup | None:
-    """Parse a background group element (supports nested groups, backgrounds, and content)."""
+    """Parse a background group element (supports nested groups and backgrounds)."""
     group_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
     flat = get_bool(elem, "flat")
@@ -191,9 +204,7 @@ def _parse_background_group(
             if nested:
                 items.append(nested)
         elif child.tag == "content":
-            content = parse_content(child)
-            if content:
-                items.append(content)
+            _report_content(child, path, group_name)
 
     return BackgroundGroup(
         name=group_name,

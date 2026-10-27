@@ -42,7 +42,8 @@ Load complete background configuration. Returns BackgroundConfig containing:
 | Function | Parses |
 |----------|--------|
 | `_parse_background` | Background with name, label, path, type, sources |
-| `_parse_background_group` | Group with nested backgrounds/groups/content |
+| `_parse_background_group` | Group with nested backgrounds/groups |
+| `_report_content` | Reports a `<content>` element, which backgrounds.xml skips |
 
 **Source types:** BROWSE/MULTI use BrowseSource; all other background types route `<source>` children to PlaylistSource.
 

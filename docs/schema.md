@@ -285,7 +285,6 @@ Defines background options and groupings.
       <path>$INFO[Window(Home).Property(MovieFanart)]</path>
     </background>
     <group name="nested" label="Nested">...</group>
-    <content source="playlists" target="videos" />
   </group>
 </backgrounds>
 ```
@@ -302,7 +301,6 @@ Defines background options and groupings.
 | `<icon>` | background | - | - | Icon for picker |
 | `<source>` | background | - | `label`, `condition`, `visible`, `icon` | Browse/playlist source. Any `<source>` element shows the source picker. `condition` and `visible` apply only to browse/multi sources; playlist and live-playlist sources read only `label`, `icon`, and the path text |
 | `<group>` | backgrounds/group | `name`, `label` (unless `flat="true"`) | `condition`, `visible`, `icon`, `flat` | Background group |
-| `<content>` | group | `source` | `target`, etc. | Dynamic content |
 
 ### Background Types
 

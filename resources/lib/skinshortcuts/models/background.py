@@ -11,9 +11,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Union
 
-    from .menu import Content
-
-    BackgroundGroupContent = Union["Background", "BackgroundGroup", "Content"]
+    BackgroundGroupContent = Union["Background", "BackgroundGroup"]
 
 
 class BackgroundType(Enum):

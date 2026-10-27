@@ -24,6 +24,7 @@ Enable either, reproduce the problem, then read the log.
 | Shortcut / Widget / Background Group Error: group missing 'name' | A group in the picker groupings has no `name` attribute | Add `name="..."` to the group |
 | Shortcut / Widget / Background Group Error: '\<name>' missing label | A group has a name but no `label`, required unless the group is `flat` | Add `label="..."`, or mark it `flat="true"` |
 | Background Error: '\<name>' has path and source | A browse or multi background defines both; the fixed path is ignored | Keep one: a fixed `<path>` or a dynamic `<source>` |
+| Background Error: '\<group>' uses \<content> | backgrounds.xml has a `<content>` element, in a group or at the root (named `backgrounds`); it is skipped | Use a playlist or browse background with `<source>` instead |
 | Property Button Error: '\<name>' not defined | A `<button>` in `properties.xml` points at a property that has no `<property>` definition | Define the property, or correct the button's `property` attribute |
 | Submenu Template Error: menu '\<name>' not found | A submenu template references a named menu that isn't defined | Correct the name, or define that menu in `menus.xml` |
 | Template Error: raw template '\<name>' has \<variables> / \<variableGroup> / \<skinshortcuts include> | A `build="true"` template declares `<variables>`, a `<variableGroup>` reference or a `<skinshortcuts include>` marker, which raw templates do not build | Move variables to a menu template; use a Kodi `<include>` in place of the marker |
