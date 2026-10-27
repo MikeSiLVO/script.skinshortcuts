@@ -705,7 +705,7 @@ For `<content source="...">` elements:
 
 ### Library Targets
 
-`genres`, `moviegenres`, `tvgenres`, `musicgenres`, `years`, `movieyears`, `tvyears`, `studios`, `moviestudios`, `tvstudios`, `tags`, `movietags`, `tvtags`, `actors`, `movieactors`, `tvactors`, `directors`, `moviedirectors`, `tvdirectors`, `artists`, `albums`
+`genres`, `moviegenres`, `tvgenres`, `musicgenres`, `years`, `movieyears`, `tvyears`, `studios`, `moviestudios`, `tvstudios`, `tags`, `movietags`, `tvtags`, `actors`, `movieactors`, `tvactors`, `directors`, `moviedirectors`, `artists`, `albums`
 
 ### Nodes Targets
 

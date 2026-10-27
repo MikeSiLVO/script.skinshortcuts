@@ -315,7 +315,6 @@ The `library` source provides access to library database content (genres, years,
 | `actors`, `movieactors` | Movie actors |
 | `tvactors` | TV show actors |
 | `directors`, `moviedirectors` | Movie directors |
-| `tvdirectors` | TV show directors |
 | `artists` | Music artists |
 | `albums` | Music albums |
 

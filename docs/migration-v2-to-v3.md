@@ -428,7 +428,6 @@ In v3, `<content>` pulls from system sources via `source` plus `target`. The sam
 | `actors`, `movieactors` | Movie actors |
 | `tvactors` | TV show actors |
 | `directors`, `moviedirectors` | Movie directors |
-| `tvdirectors` | TV show directors |
 | `artists` | Music artists |
 | `albums` | Music albums |
 

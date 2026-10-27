@@ -104,6 +104,5 @@ The `library` source supports these targets:
 | `actors` | `movieactors` | Movie actors |
 | `tvactors` | - | TV actors |
 | `directors` | `moviedirectors` | Movie directors |
-| `tvdirectors` | - | TV directors |
 | `artists` | - | Music artists |
 | `albums` | - | Music albums |
