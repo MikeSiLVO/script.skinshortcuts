@@ -88,13 +88,13 @@ Custom widget menus use auto-generated IDs (`custom-{uuid}`) and are referenced 
 |--------|---------|-------------|
 | `reset_menu(menu_id)` | bool | Reset single menu to defaults |
 | `reset_menu_tree(menu_id)` | bool | Reset menu and all referenced submenus |
-| `reset_all_submenus()` | bool | Reset all menus with `is_submenu=True` |
+| `reset_all_submenus()` | bool | Reset `<submenu>` menus and their per-item copies |
 
 **reset_menu**: For per-item keys (`parent/item`), re-seeds from the item's template.
 
 **reset_menu_tree**: Recurses into per-item submenu keys with cycle detection.
 
-**reset_all_submenus**: Resets menus defined with `<submenu>` tag (not `<menu>`).
+**reset_all_submenus**: Resets menus defined with `<submenu>` tag (not `<menu>`) and the per-item copies seeded from them. Custom widget menus and other menus with no skin default are left alone.
 
 ### Persistence
 
