@@ -326,10 +326,10 @@ def _parse_menu(
     startid_str = get_attr(elem, "id") or ""
     startid = int(startid_str) if startid_str.isdigit() else 1
     template_only = get_attr(elem, "template_only") or ""
-    build = get_attr(elem, "build") or "true"
+    build = (get_attr(elem, "build") or "true").lower()
     action = get_attr(elem, "action") or ""
     standalone = get_bool(elem, "standalone", True)
-    submenu_path = get_attr(elem, "submenuPath") or ""
+    submenu_path = get_attr(elem, "submenuPath").lower()
 
     return Menu(
         name=menu_name,
