@@ -349,11 +349,13 @@ class MenuManager:
         if not working_item:
             return False
 
-        default_item = self._default_item(menu_id, item_id)
-        if not default_item:
+        default_menu = self._default_menu(menu_id)
+        default_item = default_menu.get_item(item_id) if default_menu else None
+        if not default_menu or not default_item:
             return False
 
-        return self._diff_item(working_item, default_item) is not None
+        defaults = default_menu.defaults.properties
+        return self._diff_item(working_item, default_item, defaults) is not None
 
     def get_removed_items(self, menu_id: str) -> list[MenuItem]:
         """Get default items that have been removed from working copy."""
@@ -575,7 +577,7 @@ class MenuManager:
                     None
                 )
                 position_changed = default_idx != idx
-                item_diff = self._diff_item(working_item, default_item)
+                item_diff = self._diff_item(working_item, default_item, default.defaults.properties)
 
                 if item_diff or position_changed:
                     if item_diff is None:
@@ -587,7 +589,9 @@ class MenuManager:
             return None
         return diff
 
-    def _diff_item(self, working: MenuItem, default: MenuItem) -> MenuItemDiff | None:
+    def _diff_item(
+        self, working: MenuItem, default: MenuItem, defaults: dict[str, str]
+    ) -> MenuItemDiff | None:
         """Diff for a single item, changed fields only, None when unchanged."""
         diff = MenuItemDiff(name=working.name)
         has_changes = False
@@ -611,6 +615,7 @@ class MenuManager:
         # siblings follow the skin only on slots still holding the item's default pick
         picks = {k: v for k, v in working.properties.items() if default.properties.get(k) == v}
         derived = self.config.derived_item_properties(replace(working, properties=picks))
+        derived.update(self.config.inherited_item_properties(working, defaults))
         diff_props = {
             k: v for k, v in working.properties.items()
             if default.properties.get(k) != v and not _is_derived(derived, k, v)

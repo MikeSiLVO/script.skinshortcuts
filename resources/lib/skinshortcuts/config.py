@@ -264,12 +264,23 @@ class SkinConfig:
 
         return {self.property_schema.declared_name(k): v for k, v in derived.items() if v}
 
+    def inherited_item_properties(self, item: MenuItem, defaults: dict[str, str]) -> dict[str, str]:
+        """Sub-properties of default widgets and backgrounds in slots the item leaves unset."""
+        own = {k.lower() for k in item.properties}
+        picks = {k: v for k, v in defaults.items() if k.lower() not in own}
+        return self.derived_item_properties(replace(item, properties=picks))
+
     def resolve_item_properties(self, menu: Menu) -> None:
-        """Fill widget/background sub-properties, keeping any the user set."""
+        """Fill widget/background sub-properties; user keys win, defaults beat inherited ones."""
+        defaults = menu.defaults.properties
+        written = {k.lower() for k in defaults}
         for item in menu.items:
             present = {k.lower() for k in item.properties}
             for key, value in self.derived_item_properties(item).items():
                 if key.lower() not in present:
+                    item.properties[key] = value
+            for key, value in self.inherited_item_properties(item, defaults).items():
+                if key.lower() not in present and key.lower() not in written:
                     item.properties[key] = value
 
 

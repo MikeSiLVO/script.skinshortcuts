@@ -296,7 +296,7 @@ Menu-level defaults apply to all items in the menu.
 | `<property>` | Default property values |
 | `<skinshortcuts>` | Include reference inserted into item output (works for both regular item menus and controltype menus) |
 
-The `<defaults>` element also supports `widget` and `background` attributes as shorthand:
+The `<defaults>` element also supports `widget` and `background` attributes as shorthand. An item that names no widget of its own gets the same widget properties as if it named the default one; backgrounds work the same way. A `<property>` on the item keeps its value. A widget or background value set in `<defaults>`, such as its path or label, applies only while the item uses the default one:
 
 ```xml
 <defaults widget="default-widget" background="default-bg">
@@ -862,8 +862,8 @@ The build keeps the variable in the paths it writes, so Kodi picks the folder wh
 draws and a change takes effect on the next skin reload. End every value with a slash.
 
 The folder may sit anywhere the skin can draw from, including inside `media/` where it is
-packed into `Textures.xbt`. Address a packed folder the way Kodi does, relative to
-`media/`, so `views/icons/` rather than a full path.
+packed into `Textures.xbt`. Address a packed folder relative to `media/`, so
+`views/icons/` rather than a full path.
 
 ### Scope
 
