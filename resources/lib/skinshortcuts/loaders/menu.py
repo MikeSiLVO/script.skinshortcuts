@@ -488,15 +488,10 @@ def _parse_allow(elem) -> MenuAllow:
     if elem is None:
         return MenuAllow()
 
-    def parse_bool(value: str | None, default: bool = True) -> bool:
-        if value is None:
-            return default
-        return value.lower() == "true"
-
     return MenuAllow(
-        widgets=parse_bool(get_attr(elem, "widgets")),
-        backgrounds=parse_bool(get_attr(elem, "backgrounds")),
-        submenus=parse_bool(get_attr(elem, "submenus")),
+        widgets=get_bool(elem, "widgets", True),
+        backgrounds=get_bool(elem, "backgrounds", True),
+        submenus=get_bool(elem, "submenus", True),
     )
 
 
