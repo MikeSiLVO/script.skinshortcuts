@@ -36,7 +36,6 @@ def resolve_label(label: str) -> str:
     if not label or not IN_KODI:
         return label
 
-    # Must check $ADDON before generic $ since getInfoLabel doesn't support $ADDON
     if label.startswith("$ADDON["):
         match = ADDON_PATTERN.match(label)
         if match:
@@ -70,7 +69,7 @@ def resolve_label(label: str) -> str:
             return result
         return label
 
-    if label.isdigit():
+    if label.isdecimal():
         num = int(label)
         if 32000 <= num < 33000:
             result = xbmcaddon.Addon().getLocalizedString(num)

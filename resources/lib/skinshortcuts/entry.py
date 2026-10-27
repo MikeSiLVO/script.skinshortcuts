@@ -403,7 +403,7 @@ def reset_menus(shortcuts_path: str | None = None) -> bool:
 
 def play_channel(channel: str) -> None:
     """Play a PVR channel by its ID, logging a warning when it does not play."""
-    if not channel.isdigit():
+    if not channel.isdecimal():
         log.warning(f"playchannel: '{channel}' is not a channel ID")
         return
     request = {

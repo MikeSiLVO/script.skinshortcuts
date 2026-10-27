@@ -207,7 +207,7 @@ def _parse_dialogs(root) -> list[SubDialog]:
 
         setfocus = None
         setfocus_str = get_attr(elem, "setfocus")
-        if setfocus_str and setfocus_str.isdigit():
+        if setfocus_str and setfocus_str.isdecimal():
             setfocus = int(setfocus_str)
 
         suffix = get_attr(elem, "suffix") or ""
@@ -324,7 +324,7 @@ def _parse_menu(
     controltype = get_attr(elem, "controltype") or ""
     icons = get_bool(elem, "icons", True)
     startid_str = get_attr(elem, "id") or ""
-    startid = int(startid_str) if startid_str.isdigit() else 1
+    startid = int(startid_str) if startid_str.isdecimal() else 1
     template_only = get_attr(elem, "template_only") or ""
     build = (get_attr(elem, "build") or "true").lower()
     action = get_attr(elem, "action") or ""
