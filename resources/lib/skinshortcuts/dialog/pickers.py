@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import time
+import zlib
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Literal
 
@@ -57,6 +58,11 @@ SLOW_RESOLVE_MS = 250
 def _elapsed_ms(start: float) -> float:
     """Elapsed milliseconds, for the picker's timing lines."""
     return (time.monotonic() - start) * 1000
+
+
+def _name_hash(text: str) -> str:
+    """Hash a string for a generated item name, the same across Kodi restarts."""
+    return f"{zlib.crc32(text.encode()):08x}"
 
 
 def _log_slow_resolve(content: Content, rows: int, start: float) -> None:
@@ -642,7 +648,7 @@ class PickersMixin:
         widget_target = self._map_widget_type_to_target(widget_type, widget.target or "videos")
 
         return Widget(
-            name=f"browse-{hash(path)}",
+            name=f"browse-{_name_hash(path)}",
             label=label,
             path=path,
             type=widget_type,
@@ -1008,21 +1014,21 @@ class PickersMixin:
 
         if input_item.for_ == "action":
             return Shortcut(
-                name=f"custom-input-{hash(result)}",
+                name=f"custom-input-{_name_hash(result)}",
                 label=input_item.label,
                 actions=[Action(action=result)],
                 icon=input_item.icon,
             )
         if input_item.for_ == "label":
             return Shortcut(
-                name=f"custom-input-{hash(result)}",
+                name=f"custom-input-{_name_hash(result)}",
                 label=result,
                 actions=[Action(action="noop")],
                 icon=input_item.icon,
             )
         if input_item.for_ == "path":
             return Shortcut(
-                name=f"custom-input-{hash(result)}",
+                name=f"custom-input-{_name_hash(result)}",
                 label=input_item.label,
                 actions=[Action(action=f"ActivateWindow(Videos,{result},return)")],
                 icon=input_item.icon,
@@ -1119,7 +1125,7 @@ class PickersMixin:
 
         selected_path, label, icon = result
         return Shortcut(
-            name=f"browse-{hash(selected_path)}",
+            name=f"browse-{_name_hash(selected_path)}",
             label=label,
             actions=[Action(action=f"ActivateWindow({target_window},{selected_path},return)")],
             icon=icon,
