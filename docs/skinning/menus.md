@@ -210,8 +210,8 @@ Defines a menu item.
 
 | Attribute/Element | Where Applied | Purpose |
 |-------------------|---------------|---------|
-| `visible="..."` (attribute on `<item>`) | Config load (build time) | Omits the item from both the dialog and the generated include when the condition fails (e.g., hide playdisc when no disc drive) |
-| `<visible>` (child element) | Generated include | Output as `<visible>` in the include file |
+| `visible="..."` (attribute on `<item>`) | Config load (build time) | Whether the item applies to this system at all, such as an add-on being installed (`System.HasAddon(...)`), a platform or profiles. When it fails the item is left out of both the dialog and the generated include |
+| `<visible>` (child element) | Generated include | Whether to show the item right now, such as a disc being in the drive. Output as `<visible>` in the include file, so Kodi re-checks it as things change, and the item stays editable in the dialog |
 
 ### Multiple Visibility Conditions
 
