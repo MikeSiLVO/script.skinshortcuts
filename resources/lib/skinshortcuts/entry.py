@@ -17,7 +17,14 @@ try:
 except ImportError:
     IN_KODI = False
 
-from .constants import INCLUDES_FILE, MENUS_FILE, VIEWS_FILE, get_shortcuts_path
+from .constants import (
+    INCLUDES_FILE,
+    MENUS_FILE,
+    VIEWS_FILE,
+    WIDGET_EXTRAS,
+    WIDGET_SIBLINGS,
+    get_shortcuts_path,
+)
 from .hashing import generate_config_hashes, hash_file, needs_rebuild, write_hashes
 from .localize import LANGUAGE
 from .log import get_logger
@@ -237,7 +244,7 @@ def clear_custom_widget(
     property_name: str = "",
     shortcuts_path: str | None = None,
 ) -> bool:
-    """Clear a custom widget menu and optionally reset related properties."""
+    """Clear an item's custom widget menu and optionally its widget properties; save and rebuild."""
     if not menu or not item:
         log.warning("clear_custom_widget: menu and item are required")
         return False
@@ -255,22 +262,11 @@ def clear_custom_widget(
         manager.clear_custom_widget(menu, item, suffix)
 
         if property_name:
-            working_item = manager._get_working_item(menu, item)
-            if working_item:
-                prop_suffix = suffix or ""
-                props_to_clear = [
-                    f"{property_name}{prop_suffix}",
-                    f"{property_name}Name{prop_suffix}",
-                    f"{property_name}Path{prop_suffix}",
-                    f"{property_name}Type{prop_suffix}",
-                    f"{property_name}Target{prop_suffix}",
-                    f"{property_name}Label{prop_suffix}",
-                ]
-                for prop in props_to_clear:
-                    if prop in working_item.properties:
-                        del working_item.properties[prop]
-                manager._changed = True
-                log.debug(f"Cleared {property_name} properties on item: {item}")
+            schema = manager.config.property_schema
+            for part in ("", *WIDGET_SIBLINGS, *WIDGET_EXTRAS):
+                name = schema.declared_name(f"{property_name}{part}{suffix}")
+                manager.set_custom_property(menu, item, name, None)
+            log.debug(f"Cleared {property_name} properties on item: {item}")
 
         if manager.has_changes():
             manager.save()
