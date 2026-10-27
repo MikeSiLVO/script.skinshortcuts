@@ -349,7 +349,7 @@ def _apply_diff(item: MenuItem, diff: MenuItemDiff) -> MenuItem:
 def _create_item_from_diff(
     diff: MenuItemDiff, icon_overrides: IconOverrides | None = None
 ) -> MenuItem:
-    """Create a new menu item from a user diff."""
+    """Create a new menu item from a user diff, filling unset fields with defaults."""
     fallback = (icon_overrides or IconOverrides()).get(DEFAULT_ICON, DEFAULT_ICON)
     return MenuItem(
         name=diff.name,
@@ -358,6 +358,6 @@ def _create_item_from_diff(
         icon=diff.icon or fallback,
         visible=diff.visible or "",
         disabled=diff.disabled or False,
-        properties=diff.properties,
+        properties=dict(diff.properties),
         submenu=diff.submenu,
     )
