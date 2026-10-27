@@ -59,11 +59,13 @@ def get_int(elem: ET.Element, child: str, default: int | None = None) -> int | N
 
 
 def get_bool(elem: ET.Element, attr: str, default: bool = False) -> bool:
-    """Get boolean from attribute value (case-insensitive 'true' match)."""
-    value = elem.get(attr)
-    if value is None:
-        return default
-    return value.strip().lower() == "true"
+    """Get boolean from attribute value: true or false in any case, anything else falls back."""
+    value = (elem.get(attr) or "").strip().lower()
+    if value == "true":
+        return True
+    if value == "false":
+        return False
+    return default
 
 
 def parse_content(elem: ET.Element):

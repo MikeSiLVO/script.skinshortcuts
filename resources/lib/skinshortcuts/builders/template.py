@@ -17,6 +17,7 @@ from ..conditions import (
 )
 from ..constants import extract_path_from_action
 from ..expressions import process_if_expressions, process_math_expressions
+from ..loaders.base import get_bool
 from ..log import get_logger, notify
 from ..models.template import BuildMode, TemplateProperty
 
@@ -1315,9 +1316,7 @@ class TemplateBuilder:
                     return
                 if include_def.controls is not None:
                     elem.set("_skinshortcuts_include", include_name)
-                    wrap_attr = elem.get("wrap") or ""
-                    wrap = wrap_attr.lower() == "true"
-                    if wrap:
+                    if get_bool(elem, "wrap"):
                         elem.set("_skinshortcuts_wrap", "true")
                     elem.attrib.pop("include", None)
                     elem.attrib.pop("condition", None)

@@ -13,5 +13,5 @@
 | `get_text(elem, child, default="")` | Get child element text content |
 | `get_attr(elem, attr, default="")` | Get attribute value |
 | `get_int(elem, child, default=None)` | Get child element as integer |
-| `get_bool(elem, attr, default=False)` | Get attribute as boolean |
+| `get_bool(elem, attr, default=False)` | Get attribute as boolean: `true`/`false` in any case, anything else the default |
 | `parse_content(elem)` | Parse `<content>` reference element |
