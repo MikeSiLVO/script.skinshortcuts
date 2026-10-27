@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 try:
@@ -14,6 +15,7 @@ try:
 except ImportError:
     IN_KODI = False
 
+from .conditions import check_visible
 from .constants import (
     BACKGROUNDS_FILE,
     INCLUDES_FILE,
@@ -55,8 +57,21 @@ def hash_file(path: str | Path) -> str | None:
         return None
 
 
+def _hash_visible_results(menus_path: Path) -> str | None:
+    """Hash current visible= results of items; None if menus.xml has none or can't be read."""
+    try:
+        root = ET.parse(menus_path).getroot()
+    except (OSError, ET.ParseError):
+        return None
+    conditions = sorted({(elem.get("visible") or "").strip() for elem in root.iter("item")} - {""})
+    if not conditions:
+        return None
+    results = "\n".join(f"{condition}={check_visible(condition)}" for condition in conditions)
+    return hashlib.md5(results.encode(), usedforsecurity=False).hexdigest()
+
+
 def generate_config_hashes(shortcuts_path: str | Path) -> dict[str, str | None]:
-    """Generate hashes for all config files in shortcuts folder."""
+    """Generate hashes of config, userdata and visible= results, plus skin and version stamps."""
     path = Path(shortcuts_path)
     config_files = [
         MENUS_FILE,
@@ -71,6 +86,7 @@ def generate_config_hashes(shortcuts_path: str | Path) -> dict[str, str | None]:
     for filename in config_files:
         file_path = path / filename
         hashes[filename] = hash_file(file_path)
+    hashes["visible"] = _hash_visible_results(path / MENUS_FILE)
 
     from .userdata import get_userdata_path
 
