@@ -212,25 +212,28 @@ def load_userdata(path: str | None = None) -> UserData:
 
 
 def save_userdata(userdata: UserData, path: str | None = None) -> bool:
-    """Save user data to JSON file."""
+    """Save user data to JSON file, retrying once; False when it fails."""
     if path is None:
         path = get_userdata_path()
 
     if not path:
         return False
 
-    try:
-        file_path = Path(path)
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        # write beside the target and swap, so a kill mid-write cannot truncate userdata
-        temp_path = file_path.with_name(f"{file_path.name}.tmp")
-        with open(temp_path, "w", encoding="utf-8") as f:
-            json.dump(userdata.to_dict(), f, indent=2)
-        os.replace(temp_path, file_path)
-        return True
-    except OSError as e:
-        log.error(f"Failed to save userdata to {path}: {e}")
-        return False
+    file_path = Path(path)
+    temp_path = file_path.with_name(f"{file_path.name}.tmp")
+    for attempt in range(2):
+        try:
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(temp_path, "w", encoding="utf-8") as f:
+                json.dump(userdata.to_dict(), f, indent=2)
+            os.replace(temp_path, file_path)
+            return True
+        except OSError as e:
+            # one retry for a transient lock from an indexer, antivirus or sync client
+            if attempt or (IN_KODI and xbmc.Monitor().waitForAbort(0.5)):
+                log.error(f"Failed to save userdata to {path}: {e}")
+                return False
+    return False
 
 
 def merge_items(

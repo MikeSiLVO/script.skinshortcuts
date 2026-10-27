@@ -268,8 +268,7 @@ def clear_custom_widget(
                 manager.set_custom_property(menu, item, name, None)
             log.debug(f"Cleared {property_name} properties on item: {item}")
 
-        if manager.has_changes():
-            manager.save()
+        if manager.has_changes() and manager.save():
             log.debug("Saved changes after clearing")
             build_includes(shortcuts_path, force=True)
 
@@ -542,8 +541,8 @@ def _dispatch(args: dict[str, str]) -> None:
                     manager.reset_menu_tree(menu)
                 else:
                     manager.reset_menu(menu)
-                manager.save()
-                build_includes(shortcuts_path, force=True)
+                if manager.save():
+                    build_includes(shortcuts_path, force=True)
     elif action == "resetsubmenus":
         import xbmcgui
         if xbmcgui.Dialog().yesno(
@@ -554,8 +553,8 @@ def _dispatch(args: dict[str, str]) -> None:
             shortcuts_path = args.get("path") or get_shortcuts_path()
             manager = MenuManager(shortcuts_path)
             manager.reset_all_submenus()
-            manager.save()
-            build_includes(shortcuts_path, force=True)
+            if manager.save():
+                build_includes(shortcuts_path, force=True)
     elif action == "clear":
         clear_custom_widget(
             menu=args.get("menu", ""),

@@ -571,14 +571,13 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             return False
 
     def close(self) -> None:
-        """Close the dialog, saving any changes and clearing the Home properties set in onInit."""
+        """Close the dialog; unless a child, save changes and record whether the save worked."""
         if self.dialog_mode:
             home = xbmcgui.Window(10000)
             home.clearProperty("skinshortcuts-dialog")
             home.clearProperty("skinshortcuts-suffix")
         if not self.is_child and self.manager and self.manager.has_changes():
-            self.manager.save()
-            self.changes_saved = True
+            self.changes_saved = self.manager.save()
         xbmcgui.WindowXMLDialog.close(self)
 
     def _add_item(self) -> None:
