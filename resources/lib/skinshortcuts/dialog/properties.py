@@ -17,7 +17,7 @@ except ImportError:
     IN_KODI = False
 
 
-from ..conditions import check_visible, evaluate_condition, suffix_condition
+from ..conditions import check_visible, evaluate_condition, lookup, suffix_condition
 from ..constants import BACKGROUND_SIBLINGS, WIDGET_EXTRAS, WIDGET_SIBLINGS
 from ..loaders.widget import load_widgets
 from ..localize import LANGUAGE, resolve_label
@@ -65,7 +65,6 @@ class PropertiesMixin:
 
         def _get_selected_item(self) -> MenuItem | None: ...
         def _get_item_properties(self, item: MenuItem) -> dict[str, str]: ...
-        def _get_item_property(self, item: MenuItem, name: str) -> str: ...
         def _refresh_selected_item(self) -> None: ...
         def _log(self, msg: str) -> None: ...
 
@@ -301,7 +300,7 @@ class PropertiesMixin:
             self.manager.clear_custom_widget(self.menu_id, item.name, suffix)
 
     def _handle_background_property(self, prop, item: MenuItem, prop_name: str) -> None:
-        """Handle a background-type property."""
+        """Handle a background-type property; a cancelled path pick reopens the picker."""
         if self.manager is None:
             return
         menu = self.manager.config.get_menu(self.menu_id)
@@ -310,7 +309,7 @@ class PropertiesMixin:
             return
 
         prefix = prop_name
-        current_bg = self._get_item_property(item, prefix)
+        current_bg = lookup(prefix, item.properties) or ""
         item_props = self._get_item_properties(item)
         positions: dict[str, int] = {}
 
@@ -354,7 +353,7 @@ class PropertiesMixin:
 
             if bg.type in (BackgroundType.PLAYLIST, BackgroundType.LIVE_PLAYLIST) and not bg.path:
                 base, suffix = _split_suffix(prefix)
-                current_playlist = self._get_item_property(item, f"{base}Path{suffix}")
+                current_playlist = lookup(f"{base}Path{suffix}", item.properties) or ""
                 result = self._pick_playlist(
                     bg.sources, bg.label if bg.sources else "", current_playlist
                 )

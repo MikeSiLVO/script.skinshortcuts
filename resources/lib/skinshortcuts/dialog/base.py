@@ -141,11 +141,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             return f"{name}{self.property_suffix}"
         return name
 
-    def _get_item_property(self, item: MenuItem, name: str) -> str:
-        """Get a property value with suffix applied."""
-        suffixed = self._suffixed_name(name)
-        return item.properties.get(suffixed, "")
-
     def _list(self, control_id: int) -> xbmcgui.ControlList:
         """The list control, typed as ControlList since Kodi's getControl returns base Control."""
         return self.getControl(control_id)  # type: ignore[return-value]
