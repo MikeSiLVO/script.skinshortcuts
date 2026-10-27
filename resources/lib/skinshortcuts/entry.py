@@ -475,7 +475,12 @@ def main() -> None:
 
 
 def _dispatch(args: dict[str, str]) -> None:
-    """Dispatch the named action, building by default; on a v2 skin only the build runs."""
+    """Dispatch the named action, building by default; skip a skin without v3 config."""
+    if IN_KODI:
+        for key in ("path", "output"):
+            if args.get(key):
+                args[key] = xbmcvfs.translatePath(args[key])
+
     action = args.get("type", "buildxml")
     if action != "buildxml":
         # v2 skins run hidesubmenu from a list onback; every Back press would raise the modal
