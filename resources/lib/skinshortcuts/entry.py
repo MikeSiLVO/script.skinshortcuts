@@ -6,7 +6,7 @@ import json
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from urllib.parse import parse_qs
+from urllib.parse import parse_qsl
 
 try:
     import xbmc
@@ -421,7 +421,7 @@ def play_channel(channel: str) -> None:
 
 
 def main() -> None:
-    """Main entry point for RunScript."""
+    """Main entry point for RunScript; sets prop/value pairs on Home until the action ends."""
     log.debug("Skin Shortcuts started")
 
     args: dict[str, str] = {}
@@ -437,20 +437,15 @@ def main() -> None:
         else:
             args[key] = value
 
-    if len(sys.argv) > 1:
-        if "&" in sys.argv[1] or len(sys.argv) == 2:
-            query = sys.argv[1].lstrip("?")
-            for k, values in parse_qs(query).items():
-                if k in ("prop", "value"):
-                    for v in values:
-                        _store(k, v)
-                else:
-                    _store(k, values[0])
-        else:
-            for arg in sys.argv[1:]:
-                if "=" in arg:
-                    key, value = arg.split("=", 1)
-                    _store(key, value)
+    argv = sys.argv[1:]
+    if argv and ("&" in argv[0] or len(argv) == 1):
+        for key, value in parse_qsl(argv[0].lstrip("?"), keep_blank_values=True):
+            _store(key, value)
+        argv = argv[1:]
+    for arg in argv:
+        if "=" in arg:
+            key, value = arg.split("=", 1)
+            _store(key, value)
 
     window_props = {
         name: prop_values[i] if i < len(prop_values) else "true"

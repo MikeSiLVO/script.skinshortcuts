@@ -612,7 +612,7 @@ A `prop=` without a matching `value=` defaults to `true` (useful for boolean fla
 | `prop=<name>` paired with `value=<value>` | Set `<name>=<value>` on Home for the script's lifetime; cleared on exit |
 | `prop=<name>` alone | Set `<name>=true` on Home for the script's lifetime; cleared on exit |
 
-Values containing `&` need URL escaping (`%26`) because the arg string is parsed as a query string.
+Quote a value that contains a comma. When the first argument contains `&` or is the only one, write a literal `&` as `%26`, `+` as `%2B` and `%` as `%25`.
 
 ---
 
