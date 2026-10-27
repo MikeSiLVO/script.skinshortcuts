@@ -77,7 +77,6 @@ Each item linked to a `<submenu>` template has its own working copy, keyed by `{
 | Method | Returns | Description |
 |--------|---------|-------------|
 | `create_custom_widget_menu(menu_id, item_id, suffix)` | str | Create custom widget menu, return its ID |
-| `get_custom_widget_menu(menu_id, item_id, suffix)` | str | Get custom widget menu ID |
 | `clear_custom_widget(menu_id, item_id, suffix)` | bool | Clear custom widget menu and reference |
 
 Custom widget menus use auto-generated IDs (`custom-{uuid}`) and are referenced via `customWidget` or `customWidget.{N}` properties on items.
@@ -102,4 +101,3 @@ Custom widget menus use auto-generated IDs (`custom-{uuid}`) and are referenced 
 |--------|---------|-------------|
 | `has_changes()` | bool | Check for unsaved changes |
 | `save()` | bool | Save userdata (diff against defaults) |
-| `reload()` | None | Reload from disk |

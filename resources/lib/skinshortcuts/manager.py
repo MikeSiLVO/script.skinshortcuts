@@ -174,14 +174,6 @@ class MenuManager:
 
         return cw_menu_id
 
-    def get_custom_widget_menu(self, menu_id: str, item_id: str, suffix: str = "") -> str:
-        """Get the custom widget menu ID for an item."""
-        item = self._get_working_item(menu_id, item_id)
-        if not item:
-            return ""
-        prop_name = f"customWidget{suffix}"
-        return item.properties.get(prop_name, "")
-
     def clear_custom_widget(self, menu_id: str, item_id: str, suffix: str = "") -> bool:
         """Clear a custom widget menu and remove the reference."""
         item = self._get_working_item(menu_id, item_id)
@@ -497,15 +489,6 @@ class MenuManager:
             for act in item.actions
         ]
         cleanup_orphan_playlists(actions)
-
-    def reload(self) -> None:
-        """Reload config and userdata from disk, rebuild working copy."""
-        self.config = SkinConfig.load(
-            self.shortcuts_path, load_user=True, userdata_path=self.userdata_path
-        )
-        self.working = {menu.name: copy.deepcopy(menu) for menu in self.config.menus}
-        self._hidden = self._hidden_items()
-        self._changed = False
 
     def _cleanup_orphaned_menus(self) -> None:
         """Remove menus that are not in defaults and have no parent reference."""
