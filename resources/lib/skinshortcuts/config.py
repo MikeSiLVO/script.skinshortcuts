@@ -81,7 +81,7 @@ class SkinConfig:
         load_user: bool = True,
         userdata_path: str | None = None,
     ) -> SkinConfig:
-        """Load configuration from shortcuts directory."""
+        """Load configuration from shortcuts directory, merged with userdata unless skipped."""
         path = Path(shortcuts_path)
 
         menu_config = load_menus(path / "menus.xml")
@@ -164,7 +164,8 @@ class SkinConfig:
                 parent_name, _, _ = menu_name.partition("/")
                 if parent_name in skin_menu_names:
                     continue
-            user_menu = Menu(name=menu_name, is_submenu=True)
+            menu_type = "widgets" if menu_name.startswith("custom-") else None
+            user_menu = Menu(name=menu_name, is_submenu=True, menu_type=menu_type)
             for item_diff in menu_diff.items:
                 user_menu.items.append(
                     _create_item_from_diff(item_diff, menu_config.icon_overrides)
