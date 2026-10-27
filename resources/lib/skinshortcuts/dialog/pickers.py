@@ -26,7 +26,7 @@ from ..constants import (
 )
 from ..conditions import check_visible, evaluate_condition
 from ..loaders.menu import load_groupings
-from ..localize import LANGUAGE, resolve_label
+from ..localize import LANGUAGE, number_label, resolve_label
 from ..log import get_logger
 from ..playlists import (
     SORT_OPTIONS,
@@ -1022,7 +1022,7 @@ class PickersMixin:
         if input_item.for_ == "label":
             return Shortcut(
                 name=f"custom-input-{_name_hash(result)}",
-                label=result,
+                label=number_label(result),
                 actions=[Action(action="noop")],
                 icon=input_item.icon,
             )

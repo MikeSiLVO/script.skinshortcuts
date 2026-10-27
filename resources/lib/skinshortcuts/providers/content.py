@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import xbmc
 import xbmcvfs
 
+from ..localize import number_label
 from ..log import get_logger
 from ..playlists import parse_smart_playlist, playlists_base_path, unpack_multipath
 from .browse import normalize_image
@@ -759,7 +760,7 @@ class ContentProvider:
             path = f"videodb://{db_type}/years/{year}/"
             shortcuts.append(
                 ResolvedShortcut(
-                    label=str(year),
+                    label=number_label(str(year)),
                     action=f"ActivateWindow(Videos,{path},return)",
                     icon="DefaultYear.png",
                 )

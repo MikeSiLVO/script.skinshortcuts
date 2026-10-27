@@ -14,7 +14,7 @@ except ImportError:
     IN_KODI = False
 
 from ..conditions import evaluate_condition, suffix_condition
-from ..localize import LANGUAGE, resolve_label
+from ..localize import LANGUAGE, number_label, resolve_label
 from ..models.background import BrowseSource
 from ..models.menu import Action, ContextMenu, ContextMenuButton, IconSource, MenuItem
 from ..providers.browse import normalize_image
@@ -262,8 +262,6 @@ class ItemsMixin:
         if not item:
             return
 
-        from ..localize import resolve_label
-
         current_label = resolve_label(item.label)
         keyboard = xbmc.Keyboard(current_label, xbmc.getLocalizedString(528))
         keyboard.doModal()
@@ -271,6 +269,7 @@ class ItemsMixin:
             new_label = keyboard.getText()
             if new_label == current_label:
                 return
+            new_label = number_label(new_label)
             self.manager.set_label(self.menu_id, item.name, new_label)
             item.label = new_label
             # widget submenus seed widgetLabel from label; keep it in sync on edit
