@@ -44,7 +44,7 @@ def hash_file(path: str | Path) -> str | None:
     if not path.exists():
         return None
 
-    md5 = hashlib.md5()
+    md5 = hashlib.md5(usedforsecurity=False)
     try:
         with open(path, "rb") as f:
             for chunk in iter(lambda: f.read(8192), b""):
