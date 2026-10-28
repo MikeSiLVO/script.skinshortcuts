@@ -121,7 +121,8 @@ class ItemsMixin:
 
         index = self._get_selected_index()
 
-        if (
+        # custom widget items are shortcuts, not widgets
+        if not self.menu_id.startswith("custom-") and (
             self.dialog_mode in ("widgets", "customwidget")
             or self.dialog_mode.startswith("custom-widget")
         ):

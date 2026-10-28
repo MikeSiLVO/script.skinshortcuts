@@ -143,7 +143,7 @@ Custom widgets let users define their own item list:
 </widget>
 ```
 
-When selected, the dialog opens an item editor for the custom menu.
+When selected, the dialog opens an item editor for the custom menu. Its items are shortcuts: Add makes a blank item to fill with Choose shortcut (401), as in any menu.
 
 ---
 
