@@ -184,7 +184,7 @@ Properties set on the dialog window for conditional visibility:
 | `disableSubmenus` | `true` if disabled (empty if allowed) |
 | `skinshortcuts-menutype` | Menu type: `widgets` for a widget menu, `submenu` for a submenu, empty for a normal menu |
 | `skinshortcuts-hasdeleted` | `true` if deleted items exist |
-| `additionalDialog` | `true` while a child management dialog is stacked on top of this one (submenu editing or a subdialog/onclose mode); empty once the child closes |
+| `additionalDialog` | `true` while a child management dialog is stacked on top of this one (submenu editing or a subdialog/onclose mode); empty once the child closes, or for a subdialog once the menu its onclose opens closes |
 
 ### Subdialog Mode
 

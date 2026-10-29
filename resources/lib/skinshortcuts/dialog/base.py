@@ -89,6 +89,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     property_suffix: str
     is_child: bool
     changes_saved: bool
+    _window_id: int
     _shared_manager: MenuManager | None
     _shared_schema: PropertySchema | None
     _shared_icon_sources: list[IconSource] | None
@@ -148,6 +149,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     def onInit(self):  # noqa: N802
         """Load config and items, then display the list and set the window properties."""
         self._log(f"onInit: shortcuts_path={self.shortcuts_path}, menu_id={self.menu_id}")
+        self._window_id = xbmcgui.getCurrentWindowDialogId()
 
         if self.manager is None:
             if self._shared_manager:
@@ -571,8 +573,8 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             return False
 
     def close(self) -> None:
-        """Close the dialog; unless a child, save changes and record whether the save worked."""
-        if self.dialog_mode:
+        """Close the dialog; unless a child, clear the Home mirror and save, recording success."""
+        if self.dialog_mode and not self.is_child:
             home = xbmcgui.Window(10000)
             home.clearProperty("skinshortcuts-dialog")
             home.clearProperty("skinshortcuts-suffix")
