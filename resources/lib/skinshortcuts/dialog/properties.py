@@ -151,15 +151,15 @@ class PropertiesMixin:
         prop_type = button.type or (prop.type if prop else "")
 
         if prop_type == "widget":
-            widget = self._handle_widget_property(prop, item, prop_name)
+            widget = self._handle_widget_property(item, prop_name)
             if widget is not None and button.rename:
                 self._prompt_widget_rename(item, prop_name, widget)
             return True
         if prop_type == "background":
-            self._handle_background_property(prop, item, prop_name)
+            self._handle_background_property(item, prop_name)
             return True
         if prop_type == "toggle":
-            self._handle_toggle_property(prop, item, button, prop_name)
+            self._handle_toggle_property(prop, item, prop_name)
             return True
         if prop_type == "text":
             self._handle_text_property(item, button, prop_name)
@@ -180,8 +180,8 @@ class PropertiesMixin:
 
         return self._handle_options_property(prop, item, button, prop_name)
 
-    def _handle_widget_property(self, prop, item: MenuItem, prop_name: str) -> Widget | None:
-        """Handle a widget-type property; picking custom sets widgetType=custom for an onclose."""
+    def _handle_widget_property(self, item: MenuItem, prop_name: str) -> Widget | None:
+        """Handle a widget-type property; widget dialogs give the item the pick's label and icon."""
         if self.manager is None:
             return None
         menu = self.manager.config.get_menu(self.menu_id)
@@ -287,7 +287,7 @@ class PropertiesMixin:
         if self.manager is not None:
             self.manager.clear_custom_widget(self.menu_id, item.name, suffix)
 
-    def _handle_background_property(self, prop, item: MenuItem, prop_name: str) -> None:
+    def _handle_background_property(self, item: MenuItem, prop_name: str) -> None:
         """Handle a background-type property; a cancelled path pick reopens the picker."""
         if self.manager is None:
             return
@@ -537,8 +537,8 @@ class PropertiesMixin:
 
         return (playlists[selected][1], playlists[selected][0], playlists[selected][3])
 
-    def _handle_toggle_property(self, prop, item: MenuItem, button, prop_name: str) -> None:
-        """Handle a toggle-type property."""
+    def _handle_toggle_property(self, prop, item: MenuItem, prop_name: str) -> None:
+        """Handle a toggle-type property, clearing it when on, else setting its value."""
         toggle_value = (prop.value if prop else "") or "True"
         current_value = item.properties.get(prop_name, "")
         if current_value == toggle_value:

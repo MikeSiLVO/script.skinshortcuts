@@ -64,13 +64,13 @@ class TemplateBuilder:
         self._assigned_templates: set[str] = self._collect_assigned_templates()
 
     def _collect_assigned_templates(self) -> set[str]:
-        """Collect template include names that are actually assigned to menu items."""
+        """Collect template include names assigned to menu items."""
         assigned: set[str] = set()
         include_pattern = re.compile(r"\$INCLUDE\[skinshortcuts-template-([^\]]+)\]")
 
         for menu in self.menus:
             for item in menu.items:
-                for _prop_name, prop_value in item.properties.items():
+                for prop_value in item.properties.values():
                     if not prop_value:
                         continue
                     for match in include_pattern.finditer(prop_value):
@@ -881,7 +881,7 @@ class TemplateBuilder:
         context: dict[str, str],
         suffix: str = "",
     ) -> str | None:
-        """Resolve a property value, applying any suffix to the names in its conditions."""
+        """Resolve a property value, applying any suffix to its condition and source names."""
         if prop.condition:
             condition = self._expand_expressions(prop.condition)
             if suffix:
@@ -891,7 +891,7 @@ class TemplateBuilder:
 
         if prop.from_source:
             source = suffix_property(prop.from_source, suffix)
-            return self._get_from_source(source, item, context, suffix)
+            return self._get_from_source(source, item, context)
 
         value = prop.value
         if "$PROPERTY[" in value:
@@ -951,13 +951,7 @@ class TemplateBuilder:
             return value
         return None
 
-    def _get_from_source(
-        self,
-        source: str,
-        item: MenuItem,
-        context: dict[str, str],
-        suffix: str = "",
-    ) -> str:
+    def _get_from_source(self, source: str, item: MenuItem, context: dict[str, str]) -> str:
         """Get value from a source (built-in or item property)."""
         if source in ("index", "name", "menu", "id", "idprefix"):
             return context.get(source, "")
