@@ -20,3 +20,8 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# Test fixtures are compared byte for byte
+tests/fixtures/** -text
+tests/fixtures/golden/** linguist-generated=true
+tests/fixtures/skins/** linguist-vendored=true

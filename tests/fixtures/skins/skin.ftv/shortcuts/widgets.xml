@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets>
+	<group name="ftv" label="fTV" icon="ftv_icon.png">
+		<widget name="recent-movies" label="31167" type="movies" target="videos" icon="ftv_icon.png">
+			<path>special://skin/extras/video/RecentlyAddedMovies.xsp</path>
+		</widget>
+		<widget name="your-movies" label="31168" type="movies" target="videos" icon="ftv_icon.png">
+			<path>special://skin/extras/video/YourMovies.xsp</path>
+		</widget>
+		<widget name="inprogress-movies" label="31169" type="movies" target="videos" icon="ftv_icon.png">
+			<path>special://skin/extras/video/InProgressMovies.xsp</path>
+		</widget>
+		<widget name="kids-movies" label="31170" type="movies" target="videos" icon="ftv_icon.png">
+			<path>special://skin/extras/video/KidsMovies.xsp</path>
+		</widget>
+		<widget name="toprated-movies" label="31174" type="movies" target="videos" icon="ftv_icon.png">
+			<path>special://skin/extras/video/TopRatedMovies.xsp</path>
+		</widget>
+		<widget name="recent-tvshows" label="31175" type="tvshows" target="videos" icon="ftv_icon.png">
+			<path>special://skin/extras/video/RecentlyUpdatedTVShows.xsp</path>
+		</widget>
+		<widget name="your-tvshows" label="31176" type="tvshows" target="videos" icon="ftv_icon.png">
+			<path>special://skin/extras/video/YourTVShows.xsp</path>
+		</widget>
+		<widget name="inprogress-tvshows" label="31177" type="tvshows" target="videos" icon="ftv_icon.png">
+			<path>special://skin/extras/video/InProgressTVShows.xsp</path>
+		</widget>
+		<widget name="kids-tvshows" label="31178" type="tvshows" target="videos" icon="ftv_icon.png">
+			<path>special://skin/extras/video/KidsTVShows.xsp</path>
+		</widget>
+		<widget name="toprated-tvshows" label="31182" type="tvshows" target="videos" icon="ftv_icon.png">
+			<path>special://skin/extras/video/TopRatedTVShows.xsp</path>
+		</widget>
+		<widget name="recently-played-albums" label="31183" type="albums" target="music" icon="ftv_icon.png">
+			<path>musicdb://recentlyplayedalbums/</path>
+		</widget>
+		<widget name="your-albums" label="31184" type="albums" target="music" icon="ftv_icon.png">
+			<path>special://skin/extras/music/YourAlbums.xsp</path>
+		</widget>
+		<widget name="recently-added-albums" label="31185" type="albums" target="music" icon="ftv_icon.png">
+			<path>musicdb://recentlyaddedalbums/</path>
+		</widget>
+		<widget name="your-artists" label="31186" type="artists" target="music" icon="ftv_icon.png">
+			<path>special://skin/extras/music/YourArtists.xsp</path>
+		</widget>
+		<widget name="music-genres" label="31187" type="music" target="music" icon="ftv_icon.png">
+			<path>musicdb://genres/</path>
+		</widget>
+	</group>
+	<group name="common" label="32029">
+		<content source="favourites"/>
+	</group>
+	<group name="video" label="32030">
+		<content source="nodes" target="video"/>
+		<content source="playlists" target="video"/>
+		<content source="addons" target="video"/>
+		<content source="sources" target="video"/>
+	</group>
+	<group name="music" label="32031">
+		<content source="nodes" target="music"/>
+		<content source="playlists" target="music"/>
+		<content source="addons" target="music"/>
+		<content source="sources" target="music"/>
+	</group>
+	<group name="pictures" label="32020">
+		<content source="addons" target="pictures"/>
+		<content source="sources" target="pictures"/>
+	</group>
+</widgets>

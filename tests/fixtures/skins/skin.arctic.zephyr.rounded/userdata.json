@@ -1,0 +1,135 @@
+{
+  "menus": {
+    "powermenu": {
+      "items": [
+        {
+          "name": "power-rebootandroid",
+          "disabled": true,
+          "position": 9
+        },
+        {
+          "name": "power-quit",
+          "position": 14
+        }
+      ],
+      "removed": [
+        "power-mastermode"
+      ]
+    },
+    "mainmenu": {
+      "items": [
+        {
+          "name": "movies",
+          "properties": {
+            "background": "custom-image",
+            "backgroundPath": "special://skin/media/movies.jpg"
+          },
+          "position": 1
+        },
+        {
+          "name": "music",
+          "label": "Tunes",
+          "position": 3
+        },
+        {
+          "name": "weather",
+          "position": 6
+        },
+        {
+          "name": "favourites",
+          "position": 8
+        },
+        {
+          "name": "disc",
+          "position": 9
+        },
+        {
+          "name": "programs",
+          "position": 10
+        },
+        {
+          "name": "user-youtube",
+          "label": "YouTube",
+          "actions": [
+            {
+              "action": "ActivateWindow(Videos,plugin://plugin.video.youtube/,return)"
+            }
+          ],
+          "icon": "DefaultAddonVideo.png",
+          "position": 11,
+          "is_new": true
+        }
+      ],
+      "removed": [
+        "games"
+      ]
+    },
+    "mainmenu/tvshows": {
+      "items": [
+        {
+          "name": "tvshows-actors",
+          "position": 4
+        },
+        {
+          "name": "tvshows-studios",
+          "position": 5
+        },
+        {
+          "name": "tvshows-library",
+          "position": 6
+        }
+      ],
+      "removed": [
+        "tvshows-years"
+      ]
+    },
+    "movies.1": {
+      "items": [
+        {
+          "name": "movies-tmdb-popular",
+          "label": "Popular Now",
+          "position": 1
+        },
+        {
+          "name": "movies-new",
+          "position": 2
+        },
+        {
+          "name": "movies-tmdb-most-voted",
+          "position": 3
+        }
+      ],
+      "removed": [
+        "movies-random"
+      ]
+    },
+    "tvshows.1": {
+      "items": [
+        {
+          "name": "tvshows-random",
+          "removed_properties": [
+            "widgetaspect"
+          ],
+          "position": 3
+        }
+      ]
+    },
+    "pictures.1": {
+      "items": [
+        {
+          "name": "RandomMovies",
+          "label": "$LOCALIZE[31028]",
+          "actions": [],
+          "icon": "special://skin/extras/icons/film.png",
+          "properties": {
+            "widgetPath": "special://skin/extras/playlists/RandomMovies.xsp",
+            "widgetTarget": "videos",
+            "widgetLabel": "$LOCALIZE[31028]"
+          },
+          "position": 0,
+          "is_new": true
+        }
+      ]
+    }
+  }
+}

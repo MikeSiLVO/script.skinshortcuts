@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets showGetMore="true">
+    <!-- Movies -->
+    <group name="movies" label="$LOCALIZE[342]" icon="special://skin/extras/icons/film.png">
+        <widget name="MoviesTitles" label="$LOCALIZE[10024]" target="videos" icon="special://skin/extras/icons/film.png">
+            <path>videodb://movies/titles/</path>
+        </widget>
+        <widget name="NewMovies" label="$LOCALIZE[31026]" target="videos" icon="special://skin/extras/icons/recentlyadded.png">
+            <path>special://skin/extras/playlists/NewMovies.xsp</path>
+        </widget>
+        <widget name="NewUnwatchedMovies" label="$LOCALIZE[31241]" target="videos" icon="special://skin/extras/icons/recentlyadded.png">
+            <path>special://skin/extras/playlists/NewUnwatchedMovies.xsp</path>
+        </widget>
+        <widget name="RecentMovies" label="$LOCALIZE[31027]" target="videos" icon="special://skin/extras/icons/recent.png">
+            <path>special://skin/extras/playlists/RecentMovies.xsp</path>
+        </widget>
+        <widget name="RandomMovies" label="$LOCALIZE[31028]" target="videos" icon="special://skin/extras/icons/film.png">
+            <path>special://skin/extras/playlists/RandomMovies.xsp</path>
+        </widget>
+        <widget name="InProgressMovies" label="$LOCALIZE[31029]" target="videos" icon="special://skin/extras/icons/timer.png">
+            <path>special://skin/extras/playlists/InProgressMovies.xsp</path>
+        </widget>
+        <widget name="TopRatedMovies" label="$LOCALIZE[31030]" target="videos" icon="special://skin/extras/icons/favourites.png">
+            <path>special://skin/extras/playlists/TopRatedMovies.xsp</path>
+        </widget>
+        <widget name="Top20UserRatedMovies" label="$LOCALIZE[31237]" target="videos" icon="special://skin/extras/icons/favourites.png">
+            <path>special://skin/extras/playlists/Top20UserRatedMovies.xsp</path>
+        </widget>
+        <widget name="Top250Movies" label="$LOCALIZE[31031]" target="videos" icon="special://skin/extras/icons/favourites.png">
+            <path>special://skin/extras/playlists/Top250Movies.xsp</path>
+        </widget>
+        <widget name="UnwatchedMovies" label="$LOCALIZE[31032]" target="videos" icon="special://skin/extras/icons/film.png">
+            <path>special://skin/extras/playlists/UnwatchedMovies.xsp</path>
+        </widget>
+        <widget name="MovieSets" label="$LOCALIZE[31033]" target="videos" icon="special://skin/extras/icons/film.png">
+            <path>videodb://movies/sets/</path>
+        </widget>
+        <widget name="MovieVersions" label="$LOCALIZE[40000]" target="videos" icon="special://skin/extras/icons/film.png">
+            <path>videodb://movies/videoversions/</path>
+        </widget>
+        <widget name="4KMovies" label="$LOCALIZE[31382]" target="videos" icon="special://skin/extras/icons/film.png">
+            <path>special://skin/extras/playlists/4KMovies.xsp</path>
+        </widget>
+        <widget name="HDMovies" label="$LOCALIZE[31403]" target="videos" icon="special://skin/extras/icons/film.png">
+            <path>special://skin/extras/playlists/HDMovies.xsp</path>
+        </widget>
+        <widget name="MovieGenres" label="$LOCALIZE[135]" target="videos" icon="special://skin/extras/icons/masks-theater.png">
+            <path>library://video/movies/genres.xml</path>
+        </widget>
+    </group>
+
+    <!-- TV Shows -->
+    <group name="tvshows" label="$LOCALIZE[20343]" icon="special://skin/extras/icons/tv.png">
+        <group name="tvshows-shows" label="$LOCALIZE[20343]" icon="special://skin/extras/icons/tv.png">
+            <widget name="TvShowsTitles" label="$LOCALIZE[10024]" target="videos" icon="special://skin/extras/icons/film.png">
+                <path>videodb://tvshows/titles/</path>
+            </widget>
+            <widget name="NewTvShows" label="$LOCALIZE[31034]" target="videos" icon="special://skin/extras/icons/recentlyadded.png">
+                <path>special://skin/extras/playlists/NewShows.xsp</path>
+            </widget>
+            <widget name="NewUnwatchedTvShows" label="$LOCALIZE[31243]" target="videos" icon="special://skin/extras/icons/recentlyadded.png">
+                <path>special://skin/extras/playlists/NewUnwatchedShows.xsp</path>
+            </widget>
+            <widget name="UnwatchedTvShows" label="$LOCALIZE[31389]" target="videos" icon="special://skin/extras/icons/recentlyadded.png">
+                <path>special://skin/extras/playlists/UnwatchedTvShows.xsp</path>
+            </widget>
+            <widget name="RecentTvShows" label="$LOCALIZE[31035]" target="videos" icon="special://skin/extras/icons/recent.png">
+                <path>special://skin/extras/playlists/RecentTvShows.xsp</path>
+            </widget>
+            <widget name="InProgressTvShows" label="$LOCALIZE[626]" target="videos" icon="special://skin/extras/icons/timer.png">
+                <path>special://skin/extras/playlists/InProgressTvShows.xsp</path>
+            </widget>
+            <widget name="RandomTvShows" label="$LOCALIZE[31036]" target="videos" icon="special://skin/extras/icons/tv.png">
+                <path>special://skin/extras/playlists/RandomTvShows.xsp</path>
+            </widget>
+            <widget name="TopRatedTvShows" label="$LOCALIZE[31037]" target="videos" icon="special://skin/extras/icons/tv.png">
+                <path>special://skin/extras/playlists/TopRatedTvShows.xsp</path>
+            </widget>
+        </group>
+        <group name="tvshows-episodes" label="$LOCALIZE[20360]" icon="special://skin/extras/icons/tv.png">
+            <widget name="NewEpisodes" label="$LOCALIZE[31038]" target="videos" icon="special://skin/extras/icons/recentlyadded.png">
+                <path>special://skin/extras/playlists/NewEpisodes.xsp</path>
+            </widget>
+            <widget name="NewUnwatchedEpisodes" label="$LOCALIZE[31242]" target="videos" icon="special://skin/extras/icons/recentlyadded.png">
+                <path>special://skin/extras/playlists/NewUnwatchedEpisodes.xsp</path>
+            </widget>
+            <widget name="RecentEpisodes" label="$LOCALIZE[31039]" target="videos" icon="special://skin/extras/icons/recent.png">
+                <path>special://skin/extras/playlists/RecentEpisodes.xsp</path>
+            </widget>
+            <widget name="RandomEpisodes" label="$LOCALIZE[31040]" target="videos" icon="special://skin/extras/icons/tv.png">
+                <path>special://skin/extras/playlists/RandomEpisodes.xsp</path>
+            </widget>
+            <widget name="UnwatchedEpisodes" label="$LOCALIZE[31041]" target="videos" icon="special://skin/extras/icons/tv.png">
+                <path>special://skin/extras/playlists/UnwatchedEpisodes.xsp</path>
+            </widget>
+            <widget name="InProgressEpisodes" label="$LOCALIZE[31042]" target="videos" icon="special://skin/extras/icons/timer.png">
+                <path>special://skin/extras/playlists/InProgressEpisodes.xsp</path>
+            </widget>
+            <widget name="TopRatedEpisodes" label="$LOCALIZE[31043]" target="videos" icon="special://skin/extras/icons/tv.png">
+                <path>special://skin/extras/playlists/TopRatedEpisodes.xsp</path>
+            </widget>
+        </group>
+    </group>
+
+    <!-- Music -->
+    <group name="music" label="$LOCALIZE[249]" icon="special://skin/extras/icons/songs.png">
+        <group name="music-albums" label="$LOCALIZE[132]" icon="special://skin/extras/icons/compact-disc.png">
+            <widget name="NewAlbums" label="$LOCALIZE[31044]" type="albums" target="music" icon="special://skin/extras/icons/recentlyadded.png">
+                <path>musicdb://recentlyaddedalbums/</path>
+            </widget>
+            <widget name="RecentAlbums" label="$LOCALIZE[31045]" type="albums" target="music" icon="special://skin/extras/icons/recent.png">
+                <path>musicdb://recentlyplayedalbums/</path>
+            </widget>
+            <widget name="TopAlbums" label="$LOCALIZE[31046]" type="albums" target="music" icon="special://skin/extras/icons/compact-disc.png">
+                <path>musicdb://top100/albums/</path>
+            </widget>
+            <widget name="RandomAlbums" label="$LOCALIZE[31047]" type="albums" target="music" icon="special://skin/extras/icons/compact-disc.png">
+                <path>special://skin/extras/playlists/RandomAlbums.xsp</path>
+            </widget>
+        </group>
+        <group name="music-songs" label="$LOCALIZE[134]" icon="special://skin/extras/icons/song.png">
+            <widget name="TopSongs" label="$LOCALIZE[31210]" target="music" icon="special://skin/extras/icons/song.png">
+                <path>musicdb://top100/songs/</path>
+            </widget>
+            <widget name="RandomSongs" label="$LOCALIZE[31211]" target="music" icon="special://skin/extras/icons/song.png">
+                <path>special://skin/extras/playlists/RandomSongs.xsp</path>
+            </widget>
+            <widget name="RecentlyAddedSongs" label="$LOCALIZE[31325]" target="music" icon="special://skin/extras/icons/song.png">
+                <path>special://skin/extras/playlists/RecentlyAddedSongs.xsp</path>
+            </widget>
+            <widget name="MostPlayedSongs" label="$LOCALIZE[31326]" target="music" icon="special://skin/extras/icons/song.png">
+                <path>special://skin/extras/playlists/MostPlayedSongs.xsp</path>
+            </widget>
+        </group>
+    </group>
+
+    <!-- People -->
+    <group name="people" label="$LOCALIZE[31234]" icon="special://skin/extras/icons/artist.png">
+        <group name="people-artists" label="$LOCALIZE[133]" icon="special://skin/extras/icons/artist.png">
+            <widget name="RandomArtists" label="$LOCALIZE[31048]" type="artists" target="music" icon="special://skin/extras/icons/artist.png">
+                <path>special://skin/extras/playlists/RandomArtists.xsp</path>
+            </widget>
+            <widget name="RandomArtistsBiography" label="$LOCALIZE[31233]" type="artists" target="music" icon="special://skin/extras/icons/artist.png">
+                <path>special://skin/extras/playlists/RandomArtistsBiography.xsp</path>
+            </widget>
+            <widget name="RecentlyAddedArtists" label="$LOCALIZE[31235]" type="artists" target="music" icon="special://skin/extras/icons/artist.png">
+                <path>special://skin/extras/playlists/RecentlyAddedArtists.xsp</path>
+            </widget>
+            <widget name="RecentlyAddedArtistsBiography" label="$LOCALIZE[31236]" type="artists" target="music" icon="special://skin/extras/icons/artist.png">
+                <path>special://skin/extras/playlists/RecentlyAddedArtistsBiography.xsp</path>
+            </widget>
+        </group>
+        <group name="people-actors" label="$LOCALIZE[344]" icon="special://skin/extras/icons/artist.png">
+            <widget name="MovieActors" label="$LOCALIZE[344]" type="actors" target="videos" icon="special://skin/extras/icons/artist.png">
+                <path>library://video/movies/actors.xml/</path>
+            </widget>
+            <widget name="RandomActors" label="$LOCALIZE[31240]" type="actors" target="videos" icon="special://skin/extras/icons/artist.png">
+                <path>videodb://movies/actors/</path>
+            </widget>
+        </group>
+    </group>
+
+    <!-- Live TV -->
+    <group name="livetv" label="$LOCALIZE[31075]" icon="special://skin/extras/icons/livetv.png">
+        <widget name="LastPlayedChannels" label="$LOCALIZE[31024]" target="pvr" icon="special://skin/extras/icons/tv.png">
+            <path>pvr://channels/tv/*?view=lastplayed</path>
+        </widget>
+        <widget name="AllChannels" label="$LOCALIZE[31025]" target="pvr" icon="special://skin/extras/icons/tv.png">
+            <path>pvr://channels/tv/*</path>
+        </widget>
+        <widget name="AllChannelGroups" label="$LOCALIZE[19173]" target="tvguide" icon="special://skin/extras/icons/tv.png">
+            <path>pvr://channels/tv/</path>
+        </widget>
+        <widget name="ActiveRecordings" label="$LOCALIZE[31383]" target="pvr" icon="special://skin/extras/icons/livetv.png">
+            <path>pvr://recordings/tv/active?view=flat</path>
+        </widget>
+        <widget name="GroupedActiveRecordings" label="$LOCALIZE[31384]" target="pvr" icon="special://skin/extras/icons/livetv.png">
+            <path>pvr://recordings/tv/active?view=grouped</path>
+        </widget>
+        <widget name="DeletedRecordings" label="$LOCALIZE[19184]" target="pvr" icon="special://skin/extras/icons/livetv.png">
+            <path>pvr://recordings/tv/deleted?view=flat</path>
+        </widget>
+        <widget name="GroupedDeletedRecordings" label="$LOCALIZE[31385]" target="pvr" icon="special://skin/extras/icons/livetv.png">
+            <path>pvr://recordings/tv/deleted?view=grouped</path>
+        </widget>
+        <widget name="Timers" label="$LOCALIZE[19040]" target="pvr" icon="special://skin/extras/icons/livetv.png">
+            <path>pvr://timers/tv/timers</path>
+        </widget>
+    </group>
+
+    <!-- Radio -->
+    <group name="radio" label="$LOCALIZE[19021]" icon="special://skin/extras/icons/livetv.png">
+        <widget name="RadioAllChannels" label="$LOCALIZE[19216]" target="pvr" icon="special://skin/extras/icons/livetv.png">
+            <path>pvr://channels/radio/*</path>
+        </widget>
+        <widget name="RadioLastPlayedChannels" label="$LOCALIZE[31387]" target="pvr" icon="special://skin/extras/icons/livetv.png">
+            <path>pvr://channels/radio/*?view=lastplayed</path>
+        </widget>
+        <widget name="RadioActiveRecordings" label="$LOCALIZE[10706]" target="pvr" icon="special://skin/extras/icons/livetv.png">
+            <path>pvr://recordings/radio/active?view=flat</path>
+        </widget>
+        <widget name="RadioTimers" label="$LOCALIZE[10708]" target="pvr" icon="special://skin/extras/icons/livetv.png">
+            <path>pvr://timers/radio/timers</path>
+        </widget>
+    </group>
+
+    <!-- Weather -->
+    <group name="weather" label="$LOCALIZE[8]" icon="special://skin/extras/icons/sun.png">
+        <widget name="weatherdaily" label="$LOCALIZE[31213]" type="widget" target="weather" icon="special://skin/extras/icons/sun.png" visible="!String.IsEmpty(Window(Weather).Property(Daily.IsFetched))">
+            <path>$INCLUDE[skinshortcuts-template-WeatherDailyInfoContent]</path>
+        </widget>
+        <widget name="weatherhourly" label="$LOCALIZE[31214]" type="widget" target="weather" icon="special://skin/extras/icons/sun.png" visible="!String.IsEmpty(Window(Weather).Property(Hourly.IsFetched))">
+            <path>$INCLUDE[skinshortcuts-template-WeatherHourlyInfoContent]</path>
+        </widget>
+    </group>
+
+    <!-- System Info -->
+    <group name="systeminfo" label="$LOCALIZE[130]" icon="special://skin/extras/icons/sysinfo.png">
+        <widget name="systeminfo" label="$LOCALIZE[130]" type="system" target="system" icon="special://skin/extras/icons/sysinfo.png">
+            <path>$INCLUDE[skinshortcuts-template-SystemInfoContent]</path>
+        </widget>
+    </group>
+
+    <!-- Settings -->
+    <group name="settings" label="$LOCALIZE[5]" icon="special://skin/extras/icons/settings.png">
+        <widget name="settings" label="$LOCALIZE[5]" type="system" target="system" icon="special://skin/extras/icons/settings.png">
+            <path>$INCLUDE[skinshortcuts-template-SettingsInfoContent]</path>
+        </widget>
+    </group>
+
+    <!-- Pictures -->
+    <group name="pictures" label="$ADDON[script.skinshortcuts 32020]" icon="special://skin/extras/icons/pictures.png">
+        <content source="sources" target="pictures" />
+    </group>
+
+    <!-- Video Library -->
+    <group name="video-library" label="$ADDON[script.skinshortcuts 32030]" icon="special://skin/extras/icons/video.png">
+        <content source="nodes" target="videos" />
+        <group name="video-playlists" label="$ADDON[script.skinshortcuts 32040]" icon="special://skin/extras/icons/playlist.png">
+            <content source="playlists" target="video" />
+        </group>
+        <group name="video-addons" label="$ADDON[script.skinshortcuts 32010]" icon="special://skin/extras/icons/video-addons.png">
+            <content source="addons" target="videos" />
+        </group>
+        <group name="video-sources" label="$ADDON[script.skinshortcuts 32075]" icon="special://skin/extras/icons/folder.png">
+            <content source="sources" target="video" />
+        </group>
+    </group>
+
+    <!-- Music Library -->
+    <group name="music-library" label="$ADDON[script.skinshortcuts 32031]" icon="special://skin/extras/icons/songs.png">
+        <content source="nodes" target="music" />
+        <group name="music-playlists" label="$ADDON[script.skinshortcuts 32040]" icon="special://skin/extras/icons/playlist.png">
+            <content source="playlists" target="music" />
+        </group>
+        <group name="music-addons" label="$ADDON[script.skinshortcuts 32011]" icon="special://skin/extras/icons/songs.png">
+            <content source="addons" target="music" />
+        </group>
+        <group name="music-sources" label="$ADDON[script.skinshortcuts 32075]" icon="special://skin/extras/icons/folder.png">
+            <content source="sources" target="music" />
+        </group>
+    </group>
+
+    <!-- Favourites -->
+    <group name="favourites" label="$LOCALIZE[1036]" icon="special://skin/extras/icons/favourites.png">
+        <widget name="favourites" label="$LOCALIZE[1036]" type="favourite" target="favouritesbrowser" icon="special://skin/extras/icons/favourites.png">
+            <path>favourites://</path>
+        </widget>
+    </group>
+
+    <!-- Add-ons -->
+    <group name="addons" label="$ADDON[script.skinshortcuts 32007]" icon="special://skin/extras/icons/addons.png">
+        <group name="addons-video" label="$ADDON[script.skinshortcuts 32010]" icon="special://skin/extras/icons/video-addons.png">
+            <content source="addons" target="videos" />
+        </group>
+        <group name="addons-audio" label="$ADDON[script.skinshortcuts 32011]" icon="special://skin/extras/icons/songs.png">
+            <content source="addons" target="music" />
+        </group>
+        <group name="addons-image" label="$ADDON[script.skinshortcuts 32012]" icon="special://skin/extras/icons/pictures.png">
+            <content source="addons" target="pictures" />
+        </group>
+        <group name="addons-program" label="$ADDON[script.skinshortcuts 32009]" icon="special://skin/extras/icons/addons.png">
+            <content source="addons" target="programs" />
+        </group>
+        <widget name="addon-programs" label="$LOCALIZE[10001]" type="program" target="programs" icon="special://skin/extras/icons/addons.png">
+            <path>addons://sources/executable/</path>
+        </widget>
+        <widget name="addon-android" label="$LOCALIZE[20244]" type="program" target="programs" icon="special://skin/extras/icons/addons.png" visible="System.Platform.Android">
+            <path>androidapp://sources/apps/</path>
+        </widget>
+        <widget name="addon-video" label="$LOCALIZE[1037]" type="video" target="videos" icon="special://skin/extras/icons/video-addons.png">
+            <path>addons://sources/video/</path>
+        </widget>
+        <widget name="addon-music" label="$LOCALIZE[1038]" type="music" target="music" icon="special://skin/extras/icons/songs.png">
+            <path>addons://sources/audio/</path>
+        </widget>
+        <widget name="addon-pictures" label="$LOCALIZE[1039]" type="picture" target="pictures" icon="special://skin/extras/icons/pictures.png">
+            <path>addons://sources/image/</path>
+        </widget>
+        <widget name="addon-games" label="$LOCALIZE[35049]" type="game" target="games" icon="special://skin/extras/icons/gamepad.png">
+            <path>addons://sources/game/</path>
+        </widget>
+    </group>
+</widgets>

@@ -1,0 +1,93 @@
+{
+ "menus": {
+  "mainmenu": {
+   "items": [
+    {
+     "name": "settings",
+     "position": 3
+    },
+    {
+     "name": "power",
+     "position": 4
+    }
+   ]
+  },
+  "mainmenu/settings": {
+   "items": [
+    {
+     "actions": [
+      {
+       "action": "ActivateWindow(SkinSettings)"
+      }
+     ],
+     "icon": "DefaultAddonService.png",
+     "is_new": true,
+     "label": "$LOCALIZE[10035]",
+     "name": "sub-be5ae35d",
+     "position": 1
+    },
+    {
+     "name": "profiles",
+     "position": 2
+    },
+    {
+     "name": "systeminfo",
+     "position": 3
+    },
+    {
+     "name": "eventlog",
+     "position": 4
+    }
+   ]
+  },
+  "movies.widgets": {
+   "items": [
+    {
+     "actions": [
+      {
+       "action": "noop"
+      }
+     ],
+     "icon": "special://skin/extras/icons/recentlyadded.png",
+     "is_new": true,
+     "label": "31045",
+     "name": "sub-movies.w",
+     "position": 0,
+     "properties": {
+      "widget": "NewMovies",
+      "widgetLabel": "New Movies",
+      "widgetPath": "special://skin/extras/playlists/NewMovies.xsp",
+      "widgetTarget": "videos",
+      "widgetType": "movies"
+     }
+    }
+   ]
+  },
+  "powermenu": {
+   "items": [
+    {
+     "name": "settings",
+     "position": 10
+    }
+   ]
+  },
+  "settings.widgets": {
+   "items": [
+    {
+     "actions": [],
+     "icon": "special://skin/extras/icons/settings.png",
+     "is_new": true,
+     "label": "5",
+     "name": "sub-settings",
+     "position": 0,
+     "properties": {
+      "widget": "settings",
+      "widgetLabel": "Settings",
+      "widgetPath": "Settings",
+      "widgetTarget": "videos"
+     }
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,1496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menus>
+
+    <!-- SEARCH MENU -->
+
+    <menu name="searchmenulist">
+        <defaults>
+            <action when="before">ClearProperty(Show_Menu_Search,Home)</action>
+            <action when="before">SetProperty(Launch_Search,1,Home)</action>
+        </defaults>
+        <item name="search-globalsearch">
+            <label>$LOCALIZE[14022]</label>
+            <action>RunScript(script.globalsearch)</action>
+            <icon>special://skin/extras/icons/database.png</icon>
+            <visible>System.AddonIsEnabled(script.globalsearch)</visible>
+        </item>
+        <item name="search-tmdbhelper">
+            <label>TMDb Helper</label>
+            <action>ActivateWindow(videos,"plugin://plugin.video.themoviedb.helper/?info=dir_multisearch&amp;tmdb_type=None",return)</action>
+            <icon>special://skin/extras/icons/tmdb.png</icon>
+            <visible>System.AddonIsEnabled(plugin.video.themoviedb.helper)</visible>
+        </item>
+        <item name="search-youtube">
+            <label>$LOCALIZE[31101]</label>
+            <action>ActivateWindow(videos,"plugin://plugin.video.youtube/kodion/search/list/",return)</action>
+            <icon>special://skin/extras/icons/youtube.png</icon>
+            <visible>System.AddonIsEnabled(plugin.video.youtube)</visible>
+        </item>
+        <item name="search-wiki">
+            <label>$LOCALIZE[31477]</label>
+            <action>SetFocus(330)</action>
+            <icon>special://skin/extras/icons/world.png</icon>
+            <visible>System.AddonIsEnabled(script.wikipedia)</visible>
+        </item>
+        <item name="search-tv">
+            <label>$LOCALIZE[10704]</label>
+            <action>ActivateWindow(TVSearch)</action>
+            <icon>special://skin/extras/icons/tvguide.png</icon>
+            <visible>System.HasPVRAddon</visible>
+        </item>
+        <item name="search-addons">
+            <label>$LOCALIZE[10510]</label>
+            <action>SetFocus(331)</action>
+            <icon>special://skin/extras/icons/addons.png</icon>
+        </item>
+        <item name="search-podcasts">
+            <label>$LOCALIZE[31608]</label>
+            <action>ActivateWindow(videos,"plugin://plugin.audio.apple.podcasts/?action=search")</action>
+            <icon>special://skin/extras/icons/apple.png</icon>
+            <visible>System.AddonIsEnabled(plugin.audio.apple.podcasts)</visible>
+        </item>
+    </menu>
+
+    <!-- POWER MENU -->
+
+    <menu name="powermenu">
+        <defaults>
+            <action when="before">Close</action>
+        </defaults>
+        <item name="power-skinsettings">
+            <label>$LOCALIZE[31114]</label>
+            <action>ActivateWindowAndFocus(skinsettings,9108,2)</action>
+            <icon>special://skin/extras/icons/skinsettings.png</icon>
+            <visible>System.Loggedon</visible>
+        </item>
+        <item name="power-settings">
+            <label>$LOCALIZE[5]</label>
+            <action>ActivateWindow(settings)</action>
+            <icon>special://skin/extras/icons/settings.png</icon>
+            <visible>System.Loggedon</visible>
+        </item>
+        <item name="power-search">
+            <label>$LOCALIZE[137]</label>
+            <action>ActivateWindow(1146)</action>
+            <icon>special://skin/extras/icons/search.png</icon>
+            <visible>System.ShowExitButton</visible>
+        </item>
+        <item name="power-reloadskin">
+            <label>$LOCALIZE[31146]</label>
+            <action>ReloadSkin()</action>
+            <icon>special://skin/extras/icons/update.png</icon>
+        </item>
+        <item name="power-systeminfo">
+            <label>$LOCALIZE[130]</label>
+            <action>ActivateWindow(systeminfo)</action>
+            <icon>special://skin/extras/icons/info.png</icon>
+            <visible>System.Loggedon</visible>
+        </item>
+        <item name="power-filemanager">
+            <label>$LOCALIZE[10003]</label>
+            <action>ActivateWindow(filemanager)</action>
+            <icon>special://skin/extras/icons/filebox.png</icon>
+            <visible>System.Loggedon</visible>
+        </item>
+        <item name="power-sleeptimer">
+            <label>$LOCALIZE[20150]</label>
+            <action>AlarmClock(shutdowntimer,Shutdown())</action>
+            <icon>special://skin/extras/icons/timer.png</icon>
+            <visible>!System.HasAlarm(shutdowntimer)</visible>
+            <visible>System.CanPowerDown | System.CanSuspend | System.CanHibernate</visible>
+        </item>
+        <item name="power-canceltimer">
+            <label>$LOCALIZE[20151]</label>
+            <action>CancelAlarm(shutdowntimer)</action>
+            <icon>special://skin/extras/icons/forbidden.png</icon>
+            <visible>System.HasAlarm(shutdowntimer)</visible>
+        </item>
+        <item name="power-timerinfo">
+            <label>$LOCALIZE[31274]</label>
+            <action>noop</action>
+            <icon>special://skin/extras/icons/info2.png</icon>
+            <visible>System.HasAlarm(shutdowntimer)</visible>
+        </item>
+        <item name="power-rebootandroid">
+            <label>$LOCALIZE[31172]</label>
+            <action>System.ExecWait("/usr/sbin/rebootfromnand")</action>
+            <action>Reset()</action>
+            <icon>special://skin/extras/icons/networkinfo.png</icon>
+            <visible>System.PathExist("/dev/env")</visible>
+        </item>
+        <item name="power-logoff">
+            <label>$LOCALIZE[31271]</label>
+            <action>Dialog.Close(all,true)</action>
+            <action>System.LogOff</action>
+            <icon>special://skin/extras/icons/artist.png</icon>
+            <visible>[System.HasLoginScreen | Integer.IsGreater(System.ProfileCount,1)] + System.Loggedon</visible>
+        </item>
+        <item name="power-reboot">
+            <label>$LOCALIZE[13013]</label>
+            <action>Reset()</action>
+            <icon>special://skin/extras/icons/networkinfo.png</icon>
+            <visible>System.CanReboot</visible>
+        </item>
+        <item name="power-shutdown">
+            <label>$LOCALIZE[13005]</label>
+            <action>Powerdown()</action>
+            <icon>special://skin/extras/icons/power.png</icon>
+            <visible>System.CanPowerDown</visible>
+        </item>
+        <item name="power-suspend">
+            <label>$LOCALIZE[13011]</label>
+            <action>Suspend()</action>
+            <icon>special://skin/extras/icons/power.png</icon>
+            <visible>System.CanSuspend</visible>
+        </item>
+        <item name="power-mastermode">
+            <label>$LOCALIZE[20046]</label>
+            <action>mastermode</action>
+            <icon>special://skin/extras/icons/logout.png</icon>
+            <visible>System.HasLocks</visible>
+        </item>
+        <item name="power-quit">
+            <label>$LOCALIZE[13012]</label>
+            <action>Quit()</action>
+            <icon>special://skin/extras/icons/logout.png</icon>
+            <visible>System.ShowExitButton</visible>
+        </item>
+    </menu>
+
+    <!-- MAIN MENU -->
+
+    <menu name="mainmenu" container="300">
+        <item name="videos" submenu="videos">
+            <label>$LOCALIZE[3]</label>
+            <action>ActivateWindow(Videos,VideoLibrary)</action>
+            <icon>special://skin/extras/icons/video-addons.png</icon>
+        </item>
+        <item name="movies" submenu="movies">
+            <label>$LOCALIZE[342]</label>
+            <action>ActivateWindow(Videos,MovieTitles,return)</action>
+            <icon>special://skin/extras/icons/film.png</icon>
+        </item>
+        <item name="tvshows" submenu="tvshows">
+            <label>$LOCALIZE[20343]</label>
+            <action>ActivateWindow(Videos,TVShowTitles,return)</action>
+            <icon>special://skin/extras/icons/tv.png</icon>
+        </item>
+        <item name="music" submenu="music">
+            <label>$LOCALIZE[2]</label>
+            <action>ActivateWindow(Music,root,return)</action>
+            <icon>special://skin/extras/icons/songs.png</icon>
+        </item>
+        <item name="musicvideos" submenu="musicvideos">
+            <label>$LOCALIZE[20389]</label>
+            <action>ActivateWindow(Videos,videodb://musicvideos/,return)</action>
+            <icon>special://skin/extras/icons/musicvideo.png</icon>
+        </item>
+        <item name="livetv" submenu="livetv">
+            <label>$LOCALIZE[31075]</label>
+            <action>ActivateWindow(Tvchannels)</action>
+            <icon>special://skin/extras/icons/livetv.png</icon>
+        </item>
+        <item name="games" submenu="games">
+            <label>$LOCALIZE[15016]</label>
+            <action>ActivateWindow(Games)</action>
+            <icon>special://skin/extras/icons/arcade.png</icon>
+        </item>
+        <item name="pictures" submenu="pictures">
+            <label>$LOCALIZE[10002]</label>
+            <action>ActivateWindow(Pictures)</action>
+            <icon>special://skin/extras/icons/pictures.png</icon>
+        </item>
+        <item name="weather" submenu="weather">
+            <label>$LOCALIZE[12600]</label>
+            <action>ActivateWindow(Weather)</action>
+            <icon>special://skin/extras/icons/sun.png</icon>
+        </item>
+        <item name="favourites">
+            <label>$LOCALIZE[1036]</label>
+            <action>ActivateWindow(favouritesbrowser)</action>
+            <icon>special://skin/extras/icons/favourites.png</icon>
+        </item>
+        <item name="disc" submenu="disc" visible="System.HasMediadvd | System.HasMediaAudioCD">
+            <label>$LOCALIZE[427]</label>
+            <action>PlayDisc</action>
+            <icon>special://skin/extras/icons/cd.png</icon>
+            <visible>System.HasMediadvd | System.HasMediaAudioCD</visible>
+        </item>
+        <item name="programs" submenu="programs">
+            <label>$LOCALIZE[10001]</label>
+            <action>ActivateWindow(Programs)</action>
+            <icon>special://skin/extras/icons/addons.png</icon>
+        </item>
+        <item name="settings" submenu="settings">
+            <label>$LOCALIZE[10004]</label>
+            <action>ActivateWindow(Settings)</action>
+            <icon>special://skin/extras/icons/settings.png</icon>
+        </item>
+        <item name="shutdown" submenu="shutdown">
+            <label>$LOCALIZE[33060]</label>
+            <action>ActivateWindow(shutdownmenu)</action>
+            <icon>special://skin/extras/icons/power.png</icon>
+        </item>
+    </menu>
+
+    <!-- VIDEOS - SUBMENU -->
+
+    <submenu name="videos">
+        <item name="videos-movies">
+            <label>$LOCALIZE[342]</label>
+            <action>ActivateWindow(Videos,"library://video/movies/",return)</action>
+            <icon>special://skin/extras/icons/film.png</icon>
+        </item>
+        <item name="videos-tvshows">
+            <label>$LOCALIZE[20343]</label>
+            <action>ActivateWindow(Videos,"library://video/tvshows/",return)</action>
+            <icon>special://skin/extras/icons/tv.png</icon>
+        </item>
+        <item name="videos-files">
+            <label>$LOCALIZE[744]</label>
+            <action>ActivateWindow(Videos,Files,return)</action>
+            <icon>special://skin/extras/icons/folder.png</icon>
+        </item>
+        <item name="videos-sources">
+            <label>$LOCALIZE[39031]</label>
+            <action>ActivateWindow(Videos,sources://video/,return)</action>
+            <icon>special://skin/extras/icons/database-add.png</icon>
+        </item>
+        <item name="videos-playlists">
+            <label>$LOCALIZE[136]</label>
+            <action>ActivateWindow(Videos,special://videoplaylists/,return)</action>
+            <icon>special://skin/extras/icons/playlist.png</icon>
+        </item>
+        <item name="videos-musicvideos">
+            <label>$LOCALIZE[20389]</label>
+            <action>ActivateWindow(Videos,videodb://musicvideos/titles/,return)</action>
+            <icon>special://skin/extras/icons/musicvideo.png</icon>
+        </item>
+        <item name="videos-addons">
+            <label>$LOCALIZE[1037]</label>
+            <action>ActivateWindow(Videos,Addons,return)</action>
+            <icon>special://skin/extras/icons/video-addons.png</icon>
+        </item>
+    </submenu>
+
+    <!-- VIDEOS - WIDGET -->
+
+    <submenu name="videos.1" type="widgets">
+        <item name="videos-tmdb-movies">
+            <label>$LOCALIZE[20342] - $ADDON[plugin.video.themoviedb.helper 32178]</label>
+            <property name="widgetPath">plugin://plugin.video.themoviedb.helper/?info=trending_day&amp;tmdb_type=movie&amp;widget=true&amp;reload=$INFO[Window(Home).Property(TMDbHelper.Widgets.Reload)]</property>
+            <property name="widgetTarget">videos</property>
+        </item>
+        <item name="videos-tmdb-tv">
+            <label>$LOCALIZE[20343] - $ADDON[plugin.video.themoviedb.helper 32178]</label>
+            <property name="widgetPath">plugin://plugin.video.themoviedb.helper/?info=trending_day&amp;tmdb_type=tv&amp;widget=true&amp;reload=$INFO[Window(Home).Property(TMDbHelper.Widgets.Reload)]</property>
+            <property name="widgetTarget">videos</property>
+        </item>
+    </submenu>
+
+    <!-- MOVIES - SUBMENU -->
+
+    <submenu name="movies">
+        <item name="movies-recent">
+            <label>$LOCALIZE[20382]</label>
+            <action>ActivateWindow(Videos,videodb://recentlyaddedmovies/,return)</action>
+            <icon>special://skin/extras/icons/recentlyadded.png</icon>
+        </item>
+        <item name="movies-titles">
+            <label>$LOCALIZE[369]</label>
+            <action>ActivateWindow(Videos,videodb://movies/titles/,return)</action>
+            <icon>special://skin/extras/icons/film.png</icon>
+        </item>
+        <item name="movies-sets">
+            <label>$LOCALIZE[20434]</label>
+            <action>ActivateWindow(Videos,videodb://movies/sets/,return)</action>
+            <icon>special://skin/extras/icons/collection.png</icon>
+        </item>
+        <item name="movies-genres">
+            <label>$LOCALIZE[135]</label>
+            <action>ActivateWindow(Videos,videodb://movies/genres/,return)</action>
+            <icon>special://skin/extras/icons/masks-theater.png</icon>
+        </item>
+        <item name="movies-years">
+            <label>$LOCALIZE[562]</label>
+            <action>ActivateWindow(Videos,videodb://movies/years/,return)</action>
+            <icon>special://skin/extras/icons/calendar-day.png</icon>
+        </item>
+        <item name="movies-actors">
+            <label>$LOCALIZE[344]</label>
+            <action>ActivateWindow(Videos,videodb://movies/actors/,return)</action>
+            <icon>special://skin/extras/icons/artist.png</icon>
+        </item>
+        <item name="movies-countries">
+            <label>$LOCALIZE[574]</label>
+            <action>ActivateWindow(Videos,videodb://movies/countries/,return)</action>
+            <icon>special://skin/extras/icons/world.png</icon>
+        </item>
+        <item name="movies-directors">
+            <label>$LOCALIZE[20348]</label>
+            <action>ActivateWindow(Videos,videodb://movies/directors/,return)</action>
+            <icon>special://skin/extras/icons/director.png</icon>
+        </item>
+        <item name="movies-versions">
+            <label>$LOCALIZE[40000]</label>
+            <action>ActivateWindow(Videos,videodb://movies/videoversions/,return)</action>
+            <icon>special://skin/extras/icons/server.png</icon>
+        </item>
+        <item name="movies-library">
+            <label>$LOCALIZE[15100]</label>
+            <action>ActivateWindow(Videos,library://video/movies/,return)</action>
+            <icon>special://skin/extras/icons/database.png</icon>
+        </item>
+    </submenu>
+
+    <!-- MOVIES - WIDGET -->
+
+    <submenu name="movies.1" type="widgets">
+        <item name="movies-tmdb-theater">
+            <label>$LOCALIZE[20342] - $ADDON[plugin.video.themoviedb.helper 32180]</label>
+            <property name="widgetPath">plugin://plugin.video.themoviedb.helper/?info=now_playing&amp;tmdb_type=movie&amp;widget=true&amp;reload=$INFO[Window(Home).Property(TMDbHelper.Widgets.Reload)]</property>
+            <property name="widgetTarget">videos</property>
+            <visible>!Library.HasContent(movies)</visible>
+        </item>
+        <item name="movies-tmdb-popular">
+            <label>$LOCALIZE[20342] - $ADDON[plugin.video.themoviedb.helper 32175]</label>
+            <property name="widgetPath">plugin://plugin.video.themoviedb.helper/?info=popular&amp;tmdb_type=movie&amp;widget=true&amp;reload=$INFO[Window(Home).Property(TMDbHelper.Widgets.Reload)]</property>
+            <property name="widgetTarget">videos</property>
+            <visible>!Library.HasContent(movies)</visible>
+        </item>
+        <item name="movies-tmdb-most-voted">
+            <label>$LOCALIZE[20342] - $ADDON[plugin.video.themoviedb.helper 32185]</label>
+            <property name="widgetPath">plugin://plugin.video.themoviedb.helper/?info=most_voted&amp;tmdb_type=movie&amp;widget=true&amp;reload=$INFO[Window(Home).Property(TMDbHelper.Widgets.Reload)]</property>
+            <property name="widgetTarget">videos</property>
+            <visible>!Library.HasContent(movies)</visible>
+        </item>
+        <item name="movies-random">
+            <label>$LOCALIZE[31028]</label>
+            <property name="widgetPath">special://skin/extras/playlists/RandomMovies.xsp</property>
+            <property name="widgetTarget">videos</property>
+            <visible>Library.HasContent(movies)</visible>
+        </item>
+        <item name="movies-new">
+            <label>$LOCALIZE[31026]</label>
+            <property name="widgetPath">special://skin/extras/playlists/NewMovies.xsp</property>
+            <property name="widgetTarget">videos</property>
+            <visible>Library.HasContent(movies)</visible>
+        </item>
+    </submenu>
+
+    <!-- TV SHOWS - SUBMENU -->
+
+    <submenu name="tvshows">
+        <item name="tvshows-recent">
+            <label>$LOCALIZE[20382]</label>
+            <action>ActivateWindow(Videos,videodb://recentlyaddedepisodes/,return)</action>
+            <icon>special://skin/extras/icons/recentlyadded.png</icon>
+        </item>
+        <item name="tvshows-inprogress">
+            <label>$LOCALIZE[575]</label>
+            <action>ActivateWindow(Videos,videodb://inprogresstvshows/,return)</action>
+            <icon>special://skin/extras/icons/recent.png</icon>
+        </item>
+        <item name="tvshows-titles">
+            <label>$LOCALIZE[369]</label>
+            <action>ActivateWindow(Videos,videodb://tvshows/titles/,return)</action>
+            <icon>special://skin/extras/icons/tv.png</icon>
+        </item>
+        <item name="tvshows-genres">
+            <label>$LOCALIZE[135]</label>
+            <action>ActivateWindow(Videos,videodb://tvshows/genres/,return)</action>
+            <icon>special://skin/extras/icons/masks-theater.png</icon>
+        </item>
+        <item name="tvshows-years">
+            <label>$LOCALIZE[562]</label>
+            <action>ActivateWindow(Videos,videodb://tvshows/years/,return)</action>
+            <icon>special://skin/extras/icons/calendar-day.png</icon>
+        </item>
+        <item name="tvshows-actors">
+            <label>$LOCALIZE[344]</label>
+            <action>ActivateWindow(Videos,videodb://tvshows/actors/,return)</action>
+            <icon>special://skin/extras/icons/artist.png</icon>
+        </item>
+        <item name="tvshows-studios">
+            <label>$LOCALIZE[572]</label>
+            <action>ActivateWindow(Videos,videodb://tvshows/studios/,return)</action>
+            <icon>special://skin/extras/icons/director.png</icon>
+        </item>
+        <item name="tvshows-library">
+            <label>$LOCALIZE[15100]</label>
+            <action>ActivateWindow(Videos,library://video/tvshows/,return)</action>
+            <icon>special://skin/extras/icons/database.png</icon>
+        </item>
+    </submenu>
+
+    <!-- TV SHOWS - WIDGET -->
+
+    <submenu name="tvshows.1" type="widgets">
+        <item name="tvshows-tmdb-trending-week">
+            <label>$LOCALIZE[20343] - $ADDON[plugin.video.themoviedb.helper 32179]</label>
+            <property name="widgetPath">plugin://plugin.video.themoviedb.helper/?info=trending_week&amp;tmdb_type=tv&amp;widget=true&amp;reload=$INFO[Window(Home).Property(TMDbHelper.Widgets.Reload)]</property>
+            <property name="widgetTarget">videos</property>
+            <property name="widgetaspect">ThumbnailSmall</property>
+            <visible>!Library.HasContent(tvshows)</visible>
+        </item>
+        <item name="tvshows-tmdb-most-voted">
+            <label>$LOCALIZE[20343] - $ADDON[plugin.video.themoviedb.helper 32185]</label>
+            <property name="widgetPath">plugin://plugin.video.themoviedb.helper/?info=most_voted&amp;tmdb_type=tv&amp;widget=true&amp;reload=$INFO[Window(Home).Property(TMDbHelper.Widgets.Reload)]</property>
+            <property name="widgetTarget">videos</property>
+            <property name="widgetaspect">ThumbnailSmall</property>
+            <visible>!Library.HasContent(tvshows)</visible>
+        </item>
+        <item name="tvshows-tmdb-popular">
+            <label>$LOCALIZE[20343] - $ADDON[plugin.video.themoviedb.helper 32175]</label>
+            <property name="widgetPath">plugin://plugin.video.themoviedb.helper/?info=popular&amp;tmdb_type=tv&amp;widget=true&amp;reload=$INFO[Window(Home).Property(TMDbHelper.Widgets.Reload)]</property>
+            <property name="widgetTarget">videos</property>
+            <property name="widgetaspect">ThumbnailSmall</property>
+            <visible>!Library.HasContent(tvshows)</visible>
+        </item>
+        <item name="tvshows-random">
+            <label>$LOCALIZE[31036]</label>
+            <property name="widgetPath">special://skin/extras/playlists/RandomTvShows.xsp</property>
+            <property name="widgetTarget">videos</property>
+            <property name="widgetaspect">ThumbnailSmall</property>
+            <visible>Library.HasContent(tvshows)</visible>
+        </item>
+        <item name="tvshows-new">
+            <label>$LOCALIZE[31034]</label>
+            <property name="widgetPath">special://skin/extras/playlists/NewShows.xsp</property>
+            <property name="widgetTarget">videos</property>
+            <property name="widgetaspect">ThumbnailSmall</property>
+            <visible>Library.HasContent(tvshows)</visible>
+        </item>
+    </submenu>
+
+    <!-- MUSIC - SUBMENU -->
+
+    <submenu name="music">
+        <item name="music-recent">
+            <label>$LOCALIZE[20382]</label>
+            <action>ActivateWindow(Music,musicdb://recentlyaddedalbums/,return)</action>
+            <icon>special://skin/extras/icons/recentlyadded.png</icon>
+        </item>
+        <item name="music-recentlyplayed">
+            <label>$LOCALIZE[568]</label>
+            <action>ActivateWindow(Music,musicdb://recentlyplayedalbums/,return)</action>
+            <icon>special://skin/extras/icons/recent.png</icon>
+        </item>
+        <item name="music-files">
+            <label>$LOCALIZE[744]</label>
+            <action>ActivateWindow(Music,Files,Return)</action>
+            <icon>special://skin/extras/icons/folder.png</icon>
+        </item>
+        <item name="music-sources">
+            <label>$LOCALIZE[39031]</label>
+            <action>ActivateWindow(Music,musicdb://sources/,Return)</action>
+            <icon>special://skin/extras/icons/database-add.png</icon>
+        </item>
+        <item name="music-albums">
+            <label>$LOCALIZE[132]</label>
+            <action>ActivateWindow(Music,library://music/albums.xml/,return)</action>
+            <icon>special://skin/extras/icons/compact-disc.png</icon>
+        </item>
+        <item name="music-artists">
+            <label>$LOCALIZE[133]</label>
+            <action>ActivateWindow(Music,library://music/artists.xml/,return)</action>
+            <icon>special://skin/extras/icons/artist.png</icon>
+        </item>
+        <item name="music-playlists">
+            <label>$LOCALIZE[136]</label>
+            <action>ActivateWindow(Music,special://musicplaylists/,return)</action>
+            <icon>special://skin/extras/icons/playlist.png</icon>
+        </item>
+        <item name="music-library">
+            <label>$LOCALIZE[15100]</label>
+            <action>ActivateWindow(Music,root,return)</action>
+            <icon>special://skin/extras/icons/database.png</icon>
+        </item>
+    </submenu>
+
+    <!-- MUSIC - WIDGET -->
+
+    <submenu name="music.1" type="widgets">
+        <item name="music-widget-new">
+            <label>$LOCALIZE[31044]</label>
+            <property name="widgetPath">musicdb://recentlyaddedalbums/</property>
+            <property name="widgetTarget">music</property>
+            <property name="widgetType">music</property>
+            <property name="widgetaspect">SquareMiddle</property>
+            <visible>Library.HasContent(music)</visible>
+        </item>
+        <item name="music-widget-recent-played">
+            <label>$LOCALIZE[517]</label>
+            <property name="widgetPath">musicdb://recentlyplayedalbums/</property>
+            <property name="widgetTarget">music</property>
+            <property name="widgetType">music</property>
+            <property name="widgetaspect">SquareMiddle</property>
+            <visible>Library.HasContent(music)</visible>
+        </item>
+        <item name="music-widget-random">
+            <label>$LOCALIZE[31047]</label>
+            <property name="widgetPath">special://skin/extras/playlists/RandomAlbums.xsp</property>
+            <property name="widgetTarget">music</property>
+            <property name="widgetType">music</property>
+            <property name="widgetaspect">SquareMiddle</property>
+            <visible>Library.HasContent(music)</visible>
+        </item>
+    </submenu>
+
+    <!-- MUSIC VIDEO - SUBMENU -->
+
+    <submenu name="musicvideos">
+        <item name="musicvideos-news">
+            <label>$LOCALIZE[20382]</label>
+            <action>ActivateWindow(Videos,videodb://recentlyaddedmusicvideos/,return)</action>
+            <icon>special://skin/extras/icons/recentlyadded.png</icon>
+        </item>
+        <item name="musicvideos-genres">
+            <label>$LOCALIZE[135]</label>
+            <action>ActivateWindow(Videos,videodb://musicvideos/genres/,return)</action>
+            <icon>special://skin/extras/icons/masks-theater.png</icon>
+        </item>
+        <item name="musicvideos-titles">
+            <label>$LOCALIZE[369]</label>
+            <action>ActivateWindow(Videos,videodb://musicvideos/titles/,return)</action>
+            <icon>special://skin/extras/icons/songs.png</icon>
+        </item>
+        <item name="musicvideos-years">
+            <label>$LOCALIZE[562]</label>
+            <action>ActivateWindow(Videos,videodb://musicvideos/years/,return)</action>
+            <icon>special://skin/extras/icons/calendar-day.png</icon>
+        </item>
+        <item name="musicvideos-artists">
+            <label>$LOCALIZE[133]</label>
+            <action>ActivateWindow(Videos,videodb://musicvideos/artists/,return)</action>
+            <icon>special://skin/extras/icons/artist.png</icon>
+        </item>
+        <item name="musicvideos-albums">
+            <label>$LOCALIZE[132]</label>
+            <action>ActivateWindow(Videos,videodb://musicvideos/albums/,return)</action>
+            <icon>special://skin/extras/icons/compact-disc.png</icon>
+        </item>
+        <item name="musicvideos-library">
+            <label>$LOCALIZE[15100]</label>
+            <action>ActivateWindow(Videos,videodb://musicvideos/,return)</action>
+            <icon>special://skin/extras/icons/database.png</icon>
+        </item>
+    </submenu>
+
+    <!-- MUSIC VIDEO - WIDGET -->
+
+    <submenu name="musicvideos.1" type="widgets">
+        <item name="musicvideo-widget-new">
+            <label>$LOCALIZE[31044]</label>
+            <property name="widgetPath">videodb://recentlyaddedmusicvideos/</property>
+            <property name="widgetTarget">music</property>
+            <property name="widgetType">music</property>
+            <property name="widgetaspect">SquareMiddle</property>
+            <visible>Library.HasContent(musicvideos)</visible>
+        </item>
+        <item name="musicvideo-widget-recent-played">
+            <label>$LOCALIZE[517]</label>
+            <property name="widgetPath">special://skin/extras/playlists/random_musicvideo_artists.xsp</property>
+            <property name="widgetTarget">music</property>
+            <property name="widgetType">music</property>
+            <property name="widgetaspect">SquareMiddle</property>
+            <visible>Library.HasContent(musicvideos)</visible>
+        </item>
+        <item name="musicvideo-widget-random">
+            <label>$LOCALIZE[31047]</label>
+            <property name="widgetPath">special://skin/extras/playlists/random_musicvideo_artists.xsp</property>
+            <property name="widgetTarget">music</property>
+            <property name="widgetType">music</property>
+            <property name="widgetaspect">SquareMiddle</property>
+            <visible>Library.HasContent(musicvideos)</visible>
+        </item>
+    </submenu>
+
+    <!-- LIVE TV - SUBMENU -->
+
+    <submenu name="livetv">
+        <item name="livetv-channels">
+            <label>$LOCALIZE[19019]</label>
+            <action>ActivateWindow(TVChannels)</action>
+            <icon>special://skin/extras/icons/tvguide.png</icon>
+        </item>
+        <item name="livetv-guide">
+            <label>$LOCALIZE[22020]</label>
+            <action>ActivateWindow(TVGuide)</action>
+            <icon>special://skin/extras/icons/playlist.png</icon>
+        </item>
+        <item name="livetv-recordings">
+            <label>$LOCALIZE[19017]</label>
+            <action>ActivateWindow(TVRecordings)</action>
+            <icon>special://skin/extras/icons/folder-closed.png</icon>
+        </item>
+        <item name="livetv-timers">
+            <label>$LOCALIZE[19040]</label>
+            <action>ActivateWindow(TVTimers)</action>
+            <icon>special://skin/extras/icons/recent.png</icon>
+        </item>
+        <item name="livetv-search">
+            <label>$LOCALIZE[137]</label>
+            <action>ActivateWindow(TVSearch)</action>
+            <icon>special://skin/extras/icons/search.png</icon>
+        </item>
+    </submenu>
+
+    <!-- LIVE TV - WIDGET -->
+
+    <submenu name="livetv.1" type="widgets">
+        <item name="livetv-lastplayed">
+            <label>$LOCALIZE[31024]</label>
+            <action>pvr://channels/tv/*?view=lastplayed</action>
+            <icon>special://skin/extras/icons/tv.png</icon>
+            <property name="widgetPath">pvr://channels/tv/*?view=lastplayed</property>
+            <property name="widgetTarget">pvr</property>
+            <property name="widgetaspect">SquareMiddle</property>
+            <visible>System.HasPVRAddon</visible>
+        </item>
+    </submenu>
+
+    <!-- PICTURES - SUBMENU -->
+
+    <submenu name="pictures">
+    </submenu>
+
+    <!-- GAMES - SUBMENU -->
+
+    <submenu name="games">
+        <item name="games-channels">
+            <label>$LOCALIZE[10821]</label>
+            <action>ActivateWindow(Games)</action>
+            <icon>special://skin/extras/icons/gamepad.png</icon>
+        </item>
+        <item name="games-biostools">
+            <label>Retro BIOS Tool</label>
+            <action>RunAddon(plugin.program.retrobiostool)</action>
+            <icon>special://skin/extras/icons/sysinfo.png</icon>
+            <visible>System.HasAddon(plugin.program.retrobiostool)</visible>
+        </item>
+        <item name="games-filemanager">
+            <label>$LOCALIZE[10003]</label>
+            <action>ActivateWindow(FileManager)</action>
+            <icon>special://skin/extras/icons/filebox.png</icon>
+        </item>
+        <item name="games-akl">
+            <label>Advanced Kodi Launcher</label>
+            <action>RunAddon(plugin.program.akl)</action>
+            <icon>special://skin/extras/icons/rocket.png</icon>
+            <visible>System.HasAddon(plugin.program.akl)</visible>
+        </item>
+        <item name="games-iagl">
+            <label>Internet Archive Game Launcher</label>
+            <action>ActivateWindow(Videos,plugin://plugin.program.iagl/,return)</action>
+            <icon>special://skin/extras/icons/shipping.png</icon>
+            <visible>System.HasAddon(plugin.program.iagl)</visible>
+        </item>
+   </submenu>
+
+    <!-- WEATHER - SUBMENU -->
+
+    <submenu name="weather">
+    </submenu>
+
+    <!-- WEATHER - WIDGET -->
+
+    <submenu name="weather.1" type="widgets">
+        <item name="WeatherDay">
+            <label>$LOCALIZE[31213]</label>
+            <property name="widgetPath">$INCLUDE[skinshortcuts-template-WeatherDailyInfoContent]</property>
+            <property name="widgetTarget">weather</property>
+            <property name="widgetType">weather</property>
+            <property name="widgetaspect">Square</property>
+            <visible>!String.IsEmpty(Weather.plugin)</visible>
+        </item>
+        <item name="WeatherHourly">
+            <label>$LOCALIZE[31214]</label>
+            <property name="widgetPath">$INCLUDE[skinshortcuts-template-WeatherHourlyInfoContent]</property>
+            <property name="widgetTarget">weather</property>
+            <property name="widgetType">weather</property>
+            <property name="widgetaspect">Square</property>
+            <visible>!String.IsEmpty(Weather.plugin)</visible>
+        </item>
+    </submenu>
+
+    <!-- FAVOURITES - WIDGET -->
+
+    <submenu name="favourites.1" type="widgets">
+        <item name="favourites">
+            <label>$LOCALIZE[1036]</label>
+            <property name="widgetPath">favourites://</property>
+            <property name="widgetTarget">favourites</property>
+            <property name="widgetType">favourites</property>
+            <property name="widgetaspect">SquareMiddle</property>
+        </item>
+    </submenu>
+
+    <!-- PROGRAMS - SUBMENU -->
+
+    <submenu name="programs">
+        <item name="programs-addons">
+            <label>$LOCALIZE[1043]</label>
+            <action>ActivateWindow(Programs,Addons,return)</action>
+            <icon>special://skin/extras/icons/addons.png</icon>
+        </item>
+        <item name="programs-video">
+            <label>$LOCALIZE[1037]</label>
+            <action>ActivateWindow(Videos,Addons,return)</action>
+            <icon>special://skin/extras/icons/video-addons.png</icon>
+        </item>
+        <item name="programs-music">
+            <label>$LOCALIZE[1038]</label>
+            <action>ActivateWindow(Music,addons://sources/audio/,return)</action>
+            <icon>special://skin/extras/icons/songs.png</icon>
+        </item>
+        <item name="programs-pictures">
+            <label>$LOCALIZE[1039]</label>
+            <action>ActivateWindow(Pictures,Addons,return)</action>
+            <icon>special://skin/extras/icons/pictures.png</icon>
+        </item>
+        <item name="programs-games">
+            <label>$LOCALIZE[35049]</label>
+            <action>ActivateWindow(Games,Addons,return)</action>
+            <icon>special://skin/extras/icons/gamepad.png</icon>
+        </item>
+    </submenu>
+
+    <!-- PROGRAMS - WIDGET -->
+
+    <submenu name="programs.1" type="widgets">
+        <item name="Addons-Programs">
+            <label>$LOCALIZE[1043]</label>
+            <property name="widgetPath">addons://sources/executable/</property>
+            <property name="widgetTarget">programs</property>
+            <property name="widgetType">programs</property>
+            <property name="widgetaspect">SquareMiddle</property>
+        </item>
+        <item name="Addons-Videos">
+            <label>$LOCALIZE[1037]</label>
+            <property name="widgetPath">addons://sources/video/</property>
+            <property name="widgetTarget">videos</property>
+            <property name="widgetType">videos</property>
+            <property name="widgetaspect">SquareMiddle</property>
+        </item>
+        <item name="Addons-Audio">
+            <label>$LOCALIZE[1038]</label>
+            <property name="widgetPath">addons://sources/audio/</property>
+            <property name="widgetTarget">music</property>
+            <property name="widgetType">music</property>
+            <property name="widgetaspect">SquareMiddle</property>
+        </item>
+    </submenu>
+
+    <!-- SETTINGS - SUBMENU -->
+
+    <submenu name="settings">
+        <item name="settings-filemanager">
+            <label>$LOCALIZE[7]</label>
+            <action>ActivateWindow(FileManager)</action>
+            <icon>special://skin/extras/icons/filebox.png</icon>
+        </item>
+        <item name="settings-addonbrowser">
+            <label>$LOCALIZE[24001]</label>
+            <action>ActivateWindow(AddonBrowser)</action>
+            <icon>special://skin/extras/icons/addon.png</icon>
+        </item>
+        <item name="settings-profiles">
+            <label>$LOCALIZE[13200]</label>
+            <action>ActivateWindow(Profiles)</action>
+            <icon>special://skin/extras/icons/actor.png</icon>
+        </item>
+        <item name="settings-systeminfo">
+            <label>$LOCALIZE[13000]</label>
+            <action>ActivateWindow(SystemInfo)</action>
+            <icon>special://skin/extras/icons/sysinfo.png</icon>
+        </item>
+        <item name="settings-eventlog">
+            <label>$LOCALIZE[14111]</label>
+            <action>ActivateWindow(EventLog,events://,return)</action>
+            <icon>special://skin/extras/icons/rectangle-list.png</icon>
+        </item>
+    </submenu>
+
+    <!-- PROGRAMS - WIDGET -->
+
+    <submenu name="settings.1" type="widgets">
+        <item name="Settings">
+            <label>$LOCALIZE[5]</label>
+            <property name="widgetPath">$INCLUDE[skinshortcuts-template-SettingsInfoContent]</property>
+            <property name="widgetTarget">settings</property>
+            <property name="widgetType">settings</property>
+            <property name="widgetaspect">Square</property>
+        </item>
+    </submenu>
+
+    <!-- DISC - SUBMENU -->
+
+    <submenu name="disc">
+        <item name="disc-play">
+            <label>$LOCALIZE[341]</label>
+            <action>PlayDisc</action>
+            <icon>special://skin/extras/icons/vcd.png</icon>
+        </item>
+        <item name="disc-eject">
+            <label>$LOCALIZE[13391]</label>
+            <action>EjectTray()</action>
+            <icon>special://skin/extras/icons/vcd_eject.png</icon>
+        </item>
+    </submenu>
+
+    <!-- SHUTDOWN - SUBMENU -->
+
+    <submenu name="shutdown">
+        <defaults>
+            <action when="before">Close</action>
+        </defaults>
+        <item name="power-skinsettings">
+            <label>$LOCALIZE[31114]</label>
+            <action>ActivateWindowAndFocus(skinsettings,9108,2)</action>
+            <icon>special://skin/extras/icons/skinsettings.png</icon>
+            <visible>System.Loggedon</visible>
+        </item>
+        <item name="power-settings">
+            <label>$LOCALIZE[5]</label>
+            <action>ActivateWindow(settings)</action>
+            <icon>special://skin/extras/icons/settings.png</icon>
+            <visible>System.Loggedon</visible>
+        </item>
+        <item name="power-search">
+            <label>$LOCALIZE[137]</label>
+            <action>ActivateWindow(1146)</action>
+            <icon>special://skin/extras/icons/search.png</icon>
+            <visible>System.ShowExitButton</visible>
+        </item>
+        <item name="power-reloadskin">
+            <label>$LOCALIZE[31146]</label>
+            <action>ReloadSkin()</action>
+            <icon>special://skin/extras/icons/update.png</icon>
+        </item>
+        <item name="power-systeminfo">
+            <label>$LOCALIZE[130]</label>
+            <action>ActivateWindow(systeminfo)</action>
+            <icon>special://skin/extras/icons/info.png</icon>
+            <visible>System.Loggedon</visible>
+        </item>
+        <item name="power-filemanager">
+            <label>$LOCALIZE[10003]</label>
+            <action>ActivateWindow(filemanager)</action>
+            <icon>special://skin/extras/icons/filebox.png</icon>
+            <visible>System.Loggedon</visible>
+        </item>
+        <item name="power-sleeptimer">
+            <label>$LOCALIZE[20150]</label>
+            <action>AlarmClock(shutdowntimer,Shutdown())</action>
+            <icon>special://skin/extras/icons/timer.png</icon>
+            <visible>!System.HasAlarm(shutdowntimer)</visible>
+            <visible>System.CanPowerDown | System.CanSuspend | System.CanHibernate</visible>
+        </item>
+        <item name="power-canceltimer">
+            <label>$LOCALIZE[20151]</label>
+            <action>CancelAlarm(shutdowntimer)</action>
+            <icon>special://skin/extras/icons/forbidden.png</icon>
+            <visible>System.HasAlarm(shutdowntimer)</visible>
+        </item>
+        <item name="power-timerinfo">
+            <label>$LOCALIZE[31274]</label>
+            <action>noop</action>
+            <icon>special://skin/extras/icons/info2.png</icon>
+            <visible>System.HasAlarm(shutdowntimer)</visible>
+        </item>
+        <item name="power-rebootandroid">
+            <label>$LOCALIZE[31172]</label>
+            <action>System.ExecWait("/usr/sbin/rebootfromnand")</action>
+            <action>Reset()</action>
+            <icon>special://skin/extras/icons/networkinfo.png</icon>
+            <visible>System.PathExist("/dev/env")</visible>
+        </item>
+        <item name="power-logoff">
+            <label>$LOCALIZE[31271]</label>
+            <action>Dialog.Close(all,true)</action>
+            <action>System.LogOff</action>
+            <icon>special://skin/extras/icons/artist.png</icon>
+            <visible>[System.HasLoginScreen | Integer.IsGreater(System.ProfileCount,1)] + System.Loggedon</visible>
+        </item>
+        <item name="power-reboot">
+            <label>$LOCALIZE[13013]</label>
+            <action>Reset()</action>
+            <icon>special://skin/extras/icons/networkinfo.png</icon>
+            <visible>System.CanReboot</visible>
+        </item>
+        <item name="power-shutdown">
+            <label>$LOCALIZE[13005]</label>
+            <action>Powerdown()</action>
+            <icon>special://skin/extras/icons/power.png</icon>
+            <visible>System.CanPowerDown</visible>
+        </item>
+        <item name="power-suspend">
+            <label>$LOCALIZE[13011]</label>
+            <action>Suspend()</action>
+            <icon>special://skin/extras/icons/power.png</icon>
+            <visible>System.CanSuspend</visible>
+        </item>
+        <item name="power-mastermode">
+            <label>$LOCALIZE[20046]</label>
+            <action>mastermode</action>
+            <icon>special://skin/extras/icons/logout.png</icon>
+            <visible>System.HasLocks</visible>
+        </item>
+        <item name="power-quit">
+            <label>$LOCALIZE[13012]</label>
+            <action>Quit()</action>
+            <icon>special://skin/extras/icons/logout.png</icon>
+            <visible>System.ShowExitButton</visible>
+        </item>
+    </submenu>
+
+    <!-- POWER - WIDGET -->
+
+    <submenu name="shutdown.1" type="widgets">
+        <item name="System">
+            <label>$LOCALIZE[10007]</label>
+            <property name="widgetPath">$INCLUDE[skinshortcuts-template-SystemInfoContent]</property>
+            <property name="widgetTarget">system</property>
+            <property name="widgetType">system</property>
+            <property name="widgetaspect">Square</property>
+        </item>
+    </submenu>
+
+    <!-- MOVIE HUB MENU -->
+
+    <menu name="x1111" build="auto" action="ActivateWindow(1111)">
+        <item name="hub-movies-titles">
+            <label>$LOCALIZE[20342]</label>
+            <action>ActivateWindow(Videos,MovieTitles,return)</action>
+            <icon>special://skin/extras/icons/film.png</icon>
+        </item>
+        <item name="hub-movies-recent">
+            <label>$LOCALIZE[31129]</label>
+            <action>ActivateWindow(Videos,RecentlyAddedMovies,return)</action>
+            <icon>special://skin/extras/icons/recentlyadded.png</icon>
+        </item>
+        <item name="hub-movies-recentplayed">
+            <label>$LOCALIZE[31130]</label>
+            <action>ActivateWindow(Videos,special://skin/extras/playlists/RecentMovies.xsp,return)</action>
+            <icon>special://skin/extras/icons/recent.png</icon>
+        </item>
+        <item name="hub-movies-random">
+            <label>$LOCALIZE[31131]</label>
+            <action>PlayMedia(special://skin/extras/playlists/RandomMovies.xsp)</action>
+            <icon>special://skin/extras/icons/signpost.png</icon>
+        </item>
+        <item name="hub-movies-search">
+            <label>$LOCALIZE[137]</label>
+            <action>runscript(script.globalsearch,movies=true&amp;actors=true&amp;directors=true)</action>
+            <icon>special://skin/extras/icons/search.png</icon>
+        </item>
+        <item name="hub-movies-genres">
+            <label>$LOCALIZE[135]</label>
+            <action>ActivateWindow(Videos,MovieGenres,return)</action>
+            <icon>special://skin/extras/icons/genre.png</icon>
+        </item>
+        <item name="hub-movies-directors">
+            <label>$LOCALIZE[20348]</label>
+            <action>ActivateWindow(Videos,MovieDirectors,return)</action>
+            <icon>special://skin/extras/icons/director.png</icon>
+        </item>
+        <item name="hub-movies-actors">
+            <label>$LOCALIZE[344]</label>
+            <action>ActivateWindow(Videos,MovieActors,return)</action>
+            <icon>special://skin/extras/icons/actor.png</icon>
+        </item>
+        <item name="hub-movies-sets">
+            <label>$LOCALIZE[20434]</label>
+            <action>ActivateWindow(Videos,MovieSets,return)</action>
+            <icon>special://skin/extras/icons/network.png</icon>
+        </item>
+        <item name="hub-movies-versions">
+            <label>$LOCALIZE[40000]</label>
+            <action>ActivateWindow(Videos,videodb://movies/videoversions/,return)</action>
+            <icon>special://skin/extras/icons/server.png</icon>
+        </item>
+        <item name="hub-movies-playlists">
+            <label>$LOCALIZE[136]</label>
+            <action>ActivateWindow(videos,special://videoplaylists/,return)</action>
+            <icon>special://skin/extras/icons/playlist.png</icon>
+        </item>
+        <item name="hub-movies-files">
+            <label>$LOCALIZE[1214]</label>
+            <action>ActivateWindow(Videos,Files,return)</action>
+            <icon>special://skin/extras/icons/filebox.png</icon>
+        </item>
+        <item name="hub-movies-addons">
+            <label>$LOCALIZE[24001]</label>
+            <action>ActivateWindow(videos,addons://sources/video/,return)</action>
+            <icon>special://skin/extras/icons/addon.png</icon>
+        </item>
+        <item name="hub-movies-update">
+            <label>$LOCALIZE[653]</label>
+            <action>UpdateLibrary(video)</action>
+            <icon>special://skin/extras/icons/update.png</icon>
+        </item>
+    </menu>
+
+    <!-- TV HUB MENU -->
+
+    <menu name="x1112" build="auto" action="ActivateWindow(1112)">
+        <item name="hub-tv-titles">
+            <label>$LOCALIZE[20343]</label>
+            <action>ActivateWindow(Videos,TvShowTitles,return)</action>
+            <icon>special://skin/extras/icons/tv.png</icon>
+        </item>
+        <item name="hub-tv-recent">
+            <label>$LOCALIZE[31129]</label>
+            <action>ActivateWindow(Videos,RecentlyAddedEpisodes,return)</action>
+            <icon>special://skin/extras/icons/recentlyadded.png</icon>
+        </item>
+        <item name="hub-tv-recentplayed">
+            <label>$LOCALIZE[31130]</label>
+            <action>ActivateWindow(Videos,special://skin/extras/playlists/RecentEpisodes.xsp,return)</action>
+            <icon>special://skin/extras/icons/recent.png</icon>
+        </item>
+        <item name="hub-tv-random">
+            <label>$LOCALIZE[31131]</label>
+            <action>PlayMedia(special://skin/extras/playlists/RandomEpisodes.xsp)</action>
+            <icon>special://skin/extras/icons/signpost.png</icon>
+        </item>
+        <item name="hub-tv-search">
+            <label>$LOCALIZE[137]</label>
+            <action>RunScript(script.globalsearch,tvshows=true&amp;episodes=true&amp;movies=true)</action>
+            <icon>special://skin/extras/icons/search.png</icon>
+        </item>
+        <item name="hub-tv-genres">
+            <label>$LOCALIZE[135]</label>
+            <action>ActivateWindow(Videos,TvShowGenres,return)</action>
+            <icon>special://skin/extras/icons/genre.png</icon>
+        </item>
+        <item name="hub-tv-studios">
+            <label>$LOCALIZE[20388]</label>
+            <action>ActivateWindow(Videos,TvShowStudios,return)</action>
+            <icon>special://skin/extras/icons/director.png</icon>
+        </item>
+        <item name="hub-tv-actors">
+            <label>$LOCALIZE[344]</label>
+            <action>ActivateWindow(Videos,TvShowActors,return)</action>
+            <icon>special://skin/extras/icons/actor.png</icon>
+        </item>
+        <item name="hub-tv-years">
+            <label>$LOCALIZE[652]</label>
+            <action>ActivateWindow(Videos,TvShowYears,return)</action>
+            <icon>special://skin/extras/icons/year.png</icon>
+        </item>
+        <item name="hub-tv-playlists">
+            <label>$LOCALIZE[136]</label>
+            <action>ActivateWindow(videos,special://videoplaylists/,return)</action>
+            <icon>special://skin/extras/icons/playlist.png</icon>
+        </item>
+        <item name="hub-tv-files">
+            <label>$LOCALIZE[1214]</label>
+            <action>ActivateWindow(Videos,Files,return)</action>
+            <icon>special://skin/extras/icons/filebox.png</icon>
+        </item>
+        <item name="hub-tv-addons">
+            <label>$LOCALIZE[24001]</label>
+            <action>ActivateWindow(videos,addons://sources/video/,return)</action>
+            <icon>special://skin/extras/icons/addon.png</icon>
+        </item>
+        <item name="hub-tv-update">
+            <label>$LOCALIZE[653]</label>
+            <action>UpdateLibrary(video)</action>
+            <icon>special://skin/extras/icons/update.png</icon>
+        </item>
+    </menu>
+
+    <!-- SHORTCUT GROUPINGS FOR PICKER DIALOG -->
+
+    <groupings>
+
+        <!-- CUSTOM -->
+
+        <group name="custom" label="636" icon="special://skin/extras/icons/bars.png">
+            <shortcut name="search" label="137" type="137" icon="special://skin/extras/icons/search.png">
+                <action>ActivateWindow(1146)</action>
+            </shortcut>
+            <shortcut name="audio-profiles" label="Audio Profiles" type="0" icon="special://skin/extras/icons/headphones-simple.png" visible="System.HasAddon(script.audio.profiles) + System.AddonIsEnabled(script.audio.profiles)">
+                <action>runscript(script.audio.profiles,popup)</action>
+            </shortcut>
+            <shortcut name="artwork-dump" label="Artwork Dump" type="0" icon="special://skin/extras/icons/actor.png" visible="System.HasAddon(script.artwork.dump) + System.AddonIsEnabled(script.artwork.dump)">
+                <action>RunAddOn(script.artwork.dump)</action>
+            </shortcut>
+            <shortcut name="imdb-rating" label="IMDb Rating Update" type="0" icon="special://skin/extras/icons/download.png" visible="System.HasAddon(script.light.imdb.ratings.update) + System.AddonIsEnabled(script.light.imdb.ratings.update)">
+                <action>RunAddOn(script.light.imdb.ratings.update)</action>
+            </shortcut>
+            <shortcut name="skin-info-tools" label="Skin Info Service - tools" type="0" icon="special://skin/extras/icons/configure.png" visible="System.HasAddon(script.skin.info.service) + System.AddonIsEnabled(script.skin.info.service)">
+                <action>RunPlugin("plugin://script.skin.info.service/?action=exec_tools")</action>
+            </shortcut>
+            <shortcut name="movie-versions" label="40000" type="3" icon="special://skin/extras/icons/server.png">
+                <action>ActivateWindow(Videos,videodb://movies/videoversions/,return)</action>
+            </shortcut>
+            <shortcut name="debug-mode" label="Mode debug" type="636" icon="special://skin/extras/icons/arcade.png">
+                <action>Skin.ToggleSetting(DebugInfo)</action>
+            </shortcut>
+            <shortcut name="debug-mode-grid" label="Mode debug grid" type="636" icon="special://skin/extras/icons/crosshair.png">
+                <action>Skin.ToggleSetting(DebugInfoGrid)</action>
+            </shortcut>
+            <shortcut name="code-font" label="Code font" type="636" icon="special://skin/extras/icons/3.png">
+                <action>ActivateWindow(1201)</action>
+            </shortcut>
+        </group>
+
+        <!-- COMMON -->
+
+        <group name="common" label="$ADDON[script.skinshortcuts 32029]" icon="special://skin/extras/icons/folder-closed.png">
+            <shortcut name="videos" label="3" type="3" icon="special://skin/extras/icons/video.png">
+                <action>ActivateWindow(Videos,VideoLibrary)</action>
+            </shortcut>
+            <shortcut name="movies" label="342" type="20342" icon="special://skin/extras/icons/film.png">
+                <action>ActivateWindow(Videos,videodb://movies/titles/,return)</action>
+            </shortcut>
+            <shortcut name="tvshows" label="20343" type="20343" icon="special://skin/extras/icons/tv.png">
+                <action>ActivateWindow(Videos,videodb://tvshows/titles/,return)</action>
+            </shortcut>
+            <shortcut name="music-lib" label="2" type="2" icon="special://skin/extras/icons/songs.png">
+                <action>ActivateWindow(Music,musicdb://,return)</action>
+            </shortcut>
+            <shortcut name="artists" label="133" type="2" icon="special://skin/extras/icons/artist.png">
+                <action>ActivateWindow(Music,musicdb://artists/,return)</action>
+            </shortcut>
+            <shortcut name="albums" label="132" type="2" icon="special://skin/extras/icons/compact-disc.png">
+                <action>ActivateWindow(Music,musicdb://albums/,return)</action>
+            </shortcut>
+            <shortcut name="musicvideos" label="20389" type="20389" icon="special://skin/extras/icons/musicvideo.png">
+                <action>ActivateWindow(Videos,videodb://musicvideos/titles/,return)</action>
+            </shortcut>
+            <shortcut name="android-apps" label="20244" type="10001" icon="special://skin/extras/icons/addons.png" visible="System.Platform.Android">
+                <action>ActivateWindow(Programs,androidapp://sources/apps,return)</action>
+            </shortcut>
+            <shortcut name="libreelec" label="LibreELEC" type="10001" icon="special://skin/extras/icons/libreelec.png" visible="System.HasAddon(service.libreelec.settings)">
+                <action>RunAddon(service.libreelec.settings)</action>
+            </shortcut>
+            <shortcut name="coreelec" label="CoreELEC" type="10001" icon="special://skin/extras/icons/coreelec.png" visible="System.HasAddon(service.coreelec.settings)">
+                <action>RunAddon(service.coreelec.settings)</action>
+            </shortcut>
+            <shortcut name="addons-prog" label="10001" type="10001" icon="special://skin/extras/icons/addons.png">
+                <action>ActivateWindow(Programs,Addons,return)</action>
+            </shortcut>
+            <shortcut name="addons-video" label="1037" type="1037" icon="special://skin/extras/icons/video-addons.png">
+                <action>ActivateWindow(Videos,Addons,return)</action>
+            </shortcut>
+            <shortcut name="addons-music" label="1038" type="1038" icon="special://skin/extras/icons/songs.png">
+                <action>ActivateWindow(Music,addons://sources/audio/,return)</action>
+            </shortcut>
+            <shortcut name="addons-pictures" label="1039" type="1039" icon="special://skin/extras/icons/pictures.png">
+                <action>ActivateWindow(Pictures,Addons,return)</action>
+            </shortcut>
+            <shortcut name="games" label="10821" type="10821" icon="special://skin/extras/icons/gamepad.png">
+                <action>ActivateWindow(Games)</action>
+            </shortcut>
+            <shortcut name="tvguide" label="4" type="4" icon="special://skin/extras/icons/playlist.png">
+                <action>ActivateWindow(TVGuide)</action>
+            </shortcut>
+            <shortcut name="tvchannels" label="19023" type="19023" icon="special://skin/extras/icons/tvguide.png">
+                <action>ActivateWindow(TVChannels)</action>
+            </shortcut>
+            <shortcut name="pictures" label="1" type="1" icon="special://skin/extras/icons/pictures.png">
+                <action>ActivateWindow(Pictures)</action>
+            </shortcut>
+            <shortcut name="weather" label="12600" type="12600" icon="special://skin/extras/icons/sun.png">
+                <action>ActivateWindow(Weather)</action>
+            </shortcut>
+            <shortcut name="power" label="33060" type="33060" icon="special://skin/extras/icons/power.png">
+                <action>ActivateWindow(shutdownmenu)</action>
+            </shortcut>
+            <shortcut name="playdisc" label="341" type="341" icon="special://skin/extras/icons/cd.png">
+                <action>PlayDisc</action>
+            </shortcut>
+            <shortcut name="tvhub" label="31145" type="TVHub" icon="special://skin/extras/icons/tv.png">
+                <action>ActivateWindow(1112)</action>
+            </shortcut>
+            <shortcut name="moviehub" label="31144" type="MovieHub" icon="special://skin/extras/icons/film.png">
+                <action>ActivateWindow(1111)</action>
+            </shortcut>
+            <shortcut name="hub1119" label="Hub 1119" type="Hub 1119" icon="special://skin/extras/icons/addons.png">
+                <action>ActivateWindow(1119)</action>
+            </shortcut>
+            <shortcut name="hub1118" label="Hub 1118" type="Hub 1118" icon="special://skin/extras/icons/addons.png">
+                <action>ActivateWindow(1118)</action>
+            </shortcut>
+            <shortcut name="hub1117" label="Hub 1117" type="Hub 1117" icon="special://skin/extras/icons/addons.png">
+                <action>ActivateWindow(1117)</action>
+            </shortcut>
+            <shortcut name="hub1116" label="Hub 1116" type="Hub 1116" icon="special://skin/extras/icons/addons.png">
+                <action>ActivateWindow(1116)</action>
+            </shortcut>
+            <shortcut name="hub1115" label="Hub 1115" type="Hub 1115" icon="special://skin/extras/icons/addons.png">
+                <action>ActivateWindow(1115)</action>
+            </shortcut>
+            <shortcut name="hub1114" label="Hub 1114" type="Hub 1114" icon="special://skin/extras/icons/addons.png">
+                <action>ActivateWindow(1114)</action>
+            </shortcut>
+            <shortcut name="hub1113" label="Hub 1113" type="Hub 1113" icon="special://skin/extras/icons/addons.png">
+                <action>ActivateWindow(1113)</action>
+            </shortcut>
+            <shortcut name="tmdb-episodes" label="31159" type="themoviedb.org episodes" icon="special://skin/extras/icons/director.png">
+                <action>ActivateWindow(1105)</action>
+            </shortcut>
+            <shortcut name="tmdb-movies" label="31155" type="themoviedb.org movies" icon="special://skin/extras/icons/director.png">
+                <action>ActivateWindow(1104)</action>
+            </shortcut>
+        </group>
+
+        <!-- VIDEO LIBRARY -->
+
+        <group name="video-library" label="$ADDON[script.skinshortcuts 32030]" icon="special://skin/extras/icons/video.png">
+            <content source="nodes" target="video" />
+            <shortcut name="playlists" label="$LOCALIZE[136]" type="3" icon="special://skin/extras/icons/playlist.png">
+                <action>ActivateWindow(Videos,special://videoplaylists/,return)</action>
+            </shortcut>
+            <group name="video-playlists" label="$ADDON[script.skinshortcuts 32040]" icon="special://skin/extras/icons/folder.png">
+                <content source="playlists" target="video" />
+            </group>
+            <shortcut name="video-sources" label="$LOCALIZE[39031]" type="20094" icon="special://skin/extras/icons/database-add.png">
+                <action>ActivateWindow(Videos,sources://video/,return)</action>
+            </shortcut>
+            <group name="video-addons" label="$ADDON[script.skinshortcuts 32010]" icon="special://skin/extras/icons/video-addons.png">
+                <shortcut name="video-addons-browse" label="1037" type="32014" icon="special://skin/extras/icons/video-addons.png">
+                    <action>ActivateWindow(Videos,Addons,return)</action>
+                </shortcut>
+                <content source="addons" target="video" />
+            </group>
+            <group name="video-sources" label="$LOCALIZE[39031]" icon="special://skin/extras/icons/folder.png">
+                <content source="sources" target="video" />
+            </group>
+            <group name="video-browse" label="$LOCALIZE[31324]" icon="special://skin/extras/icons/film.png">
+                <group name="movies-browse" label="$LOCALIZE[342]" icon="special://skin/extras/icons/film.png">
+                    <shortcut name="in-progress-movies" label="31029" icon="special://skin/extras/icons/timer.png">
+                        <action>ActivateWindow(Videos,special://skin/extras/playlists/InProgressMovies.xsp,return)</action>
+                    </shortcut>
+                    <shortcut name="top-rated-movies" label="31030" icon="special://skin/extras/icons/favourites.png">
+                        <action>ActivateWindow(Videos,special://skin/extras/playlists/TopRatedMovies.xsp,return)</action>
+                    </shortcut>
+                    <shortcut name="user-rated-movies" label="31237" icon="special://skin/extras/icons/favourites.png">
+                        <action>ActivateWindow(Videos,special://skin/extras/playlists/Top20UserRatedMovies.xsp,return)</action>
+                    </shortcut>
+                    <shortcut name="top250-movies" label="31031" icon="special://skin/extras/icons/favourites.png">
+                        <action>ActivateWindow(Videos,special://skin/extras/playlists/Top250Movies.xsp,return)</action>
+                    </shortcut>
+                    <shortcut name="unwatched-movies" label="31032" icon="special://skin/extras/icons/film.png">
+                        <action>ActivateWindow(Videos,special://skin/extras/playlists/UnwatchedMovies.xsp,return)</action>
+                    </shortcut>
+                </group>
+                <group name="tvshows-browse" label="$LOCALIZE[20343]" icon="special://skin/extras/icons/tv.png">
+                    <shortcut name="new-tvshows" label="31034" icon="special://skin/extras/icons/recentlyadded.png">
+                        <action>ActivateWindow(Videos,special://skin/extras/playlists/NewShows.xsp,return)</action>
+                    </shortcut>
+                    <shortcut name="new-unwatched-tvshows" label="31243" icon="special://skin/extras/icons/recentlyadded.png">
+                        <action>ActivateWindow(Videos,special://skin/extras/playlists/NewUnwatchedShows.xsp,return)</action>
+                    </shortcut>
+                    <shortcut name="recent-tvshows" label="31035" icon="special://skin/extras/icons/recent.png">
+                        <action>ActivateWindow(Videos,special://skin/extras/playlists/RecentTvShows.xsp,return)</action>
+                    </shortcut>
+                    <shortcut name="in-progress-tvshows" label="626" icon="special://skin/extras/icons/timer.png">
+                        <action>ActivateWindow(Videos,special://skin/extras/playlists/InProgressTvShows.xsp,return)</action>
+                    </shortcut>
+                    <shortcut name="random-tvshows" label="31036" icon="special://skin/extras/icons/tv.png">
+                        <action>ActivateWindow(Videos,special://skin/extras/playlists/RandomTvShows.xsp,return)</action>
+                    </shortcut>
+                    <shortcut name="top-rated-tvshows" label="31037" icon="special://skin/extras/icons/tv.png">
+                        <action>ActivateWindow(Videos,special://skin/extras/playlists/TopRatedTvShows.xsp,return)</action>
+                    </shortcut>
+                </group>
+            </group>
+        </group>
+
+        <!-- MUSIC LIBRARY -->
+
+        <group name="music-library" label="$ADDON[script.skinshortcuts 32031]" icon="special://skin/extras/icons/songs.png">
+            <content source="nodes" target="music" />
+            <group name="music-playlists" label="$ADDON[script.skinshortcuts 32040]" icon="special://skin/extras/icons/playlist.png">
+                <content source="playlists" target="music" />
+            </group>
+            <group name="music-addons" label="$ADDON[script.skinshortcuts 32011]" icon="special://skin/extras/icons/songs.png">
+                <shortcut name="music-addons-browse-2" label="1038" type="32019" icon="special://skin/extras/icons/songs.png">
+                    <action>ActivateWindow(Music,addons://sources/audio/,return)</action>
+                </shortcut>
+                <content source="addons" target="music" />
+            </group>
+            <group name="music-sources" label="$LOCALIZE[39031]" icon="special://skin/extras/icons/folder.png">
+                <content source="sources" target="music" />
+            </group>
+            <shortcut name="music-media" label="15100" type="32019" icon="special://skin/extras/icons/database.png">
+                <action>ActivateWindow(Music,root,return)</action>
+            </shortcut>
+        </group>
+
+        <!-- LIVE TV (VERSION 13) -->
+
+        <group name="livetv-v13" label="$ADDON[script.skinshortcuts 32017]" icon="special://skin/extras/icons/livetv.png" visible="System.GetBool(pvrmanager.enabled)">
+            <content source="pvr" />
+            <content source="nodes" target="pvr" />
+            <group name="tv-channels-v13" label="19023" icon="special://skin/extras/icons/tv.png">
+                <content source="pvr" target="tv" />
+            </group>
+            <group name="radio-channels-v13" label="19024" icon="special://skin/extras/icons/livetv.png">
+                <content source="pvr" target="radio" />
+            </group>
+        </group>
+
+        <!-- LIVE TV (VERSION 14+) -->
+
+        <group name="livetv-v14" label="$ADDON[script.skinshortcuts 32017]" icon="special://skin/extras/icons/livetv.png" visible="PVR.HasTVChannels">
+            <content source="pvr" />
+            <shortcut name="tv-channels" label="10700" type="32017" icon="special://skin/extras/icons/tvguide.png">
+                <action>ActivateWindow(TVChannels)</action>
+            </shortcut>
+            <shortcut name="tv-guide" label="10702" type="32017" icon="special://skin/extras/icons/playlist.png">
+                <action>ActivateWindow(TVGuide)</action>
+            </shortcut>
+            <shortcut name="tv-providers" label="19334" type="32017" icon="special://skin/extras/icons/wifi.png">
+                <action>ActivateWindow(TVProviders)</action>
+            </shortcut>
+            <shortcut name="tv-recordings" label="10701" type="32017" icon="special://skin/extras/icons/folder-closed.png">
+                <action>ActivateWindow(TVRecordings)</action>
+            </shortcut>
+            <shortcut name="tv-tvtimers" label="10703" type="32017" icon="special://skin/extras/icons/timer.png">
+                <action>ActivateWindow(TVTimers)</action>
+            </shortcut>
+            <shortcut name="tv-tvtimerrules" label="10710" type="32017" icon="special://skin/extras/icons/recent.png">
+                <action>ActivateWindow(TVTimerRules)</action>
+            </shortcut>
+            <shortcut name="tv-tvserch" label="10704" type="32017" icon="special://skin/extras/icons/search.png">
+                <action>ActivateWindow(TVSerch)</action>
+            </shortcut>
+            <shortcut name="tv-lastchannelview" label="31024" type="32017" icon="special://skin/extras/icons/livetv.png">
+                <action>PlayPvrTV</action>
+            </shortcut>
+            <group name="tv-channels-v14" label="14301" icon="special://skin/extras/icons/tv.png">
+                <content source="pvr" target="tv" />
+            </group>
+        </group>
+
+        <!-- RADIO (VERSION 14+) -->
+
+        <group name="radio-v14" label="$ADDON[script.skinshortcuts 32087]" icon="special://skin/extras/icons/livetv.png" visible="PVR.HasRadioChannels">
+            <content source="pvr-radio" target="radio" />
+            <group name="radio-channels-v14" label="19024" icon="special://skin/extras/icons/livetv.png">
+                <content source="pvr" target="radio" />
+            </group>
+        </group>
+
+        <!-- PICTURES -->
+
+        <group name="pictures-sources" label="$ADDON[script.skinshortcuts 32020]" icon="special://skin/extras/icons/pictures.png">
+            <content source="sources" target="pictures" />
+        </group>
+
+        <!-- ADD-ONS -->
+
+        <group name="addons-all" label="$ADDON[script.skinshortcuts 32007]" icon="special://skin/extras/icons/addons.png">
+            <group name="addon-programs" label="$ADDON[script.skinshortcuts 32009]" icon="special://skin/extras/icons/addons.png">
+                <shortcut name="programs-browse" label="10001" type="32021" icon="special://skin/extras/icons/addons.png">
+                    <action>ActivateWindow(Programs,Addons,return)</action>
+                </shortcut>
+                <content source="addons" target="programs" />
+            </group>
+            <group name="addon-video-grp" label="$ADDON[script.skinshortcuts 32010]" icon="special://skin/extras/icons/video-addons.png">
+                <shortcut name="video-addons-all" label="1037" type="32014" icon="special://skin/extras/icons/video-addons.png">
+                    <action>ActivateWindow(Videos,Addons,return)</action>
+                </shortcut>
+                <content source="addons" target="video" />
+            </group>
+            <group name="addon-audio-grp" label="$ADDON[script.skinshortcuts 32011]" icon="special://skin/extras/icons/songs.png">
+                <shortcut name="music-addons-all" label="1038" type="32019" icon="special://skin/extras/icons/songs.png">
+                    <action>ActivateWindow(Music,addons://sources/audio/,return)</action>
+                </shortcut>
+                <content source="addons" target="music" />
+            </group>
+            <group name="addon-image-grp" label="$ADDON[script.skinshortcuts 32012]" icon="special://skin/extras/icons/pictures.png">
+                <shortcut name="picture-addons" label="1039" type="32020" icon="special://skin/extras/icons/pictures.png">
+                    <action>ActivateWindow(Pictures,Addons,return)</action>
+                </shortcut>
+                <content source="addons" target="pictures" />
+            </group>
+        </group>
+
+        <!-- FAVOURITES -->
+
+        <group name="favourites" label="1036" icon="special://skin/extras/icons/favourites.png">
+            <shortcut name="favourites-window" label="1036" type="1036" icon="favourites.png">
+                <action>ActivateWindow(favouritesbrowser)</action>
+            </shortcut>
+            <content source="favourites" />
+        </group>
+
+        <!-- GAMES -->
+
+        <group name="games-grp" label="10821" icon="special://skin/extras/icons/gamepad.png">
+            <shortcut name="games-window" label="10821" type="32021" icon="special://skin/extras/icons/gamepad.png">
+                <action>ActivateWindow(Games)</action>
+            </shortcut>
+        </group>
+
+        <!-- WEATHER -->
+
+        <group name="weather-grp" label="400" icon="special://skin/extras/icons/sun.png">
+            <shortcut name="weather-window" label="12600" type="400" icon="special://skin/extras/icons/sun.png">
+                <action>ActivateWindow(Weather)</action>
+            </shortcut>
+        </group>
+
+        <!-- SETTINGS -->
+
+        <group name="settings-grp" label="10004" icon="special://skin/extras/icons/configure.png">
+            <content source="settings" />
+            <shortcut name="libreelec-settings" label="LibreELEC" type="10001" icon="special://skin/extras/icons/libreelec.png" visible="System.HasAddon(service.libreelec.settings)">
+                <action>RunAddon(service.libreelec.settings)</action>
+            </shortcut>
+            <shortcut name="coreelec-settings" label="CoreELEC" type="10001" icon="special://skin/extras/icons/coreelec.png" visible="System.HasAddon(service.coreelec.settings)">
+                <action>RunAddon(service.coreelec.settings)</action>
+            </shortcut>
+        </group>
+
+        <!-- KODI COMMANDS -->
+
+        <group name="commands-grp" label="$ADDON[script.skinshortcuts 32054]" icon="special://skin/extras/icons/power.png">
+            <content source="commands" />
+            <shortcut name="update-video" label="$ADDON[script.skinshortcuts 32046]" type="427" icon="special://skin/extras/icons/update.png">
+                <action>UpdateLibrary(video,,true)</action>
+            </shortcut>
+            <shortcut name="update-music" label="$ADDON[script.skinshortcuts 32047]" type="427" icon="special://skin/extras/icons/update.png">
+                <action>UpdateLibrary(music,,true)</action>
+            </shortcut>
+
+            <shortcut name="clean-video" label="$ADDON[script.skinshortcuts 32055]" type="427" icon="special://skin/extras/icons/wand.png">
+                <action>CleanLibrary(video,true)</action>
+            </shortcut>
+            <shortcut name="clean-music" label="$ADDON[script.skinshortcuts 32056]" type="427" icon="special://skin/extras/icons/wand.png">
+                <action>CleanLibrary(music,true)</action>
+            </shortcut>
+            <shortcut name="reboot-android" label="31172" type="10001" icon="special://skin/extras/icons/sysinfo.png">
+            <action>System.ExecWait("/usr/sbin/rebootfromnand")</action>
+            <action>Reset()</action>
+            </shortcut>
+            <shortcut name="play-disc" label="341" type="427" icon="special://skin/extras/icons/vcd.png">
+                <action>PlayDisc</action>
+            </shortcut>
+            <shortcut name="eject-tray" label="13391" type="427" icon="special://skin/extras/icons/vcd_eject.png">
+                <action>EjectTray()</action>
+            </shortcut>
+        </group>
+    </groupings>
+
+    <!-- SUBDIALOG DEFINITIONS FOR WIDGET EDITING -->
+
+    <dialogs>
+        <subdialog buttonID="406" menu="{item}.1" />
+    </dialogs>
+
+    <!-- CONTEXT MENU -->
+
+    <contextmenu>false</contextmenu>
+
+    <!-- LIST ICON TO SELECT -->
+
+    <icons>special://skin/extras/icons/</icons>
+</menus>

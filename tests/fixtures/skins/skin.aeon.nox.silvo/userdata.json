@@ -1,0 +1,301 @@
+{
+  "menus": {
+    "mainmenu": {
+      "items": [
+        {
+          "name": "settings",
+          "properties": {
+            "widget": "weather-forecast",
+            "widgetStyle": "Extended Panel",
+            "background": "weather-fanart",
+            "InfoLine": "system_info",
+            "widgetBack": "Clear",
+            "backgroundPlaylistType": "movies",
+            "widgetStyle.2": "Extended Panel",
+            "widgetArt.2": "Poster"
+          },
+          "position": 0
+        },
+        {
+          "name": "tvshows",
+          "properties": {
+            "widget": "recent-tvshows-pl",
+            "widgetStyle": "Extended Panel",
+            "widgetPanelInfo": "True",
+            "widgetHide": "True",
+            "InfoLine": "tvshow_library_stats",
+            "background": "tv-fanart",
+            "backgroundPlaylistType": "movies",
+            "widget.2": "recommended-tvshows",
+            "widgetStyle.2": "Extended Panel",
+            "widgetHide.2": "True",
+            "widgetPanelInfo.2": "True",
+            "widgetArt.2": "Poster"
+          },
+          "position": 1
+        },
+        {
+          "name": "movies",
+          "properties": {
+            "widgetStyle": "Extended Panel",
+            "widgetPanelInfo": "True",
+            "widgetHide": "True",
+            "background": "movie-fanart",
+            "InfoLine": "movie_library_stats",
+            "widgetStyle.2": "Extended Panel",
+            "widgetPanelInfo.2": "True",
+            "widgetHide.2": "True",
+            "widgetArt": "Poster",
+            "widget": "random-movies-pl",
+            "backgroundPlaylistType": "movies",
+            "widget.2": "customwidget2",
+            "customWidget.2": "custom-7695b32c"
+          },
+          "position": 2
+        },
+        {
+          "name": "music",
+          "label": "Music",
+          "actions": [
+            {
+              "action": "ActivateWindow(Music,musicdb://artists/,return)"
+            }
+          ],
+          "icon": "DefaultMusicArtists.png",
+          "properties": {
+            "background": "music-fanart",
+            "widgetStyle": "Extended Panel",
+            "widgetStyle.2": "Extended Panel",
+            "widget": "customwidget",
+            "customWidget": "custom-c628c5e1"
+          },
+          "position": 3,
+          "submenu": ""
+        },
+        {
+          "name": "favourites",
+          "position": 4
+        }
+      ],
+      "removed": [
+        "pictures",
+        "livetv",
+        "videos",
+        "programs",
+        "games",
+        "search",
+        "power",
+        "weather",
+        "musicvideos"
+      ]
+    },
+    "mainmenu/settings": {
+      "items": [
+        {
+          "name": "sub-7632378c",
+          "label": "$LOCALIZE[31957]",
+          "actions": [
+            {
+              "action": "ActivateWindow(1133)"
+            }
+          ],
+          "icon": "DefaultAddonProgram.png",
+          "position": 3,
+          "is_new": true
+        },
+        {
+          "name": "settings-filemanager",
+          "position": 4
+        },
+        {
+          "name": "settings-profiles",
+          "position": 5
+        },
+        {
+          "name": "settings-eventlog",
+          "position": 6
+        },
+        {
+          "name": "sub-fda96bd6",
+          "label": "Most Played Songs",
+          "actions": [
+            {
+              "action": "ActivateWindow(music,special://skin/extras/playlists/mostplayedsongs.xsp,return)"
+            }
+          ],
+          "icon": "DefaultPlaylist.png",
+          "position": 7,
+          "is_new": true
+        }
+      ]
+    },
+    "mainmenu/tvshows": {
+      "items": [
+        {
+          "name": "tvshows-genres",
+          "position": 0
+        },
+        {
+          "name": "tvshows-recent",
+          "label": "Recently Added",
+          "actions": [
+            {
+              "action": "ActivateWindow(videos,special://profile/playlists/video/Recently Added TV Shows.xsp,return)"
+            }
+          ],
+          "icon": "DefaultPlaylist.png",
+          "position": 1
+        },
+        {
+          "name": "tvshows-inprogress",
+          "position": 2
+        }
+      ]
+    },
+    "mainmenu/movies": {
+      "items": [
+        {
+          "name": "sub-0ce8742d",
+          "label": "Random",
+          "actions": [
+            {
+              "action": "ActivateWindow(videos,special://profile/playlists/video/Random Movies (All).xsp,return)"
+            }
+          ],
+          "icon": "DefaultPlaylist.png",
+          "position": 3,
+          "is_new": true
+        },
+        {
+          "name": "sub-208aff44",
+          "label": "$LOCALIZE[136]",
+          "actions": [
+            {
+              "action": "ActivateWindow(Videos,special://videoplaylists/,return)"
+            }
+          ],
+          "icon": "DefaultVideoPlaylists.png",
+          "position": 4,
+          "is_new": true
+        },
+        {
+          "name": "movies-sets",
+          "position": 5
+        },
+        {
+          "name": "movies-genres",
+          "position": 6
+        },
+        {
+          "name": "sub-3e162520",
+          "label": "$LOCALIZE[3]",
+          "actions": [
+            {
+              "action": "ActivateWindow(Videos,library://video/,return)"
+            }
+          ],
+          "icon": "DefaultVideo.png",
+          "position": 7,
+          "is_new": true
+        },
+        {
+          "name": "movies-years",
+          "position": 8
+        },
+        {
+          "name": "movies-actors",
+          "position": 9
+        },
+        {
+          "name": "movies-tags",
+          "position": 10
+        }
+      ]
+    },
+    "buttonmenu": {
+      "items": [
+        {
+          "name": "button-favourites",
+          "position": 1
+        },
+        {
+          "name": "button-reloadskin",
+          "position": 2
+        },
+        {
+          "name": "button-skinsettings",
+          "position": 3
+        },
+        {
+          "name": "button-settings",
+          "position": 4
+        }
+      ],
+      "removed": [
+        "button-shutdown",
+        "button-sleeptimer",
+        "button-canceltimer",
+        "button-suspend",
+        "button-reboot"
+      ]
+    },
+    "custom-c628c5e1": {
+      "items": [
+        {
+          "name": "random-movies-pl",
+          "label": "$LOCALIZE[31031]",
+          "actions": [],
+          "icon": "logos/kodi-pl.png",
+          "properties": {
+            "widgetPath": "special://skin/extras/playlists/randommovies.xsp",
+            "widgetType": "movies",
+            "widgetTarget": "videos",
+            "widgetSource": "playlist",
+            "widgetLabel": "$LOCALIZE[31031]"
+          },
+          "position": 0,
+          "is_new": true
+        },
+        {
+          "name": "recent-tvshows-pl",
+          "label": "$LOCALIZE[31532]",
+          "actions": [],
+          "icon": "logos/kodi-pl.png",
+          "properties": {
+            "widgetPath": "special://skin/extras/playlists/recenttvshows.xsp",
+            "widgetType": "tvshows",
+            "widgetTarget": "videos",
+            "widgetSource": "playlist",
+            "widgetLabel": "$LOCALIZE[31532]"
+          },
+          "position": 1,
+          "is_new": true
+        }
+      ]
+    },
+    "custom-7695b32c": {
+      "items": [
+        {
+          "name": "recent-tvshows-pl",
+          "label": "$LOCALIZE[31532]",
+          "actions": [],
+          "icon": "logos/kodi-pl.png",
+          "properties": {
+            "widgetPath": "special://skin/extras/playlists/recenttvshows.xsp",
+            "widgetType": "tvshows",
+            "widgetTarget": "videos",
+            "widgetSource": "playlist",
+            "widgetLabel": "$LOCALIZE[31532]"
+          },
+          "position": 0,
+          "is_new": true
+        }
+      ]
+    }
+  },
+  "views": {
+    "library": {
+      "movies": "506"
+    }
+  }
+}

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+	<template include="widget-lists">
+		<condition>widgetPath</condition>
+		<controls>
+			<control type="list" id="$MATH[$PROPERTY[groupId] + $PROPERTY[index]]">
+				<include>HiddenList</include>
+				<content target="$PROPERTY[widgetTarget]" sortby="$PROPERTY[widgetSortBy]" sortorder="$PROPERTY[widgetSortOrder]" limit="6">$PROPERTY[widgetPath]</content>
+			</control>
+		</controls>
+	</template>
+	<template include="widget-rows">
+		<condition>widgetPath</condition>
+		<var name="styleLabel">
+			<value condition="widgetStyle=wide">$LOCALIZE[31159]</value>
+			<value condition="widgetStyle=poster">$LOCALIZE[31160]</value>
+			<value condition="widgetStyle=square">$LOCALIZE[31203]</value>
+			<value condition="widgetStyle=squareinfo">$LOCALIZE[31161]</value>
+		</var>
+		<controls>
+			<item>
+				<label>$PROPERTY[label]</label>
+				<visible>!String.IsEmpty(Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(0).Label)</visible>
+				<property name="WidgetStyle">$PROPERTY[styleLabel]</property>
+				<property name="WidgetOnClick">ActivateWindow($PROPERTY[widgetTarget],&quot;$PROPERTY[widgetPath]&quot;,return)</property>
+				<property name="Icon1">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(0).Icon]</property>
+				<property name="Icon2">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(1).Icon]</property>
+				<property name="Icon3">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(2).Icon]</property>
+				<property name="Icon4">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(3).Icon]</property>
+				<property name="Icon5">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(4).Icon]</property>
+				<property name="Icon6">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(5).Icon]</property>
+				<property name="Poster1">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(0).Art(poster)]</property>
+				<property name="Poster2">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(1).Art(poster)]</property>
+				<property name="Poster3">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(2).Art(poster)]</property>
+				<property name="Poster4">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(3).Art(poster)]</property>
+				<property name="Poster5">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(4).Art(poster)]</property>
+				<property name="Poster6">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(5).Art(poster)]</property>
+				<property name="InfoLabel1">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(0).Label]</property>
+				<property name="InfoLabel2">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(1).Label]</property>
+				<property name="InfoLabel3">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(2).Label]</property>
+				<property name="InfoLabel4">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(3).Label]</property>
+				<property name="InfoLabel5">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(4).Label]</property>
+				<property name="InfoLabel6">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(5).Label]</property>
+				<property name="Overlay1">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(0).Overlay]</property>
+				<property name="Overlay2">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(1).Overlay]</property>
+				<property name="Overlay3">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(2).Overlay]</property>
+				<property name="Overlay4">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(3).Overlay]</property>
+				<property name="Overlay5">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(4).Overlay]</property>
+				<property name="Overlay6">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(5).Overlay]</property>
+				<property name="VideoResolution1">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(0).VideoResolution]</property>
+				<property name="VideoResolution2">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(1).VideoResolution]</property>
+				<property name="VideoResolution3">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(2).VideoResolution]</property>
+				<property name="VideoResolution4">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(3).VideoResolution]</property>
+				<property name="VideoResolution5">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(4).VideoResolution]</property>
+				<property name="VideoResolution6">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(5).VideoResolution]</property>
+				<property name="ArtFTV1">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(0).Art(ftv)]</property>
+				<property name="ArtFTV2">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(1).Art(ftv)]</property>
+				<property name="ArtFTV3">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(2).Art(ftv)]</property>
+				<property name="ArtFanart1">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(0).Art(fanart)]</property>
+				<property name="ArtFanart2">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(1).Art(fanart)]</property>
+				<property name="ArtFanart3">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(2).Art(fanart)]</property>
+				<property name="ArtLogo1">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(0).Art(clearlogo)]</property>
+				<property name="ArtLogo2">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(1).Art(clearlogo)]</property>
+				<property name="ArtLogo3">$INFO[Container($MATH[$PROPERTY[groupId] + $PROPERTY[index]]).ListItemPosition(2).Art(clearlogo)]</property>
+				<onclick>ActivateWindow($PROPERTY[widgetTarget],&quot;$PROPERTY[widgetPath]&quot;,return)</onclick>
+			</item>
+		</controls>
+	</template>
+</templates>

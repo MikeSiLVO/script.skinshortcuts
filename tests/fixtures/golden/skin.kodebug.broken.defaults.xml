@@ -1,0 +1,316 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<includes>
+	<include name="skinshortcuts-mainmenu">
+		<item id="1">
+			<label>Movies A</label>
+			<icon>DefaultMovies.png</icon>
+			<onclick>ActivateWindow(Videos,videodb://movies/titles/,return)</onclick>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">movies-a</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Videos,videodb://movies/titles/,return)</property>
+			<property name="path">videodb://movies/titles/</property>
+			<property name="submenuVisibility">movies-a</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+		<item id="2">
+			<label>Movies B</label>
+			<icon>DefaultMovies.png</icon>
+			<onclick>ActivateWindow(Videos,videodb://movies/titles/,return)</onclick>
+			<property name="id">$NUMBER[2]</property>
+			<property name="name">movies-b</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Videos,videodb://movies/titles/,return)</property>
+			<property name="path">videodb://movies/titles/</property>
+			<property name="submenuVisibility">movies-b</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+		<item id="3">
+			<label>TV Shows</label>
+			<icon>DefaultTVShows.png</icon>
+			<onclick>ActivateWindow(Videos,videodb://tvshows/titles/,return)</onclick>
+			<property name="id">$NUMBER[3]</property>
+			<property name="name">tvshows</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Videos,videodb://tvshows/titles/,return)</property>
+			<property name="path">videodb://tvshows/titles/</property>
+			<property name="submenuVisibility">tvshows</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+		<item id="4">
+			<label>Settings</label>
+			<icon>DefaultAddonService.png</icon>
+			<onclick>ActivateWindow(Settings)</onclick>
+			<property name="id">$NUMBER[4]</property>
+			<property name="name">settings</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Settings)</property>
+			<property name="path">ActivateWindow(Settings)</property>
+			<property name="submenuVisibility">settings</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+		<item id="5">
+			<label>Power</label>
+			<icon>DefaultAddonPowerManager.png</icon>
+			<onclick>ActivateWindow(ShutdownMenu)</onclick>
+			<property name="id">$NUMBER[5]</property>
+			<property name="name">power</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(ShutdownMenu)</property>
+			<property name="path">ActivateWindow(ShutdownMenu)</property>
+			<property name="submenuVisibility">power</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-mainmenu-submenu">
+		<item id="1">
+			<label>All Movies</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(Videos,videodb://movies/titles/,return)</onclick>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">all-movies</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,videodb://movies/titles/,return)</property>
+			<property name="path">videodb://movies/titles/</property>
+			<property name="submenuVisibility">all-movies</property>
+			<property name="parent">movies-a</property>
+			<visible>String.IsEqual(Container(300).ListItem.Property(name),movies-a)</visible>
+		</item>
+		<item id="2">
+			<label>Recently Added Movies</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(Videos,videodb://recentlyaddedmovies/,return)</onclick>
+			<property name="id">$NUMBER[2]</property>
+			<property name="name">recent-movies</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,videodb://recentlyaddedmovies/,return)</property>
+			<property name="path">videodb://recentlyaddedmovies/</property>
+			<property name="submenuVisibility">recent-movies</property>
+			<property name="parent">movies-a</property>
+			<visible>String.IsEqual(Container(300).ListItem.Property(name),movies-a)</visible>
+		</item>
+		<item id="3">
+			<label>All Movies</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(Videos,videodb://movies/titles/,return)</onclick>
+			<property name="id">$NUMBER[3]</property>
+			<property name="name">all-movies</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,videodb://movies/titles/,return)</property>
+			<property name="path">videodb://movies/titles/</property>
+			<property name="submenuVisibility">all-movies</property>
+			<property name="parent">movies-b</property>
+			<visible>String.IsEqual(Container(300).ListItem.Property(name),movies-b)</visible>
+		</item>
+		<item id="4">
+			<label>Recently Added Movies</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(Videos,videodb://recentlyaddedmovies/,return)</onclick>
+			<property name="id">$NUMBER[4]</property>
+			<property name="name">recent-movies</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,videodb://recentlyaddedmovies/,return)</property>
+			<property name="path">videodb://recentlyaddedmovies/</property>
+			<property name="submenuVisibility">recent-movies</property>
+			<property name="parent">movies-b</property>
+			<visible>String.IsEqual(Container(300).ListItem.Property(name),movies-b)</visible>
+		</item>
+		<item id="5">
+			<label>All TV Shows</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(Videos,videodb://tvshows/titles/,return)</onclick>
+			<property name="id">$NUMBER[5]</property>
+			<property name="name">all-tv</property>
+			<property name="menu">tvshows</property>
+			<property name="action">ActivateWindow(Videos,videodb://tvshows/titles/,return)</property>
+			<property name="path">videodb://tvshows/titles/</property>
+			<property name="submenuVisibility">all-tv</property>
+			<property name="parent">tvshows</property>
+			<visible>String.IsEqual(Container(300).ListItem.Property(name),tvshows)</visible>
+		</item>
+		<item id="6">
+			<label>$LOCALIZE[13000]</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(SystemSettings)</onclick>
+			<property name="id">$NUMBER[6]</property>
+			<property name="name">system-settings</property>
+			<property name="menu">settings</property>
+			<property name="action">ActivateWindow(SystemSettings)</property>
+			<property name="path">ActivateWindow(SystemSettings)</property>
+			<property name="submenuVisibility">system-settings</property>
+			<property name="parent">settings</property>
+			<visible>String.IsEqual(Container(300).ListItem.Property(name),settings)</visible>
+		</item>
+		<item id="7">
+			<label>$LOCALIZE[20077]</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(SkinSettings)</onclick>
+			<property name="id">$NUMBER[7]</property>
+			<property name="name">skin-settings</property>
+			<property name="menu">settings</property>
+			<property name="action">ActivateWindow(SkinSettings)</property>
+			<property name="path">ActivateWindow(SkinSettings)</property>
+			<property name="submenuVisibility">skin-settings</property>
+			<property name="parent">settings</property>
+			<visible>String.IsEqual(Container(300).ListItem.Property(name),settings)</visible>
+		</item>
+		<item id="8">
+			<label>$LOCALIZE[24001]</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(AddonBrowser)</onclick>
+			<property name="id">$NUMBER[8]</property>
+			<property name="name">addons</property>
+			<property name="menu">settings</property>
+			<property name="action">ActivateWindow(AddonBrowser)</property>
+			<property name="path">ActivateWindow(AddonBrowser)</property>
+			<property name="submenuVisibility">addons</property>
+			<property name="parent">settings</property>
+			<visible>String.IsEqual(Container(300).ListItem.Property(name),settings)</visible>
+		</item>
+	</include>
+	<include name="skinshortcuts-buttonmenu">
+		<control type="button" id="1">
+			<label>$LOCALIZE[13005]</label>
+			<onclick>System.Shutdown</onclick>
+		</control>
+		<control type="button" id="2">
+			<label>$LOCALIZE[13013]</label>
+			<onclick>System.Reboot</onclick>
+		</control>
+		<control type="button" id="3">
+			<label>$LOCALIZE[13009]</label>
+			<onclick>Quit</onclick>
+		</control>
+	</include>
+	<include name="skinshortcuts-movies">
+		<item id="1">
+			<label>All Movies</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(Videos,videodb://movies/titles/,return)</onclick>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">all-movies</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,videodb://movies/titles/,return)</property>
+			<property name="path">videodb://movies/titles/</property>
+			<property name="submenuVisibility">all-movies</property>
+		</item>
+		<item id="2">
+			<label>Recently Added Movies</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(Videos,videodb://recentlyaddedmovies/,return)</onclick>
+			<property name="id">$NUMBER[2]</property>
+			<property name="name">recent-movies</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,videodb://recentlyaddedmovies/,return)</property>
+			<property name="path">videodb://recentlyaddedmovies/</property>
+			<property name="submenuVisibility">recent-movies</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-tvshows">
+		<item id="1">
+			<label>All TV Shows</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(Videos,videodb://tvshows/titles/,return)</onclick>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">all-tv</property>
+			<property name="menu">tvshows</property>
+			<property name="action">ActivateWindow(Videos,videodb://tvshows/titles/,return)</property>
+			<property name="path">videodb://tvshows/titles/</property>
+			<property name="submenuVisibility">all-tv</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-settings">
+		<item id="1">
+			<label>$LOCALIZE[13000]</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(SystemSettings)</onclick>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">system-settings</property>
+			<property name="menu">settings</property>
+			<property name="action">ActivateWindow(SystemSettings)</property>
+			<property name="path">ActivateWindow(SystemSettings)</property>
+			<property name="submenuVisibility">system-settings</property>
+		</item>
+		<item id="2">
+			<label>$LOCALIZE[20077]</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(SkinSettings)</onclick>
+			<property name="id">$NUMBER[2]</property>
+			<property name="name">skin-settings</property>
+			<property name="menu">settings</property>
+			<property name="action">ActivateWindow(SkinSettings)</property>
+			<property name="path">ActivateWindow(SkinSettings)</property>
+			<property name="submenuVisibility">skin-settings</property>
+		</item>
+		<item id="3">
+			<label>$LOCALIZE[24001]</label>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(AddonBrowser)</onclick>
+			<property name="id">$NUMBER[3]</property>
+			<property name="name">addons</property>
+			<property name="menu">settings</property>
+			<property name="action">ActivateWindow(AddonBrowser)</property>
+			<property name="path">ActivateWindow(AddonBrowser)</property>
+			<property name="submenuVisibility">addons</property>
+		</item>
+	</include>
+	<variable name="MainMenuBackgroundPathVar">
+		<value />
+	</variable>
+	<include name="skinshortcuts-template-widget1">
+		<description>Automatically generated - no menu items matched this template (see log)</description>
+	</include>
+	<include name="skinshortcuts-template-widget2">
+		<description>Automatically generated - no menu items matched this template (see log)</description>
+	</include>
+	<include name="skinshortcuts-template-HomeRandomFanartLists">
+		<description>Automatically generated - no menu items matched this template (see log)</description>
+	</include>
+	<expression name="ShortcutView_50">[Container.Content(videos)] | [Container.Content(addons)] | [!Window.IsVisible(MyMusicNav.xml) + Container.Content(genres)] | [Container.Content(musicvideos)] | [Container.Content(games)] | [Container.Content(images)] | [!Window.IsVisible(MyMusicNav.xml) + Container.Content(files)] | [Container.Content() + Window.IsVisible(MyVideoNav.xml)] | [Container.Content(playlists)] | [Container.Content(actors)] | [Container.Content(directors)] | [Container.Content(studios)] | [Container.Content(years)] | [Container.Content(tags)] | [Container.Content(countries)] | [Container.Content(videoversions) + String.StartsWith(Container.FolderPath,videodb://movies/videoversions)]</expression>
+	<expression name="ShortcutView_51">False</expression>
+	<expression name="ShortcutView_52">False</expression>
+	<expression name="ShortcutView_53">False</expression>
+	<expression name="ShortcutView_54">False</expression>
+	<expression name="ShortcutView_55">[Container.Content(artists)]</expression>
+	<expression name="ShortcutView_56">False</expression>
+	<expression name="ShortcutView_57">False</expression>
+	<expression name="ShortcutView_58">False</expression>
+	<expression name="ShortcutView_59">[Container.Content(tvshows)]</expression>
+	<expression name="ShortcutView_500">False</expression>
+	<expression name="ShortcutView_501">[Container.Content(albums)]</expression>
+	<expression name="ShortcutView_502">False</expression>
+	<expression name="ShortcutView_503">False</expression>
+	<expression name="ShortcutView_504">False</expression>
+	<expression name="ShortcutView_505">False</expression>
+	<expression name="ShortcutView_506">[Container.Content(movies) + !String.StartsWith(Container.FolderPath,videodb://movies/sets)] | [Container.Content(movies) + String.StartsWith(Container.FolderPath,videodb://movies/sets)] | [Container.Content(videoversions) + !String.StartsWith(Container.FolderPath,videodb://movies/videoversions)] | [Container.Content(episodes)] | [Container.Content(seasons)] | [Container.Content(songs)]</expression>
+	<expression name="ShortcutView_507">False</expression>
+	<expression name="ShortcutView_508">False</expression>
+	<expression name="ShortcutView_509">[Container.Content(sets)]</expression>
+	<expression name="ShortcutView_510">False</expression>
+	<expression name="ShortcutView_511">False</expression>
+	<expression name="ShortcutView_512">False</expression>
+	<expression name="ShortcutView_513">False</expression>
+	<expression name="ShortcutView_50_Include">True</expression>
+	<expression name="ShortcutView_51_Include">False</expression>
+	<expression name="ShortcutView_52_Include">False</expression>
+	<expression name="ShortcutView_53_Include">False</expression>
+	<expression name="ShortcutView_54_Include">False</expression>
+	<expression name="ShortcutView_55_Include">True</expression>
+	<expression name="ShortcutView_56_Include">False</expression>
+	<expression name="ShortcutView_57_Include">False</expression>
+	<expression name="ShortcutView_58_Include">False</expression>
+	<expression name="ShortcutView_59_Include">True</expression>
+	<expression name="ShortcutView_500_Include">False</expression>
+	<expression name="ShortcutView_501_Include">True</expression>
+	<expression name="ShortcutView_502_Include">False</expression>
+	<expression name="ShortcutView_503_Include">False</expression>
+	<expression name="ShortcutView_504_Include">False</expression>
+	<expression name="ShortcutView_505_Include">False</expression>
+	<expression name="ShortcutView_506_Include">True</expression>
+	<expression name="ShortcutView_507_Include">False</expression>
+	<expression name="ShortcutView_508_Include">False</expression>
+	<expression name="ShortcutView_509_Include">True</expression>
+	<expression name="ShortcutView_510_Include">False</expression>
+	<expression name="ShortcutView_511_Include">False</expression>
+	<expression name="ShortcutView_512_Include">False</expression>
+	<expression name="ShortcutView_513_Include">False</expression>
+</includes>

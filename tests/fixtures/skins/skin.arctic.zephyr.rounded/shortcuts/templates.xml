@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <!-- ============================================================ -->
+    <!--                    EXPRESSIONS                               -->
+    <!-- ============================================================ -->
+
+    <expressions>
+        <expression name="widgetItemVisible">String.IsEqual(Container(300).ListItem.Property(submenuVisibility),$PARENT[name]) + [Integer.IsGreater(Container($MATH[$PARENT[index] * 1000 + 600 + widgetIndex]).NumItems,0) | Container($MATH[$PARENT[index] * 1000 + 600 + widgetIndex]).IsUpdating]</expression>
+    </expressions>
+
+    <!-- ============================================================ -->
+    <!--                    PRESETS                                   -->
+    <!-- ============================================================ -->
+
+    <presets>
+        <preset name="layoutFlags">
+            <values condition="widgetTarget=weather" isNormalLayout="false" isWeatherLayout="true" isSystemLayout="false" isSettingsLayout="false" labelIsVisible="false" moreVisible="false" />
+            <values condition="widgetTarget=system" isNormalLayout="false" isWeatherLayout="false" isSystemLayout="true" isSettingsLayout="false" labelIsVisible="false" moreVisible="false" />
+            <values condition="widgetTarget=settings" isNormalLayout="false" isWeatherLayout="false" isSystemLayout="false" isSettingsLayout="true" labelIsVisible="true" moreVisible="true" />
+            <values condition="widgetTarget=tvguide" isNormalLayout="true" isWeatherLayout="false" isSystemLayout="false" isSettingsLayout="false" labelIsVisible="true" moreVisible="false" />
+            <values condition="widgetTarget=pvr" isNormalLayout="true" isWeatherLayout="false" isSystemLayout="false" isSettingsLayout="false" labelIsVisible="true" moreVisible="false" />
+            <values isNormalLayout="true" isWeatherLayout="false" isSystemLayout="false" isSettingsLayout="false" labelIsVisible="true" moreVisible="true" />
+        </preset>
+
+        <preset name="widgetMovement">
+            <values condition="widgetTarget=settings" widgetMovement="4" widgetMovement2="3" />
+            <values condition="widgetTarget=system" widgetMovement="4" widgetMovement2="3" />
+            <values condition="widgetaspect=Square" widgetMovement="4" widgetMovement2="3" />
+            <values condition="widgetaspect=SquareMiddle" widgetMovement="6" widgetMovement2="5" />
+            <values condition="widgetaspect=SquareSmall" widgetMovement="7" widgetMovement2="6" />
+            <values condition="widgetaspect=Thumbnail" widgetMovement="2" widgetMovement2="1" />
+            <values condition="widgetaspect=Fanart" widgetMovement="2" widgetMovement2="1" />
+            <values condition="widgetaspect=ThumbnailSmall" widgetMovement="3" widgetMovement2="2" />
+            <values condition="widgetaspect=FanartSmall" widgetMovement="3" widgetMovement2="2" />
+            <values widgetMovement="7" widgetMovement2="6" />
+        </preset>
+    </presets>
+
+    <!-- ============================================================ -->
+    <!--                    WIDGET ITEMS TEMPLATE                     -->
+    <!-- ============================================================ -->
+    <!-- Iterates over each widget in a menu item's .1 submenu -->
+
+    <template items="widgets" source="1">
+        <!-- Properties from the widget item -->
+        <property name="widgetIndex" from="index" />
+        <property name="widgetPath" from="widgetPath" />
+        <property name="widgetTarget" from="widgetTarget" />
+        <property name="widgetLabel" from="label" />
+        <property name="widgetLimit" from="widgetLimit" />
+        <property name="widgetSortby" from="widgetSortby" />
+        <property name="widgetSortorder" from="widgetSortorder" />
+        <property name="widgetAspect" from="widgetaspect" />
+        <property name="widgetAuto" from="widgetAuto" />
+        <property name="widgetlisttype" from="widgetlisttype" />
+        <property name="widgetClearLogoFanart" from="widgetClearLogoFanart" />
+
+        <!-- Layout and movement presets -->
+        <preset content="layoutFlags" />
+        <preset content="widgetMovement" />
+
+        <!-- Computed widget style based on aspect/target -->
+        <var name="widgetStyle">
+            <value condition="widgetTarget=settings">Square</value>
+            <value condition="widgetTarget=system">Square</value>
+            <value condition="widgetaspect=SquareMiddle">SquareMid</value>
+            <value condition="widgetaspect=SquareSmall">SqSmallTb</value>
+            <value condition="widgetaspect=ThumbnailSmall">ThumbSmall</value>
+            <value condition="widgetaspect=FanartSmall">FanSmall</value>
+            <value condition="widgetaspect">$PROPERTY[widgetAspect]</value>
+            <value>Poster</value>
+        </var>
+
+        <!-- List type -->
+        <var name="listType">
+            <value condition="widgetlisttype">$PROPERTY[widgetlisttype]</value>
+            <value>fixedlist</value>
+        </var>
+
+        <!-- Limit fallback -->
+        <var name="limit">
+            <value condition="widgetLimit=10">10</value>
+            <value condition="widgetLimit=25">25</value>
+            <value condition="widgetLimit=50">50</value>
+            <value condition="widgetLimit=100">100</value>
+            <value condition="widgetLimit=200">200</value>
+            <value condition="widgetLimit=99999">99999</value>
+            <value condition="widgetLimit">$PROPERTY[widgetLimit]</value>
+            <value>$VAR[Value_Widget_Limit]</value>
+        </var>
+
+        <!-- Clearlogo setting -->
+        <var name="clearLogoFanart">
+            <value condition="widgetClearLogoFanart=no">false</value>
+            <value>true</value>
+        </var>
+
+        <!-- Style booleans for includes -->
+        <var name="isThumbnail">
+            <value condition="widgetStyle=Thumbnail">true</value>
+            <value>false</value>
+        </var>
+        <var name="isFanart">
+            <value condition="widgetStyle=Fanart">true</value>
+            <value>false</value>
+        </var>
+        <var name="isFanartSmall">
+            <value condition="widgetStyle=FanSmall">true</value>
+            <value>false</value>
+        </var>
+        <var name="isThumbnailSmall">
+            <value condition="widgetStyle=ThumbSmall">true</value>
+            <value>false</value>
+        </var>
+        <var name="isSquare">
+            <value condition="widgetStyle=Square">true</value>
+            <value>false</value>
+        </var>
+        <var name="isSquareMiddle">
+            <value condition="widgetStyle=SquareMid">true</value>
+            <value>false</value>
+        </var>
+        <var name="isSquareSmall">
+            <value condition="widgetStyle=SqSmallTb">true</value>
+            <value>false</value>
+        </var>
+
+        <controls>
+            <!-- Main widget list control (must be FIRST for z-order with usecontrolcoords) -->
+            <control type="$PROPERTY[listType]" id="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]">
+                <include content="Animation_Widget_Direction" condition="!Skin.HasSetting(home.disable.widget.animation)">
+                    <param name="visible" value="[String.IsEqual(Container(300).ListItem.Property(submenuVisibility),$PARENT[name])]" />
+                </include>
+
+                <include condition="Skin.HasSetting(home.disable.widget.animation)">Animation_Widget_Fade_In_Out</include>
+
+                <include content="Def_Multi_Widget_Container">
+                    <param name="id" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                    <param name="height" value="325" />
+                    <param name="idshort" value="$MATH[$PARENT[index] * 100 + 60]" />
+                    <param name="backid" value="$MATH[$PARENT[index] * 1000 + 601]" />
+                    <param name="AutoTime" value="$PROPERTY[widgetAuto]" />
+                    <param name="orientation" value="horizontal" />
+                    <param name="movement" value="$PROPERTY[widgetMovement]" />
+                    <param name="movement2" value="$PROPERTY[widgetMovement2]" />
+                    <param name="AutoScrollCondition" value="[Control.HasFocus(300) | Control.HasFocus(302) | Control.HasFocus(222) | Control.HasFocus(399) | Control.HasFocus(2011)] + Integer.IsGreater($PROPERTY[widgetAuto],0) + System.IdleTime(1)" />
+                    <param name="animation_condition" value="!Control.HasFocus($MATH[$PARENT[index] * 1000 + 600 + widgetIndex])" />
+                    <param name="visible" value="[$EXP[widgetItemVisible]]" />
+                </include>
+
+                <!-- Item layouts -->
+                <include content="Def_Normal_Layout_Item" condition="$PROPERTY[isNormalLayout]">
+                    <param name="shortcutsclearlogo" value="$PROPERTY[clearLogoFanart]" />
+                    <param name="aspectratio" value="keep" />
+                    <param name="distance" value="10" />
+                    <param name="Thumbnail" value="$PROPERTY[isThumbnail]" />
+                    <param name="Fanart" value="$PROPERTY[isFanart]" />
+                    <param name="FanartSmall" value="$PROPERTY[isFanartSmall]" />
+                    <param name="ThumbnailSmall" value="$PROPERTY[isThumbnailSmall]" />
+                    <param name="Square" value="$PROPERTY[isSquare]" />
+                    <param name="SquareMiddle" value="$PROPERTY[isSquareMiddle]" />
+                    <param name="SquareSmall" value="$PROPERTY[isSquareSmall]" />
+                </include>
+
+                <include content="Def_Weather_Layout_Item" condition="$PROPERTY[isWeatherLayout]">
+                    <param name="Fanart" value="$PROPERTY[isFanart]" />
+                    <param name="Square" value="$PROPERTY[isSquare]" />
+                </include>
+
+                <include condition="$PROPERTY[isSystemLayout]">Def_System_Layout_Item</include>
+                <include condition="$PROPERTY[isSettingsLayout]">Def_System_Layout_Item</include>
+
+                <!-- Focus layouts -->
+                <include content="Def_Normal_Layout_Item_Focus" condition="$PROPERTY[isNormalLayout]">
+                    <param name="shortcutsid" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                    <param name="shortcutsclearlogo" value="$PROPERTY[clearLogoFanart]" />
+                    <param name="aspectratio" value="keep" />
+                    <param name="distance" value="10" />
+                    <param name="Thumbnail" value="$PROPERTY[isThumbnail]" />
+                    <param name="Fanart" value="$PROPERTY[isFanart]" />
+                    <param name="FanartSmall" value="$PROPERTY[isFanartSmall]" />
+                    <param name="ThumbnailSmall" value="$PROPERTY[isThumbnailSmall]" />
+                    <param name="Square" value="$PROPERTY[isSquare]" />
+                    <param name="SquareMiddle" value="$PROPERTY[isSquareMiddle]" />
+                    <param name="SquareSmall" value="$PROPERTY[isSquareSmall]" />
+                </include>
+
+                <include content="Def_Weather_Layout_Item_Focus" condition="$PROPERTY[isWeatherLayout]">
+                    <param name="shortcutsid" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                    <param name="Fanart" value="$PROPERTY[isFanart]" />
+                    <param name="Square" value="$PROPERTY[isSquare]" />
+                </include>
+
+                <include content="Def_System_Layout_Item_Focus" condition="$PROPERTY[isSystemLayout]">
+                    <param name="shortcutsid" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                </include>
+
+                <include content="Def_System_Layout_Item_Focus" condition="$PROPERTY[isSettingsLayout]">
+                    <param name="shortcutsid" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                </include>
+
+                <!-- Widget content -->
+                <content limit="$PROPERTY[limit]" target="$PROPERTY[widgetTarget]" sortby="$PROPERTY[widgetSortby]" sortorder="$PROPERTY[widgetSortorder]" browse="never">$PROPERTY[widgetPath]</content>
+
+                <!-- More content button -->
+                <include content="Def_Widget_Item_More_Content" condition="Skin.HasSetting(enable.morewidget) + $PROPERTY[moreVisible]">
+                    <param name="id" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                    <param name="target" value="$PROPERTY[widgetTarget]" />
+                    <param name="content" value="$PROPERTY[widgetPath]" />
+                </include>
+            </control>
+
+            <!-- Widget navigation arrows group -->
+            <control type="group" id="$MATH[$PARENT[index] * 1000 + 500 + widgetIndex]">
+                <visible>[$EXP[widgetItemVisible]]</visible>
+
+                <control type="group" id="$MATH[$PARENT[index] * 1000 + 400 + widgetIndex]">
+                    <include content="Widget_Navigation_Arrows">
+                        <param name="id" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                        <param name="focusid" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                        <param name="idshort" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                        <param name="animation_condition" value="!Control.HasFocus($MATH[$PARENT[index] * 1000 + 600 + widgetIndex])" />
+                        <param name="submenuVisibility" value="$PARENT[name]" />
+                    </include>
+                </control>
+            </control>
+
+            <!-- Widget info for Home Flix style -->
+            <control type="group" id="$MATH[$PARENT[index] * 1000 + 700 + widgetIndex]">
+                <visible>[$EXP[widgetItemVisible]]</visible>
+                <visible>Skin.HasSetting(home.style.flix)</visible>
+
+                <include content="Animation_Fade_Out_Home_Fullscreen_Widget">
+                    <param name="condition" value="!Control.HasFocus($MATH[$PARENT[index] * 1000 + 600 + widgetIndex])" />
+                </include>
+
+                <include content="Animation_Widget_Direction" condition="$EXP[Home_Is_Vertical] + !Skin.HasSetting(home.disable.widget.animation)">
+                    <param name="visible" value="[String.IsEqual(Container(300).ListItem.Property(submenuVisibility),$PARENT[name])]" />
+                </include>
+
+                <control type="group">
+                    <include content="Home_Flix_Widgets_Item_Info" condition="$PROPERTY[isNormalLayout]">
+                        <param name="id" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                        <param name="labelisvisible" value="$PROPERTY[labelIsVisible]" />
+                        <param name="submenuVisibility" value="$PARENT[name]" />
+                    </include>
+                </control>
+
+                <control type="grouplist">
+                    <include condition="$PROPERTY[isWeatherLayout]">Home_Flix_Widgets_Weather_Info</include>
+                </control>
+
+                <control type="grouplist">
+                    <include content="Home_Flix_Widgets_System_Info" condition="$PROPERTY[isSystemLayout] | $PROPERTY[isSettingsLayout]">
+                        <param name="issettingslayout" value="$PROPERTY[isSettingsLayout]" />
+                        <param name="id" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                    </include>
+                </control>
+            </control>
+
+            <!-- Widget title label group -->
+            <control type="group" id="$MATH[$PARENT[index] * 1000 + 900 + widgetIndex]">
+                <visible>[$EXP[widgetItemVisible]]</visible>
+
+                <include content="Animation_Widget_Direction" condition="$EXP[Home_Is_Vertical] + !Skin.HasSetting(home.disable.widget.animation)">
+                    <param name="visible" value="[String.IsEqual(Container(300).ListItem.Property(submenuVisibility),$PARENT[name])]" />
+                </include>
+
+                <control type="grouplist" id="$MATH[$PARENT[index] * 1000 + 800 + widgetIndex]">
+                    <include content="Widget_Title_Label" condition="!Skin.HasSetting(hide.widget.title)">
+                        <param name="focusid" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                        <param name="idshort" value="$MATH[$PARENT[index] * 1000 + 600 + widgetIndex]" />
+                        <param name="animation_condition" value="!Control.HasFocus($MATH[$PARENT[index] * 1000 + 600 + widgetIndex])" />
+                        <param name="submenuVisibility" value="$PARENT[name]" />
+                        <param name="widget_label" value="$PROPERTY[widgetLabel]" />
+                        <param name="busy_visible" value="Integer.IsEqual(Container($MATH[$PARENT[index] * 1000 + 600 + widgetIndex]).NumItems,0) | Container($MATH[$PARENT[index] * 1000 + 600 + widgetIndex]).IsUpdating" />
+                    </include>
+                </control>
+            </control>
+        </controls>
+    </template>
+
+    <!-- ============================================================ -->
+    <!--                    MAIN WIDGETS TEMPLATE                     -->
+    <!-- ============================================================ -->
+    <!-- Container for all widgets, iterates over main menu items -->
+
+    <template include="widgets" menu="mainmenu">
+        <property name="mainMenuIndex" from="index" />
+        <property name="menuName" from="name" />
+        <property name="submenuVisibility" from="submenuVisibility" />
+
+        <controls>
+            <control type="grouplist" id="$MATH[mainMenuIndex * 1000 + 400]">
+                <include>Animation_Common_Global</include>
+                <include>Animation_NowPlaying_Widget_Fade</include>
+                <include>Animation_Scrolltime_Widgets_Container</include>
+
+                <itemgap>0</itemgap>
+                <orientation>vertical</orientation>
+                <usecontrolcoords>true</usecontrolcoords>
+
+                <!-- HOME HORIZONTAL -->
+                <onup condition="$EXP[Home_Is_Horizontal] + !Skin.HasSetting(disable.widgets.onup.go.back.to.last.item)">SetFocus(8888)</onup>
+                <onup condition="$EXP[Home_Is_Horizontal] + !Skin.HasSetting(disable.widgets.onup.go.back.to.main.menu) + Skin.HasSetting(disable.widgets.onup.go.back.to.last.item) + !Skin.HasSetting(enable_widgets_to_position_0_onback_menu)">300</onup>
+                <onup condition="$EXP[Home_Is_Horizontal] + !Skin.HasSetting(disable.widgets.onup.go.back.to.main.menu) + Skin.HasSetting(disable.widgets.onup.go.back.to.last.item) + Skin.HasSetting(enable_widgets_to_position_0_onback_menu)">SetFocus(4567)</onup>
+                <onup condition="$EXP[Home_Is_Horizontal] + Skin.HasSetting(disable.widgets.onup.go.back.to.main.menu) + Skin.HasSetting(disable.widgets.onup.go.back.to.last.item) + Skin.HasSetting(enable_widgets_to_position_0_onback_menu)">SetFocus(301,0)</onup>
+
+                <ondown condition="$EXP[Home_Is_Horizontal] + Skin.HasSetting(enable.widgets.ondown.go.back.to.first.item)">SetFocus(8808)</ondown>
+                <ondown condition="$EXP[Home_Is_Horizontal] + !Skin.HasSetting(enable.widgets.ondown.go.back.to.first.item) + Skin.HasSetting(disable.widgets.ondown.go.back.to.position.0) + !Skin.HasSetting(enable_widgets_to_position_0_onback_menu)">300</ondown>
+                <ondown condition="$EXP[Home_Is_Horizontal] + !Skin.HasSetting(enable.widgets.ondown.go.back.to.first.item) + [!Skin.HasSetting(disable.widgets.ondown.go.back.to.position.0) | Skin.HasSetting(enable_widgets_to_position_0_onback_menu)]">SetFocus(4567)</ondown>
+
+                <!-- HOME VERTICAL -->
+                <onup condition="$EXP[Home_Is_Vertical] + Skin.HasSetting(enable.widgets.onup.go.back.to.last.widget)">9888</onup>
+                <onup condition="$EXP[Home_Is_Vertical] + !Skin.HasSetting(enable.widgets.onup.go.back.to.last.widget) + !Skin.HasSetting(enable_widgets_to_position_0_onback_menu)">300</onup>
+                <onup condition="$EXP[Home_Is_Vertical] + !Skin.HasSetting(enable.widgets.onup.go.back.to.last.widget) + Skin.HasSetting(enable_widgets_to_position_0_onback_menu)">SetFocus(9567)</onup>
+
+                <ondown condition="$EXP[Home_Is_Vertical] + Skin.HasSetting(enable.widgets.onup.go.back.to.last.widget)">9808</ondown>
+                <ondown condition="$EXP[Home_Is_Vertical] + !Skin.HasSetting(enable.widgets.onup.go.back.to.last.widget) + !Skin.HasSetting(enable_widgets_to_position_0_onback_menu)">300</ondown>
+                <ondown condition="$EXP[Home_Is_Vertical] + !Skin.HasSetting(enable.widgets.onup.go.back.to.last.widget) + Skin.HasSetting(enable_widgets_to_position_0_onback_menu)">SetFocus(9567)</ondown>
+
+                <!-- Widget items inserted here -->
+                <skinshortcuts insert="widgets" />
+            </control>
+        </controls>
+    </template>
+
+    <!-- ============================================================ -->
+    <!--                    OTHER TEMPLATES                           -->
+    <!-- ============================================================ -->
+
+    <!-- Weather Daily -->
+    <template include="WeatherDailyInfoContent" build="true">
+        <controls>
+            <include>Def_Content_Widget_Weather_Daily_Items</include>
+        </controls>
+    </template>
+
+    <!-- Weather Hourly -->
+    <template include="WeatherHourlyInfoContent" build="true">
+        <controls>
+            <include>Def_Content_Widget_Weather_Hourly_Items</include>
+        </controls>
+    </template>
+
+    <!-- System Info -->
+    <template include="SystemInfoContent" build="true">
+        <controls>
+            <include>Def_Content_Widget_System_Info_Items</include>
+        </controls>
+    </template>
+
+    <!-- Settings -->
+    <template include="SettingsInfoContent" build="true">
+        <controls>
+            <include>Def_Content_Widget_Settings_Items</include>
+        </controls>
+    </template>
+</templates>

@@ -1,0 +1,2126 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<includes>
+	<include name="skinshortcuts-mainmenu">
+		<item id="1">
+			<label>137</label>
+			<label2>script.globalsearch</label2>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>RunScript(script.globalsearch)</onclick>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">script.globalsearch</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">RunScript(script.globalsearch)</property>
+			<property name="path">RunScript(script.globalsearch)</property>
+			<property name="submenuVisibility">script.globalsearch</property>
+			<property name="widgetName">Global search</property>
+			<property name="defaultID">script.globalsearch</property>
+		</item>
+		<item id="2">
+			<label>10000</label>
+			<label2>widget1</label2>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>noop</onclick>
+			<visible>Library.HasContent(Movies) | Library.HasContent(TVShows)</visible>
+			<property name="id">$NUMBER[2]</property>
+			<property name="name">home</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">noop</property>
+			<property name="path">noop</property>
+			<property name="submenuVisibility">home</property>
+			<property name="widgetgroup">widget1</property>
+			<property name="widgetName">Widget Group 1</property>
+			<property name="defaultID">home</property>
+		</item>
+		<item id="3">
+			<label>20342</label>
+			<label2>widget2</label2>
+			<icon>DefaultMovies.png</icon>
+			<onclick>ActivateWindow(Videos,MovieTitles,return)</onclick>
+			<property name="id">$NUMBER[3]</property>
+			<property name="name">movies</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Videos,MovieTitles,return)</property>
+			<property name="path">MovieTitles</property>
+			<property name="submenuVisibility">movies</property>
+			<property name="widgetgroup">widget2</property>
+			<property name="widgetName">Widget Group 2</property>
+			<property name="defaultID">movies</property>
+		</item>
+		<item id="4">
+			<label>36903</label>
+			<label2>widget3</label2>
+			<icon>DefaultTVShows.png</icon>
+			<onclick>ActivateWindow(Videos,TVShowTitles,return)</onclick>
+			<property name="id">$NUMBER[4]</property>
+			<property name="name">tvshows</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Videos,TVShowTitles,return)</property>
+			<property name="path">TVShowTitles</property>
+			<property name="submenuVisibility">tvshows</property>
+			<property name="widgetgroup">widget3</property>
+			<property name="widgetName">Widget Group 3</property>
+			<property name="defaultID">tvshows</property>
+		</item>
+		<item id="5">
+			<label>1036</label>
+			<label2>favourites</label2>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(favouritesbrowser,return)</onclick>
+			<property name="id">$NUMBER[5]</property>
+			<property name="name">favourites</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(favouritesbrowser,return)</property>
+			<property name="path">return</property>
+			<property name="submenuVisibility">favourites</property>
+			<property name="widgetgroup">favourites</property>
+			<property name="widgetName">Favourites</property>
+			<property name="defaultID">favourites</property>
+		</item>
+		<item id="6">
+			<label>10025</label>
+			<label2>widget4</label2>
+			<icon>DefaultVideo.png</icon>
+			<onclick>ActivateWindow(Videos,root)</onclick>
+			<property name="id">$NUMBER[6]</property>
+			<property name="name">videos</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Videos,root)</property>
+			<property name="path">root</property>
+			<property name="submenuVisibility">videos</property>
+			<property name="widgetgroup">widget4</property>
+			<property name="widgetName">Widget Group 4</property>
+			<property name="defaultID">videos</property>
+		</item>
+		<item id="7">
+			<label>10502</label>
+			<label2>widget5</label2>
+			<icon>DefaultMusicAlbums.png</icon>
+			<onclick>ActivateWindow(Music,root)</onclick>
+			<property name="id">$NUMBER[7]</property>
+			<property name="name">music</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Music,root)</property>
+			<property name="path">root</property>
+			<property name="submenuVisibility">music</property>
+			<property name="widgetgroup">widget5</property>
+			<property name="widgetName">Widget Group 5</property>
+			<property name="defaultID">music</property>
+		</item>
+		<item id="8">
+			<label>15016</label>
+			<label2>widget6</label2>
+			<icon>ftv_icon.png</icon>
+			<onclick>ActivateWindow(Games)</onclick>
+			<visible>System.GetBool(gamesgeneral.enable)</visible>
+			<property name="id">$NUMBER[8]</property>
+			<property name="name">games</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Games)</property>
+			<property name="path">ActivateWindow(Games)</property>
+			<property name="submenuVisibility">games</property>
+			<property name="widgetgroup">widget6</property>
+			<property name="widgetName">Widget Group 6</property>
+			<property name="defaultID">games</property>
+		</item>
+		<item id="9">
+			<label>10506</label>
+			<label2>widget7</label2>
+			<icon>DefaultProgram.png</icon>
+			<onclick>ActivateWindow(1112)</onclick>
+			<property name="id">$NUMBER[9]</property>
+			<property name="name">programs</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(1112)</property>
+			<property name="path">ActivateWindow(1112)</property>
+			<property name="submenuVisibility">programs</property>
+			<property name="widgetgroup">widget7</property>
+			<property name="widgetName">Widget Group 7</property>
+			<property name="defaultID">programs</property>
+		</item>
+		<item id="10">
+			<label>1213</label>
+			<label2>widget8</label2>
+			<icon>DefaultPicture.png</icon>
+			<onclick>ActivateWindow(Pictures)</onclick>
+			<property name="id">$NUMBER[10]</property>
+			<property name="name">pictures</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Pictures)</property>
+			<property name="path">ActivateWindow(Pictures)</property>
+			<property name="submenuVisibility">pictures</property>
+			<property name="widgetgroup">widget8</property>
+			<property name="widgetName">Widget Group 8</property>
+			<property name="defaultID">pictures</property>
+		</item>
+		<item id="11">
+			<label>12600</label>
+			<label2>weather</label2>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(Weather)</onclick>
+			<property name="id">$NUMBER[11]</property>
+			<property name="name">weather</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Weather)</property>
+			<property name="path">ActivateWindow(Weather)</property>
+			<property name="submenuVisibility">weather</property>
+			<property name="widgetgroup">weather</property>
+			<property name="widgetName">Weather</property>
+			<property name="defaultID">weather</property>
+		</item>
+		<item id="12">
+			<label>10004</label>
+			<label2>settings</label2>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindowAndFocus(Settings,9000,0)</onclick>
+			<property name="id">$NUMBER[12]</property>
+			<property name="name">settings</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindowAndFocus(Settings,9000,0)</property>
+			<property name="path">ActivateWindowAndFocus(Settings,9000,0)</property>
+			<property name="submenuVisibility">settings</property>
+			<property name="widgetName">Settings</property>
+			<property name="defaultID">settings</property>
+		</item>
+		<item id="13">
+			<label>13012</label>
+			<label2>exit</label2>
+			<icon>DefaultShortcut.png</icon>
+			<onclick>ActivateWindow(ShutdownMenu)</onclick>
+			<property name="id">$NUMBER[13]</property>
+			<property name="name">exit</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(ShutdownMenu)</property>
+			<property name="path">ActivateWindow(ShutdownMenu)</property>
+			<property name="submenuVisibility">exit</property>
+			<property name="widgetName">Exit</property>
+			<property name="defaultID">exit</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-shutdown">
+		<item id="1">
+			<label>13009</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultQuit.png</icon>
+			<onclick>Quit</onclick>
+			<onclick>Close</onclick>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">quit</property>
+			<property name="menu">shutdown</property>
+			<property name="action">Quit</property>
+			<property name="path">Quit</property>
+			<property name="submenuVisibility">quit</property>
+			<property name="defaultID">13009</property>
+		</item>
+		<item id="2">
+			<label>13011</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultSleep.png</icon>
+			<onclick>Suspend</onclick>
+			<onclick>Close</onclick>
+			<property name="id">$NUMBER[2]</property>
+			<property name="name">suspend</property>
+			<property name="menu">shutdown</property>
+			<property name="action">Suspend</property>
+			<property name="path">Suspend</property>
+			<property name="submenuVisibility">suspend</property>
+			<property name="defaultID">13011</property>
+		</item>
+		<item id="3">
+			<label>13010</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultSleep.png</icon>
+			<onclick>Hibernate</onclick>
+			<onclick>Close</onclick>
+			<property name="id">$NUMBER[3]</property>
+			<property name="name">hibernate</property>
+			<property name="menu">shutdown</property>
+			<property name="action">Hibernate</property>
+			<property name="path">Hibernate</property>
+			<property name="submenuVisibility">hibernate</property>
+			<property name="defaultID">13010</property>
+		</item>
+		<item id="4">
+			<label>13013</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultReboot.png</icon>
+			<onclick>Reboot</onclick>
+			<onclick>Close</onclick>
+			<property name="id">$NUMBER[4]</property>
+			<property name="name">reboot</property>
+			<property name="menu">shutdown</property>
+			<property name="action">Reboot</property>
+			<property name="path">Reboot</property>
+			<property name="submenuVisibility">reboot</property>
+			<property name="defaultID">13013</property>
+		</item>
+		<item id="5">
+			<label>13016</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultShutdown.png</icon>
+			<onclick>PowerDown</onclick>
+			<onclick>Close</onclick>
+			<property name="id">$NUMBER[5]</property>
+			<property name="name">powerdown</property>
+			<property name="menu">shutdown</property>
+			<property name="action">PowerDown</property>
+			<property name="path">PowerDown</property>
+			<property name="submenuVisibility">powerdown</property>
+			<property name="defaultID">13016</property>
+		</item>
+		<item id="6">
+			<label>13005</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultShutdown.png</icon>
+			<onclick>ShutDown</onclick>
+			<onclick>Close</onclick>
+			<property name="id">$NUMBER[6]</property>
+			<property name="name">shutdown</property>
+			<property name="menu">shutdown</property>
+			<property name="action">ShutDown</property>
+			<property name="path">ShutDown</property>
+			<property name="submenuVisibility">shutdown</property>
+			<property name="defaultID">13005</property>
+		</item>
+		<item id="7">
+			<label>19026</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultTimer.png</icon>
+			<onclick>AlarmClock(shutdowntimer,XBMC.Shutdown())</onclick>
+			<onclick>Close</onclick>
+			<property name="id">$NUMBER[7]</property>
+			<property name="name">shutdown_timer</property>
+			<property name="menu">shutdown</property>
+			<property name="action">AlarmClock(shutdowntimer,XBMC.Shutdown())</property>
+			<property name="path">AlarmClock(shutdowntimer,XBMC.Shutdown())</property>
+			<property name="submenuVisibility">shutdown_timer</property>
+			<property name="defaultID">19026</property>
+		</item>
+		<item id="8">
+			<label>20151</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultTimer.png</icon>
+			<onclick>CancelAlarm(shutdowntimer)</onclick>
+			<onclick>Close</onclick>
+			<property name="id">$NUMBER[8]</property>
+			<property name="name">cancel_shutdown_timer</property>
+			<property name="menu">shutdown</property>
+			<property name="action">CancelAlarm(shutdowntimer)</property>
+			<property name="path">CancelAlarm(shutdowntimer)</property>
+			<property name="submenuVisibility">cancel_shutdown_timer</property>
+			<property name="defaultID">20151</property>
+		</item>
+		<item id="9">
+			<label>360</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultScreensaver.png</icon>
+			<onclick>ActivateScreensaver</onclick>
+			<onclick>Close</onclick>
+			<property name="id">$NUMBER[9]</property>
+			<property name="name">screensaver</property>
+			<property name="menu">shutdown</property>
+			<property name="action">ActivateScreensaver</property>
+			<property name="path">ActivateScreensaver</property>
+			<property name="submenuVisibility">screensaver</property>
+			<property name="defaultID">360</property>
+		</item>
+		<item id="10">
+			<label>20045</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultMasterMode.png</icon>
+			<onclick>Mastermode</onclick>
+			<onclick>Close</onclick>
+			<property name="id">$NUMBER[10]</property>
+			<property name="name">mastermode</property>
+			<property name="menu">shutdown</property>
+			<property name="action">Mastermode</property>
+			<property name="path">Mastermode</property>
+			<property name="submenuVisibility">mastermode</property>
+			<property name="defaultID">20045</property>
+		</item>
+		<item id="11">
+			<label>20126</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultActor.png</icon>
+			<onclick>System.LogOff</onclick>
+			<onclick>Close</onclick>
+			<property name="id">$NUMBER[11]</property>
+			<property name="name">logoff</property>
+			<property name="menu">shutdown</property>
+			<property name="action">System.LogOff</property>
+			<property name="path">System.LogOff</property>
+			<property name="submenuVisibility">logoff</property>
+			<property name="defaultID">20126</property>
+		</item>
+		<item id="12">
+			<label>10004</label>
+			<label2>Common Shortcut</label2>
+			<icon>DefaultSettings.png</icon>
+			<onclick>ActivateWindow(Settings)</onclick>
+			<onclick>Close</onclick>
+			<property name="id">$NUMBER[12]</property>
+			<property name="name">settings</property>
+			<property name="menu">shutdown</property>
+			<property name="action">ActivateWindow(Settings)</property>
+			<property name="path">ActivateWindow(Settings)</property>
+			<property name="submenuVisibility">settings</property>
+			<property name="defaultID">settings</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-widget1">
+		<item id="1">
+			<label>31177</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">widget1-1</property>
+			<property name="menu">widget1</property>
+			<property name="submenuVisibility">widget1-1</property>
+			<property name="groupId">1000</property>
+			<property name="widgetLabel">31177</property>
+			<property name="widget">inprogress-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/InProgressTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">lastplayed</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="2">
+			<label>31167</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[2]</property>
+			<property name="name">widget1-2</property>
+			<property name="menu">widget1</property>
+			<property name="submenuVisibility">widget1-2</property>
+			<property name="groupId">1000</property>
+			<property name="widgetLabel">31167</property>
+			<property name="widget">recent-movies</property>
+			<property name="widgetPath">special://skin/extras/video/RecentlyAddedMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">dateadded</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="3">
+			<label>31175</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[3]</property>
+			<property name="name">widget1-3</property>
+			<property name="menu">widget1</property>
+			<property name="submenuVisibility">widget1-3</property>
+			<property name="groupId">1000</property>
+			<property name="widgetLabel">31175</property>
+			<property name="widget">recent-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/RecentlyUpdatedTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">dateadded</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="4">
+			<label>31169</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[4]</property>
+			<property name="name">widget1-4</property>
+			<property name="menu">widget1</property>
+			<property name="submenuVisibility">widget1-4</property>
+			<property name="groupId">1000</property>
+			<property name="widgetLabel">31169</property>
+			<property name="widget">inprogress-movies</property>
+			<property name="widgetPath">special://skin/extras/video/InProgressMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">lastplayed</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="5">
+			<label>31183</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[5]</property>
+			<property name="name">widget1-5</property>
+			<property name="menu">widget1</property>
+			<property name="submenuVisibility">widget1-5</property>
+			<property name="groupId">1000</property>
+			<property name="widgetLabel">31183</property>
+			<property name="widget">recently-played-albums</property>
+			<property name="widgetPath">musicdb://recentlyplayedalbums/</property>
+			<property name="widgetType">albums</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">lastplayed</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">square</property>
+		</item>
+		<item id="6">
+			<label>31185</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[6]</property>
+			<property name="name">widget1-6</property>
+			<property name="menu">widget1</property>
+			<property name="submenuVisibility">widget1-6</property>
+			<property name="groupId">1000</property>
+			<property name="widgetLabel">31185</property>
+			<property name="widget">recently-added-albums</property>
+			<property name="widgetPath">musicdb://recentlyaddedalbums/</property>
+			<property name="widgetType">albums</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">dateadded</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">square</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-widget2">
+		<item id="1">
+			<label>31168</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">widget2-1</property>
+			<property name="menu">widget2</property>
+			<property name="submenuVisibility">widget2-1</property>
+			<property name="groupId">2000</property>
+			<property name="widgetLabel">31168</property>
+			<property name="widget">your-movies</property>
+			<property name="widgetPath">special://skin/extras/video/YourMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">name</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="2">
+			<label>31167</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[2]</property>
+			<property name="name">widget2-2</property>
+			<property name="menu">widget2</property>
+			<property name="submenuVisibility">widget2-2</property>
+			<property name="groupId">2000</property>
+			<property name="widgetLabel">31167</property>
+			<property name="widget">recent-movies</property>
+			<property name="widgetPath">special://skin/extras/video/RecentlyAddedMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">dateadded</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="3">
+			<label>31169</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[3]</property>
+			<property name="name">widget2-3</property>
+			<property name="menu">widget2</property>
+			<property name="submenuVisibility">widget2-3</property>
+			<property name="groupId">2000</property>
+			<property name="widgetLabel">31169</property>
+			<property name="widget">inprogress-movies</property>
+			<property name="widgetPath">special://skin/extras/video/InProgressMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">lastplayed</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="4">
+			<label>31170</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[4]</property>
+			<property name="name">widget2-4</property>
+			<property name="menu">widget2</property>
+			<property name="submenuVisibility">widget2-4</property>
+			<property name="groupId">2000</property>
+			<property name="widgetLabel">31170</property>
+			<property name="widget">kids-movies</property>
+			<property name="widgetPath">special://skin/extras/video/KidsMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">name</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="5">
+			<label>31174</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[5]</property>
+			<property name="name">widget2-5</property>
+			<property name="menu">widget2</property>
+			<property name="submenuVisibility">widget2-5</property>
+			<property name="groupId">2000</property>
+			<property name="widgetLabel">31174</property>
+			<property name="widget">toprated-movies</property>
+			<property name="widgetPath">special://skin/extras/video/TopRatedMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">rating</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="6">
+			<label>31024</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[6]</property>
+			<property name="name">widget2-6</property>
+			<property name="menu">widget2</property>
+			<property name="submenuVisibility">widget2-6</property>
+			<property name="groupId">2000</property>
+			<property name="widgetLabel">31024</property>
+			<property name="widgetPath">library://video/movies/sets.xml/</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">name</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-widget3">
+		<item id="1">
+			<label>31176</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">widget3-1</property>
+			<property name="menu">widget3</property>
+			<property name="submenuVisibility">widget3-1</property>
+			<property name="groupId">3000</property>
+			<property name="widgetLabel">31176</property>
+			<property name="widget">your-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/YourTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">name</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="2">
+			<label>31175</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[2]</property>
+			<property name="name">widget3-2</property>
+			<property name="menu">widget3</property>
+			<property name="submenuVisibility">widget3-2</property>
+			<property name="groupId">3000</property>
+			<property name="widgetLabel">31175</property>
+			<property name="widget">recent-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/RecentlyUpdatedTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">dateadded</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="3">
+			<label>31177</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[3]</property>
+			<property name="name">widget3-3</property>
+			<property name="menu">widget3</property>
+			<property name="submenuVisibility">widget3-3</property>
+			<property name="groupId">3000</property>
+			<property name="widgetLabel">31177</property>
+			<property name="widget">inprogress-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/InProgressTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">lastplayed</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="4">
+			<label>31178</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[4]</property>
+			<property name="name">widget3-4</property>
+			<property name="menu">widget3</property>
+			<property name="submenuVisibility">widget3-4</property>
+			<property name="groupId">3000</property>
+			<property name="widgetLabel">31178</property>
+			<property name="widget">kids-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/KidsTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">name</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item id="5">
+			<label>31182</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[5]</property>
+			<property name="name">widget3-5</property>
+			<property name="menu">widget3</property>
+			<property name="submenuVisibility">widget3-5</property>
+			<property name="groupId">3000</property>
+			<property name="widgetLabel">31182</property>
+			<property name="widget">toprated-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/TopRatedTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">rating</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-widget4">
+		<item id="1">
+			<label>31223</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">widget4-1</property>
+			<property name="menu">widget4</property>
+			<property name="submenuVisibility">widget4-1</property>
+			<property name="groupId">4000</property>
+			<property name="widgetLabel">31223</property>
+			<property name="widgetPath">addons://sources/video/</property>
+			<property name="widgetType">addons</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">label</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-widget5">
+		<item id="1">
+			<label>31183</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">widget5-1</property>
+			<property name="menu">widget5</property>
+			<property name="submenuVisibility">widget5-1</property>
+			<property name="groupId">5000</property>
+			<property name="widgetLabel">31183</property>
+			<property name="widget">recently-played-albums</property>
+			<property name="widgetPath">musicdb://recentlyplayedalbums/</property>
+			<property name="widgetType">albums</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">lastplayed</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+		<item id="2">
+			<label>31185</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[2]</property>
+			<property name="name">widget5-2</property>
+			<property name="menu">widget5</property>
+			<property name="submenuVisibility">widget5-2</property>
+			<property name="groupId">5000</property>
+			<property name="widgetLabel">31185</property>
+			<property name="widget">recently-added-albums</property>
+			<property name="widgetPath">musicdb://recentlyaddedalbums/</property>
+			<property name="widgetType">albums</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">dateadded</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+		<item id="3">
+			<label>31184</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[3]</property>
+			<property name="name">widget5-3</property>
+			<property name="menu">widget5</property>
+			<property name="submenuVisibility">widget5-3</property>
+			<property name="groupId">5000</property>
+			<property name="widgetLabel">31184</property>
+			<property name="widget">your-albums</property>
+			<property name="widgetPath">special://skin/extras/music/YourAlbums.xsp</property>
+			<property name="widgetType">albums</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">artist</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+		<item id="4">
+			<label>31186</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[4]</property>
+			<property name="name">widget5-4</property>
+			<property name="menu">widget5</property>
+			<property name="submenuVisibility">widget5-4</property>
+			<property name="groupId">5000</property>
+			<property name="widgetLabel">31186</property>
+			<property name="widget">your-artists</property>
+			<property name="widgetPath">special://skin/extras/music/YourArtists.xsp</property>
+			<property name="widgetType">artists</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">artist</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+		<item id="5">
+			<label>31187</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[5]</property>
+			<property name="name">widget5-5</property>
+			<property name="menu">widget5</property>
+			<property name="submenuVisibility">widget5-5</property>
+			<property name="groupId">5000</property>
+			<property name="widgetLabel">31187</property>
+			<property name="widget">music-genres</property>
+			<property name="widgetPath">musicdb://genres/</property>
+			<property name="widgetType">music</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">genre</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-widget6">
+		<item id="1">
+			<label>31100</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">widget6-1</property>
+			<property name="menu">widget6</property>
+			<property name="submenuVisibility">widget6-1</property>
+			<property name="groupId">6000</property>
+			<property name="widgetLabel">31100</property>
+			<property name="widgetPath">addons://sources/game/</property>
+			<property name="widgetType">addons</property>
+			<property name="widgetTarget">games</property>
+			<property name="widgetSortBy">label</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-widget7">
+		<item id="1">
+			<label>31222</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">widget7-1</property>
+			<property name="menu">widget7</property>
+			<property name="submenuVisibility">widget7-1</property>
+			<property name="groupId">7000</property>
+			<property name="widgetLabel">31222</property>
+			<property name="widgetPath">addons://sources/executable/</property>
+			<property name="widgetType">addons</property>
+			<property name="widgetTarget">programs</property>
+			<property name="widgetSortBy">label</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-widget8">
+		<item id="1">
+			<label>1039</label>
+			<icon>ftv_icon.png</icon>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">widget8-1</property>
+			<property name="menu">widget8</property>
+			<property name="submenuVisibility">widget8-1</property>
+			<property name="groupId">8000</property>
+			<property name="widgetLabel">1039</property>
+			<property name="widgetPath">addons://sources/image/</property>
+			<property name="widgetType">addons</property>
+			<property name="widgetTarget">pictures</property>
+			<property name="widgetSortBy">name</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-template-widget-lists">
+		<control type="list" id="1001">
+			<include>HiddenList</include>
+			<content target="videos" sortby="lastplayed" sortorder="descending" limit="6">special://skin/extras/video/InProgressTVShows.xsp</content>
+		</control>
+		<control type="list" id="1002">
+			<include>HiddenList</include>
+			<content target="videos" sortby="dateadded" sortorder="descending" limit="6">special://skin/extras/video/RecentlyAddedMovies.xsp</content>
+		</control>
+		<control type="list" id="1003">
+			<include>HiddenList</include>
+			<content target="videos" sortby="dateadded" sortorder="descending" limit="6">special://skin/extras/video/RecentlyUpdatedTVShows.xsp</content>
+		</control>
+		<control type="list" id="1004">
+			<include>HiddenList</include>
+			<content target="videos" sortby="lastplayed" sortorder="descending" limit="6">special://skin/extras/video/InProgressMovies.xsp</content>
+		</control>
+		<control type="list" id="1005">
+			<include>HiddenList</include>
+			<content target="music" sortby="lastplayed" sortorder="descending" limit="6">musicdb://recentlyplayedalbums/</content>
+		</control>
+		<control type="list" id="1006">
+			<include>HiddenList</include>
+			<content target="music" sortby="dateadded" sortorder="descending" limit="6">musicdb://recentlyaddedalbums/</content>
+		</control>
+		<control type="list" id="2001">
+			<include>HiddenList</include>
+			<content target="videos" sortby="name" sortorder="ascending" limit="6">special://skin/extras/video/YourMovies.xsp</content>
+		</control>
+		<control type="list" id="2002">
+			<include>HiddenList</include>
+			<content target="videos" sortby="dateadded" sortorder="descending" limit="6">special://skin/extras/video/RecentlyAddedMovies.xsp</content>
+		</control>
+		<control type="list" id="2003">
+			<include>HiddenList</include>
+			<content target="videos" sortby="lastplayed" sortorder="descending" limit="6">special://skin/extras/video/InProgressMovies.xsp</content>
+		</control>
+		<control type="list" id="2004">
+			<include>HiddenList</include>
+			<content target="videos" sortby="name" sortorder="ascending" limit="6">special://skin/extras/video/KidsMovies.xsp</content>
+		</control>
+		<control type="list" id="2005">
+			<include>HiddenList</include>
+			<content target="videos" sortby="rating" sortorder="descending" limit="6">special://skin/extras/video/TopRatedMovies.xsp</content>
+		</control>
+		<control type="list" id="2006">
+			<include>HiddenList</include>
+			<content target="videos" sortby="name" sortorder="ascending" limit="6">library://video/movies/sets.xml/</content>
+		</control>
+		<control type="list" id="3001">
+			<include>HiddenList</include>
+			<content target="videos" sortby="name" sortorder="ascending" limit="6">special://skin/extras/video/YourTVShows.xsp</content>
+		</control>
+		<control type="list" id="3002">
+			<include>HiddenList</include>
+			<content target="videos" sortby="dateadded" sortorder="descending" limit="6">special://skin/extras/video/RecentlyUpdatedTVShows.xsp</content>
+		</control>
+		<control type="list" id="3003">
+			<include>HiddenList</include>
+			<content target="videos" sortby="lastplayed" sortorder="descending" limit="6">special://skin/extras/video/InProgressTVShows.xsp</content>
+		</control>
+		<control type="list" id="3004">
+			<include>HiddenList</include>
+			<content target="videos" sortby="name" sortorder="ascending" limit="6">special://skin/extras/video/KidsTVShows.xsp</content>
+		</control>
+		<control type="list" id="3005">
+			<include>HiddenList</include>
+			<content target="videos" sortby="rating" sortorder="descending" limit="6">special://skin/extras/video/TopRatedTVShows.xsp</content>
+		</control>
+		<control type="list" id="4001">
+			<include>HiddenList</include>
+			<content target="videos" sortby="label" sortorder="ascending" limit="6">addons://sources/video/</content>
+		</control>
+		<control type="list" id="5001">
+			<include>HiddenList</include>
+			<content target="music" sortby="lastplayed" sortorder="descending" limit="6">musicdb://recentlyplayedalbums/</content>
+		</control>
+		<control type="list" id="5002">
+			<include>HiddenList</include>
+			<content target="music" sortby="dateadded" sortorder="descending" limit="6">musicdb://recentlyaddedalbums/</content>
+		</control>
+		<control type="list" id="5003">
+			<include>HiddenList</include>
+			<content target="music" sortby="artist" sortorder="ascending" limit="6">special://skin/extras/music/YourAlbums.xsp</content>
+		</control>
+		<control type="list" id="5004">
+			<include>HiddenList</include>
+			<content target="music" sortby="artist" sortorder="ascending" limit="6">special://skin/extras/music/YourArtists.xsp</content>
+		</control>
+		<control type="list" id="5005">
+			<include>HiddenList</include>
+			<content target="music" sortby="genre" sortorder="ascending" limit="6">musicdb://genres/</content>
+		</control>
+		<control type="list" id="6001">
+			<include>HiddenList</include>
+			<content target="games" sortby="label" sortorder="ascending" limit="6">addons://sources/game/</content>
+		</control>
+		<control type="list" id="7001">
+			<include>HiddenList</include>
+			<content target="programs" sortby="label" sortorder="ascending" limit="6">addons://sources/executable/</content>
+		</control>
+		<control type="list" id="8001">
+			<include>HiddenList</include>
+			<content target="pictures" sortby="name" sortorder="ascending" limit="6">addons://sources/image/</content>
+		</control>
+	</include>
+	<include name="skinshortcuts-template-widget-rows">
+		<item>
+			<label>31177</label>
+			<visible>!String.IsEmpty(Container(1001).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/InProgressTVShows.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(1001).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(1001).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(1001).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(1001).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(1001).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(1001).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(1001).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(1001).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(1001).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(1001).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(1001).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(1001).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(1001).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(1001).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(1001).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(1001).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(1001).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(1001).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(1001).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(1001).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(1001).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(1001).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(1001).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(1001).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(1001).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(1001).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(1001).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(1001).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(1001).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(1001).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(1001).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(1001).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(1001).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(1001).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(1001).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(1001).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(1001).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(1001).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(1001).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/InProgressTVShows.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31167</label>
+			<visible>!String.IsEmpty(Container(1002).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/RecentlyAddedMovies.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(1002).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(1002).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(1002).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(1002).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(1002).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(1002).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(1002).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(1002).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(1002).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(1002).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(1002).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(1002).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(1002).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(1002).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(1002).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(1002).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(1002).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(1002).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(1002).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(1002).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(1002).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(1002).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(1002).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(1002).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(1002).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(1002).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(1002).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(1002).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(1002).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(1002).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(1002).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(1002).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(1002).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(1002).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(1002).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(1002).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(1002).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(1002).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(1002).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/RecentlyAddedMovies.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31175</label>
+			<visible>!String.IsEmpty(Container(1003).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/RecentlyUpdatedTVShows.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(1003).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(1003).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(1003).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(1003).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(1003).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(1003).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(1003).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(1003).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(1003).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(1003).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(1003).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(1003).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(1003).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(1003).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(1003).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(1003).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(1003).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(1003).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(1003).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(1003).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(1003).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(1003).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(1003).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(1003).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(1003).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(1003).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(1003).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(1003).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(1003).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(1003).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(1003).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(1003).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(1003).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(1003).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(1003).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(1003).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(1003).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(1003).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(1003).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/RecentlyUpdatedTVShows.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31169</label>
+			<visible>!String.IsEmpty(Container(1004).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/InProgressMovies.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(1004).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(1004).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(1004).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(1004).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(1004).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(1004).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(1004).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(1004).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(1004).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(1004).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(1004).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(1004).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(1004).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(1004).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(1004).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(1004).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(1004).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(1004).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(1004).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(1004).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(1004).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(1004).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(1004).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(1004).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(1004).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(1004).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(1004).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(1004).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(1004).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(1004).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(1004).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(1004).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(1004).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(1004).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(1004).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(1004).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(1004).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(1004).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(1004).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/InProgressMovies.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31183</label>
+			<visible>!String.IsEmpty(Container(1005).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31203]</property>
+			<property name="WidgetOnClick">ActivateWindow(music,"musicdb://recentlyplayedalbums/",return)</property>
+			<property name="Icon1">$INFO[Container(1005).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(1005).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(1005).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(1005).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(1005).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(1005).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(1005).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(1005).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(1005).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(1005).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(1005).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(1005).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(1005).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(1005).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(1005).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(1005).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(1005).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(1005).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(1005).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(1005).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(1005).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(1005).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(1005).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(1005).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(1005).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(1005).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(1005).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(1005).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(1005).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(1005).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(1005).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(1005).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(1005).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(1005).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(1005).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(1005).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(1005).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(1005).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(1005).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(music,"musicdb://recentlyplayedalbums/",return)</onclick>
+		</item>
+		<item>
+			<label>31185</label>
+			<visible>!String.IsEmpty(Container(1006).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31203]</property>
+			<property name="WidgetOnClick">ActivateWindow(music,"musicdb://recentlyaddedalbums/",return)</property>
+			<property name="Icon1">$INFO[Container(1006).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(1006).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(1006).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(1006).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(1006).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(1006).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(1006).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(1006).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(1006).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(1006).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(1006).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(1006).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(1006).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(1006).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(1006).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(1006).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(1006).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(1006).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(1006).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(1006).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(1006).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(1006).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(1006).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(1006).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(1006).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(1006).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(1006).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(1006).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(1006).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(1006).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(1006).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(1006).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(1006).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(1006).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(1006).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(1006).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(1006).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(1006).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(1006).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(music,"musicdb://recentlyaddedalbums/",return)</onclick>
+		</item>
+		<item>
+			<label>31168</label>
+			<visible>!String.IsEmpty(Container(2001).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/YourMovies.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(2001).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(2001).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(2001).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(2001).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(2001).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(2001).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(2001).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(2001).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(2001).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(2001).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(2001).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(2001).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(2001).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(2001).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(2001).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(2001).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(2001).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(2001).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(2001).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(2001).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(2001).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(2001).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(2001).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(2001).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(2001).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(2001).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(2001).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(2001).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(2001).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(2001).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(2001).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(2001).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(2001).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(2001).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(2001).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(2001).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(2001).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(2001).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(2001).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/YourMovies.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31167</label>
+			<visible>!String.IsEmpty(Container(2002).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/RecentlyAddedMovies.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(2002).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(2002).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(2002).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(2002).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(2002).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(2002).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(2002).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(2002).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(2002).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(2002).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(2002).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(2002).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(2002).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(2002).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(2002).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(2002).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(2002).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(2002).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(2002).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(2002).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(2002).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(2002).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(2002).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(2002).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(2002).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(2002).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(2002).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(2002).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(2002).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(2002).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(2002).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(2002).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(2002).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(2002).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(2002).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(2002).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(2002).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(2002).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(2002).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/RecentlyAddedMovies.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31169</label>
+			<visible>!String.IsEmpty(Container(2003).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/InProgressMovies.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(2003).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(2003).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(2003).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(2003).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(2003).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(2003).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(2003).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(2003).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(2003).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(2003).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(2003).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(2003).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(2003).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(2003).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(2003).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(2003).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(2003).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(2003).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(2003).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(2003).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(2003).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(2003).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(2003).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(2003).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(2003).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(2003).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(2003).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(2003).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(2003).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(2003).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(2003).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(2003).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(2003).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(2003).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(2003).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(2003).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(2003).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(2003).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(2003).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/InProgressMovies.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31170</label>
+			<visible>!String.IsEmpty(Container(2004).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/KidsMovies.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(2004).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(2004).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(2004).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(2004).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(2004).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(2004).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(2004).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(2004).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(2004).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(2004).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(2004).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(2004).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(2004).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(2004).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(2004).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(2004).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(2004).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(2004).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(2004).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(2004).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(2004).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(2004).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(2004).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(2004).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(2004).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(2004).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(2004).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(2004).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(2004).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(2004).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(2004).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(2004).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(2004).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(2004).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(2004).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(2004).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(2004).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(2004).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(2004).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/KidsMovies.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31174</label>
+			<visible>!String.IsEmpty(Container(2005).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/TopRatedMovies.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(2005).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(2005).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(2005).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(2005).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(2005).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(2005).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(2005).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(2005).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(2005).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(2005).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(2005).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(2005).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(2005).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(2005).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(2005).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(2005).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(2005).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(2005).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(2005).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(2005).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(2005).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(2005).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(2005).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(2005).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(2005).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(2005).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(2005).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(2005).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(2005).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(2005).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(2005).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(2005).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(2005).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(2005).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(2005).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(2005).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(2005).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(2005).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(2005).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/TopRatedMovies.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31024</label>
+			<visible>!String.IsEmpty(Container(2006).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"library://video/movies/sets.xml/",return)</property>
+			<property name="Icon1">$INFO[Container(2006).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(2006).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(2006).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(2006).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(2006).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(2006).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(2006).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(2006).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(2006).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(2006).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(2006).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(2006).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(2006).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(2006).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(2006).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(2006).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(2006).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(2006).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(2006).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(2006).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(2006).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(2006).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(2006).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(2006).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(2006).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(2006).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(2006).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(2006).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(2006).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(2006).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(2006).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(2006).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(2006).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(2006).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(2006).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(2006).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(2006).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(2006).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(2006).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"library://video/movies/sets.xml/",return)</onclick>
+		</item>
+		<item>
+			<label>31176</label>
+			<visible>!String.IsEmpty(Container(3001).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/YourTVShows.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(3001).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(3001).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(3001).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(3001).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(3001).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(3001).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(3001).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(3001).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(3001).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(3001).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(3001).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(3001).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(3001).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(3001).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(3001).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(3001).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(3001).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(3001).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(3001).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(3001).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(3001).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(3001).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(3001).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(3001).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(3001).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(3001).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(3001).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(3001).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(3001).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(3001).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(3001).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(3001).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(3001).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(3001).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(3001).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(3001).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(3001).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(3001).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(3001).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/YourTVShows.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31175</label>
+			<visible>!String.IsEmpty(Container(3002).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/RecentlyUpdatedTVShows.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(3002).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(3002).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(3002).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(3002).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(3002).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(3002).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(3002).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(3002).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(3002).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(3002).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(3002).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(3002).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(3002).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(3002).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(3002).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(3002).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(3002).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(3002).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(3002).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(3002).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(3002).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(3002).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(3002).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(3002).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(3002).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(3002).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(3002).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(3002).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(3002).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(3002).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(3002).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(3002).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(3002).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(3002).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(3002).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(3002).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(3002).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(3002).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(3002).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/RecentlyUpdatedTVShows.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31177</label>
+			<visible>!String.IsEmpty(Container(3003).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/InProgressTVShows.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(3003).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(3003).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(3003).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(3003).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(3003).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(3003).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(3003).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(3003).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(3003).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(3003).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(3003).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(3003).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(3003).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(3003).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(3003).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(3003).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(3003).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(3003).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(3003).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(3003).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(3003).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(3003).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(3003).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(3003).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(3003).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(3003).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(3003).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(3003).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(3003).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(3003).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(3003).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(3003).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(3003).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(3003).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(3003).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(3003).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(3003).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(3003).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(3003).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/InProgressTVShows.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31178</label>
+			<visible>!String.IsEmpty(Container(3004).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/KidsTVShows.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(3004).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(3004).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(3004).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(3004).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(3004).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(3004).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(3004).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(3004).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(3004).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(3004).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(3004).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(3004).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(3004).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(3004).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(3004).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(3004).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(3004).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(3004).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(3004).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(3004).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(3004).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(3004).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(3004).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(3004).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(3004).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(3004).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(3004).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(3004).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(3004).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(3004).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(3004).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(3004).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(3004).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(3004).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(3004).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(3004).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(3004).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(3004).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(3004).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/KidsTVShows.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31182</label>
+			<visible>!String.IsEmpty(Container(3005).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31160]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"special://skin/extras/video/TopRatedTVShows.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(3005).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(3005).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(3005).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(3005).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(3005).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(3005).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(3005).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(3005).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(3005).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(3005).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(3005).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(3005).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(3005).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(3005).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(3005).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(3005).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(3005).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(3005).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(3005).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(3005).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(3005).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(3005).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(3005).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(3005).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(3005).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(3005).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(3005).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(3005).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(3005).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(3005).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(3005).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(3005).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(3005).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(3005).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(3005).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(3005).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(3005).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(3005).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(3005).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"special://skin/extras/video/TopRatedTVShows.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31223</label>
+			<visible>!String.IsEmpty(Container(4001).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31161]</property>
+			<property name="WidgetOnClick">ActivateWindow(videos,"addons://sources/video/",return)</property>
+			<property name="Icon1">$INFO[Container(4001).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(4001).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(4001).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(4001).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(4001).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(4001).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(4001).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(4001).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(4001).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(4001).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(4001).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(4001).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(4001).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(4001).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(4001).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(4001).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(4001).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(4001).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(4001).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(4001).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(4001).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(4001).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(4001).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(4001).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(4001).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(4001).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(4001).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(4001).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(4001).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(4001).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(4001).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(4001).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(4001).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(4001).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(4001).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(4001).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(4001).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(4001).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(4001).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(videos,"addons://sources/video/",return)</onclick>
+		</item>
+		<item>
+			<label>31183</label>
+			<visible>!String.IsEmpty(Container(5001).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31161]</property>
+			<property name="WidgetOnClick">ActivateWindow(music,"musicdb://recentlyplayedalbums/",return)</property>
+			<property name="Icon1">$INFO[Container(5001).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(5001).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(5001).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(5001).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(5001).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(5001).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(5001).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(5001).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(5001).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(5001).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(5001).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(5001).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(5001).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(5001).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(5001).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(5001).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(5001).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(5001).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(5001).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(5001).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(5001).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(5001).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(5001).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(5001).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(5001).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(5001).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(5001).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(5001).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(5001).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(5001).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(5001).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(5001).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(5001).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(5001).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(5001).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(5001).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(5001).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(5001).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(5001).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(music,"musicdb://recentlyplayedalbums/",return)</onclick>
+		</item>
+		<item>
+			<label>31185</label>
+			<visible>!String.IsEmpty(Container(5002).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31161]</property>
+			<property name="WidgetOnClick">ActivateWindow(music,"musicdb://recentlyaddedalbums/",return)</property>
+			<property name="Icon1">$INFO[Container(5002).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(5002).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(5002).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(5002).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(5002).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(5002).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(5002).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(5002).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(5002).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(5002).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(5002).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(5002).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(5002).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(5002).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(5002).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(5002).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(5002).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(5002).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(5002).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(5002).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(5002).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(5002).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(5002).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(5002).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(5002).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(5002).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(5002).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(5002).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(5002).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(5002).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(5002).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(5002).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(5002).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(5002).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(5002).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(5002).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(5002).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(5002).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(5002).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(music,"musicdb://recentlyaddedalbums/",return)</onclick>
+		</item>
+		<item>
+			<label>31184</label>
+			<visible>!String.IsEmpty(Container(5003).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31161]</property>
+			<property name="WidgetOnClick">ActivateWindow(music,"special://skin/extras/music/YourAlbums.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(5003).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(5003).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(5003).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(5003).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(5003).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(5003).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(5003).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(5003).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(5003).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(5003).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(5003).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(5003).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(5003).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(5003).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(5003).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(5003).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(5003).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(5003).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(5003).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(5003).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(5003).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(5003).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(5003).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(5003).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(5003).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(5003).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(5003).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(5003).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(5003).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(5003).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(5003).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(5003).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(5003).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(5003).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(5003).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(5003).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(5003).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(5003).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(5003).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(music,"special://skin/extras/music/YourAlbums.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31186</label>
+			<visible>!String.IsEmpty(Container(5004).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31161]</property>
+			<property name="WidgetOnClick">ActivateWindow(music,"special://skin/extras/music/YourArtists.xsp",return)</property>
+			<property name="Icon1">$INFO[Container(5004).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(5004).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(5004).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(5004).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(5004).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(5004).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(5004).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(5004).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(5004).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(5004).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(5004).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(5004).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(5004).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(5004).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(5004).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(5004).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(5004).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(5004).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(5004).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(5004).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(5004).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(5004).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(5004).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(5004).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(5004).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(5004).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(5004).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(5004).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(5004).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(5004).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(5004).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(5004).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(5004).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(5004).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(5004).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(5004).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(5004).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(5004).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(5004).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(music,"special://skin/extras/music/YourArtists.xsp",return)</onclick>
+		</item>
+		<item>
+			<label>31187</label>
+			<visible>!String.IsEmpty(Container(5005).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31161]</property>
+			<property name="WidgetOnClick">ActivateWindow(music,"musicdb://genres/",return)</property>
+			<property name="Icon1">$INFO[Container(5005).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(5005).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(5005).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(5005).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(5005).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(5005).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(5005).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(5005).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(5005).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(5005).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(5005).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(5005).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(5005).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(5005).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(5005).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(5005).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(5005).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(5005).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(5005).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(5005).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(5005).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(5005).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(5005).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(5005).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(5005).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(5005).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(5005).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(5005).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(5005).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(5005).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(5005).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(5005).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(5005).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(5005).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(5005).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(5005).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(5005).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(5005).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(5005).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(music,"musicdb://genres/",return)</onclick>
+		</item>
+		<item>
+			<label>31100</label>
+			<visible>!String.IsEmpty(Container(6001).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31161]</property>
+			<property name="WidgetOnClick">ActivateWindow(games,"addons://sources/game/",return)</property>
+			<property name="Icon1">$INFO[Container(6001).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(6001).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(6001).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(6001).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(6001).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(6001).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(6001).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(6001).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(6001).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(6001).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(6001).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(6001).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(6001).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(6001).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(6001).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(6001).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(6001).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(6001).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(6001).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(6001).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(6001).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(6001).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(6001).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(6001).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(6001).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(6001).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(6001).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(6001).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(6001).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(6001).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(6001).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(6001).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(6001).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(6001).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(6001).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(6001).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(6001).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(6001).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(6001).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(games,"addons://sources/game/",return)</onclick>
+		</item>
+		<item>
+			<label>31222</label>
+			<visible>!String.IsEmpty(Container(7001).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31161]</property>
+			<property name="WidgetOnClick">ActivateWindow(programs,"addons://sources/executable/",return)</property>
+			<property name="Icon1">$INFO[Container(7001).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(7001).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(7001).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(7001).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(7001).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(7001).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(7001).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(7001).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(7001).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(7001).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(7001).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(7001).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(7001).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(7001).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(7001).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(7001).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(7001).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(7001).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(7001).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(7001).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(7001).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(7001).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(7001).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(7001).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(7001).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(7001).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(7001).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(7001).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(7001).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(7001).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(7001).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(7001).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(7001).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(7001).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(7001).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(7001).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(7001).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(7001).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(7001).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(programs,"addons://sources/executable/",return)</onclick>
+		</item>
+		<item>
+			<label>1039</label>
+			<visible>!String.IsEmpty(Container(8001).ListItemPosition(0).Label)</visible>
+			<property name="WidgetStyle">$LOCALIZE[31161]</property>
+			<property name="WidgetOnClick">ActivateWindow(pictures,"addons://sources/image/",return)</property>
+			<property name="Icon1">$INFO[Container(8001).ListItemPosition(0).Icon]</property>
+			<property name="Icon2">$INFO[Container(8001).ListItemPosition(1).Icon]</property>
+			<property name="Icon3">$INFO[Container(8001).ListItemPosition(2).Icon]</property>
+			<property name="Icon4">$INFO[Container(8001).ListItemPosition(3).Icon]</property>
+			<property name="Icon5">$INFO[Container(8001).ListItemPosition(4).Icon]</property>
+			<property name="Icon6">$INFO[Container(8001).ListItemPosition(5).Icon]</property>
+			<property name="Poster1">$INFO[Container(8001).ListItemPosition(0).Art(poster)]</property>
+			<property name="Poster2">$INFO[Container(8001).ListItemPosition(1).Art(poster)]</property>
+			<property name="Poster3">$INFO[Container(8001).ListItemPosition(2).Art(poster)]</property>
+			<property name="Poster4">$INFO[Container(8001).ListItemPosition(3).Art(poster)]</property>
+			<property name="Poster5">$INFO[Container(8001).ListItemPosition(4).Art(poster)]</property>
+			<property name="Poster6">$INFO[Container(8001).ListItemPosition(5).Art(poster)]</property>
+			<property name="InfoLabel1">$INFO[Container(8001).ListItemPosition(0).Label]</property>
+			<property name="InfoLabel2">$INFO[Container(8001).ListItemPosition(1).Label]</property>
+			<property name="InfoLabel3">$INFO[Container(8001).ListItemPosition(2).Label]</property>
+			<property name="InfoLabel4">$INFO[Container(8001).ListItemPosition(3).Label]</property>
+			<property name="InfoLabel5">$INFO[Container(8001).ListItemPosition(4).Label]</property>
+			<property name="InfoLabel6">$INFO[Container(8001).ListItemPosition(5).Label]</property>
+			<property name="Overlay1">$INFO[Container(8001).ListItemPosition(0).Overlay]</property>
+			<property name="Overlay2">$INFO[Container(8001).ListItemPosition(1).Overlay]</property>
+			<property name="Overlay3">$INFO[Container(8001).ListItemPosition(2).Overlay]</property>
+			<property name="Overlay4">$INFO[Container(8001).ListItemPosition(3).Overlay]</property>
+			<property name="Overlay5">$INFO[Container(8001).ListItemPosition(4).Overlay]</property>
+			<property name="Overlay6">$INFO[Container(8001).ListItemPosition(5).Overlay]</property>
+			<property name="VideoResolution1">$INFO[Container(8001).ListItemPosition(0).VideoResolution]</property>
+			<property name="VideoResolution2">$INFO[Container(8001).ListItemPosition(1).VideoResolution]</property>
+			<property name="VideoResolution3">$INFO[Container(8001).ListItemPosition(2).VideoResolution]</property>
+			<property name="VideoResolution4">$INFO[Container(8001).ListItemPosition(3).VideoResolution]</property>
+			<property name="VideoResolution5">$INFO[Container(8001).ListItemPosition(4).VideoResolution]</property>
+			<property name="VideoResolution6">$INFO[Container(8001).ListItemPosition(5).VideoResolution]</property>
+			<property name="ArtFTV1">$INFO[Container(8001).ListItemPosition(0).Art(ftv)]</property>
+			<property name="ArtFTV2">$INFO[Container(8001).ListItemPosition(1).Art(ftv)]</property>
+			<property name="ArtFTV3">$INFO[Container(8001).ListItemPosition(2).Art(ftv)]</property>
+			<property name="ArtFanart1">$INFO[Container(8001).ListItemPosition(0).Art(fanart)]</property>
+			<property name="ArtFanart2">$INFO[Container(8001).ListItemPosition(1).Art(fanart)]</property>
+			<property name="ArtFanart3">$INFO[Container(8001).ListItemPosition(2).Art(fanart)]</property>
+			<property name="ArtLogo1">$INFO[Container(8001).ListItemPosition(0).Art(clearlogo)]</property>
+			<property name="ArtLogo2">$INFO[Container(8001).ListItemPosition(1).Art(clearlogo)]</property>
+			<property name="ArtLogo3">$INFO[Container(8001).ListItemPosition(2).Art(clearlogo)]</property>
+			<onclick>ActivateWindow(pictures,"addons://sources/image/",return)</onclick>
+		</item>
+	</include>
+</includes>

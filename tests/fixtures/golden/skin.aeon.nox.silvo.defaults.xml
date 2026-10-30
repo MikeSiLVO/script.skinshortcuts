@@ -1,0 +1,899 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<includes>
+	<include name="skinshortcuts-mainmenu">
+		<item id="1">
+			<label>$LOCALIZE[1]</label>
+			<icon>special://skin/extras/icons/DefaultPicture.png</icon>
+			<onclick>ActivateWindow(Pictures,return)</onclick>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">pictures</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Pictures,return)</property>
+			<property name="path">return</property>
+			<property name="submenuVisibility">pictures</property>
+		</item>
+		<item id="2">
+			<label>$LOCALIZE[2]</label>
+			<icon>special://skin/extras/icons/DefaultAudio.png</icon>
+			<onclick condition="Library.HasContent(music)">ActivateWindow(Music,musicdb://,return)</onclick>
+			<onclick condition="!Library.HasContent(music)">ActivateWindow(Music,files)</onclick>
+			<property name="id">$NUMBER[2]</property>
+			<property name="name">music</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Music,musicdb://,return)</property>
+			<property name="path">musicdb://</property>
+			<property name="submenuVisibility">music</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+		<item id="3">
+			<label>$LOCALIZE[20342]</label>
+			<icon>special://skin/extras/icons/DefaultMovies.png</icon>
+			<onclick condition="Library.HasContent(movies)">ActivateWindow(Videos,videodb://movies/titles/,return)</onclick>
+			<onclick condition="!Library.HasContent(movies)">ActivateWindow(Videos,files,return)</onclick>
+			<property name="id">$NUMBER[3]</property>
+			<property name="name">movies</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Videos,videodb://movies/titles/,return)</property>
+			<property name="path">videodb://movies/titles/</property>
+			<property name="submenuVisibility">movies</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+		<item id="4">
+			<label>$LOCALIZE[20343]</label>
+			<icon>special://skin/extras/icons/DefaultTVShows.png</icon>
+			<onclick condition="Library.HasContent(tvshows)">ActivateWindow(Videos,videodb://tvshows/titles/,return)</onclick>
+			<onclick condition="!Library.HasContent(tvshows)">ActivateWindow(Videos,files,return)</onclick>
+			<property name="id">$NUMBER[4]</property>
+			<property name="name">tvshows</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Videos,videodb://tvshows/titles/,return)</property>
+			<property name="path">videodb://tvshows/titles/</property>
+			<property name="submenuVisibility">tvshows</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+		<item id="5">
+			<label>$LOCALIZE[31502]</label>
+			<icon>special://skin/extras/icons/DefaultAddonPVRClient.png</icon>
+			<onclick condition="System.HasPVRAddon">ActivateWindow(TVChannels)</onclick>
+			<onclick condition="!System.HasPVRAddon">ActivateWindow(addonbrowser,addons://default_binary_addons_source/kodi.pvrclient,return)</onclick>
+			<property name="id">$NUMBER[5]</property>
+			<property name="name">livetv</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(TVChannels)</property>
+			<property name="path">ActivateWindow(TVChannels)</property>
+			<property name="submenuVisibility">livetv</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+		<item id="6">
+			<label>$LOCALIZE[3]</label>
+			<icon>special://skin/extras/icons/DefaultVideo.png</icon>
+			<onclick>ActivateWindow(Videos,root)</onclick>
+			<property name="id">$NUMBER[6]</property>
+			<property name="name">videos</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Videos,root)</property>
+			<property name="path">root</property>
+			<property name="submenuVisibility">videos</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+		<item id="7">
+			<label>$LOCALIZE[31957]</label>
+			<icon>special://skin/extras/icons/DefaultAddon.png</icon>
+			<onclick>ActivateWindow(1133)</onclick>
+			<property name="id">$NUMBER[7]</property>
+			<property name="name">programs</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(1133)</property>
+			<property name="path">ActivateWindow(1133)</property>
+			<property name="submenuVisibility">programs</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+		<item id="8">
+			<label>$LOCALIZE[15016]</label>
+			<icon>special://skin/extras/icons/DefaultGames.png</icon>
+			<onclick>ActivateWindow(Games)</onclick>
+			<visible>System.GetBool(gamesgeneral.enable)</visible>
+			<property name="id">$NUMBER[8]</property>
+			<property name="name">games</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Games)</property>
+			<property name="path">ActivateWindow(Games)</property>
+			<property name="submenuVisibility">games</property>
+		</item>
+		<item id="9">
+			<label>$LOCALIZE[13000]</label>
+			<icon>special://skin/extras/icons/DefaultAddonService.png</icon>
+			<onclick>ActivateWindow(Settings)</onclick>
+			<property name="id">$NUMBER[9]</property>
+			<property name="name">settings</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Settings)</property>
+			<property name="path">ActivateWindow(Settings)</property>
+			<property name="submenuVisibility">settings</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+		<item id="10">
+			<label>$LOCALIZE[137]</label>
+			<icon>special://skin/extras/icons/DefaultAddonsSearch.png</icon>
+			<onclick>SetProperty(CustomSelect,search,Home)</onclick>
+			<onclick>ActivateWindow(1129)</onclick>
+			<property name="id">$NUMBER[10]</property>
+			<property name="name">search</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(1129)</property>
+			<property name="path">ActivateWindow(1129)</property>
+			<property name="submenuVisibility">search</property>
+		</item>
+		<item id="11">
+			<label>$LOCALIZE[33060]</label>
+			<icon>special://skin/extras/icons/power.png</icon>
+			<onclick>ActivateWindow(shutdownmenu)</onclick>
+			<property name="id">$NUMBER[11]</property>
+			<property name="name">power</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(shutdownmenu)</property>
+			<property name="path">ActivateWindow(shutdownmenu)</property>
+			<property name="submenuVisibility">power</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+		<item id="12">
+			<label>$LOCALIZE[1036]</label>
+			<icon>special://skin/extras/icons/Favorites.png</icon>
+			<onclick>ActivateWindow(FavouritesBrowser)</onclick>
+			<property name="id">$NUMBER[12]</property>
+			<property name="name">favourites</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(FavouritesBrowser)</property>
+			<property name="path">ActivateWindow(FavouritesBrowser)</property>
+			<property name="submenuVisibility">favourites</property>
+		</item>
+		<item id="13">
+			<label>$LOCALIZE[12600]</label>
+			<icon>special://skin/extras/icons/DefaultAddonWeather.png</icon>
+			<onclick condition="!String.IsEmpty(Weather.Plugin)">ActivateWindow(Weather)</onclick>
+			<onclick condition="String.IsEmpty(Weather.Plugin)">ActivateWindow(ServiceSettings,weather)</onclick>
+			<property name="id">$NUMBER[13]</property>
+			<property name="name">weather</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Weather)</property>
+			<property name="path">ActivateWindow(Weather)</property>
+			<property name="submenuVisibility">weather</property>
+		</item>
+		<item id="14">
+			<label>$LOCALIZE[20389]</label>
+			<icon>special://skin/extras/icons/DefaultMusicVideos.png</icon>
+			<onclick condition="Library.HasContent(musicvideos)">ActivateWindow(Videos,videodb://musicvideos/titles/,return)</onclick>
+			<onclick condition="!Library.HasContent(musicvideos)">ActivateWindow(Videos,files,return)</onclick>
+			<property name="id">$NUMBER[14]</property>
+			<property name="name">musicvideos</property>
+			<property name="menu">mainmenu</property>
+			<property name="action">ActivateWindow(Videos,videodb://musicvideos/titles/,return)</property>
+			<property name="path">videodb://musicvideos/titles/</property>
+			<property name="submenuVisibility">musicvideos</property>
+			<property name="hasSubmenu">True</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-mainmenu-submenu">
+		<item id="1">
+			<label>$LOCALIZE[133]</label>
+			<onclick>ActivateWindow(Music,musicdb://artists/,return)</onclick>
+			<property name="id">$NUMBER[1]</property>
+			<property name="name">music-artists</property>
+			<property name="menu">music</property>
+			<property name="action">ActivateWindow(Music,musicdb://artists/,return)</property>
+			<property name="path">musicdb://artists/</property>
+			<property name="submenuVisibility">music-artists</property>
+			<property name="parent">music</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),music)</visible>
+		</item>
+		<item id="2">
+			<label>$LOCALIZE[132]</label>
+			<onclick>ActivateWindow(Music,musicdb://albums/,return)</onclick>
+			<property name="id">$NUMBER[2]</property>
+			<property name="name">music-albums</property>
+			<property name="menu">music</property>
+			<property name="action">ActivateWindow(Music,musicdb://albums/,return)</property>
+			<property name="path">musicdb://albums/</property>
+			<property name="submenuVisibility">music-albums</property>
+			<property name="parent">music</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),music)</visible>
+		</item>
+		<item id="3">
+			<label>$LOCALIZE[134]</label>
+			<onclick>ActivateWindow(Music,musicdb://songs/,return)</onclick>
+			<property name="id">$NUMBER[3]</property>
+			<property name="name">music-songs</property>
+			<property name="menu">music</property>
+			<property name="action">ActivateWindow(Music,musicdb://songs/,return)</property>
+			<property name="path">musicdb://songs/</property>
+			<property name="submenuVisibility">music-songs</property>
+			<property name="parent">music</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),music)</visible>
+		</item>
+		<item id="4">
+			<label>$LOCALIZE[744]</label>
+			<onclick>ActivateWindow(Music,sources://music/,return)</onclick>
+			<property name="id">$NUMBER[4]</property>
+			<property name="name">music-files</property>
+			<property name="menu">music</property>
+			<property name="action">ActivateWindow(Music,sources://music/,return)</property>
+			<property name="path">sources://music/</property>
+			<property name="submenuVisibility">music-files</property>
+			<property name="parent">music</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),music)</visible>
+		</item>
+		<item id="5">
+			<label>$LOCALIZE[24001]</label>
+			<onclick>ActivateWindow(Music,addons://sources/audio/,return)</onclick>
+			<property name="id">$NUMBER[5]</property>
+			<property name="name">music-addons</property>
+			<property name="menu">music</property>
+			<property name="action">ActivateWindow(Music,addons://sources/audio/,return)</property>
+			<property name="path">addons://sources/audio/</property>
+			<property name="submenuVisibility">music-addons</property>
+			<property name="parent">music</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),music)</visible>
+		</item>
+		<item id="6">
+			<label>$LOCALIZE[14022]</label>
+			<onclick>ActivateWindow(Music,musicdb://)</onclick>
+			<property name="id">$NUMBER[6]</property>
+			<property name="name">music-library</property>
+			<property name="menu">music</property>
+			<property name="action">ActivateWindow(Music,musicdb://)</property>
+			<property name="path">musicdb://</property>
+			<property name="submenuVisibility">music-library</property>
+			<property name="parent">music</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),music)</visible>
+		</item>
+		<item id="7">
+			<label>$LOCALIZE[16101]</label>
+			<onclick>ActivateWindow(Videos,special://skin/extras/playlists/unwatchedmovies.xsp,return)</onclick>
+			<property name="id">$NUMBER[7]</property>
+			<property name="name">movies-unwatched</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,special://skin/extras/playlists/unwatchedmovies.xsp,return)</property>
+			<property name="path">special://skin/extras/playlists/unwatchedmovies.xsp</property>
+			<property name="submenuVisibility">movies-unwatched</property>
+			<property name="parent">movies</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),movies)</visible>
+		</item>
+		<item id="8">
+			<label>$LOCALIZE[575]</label>
+			<onclick>ActivateWindow(Videos,special://skin/extras/playlists/inprogressmovies.xsp,return)</onclick>
+			<property name="id">$NUMBER[8]</property>
+			<property name="name">movies-inprogress</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,special://skin/extras/playlists/inprogressmovies.xsp,return)</property>
+			<property name="path">special://skin/extras/playlists/inprogressmovies.xsp</property>
+			<property name="submenuVisibility">movies-inprogress</property>
+			<property name="parent">movies</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),movies)</visible>
+		</item>
+		<item id="9">
+			<label>$LOCALIZE[31328]</label>
+			<onclick>ActivateWindow(Videos,videodb://recentlyaddedmovies/,return)</onclick>
+			<property name="id">$NUMBER[9]</property>
+			<property name="name">movies-recent</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,videodb://recentlyaddedmovies/,return)</property>
+			<property name="path">videodb://recentlyaddedmovies/</property>
+			<property name="submenuVisibility">movies-recent</property>
+			<property name="parent">movies</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),movies)</visible>
+		</item>
+		<item id="10">
+			<label>$LOCALIZE[20434]</label>
+			<onclick>ActivateWindow(Videos,videodb://movies/sets/,return)</onclick>
+			<property name="id">$NUMBER[10]</property>
+			<property name="name">movies-sets</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,videodb://movies/sets/,return)</property>
+			<property name="path">videodb://movies/sets/</property>
+			<property name="submenuVisibility">movies-sets</property>
+			<property name="parent">movies</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),movies)</visible>
+		</item>
+		<item id="11">
+			<label>$LOCALIZE[135]</label>
+			<onclick>ActivateWindow(Videos,videodb://movies/genres/,return)</onclick>
+			<property name="id">$NUMBER[11]</property>
+			<property name="name">movies-genres</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,videodb://movies/genres/,return)</property>
+			<property name="path">videodb://movies/genres/</property>
+			<property name="submenuVisibility">movies-genres</property>
+			<property name="parent">movies</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),movies)</visible>
+		</item>
+		<item id="12">
+			<label>$LOCALIZE[652]</label>
+			<onclick>ActivateWindow(Videos,videodb://movies/years/,return)</onclick>
+			<property name="id">$NUMBER[12]</property>
+			<property name="name">movies-years</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,videodb://movies/years/,return)</property>
+			<property name="path">videodb://movies/years/</property>
+			<property name="submenuVisibility">movies-years</property>
+			<property name="parent">movies</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),movies)</visible>
+		</item>
+		<item id="13">
+			<label>$LOCALIZE[344]</label>
+			<onclick>ActivateWindow(Videos,videodb://movies/actors/,return)</onclick>
+			<property name="id">$NUMBER[13]</property>
+			<property name="name">movies-actors</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,videodb://movies/actors/,return)</property>
+			<property name="path">videodb://movies/actors/</property>
+			<property name="submenuVisibility">movies-actors</property>
+			<property name="parent">movies</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),movies)</visible>
+		</item>
+		<item id="14">
+			<label>$LOCALIZE[20459]</label>
+			<onclick>ActivateWindow(Videos,videodb://movies/tags/,return)</onclick>
+			<property name="id">$NUMBER[14]</property>
+			<property name="name">movies-tags</property>
+			<property name="menu">movies</property>
+			<property name="action">ActivateWindow(Videos,videodb://movies/tags/,return)</property>
+			<property name="path">videodb://movies/tags/</property>
+			<property name="submenuVisibility">movies-tags</property>
+			<property name="parent">movies</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),movies)</visible>
+		</item>
+		<item id="15">
+			<label>$LOCALIZE[575]</label>
+			<onclick>ActivateWindow(Videos,videodb://inprogresstvshows/,return)</onclick>
+			<property name="id">$NUMBER[15]</property>
+			<property name="name">tvshows-inprogress</property>
+			<property name="menu">tvshows</property>
+			<property name="action">ActivateWindow(Videos,videodb://inprogresstvshows/,return)</property>
+			<property name="path">videodb://inprogresstvshows/</property>
+			<property name="submenuVisibility">tvshows-inprogress</property>
+			<property name="parent">tvshows</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),tvshows)</visible>
+		</item>
+		<item id="16">
+			<label>$LOCALIZE[31328]</label>
+			<onclick>ActivateWindow(Videos,videodb://recentlyaddedepisodes/,return)</onclick>
+			<property name="id">$NUMBER[16]</property>
+			<property name="name">tvshows-recent</property>
+			<property name="menu">tvshows</property>
+			<property name="action">ActivateWindow(Videos,videodb://recentlyaddedepisodes/,return)</property>
+			<property name="path">videodb://recentlyaddedepisodes/</property>
+			<property name="submenuVisibility">tvshows-recent</property>
+			<property name="parent">tvshows</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),tvshows)</visible>
+		</item>
+		<item id="17">
+			<label>$LOCALIZE[135]</label>
+			<onclick>ActivateWindow(Videos,videodb://tvshows/genres/,return)</onclick>
+			<property name="id">$NUMBER[17]</property>
+			<property name="name">tvshows-genres</property>
+			<property name="menu">tvshows</property>
+			<property name="action">ActivateWindow(Videos,videodb://tvshows/genres/,return)</property>
+			<property name="path">videodb://tvshows/genres/</property>
+			<property name="submenuVisibility">tvshows-genres</property>
+			<property name="parent">tvshows</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),tvshows)</visible>
+		</item>
+		<item id="18">
+			<label>$LOCALIZE[652]</label>
+			<onclick>ActivateWindow(Videos,videodb://tvshows/years/,return)</onclick>
+			<property name="id">$NUMBER[18]</property>
+			<property name="name">tvshows-years</property>
+			<property name="menu">tvshows</property>
+			<property name="action">ActivateWindow(Videos,videodb://tvshows/years/,return)</property>
+			<property name="path">videodb://tvshows/years/</property>
+			<property name="submenuVisibility">tvshows-years</property>
+			<property name="parent">tvshows</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),tvshows)</visible>
+		</item>
+		<item id="19">
+			<label>$LOCALIZE[344]</label>
+			<onclick>ActivateWindow(Videos,videodb://tvshows/actors/,return)</onclick>
+			<property name="id">$NUMBER[19]</property>
+			<property name="name">tvshows-actors</property>
+			<property name="menu">tvshows</property>
+			<property name="action">ActivateWindow(Videos,videodb://tvshows/actors/,return)</property>
+			<property name="path">videodb://tvshows/actors/</property>
+			<property name="submenuVisibility">tvshows-actors</property>
+			<property name="parent">tvshows</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),tvshows)</visible>
+		</item>
+		<item id="20">
+			<label>$LOCALIZE[19024]</label>
+			<onclick>ActivateWindow(RadioChannels)</onclick>
+			<property name="id">$NUMBER[20]</property>
+			<property name="name">livetv-radio</property>
+			<property name="menu">livetv</property>
+			<property name="action">ActivateWindow(RadioChannels)</property>
+			<property name="path">ActivateWindow(RadioChannels)</property>
+			<property name="submenuVisibility">livetv-radio</property>
+			<property name="parent">livetv</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),livetv)</visible>
+		</item>
+		<item id="21">
+			<label>$LOCALIZE[19023]</label>
+			<onclick>ActivateWindow(TVChannels)</onclick>
+			<property name="id">$NUMBER[21]</property>
+			<property name="name">livetv-channels</property>
+			<property name="menu">livetv</property>
+			<property name="action">ActivateWindow(TVChannels)</property>
+			<property name="path">ActivateWindow(TVChannels)</property>
+			<property name="submenuVisibility">livetv-channels</property>
+			<property name="parent">livetv</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),livetv)</visible>
+		</item>
+		<item id="22">
+			<label>$LOCALIZE[19069]</label>
+			<onclick>ActivateWindow(TVGuide)</onclick>
+			<property name="id">$NUMBER[22]</property>
+			<property name="name">livetv-guide</property>
+			<property name="menu">livetv</property>
+			<property name="action">ActivateWindow(TVGuide)</property>
+			<property name="path">ActivateWindow(TVGuide)</property>
+			<property name="submenuVisibility">livetv-guide</property>
+			<property name="parent">livetv</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),livetv)</visible>
+		</item>
+		<item id="23">
+			<label>$LOCALIZE[19163]</label>
+			<onclick>ActivateWindow(TVRecordings)</onclick>
+			<property name="id">$NUMBER[23]</property>
+			<property name="name">livetv-recordings</property>
+			<property name="menu">livetv</property>
+			<property name="action">ActivateWindow(TVRecordings)</property>
+			<property name="path">ActivateWindow(TVRecordings)</property>
+			<property name="submenuVisibility">livetv-recordings</property>
+			<property name="parent">livetv</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),livetv)</visible>
+		</item>
+		<item id="24">
+			<label>$LOCALIZE[19040]</label>
+			<onclick>ActivateWindow(TVTimers)</onclick>
+			<property name="id">$NUMBER[24]</property>
+			<property name="name">livetv-timers</property>
+			<property name="menu">livetv</property>
+			<property name="action">ActivateWindow(TVTimers)</property>
+			<property name="path">ActivateWindow(TVTimers)</property>
+			<property name="submenuVisibility">livetv-timers</property>
+			<property name="parent">livetv</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),livetv)</visible>
+		</item>
+		<item id="25">
+			<label>$LOCALIZE[20342]</label>
+			<onclick>ActivateWindow(Videos,Movies,root)</onclick>
+			<property name="id">$NUMBER[25]</property>
+			<property name="name">videos-movies</property>
+			<property name="menu">videos</property>
+			<property name="action">ActivateWindow(Videos,Movies,root)</property>
+			<property name="path">Movies</property>
+			<property name="submenuVisibility">videos-movies</property>
+			<property name="parent">videos</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),videos)</visible>
+		</item>
+		<item id="26">
+			<label>$LOCALIZE[20343]</label>
+			<onclick>ActivateWindow(Videos,TvShows,root)</onclick>
+			<property name="id">$NUMBER[26]</property>
+			<property name="name">videos-tvshows</property>
+			<property name="menu">videos</property>
+			<property name="action">ActivateWindow(Videos,TvShows,root)</property>
+			<property name="path">TvShows</property>
+			<property name="submenuVisibility">videos-tvshows</property>
+			<property name="parent">videos</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),videos)</visible>
+		</item>
+		<item id="27">
+			<label>$LOCALIZE[24001]</label>
+			<onclick>ActivateWindow(Videos,Addons,return)</onclick>
+			<property name="id">$NUMBER[27]</property>
+			<property name="name">videos-addons</property>
+			<property name="menu">videos</property>
+			<property name="action">ActivateWindow(Videos,Addons,return)</property>
+			<property name="path">Addons</property>
+			<property name="submenuVisibility">videos-addons</property>
+			<property name="parent">videos</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),videos)</visible>
+		</item>
+		<item id="28">
+			<label>$LOCALIZE[744]</label>
+			<onclick>ActivateWindow(Videos,Files,return)</onclick>
+			<property name="id">$NUMBER[28]</property>
+			<property name="name">videos-files</property>
+			<property name="menu">videos</property>
+			<property name="action">ActivateWindow(Videos,Files,return)</property>
+			<property name="path">Files</property>
+			<property name="submenuVisibility">videos-files</property>
+			<property name="parent">videos</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),videos)</visible>
+		</item>
+		<item id="29">
+			<label>$LOCALIZE[136]</label>
+			<onclick>ActivateWindow(Videos,Playlists,return)</onclick>
+			<property name="id">$NUMBER[29]</property>
+			<property name="name">videos-playlists</property>
+			<property name="menu">videos</property>
+			<property name="action">ActivateWindow(Videos,Playlists,return)</property>
+			<property name="path">Playlists</property>
+			<property name="submenuVisibility">videos-playlists</property>
+			<property name="parent">videos</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),videos)</visible>
+		</item>
+		<item id="30">
+			<label>$LOCALIZE[14022]</label>
+			<onclick>ActivateWindow(Videos,Root)</onclick>
+			<property name="id">$NUMBER[30]</property>
+			<property name="name">videos-library</property>
+			<property name="menu">videos</property>
+			<property name="action">ActivateWindow(Videos,Root)</property>
+			<property name="path">Root</property>
+			<property name="submenuVisibility">videos-library</property>
+			<property name="parent">videos</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),videos)</visible>
+		</item>
+		<item id="31">
+			<label>$LOCALIZE[1038]</label>
+			<onclick>ActivateWindow(Music,Addons,return)</onclick>
+			<property name="id">$NUMBER[31]</property>
+			<property name="name">programs-music-addons</property>
+			<property name="menu">programs</property>
+			<property name="action">ActivateWindow(Music,Addons,return)</property>
+			<property name="path">Addons</property>
+			<property name="submenuVisibility">programs-music-addons</property>
+			<property name="parent">programs</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),programs)</visible>
+		</item>
+		<item id="32">
+			<label>$LOCALIZE[1037]</label>
+			<onclick>ActivateWindow(Videos,Addons,return)</onclick>
+			<property name="id">$NUMBER[32]</property>
+			<property name="name">programs-video-addons</property>
+			<property name="menu">programs</property>
+			<property name="action">ActivateWindow(Videos,Addons,return)</property>
+			<property name="path">Addons</property>
+			<property name="submenuVisibility">programs-video-addons</property>
+			<property name="parent">programs</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),programs)</visible>
+		</item>
+		<item id="33">
+			<label>$LOCALIZE[10040]</label>
+			<onclick>ActivateWindow(Addonbrowser)</onclick>
+			<property name="id">$NUMBER[33]</property>
+			<property name="name">programs-addonbrowser</property>
+			<property name="menu">programs</property>
+			<property name="action">ActivateWindow(Addonbrowser)</property>
+			<property name="path">ActivateWindow(Addonbrowser)</property>
+			<property name="submenuVisibility">programs-addonbrowser</property>
+			<property name="parent">programs</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),programs)</visible>
+		</item>
+		<item id="34">
+			<label>$LOCALIZE[1043]</label>
+			<onclick>ActivateWindow(Programs,Addons,return)</onclick>
+			<property name="id">$NUMBER[34]</property>
+			<property name="name">programs-addons</property>
+			<property name="menu">programs</property>
+			<property name="action">ActivateWindow(Programs,Addons,return)</property>
+			<property name="path">Addons</property>
+			<property name="submenuVisibility">programs-addons</property>
+			<property name="parent">programs</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),programs)</visible>
+		</item>
+		<item id="35">
+			<label>$LOCALIZE[1039]</label>
+			<onclick>ActivateWindow(Pictures,Addons,return)</onclick>
+			<property name="id">$NUMBER[35]</property>
+			<property name="name">programs-picture-addons</property>
+			<property name="menu">programs</property>
+			<property name="action">ActivateWindow(Pictures,Addons,return)</property>
+			<property name="path">Addons</property>
+			<property name="submenuVisibility">programs-picture-addons</property>
+			<property name="parent">programs</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),programs)</visible>
+		</item>
+		<item id="36">
+			<label>$LOCALIZE[130]</label>
+			<onclick>ActivateWindow(SystemInfo)</onclick>
+			<property name="id">$NUMBER[36]</property>
+			<property name="name">settings-systeminfo</property>
+			<property name="menu">settings</property>
+			<property name="action">ActivateWindow(SystemInfo)</property>
+			<property name="path">ActivateWindow(SystemInfo)</property>
+			<property name="submenuVisibility">settings-systeminfo</property>
+			<property name="parent">settings</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),settings)</visible>
+		</item>
+		<item id="37">
+			<label>$LOCALIZE[33060]</label>
+			<onclick>ActivateWindow(shutdownmenu)</onclick>
+			<property name="id">$NUMBER[37]</property>
+			<property name="name">settings-shutdown</property>
+			<property name="menu">settings</property>
+			<property name="action">ActivateWindow(shutdownmenu)</property>
+			<property name="path">ActivateWindow(shutdownmenu)</property>
+			<property name="submenuVisibility">settings-shutdown</property>
+			<property name="parent">settings</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),settings)</visible>
+		</item>
+		<item id="38">
+			<label>$LOCALIZE[20077]</label>
+			<onclick>ActivateWindow(SkinSettings)</onclick>
+			<property name="id">$NUMBER[38]</property>
+			<property name="name">settings-skin</property>
+			<property name="menu">settings</property>
+			<property name="action">ActivateWindow(SkinSettings)</property>
+			<property name="path">ActivateWindow(SkinSettings)</property>
+			<property name="submenuVisibility">settings-skin</property>
+			<property name="parent">settings</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),settings)</visible>
+		</item>
+		<item id="39">
+			<label>$LOCALIZE[7]</label>
+			<onclick>ActivateWindow(FileManager)</onclick>
+			<property name="id">$NUMBER[39]</property>
+			<property name="name">settings-filemanager</property>
+			<property name="menu">settings</property>
+			<property name="action">ActivateWindow(FileManager)</property>
+			<property name="path">ActivateWindow(FileManager)</property>
+			<property name="submenuVisibility">settings-filemanager</property>
+			<property name="parent">settings</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),settings)</visible>
+		</item>
+		<item id="40">
+			<label>$LOCALIZE[13200]</label>
+			<onclick>ActivateWindow(Profiles)</onclick>
+			<property name="id">$NUMBER[40]</property>
+			<property name="name">settings-profiles</property>
+			<property name="menu">settings</property>
+			<property name="action">ActivateWindow(Profiles)</property>
+			<property name="path">ActivateWindow(Profiles)</property>
+			<property name="submenuVisibility">settings-profiles</property>
+			<property name="parent">settings</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),settings)</visible>
+		</item>
+		<item id="41">
+			<label>$LOCALIZE[31159]</label>
+			<onclick>ActivateWindow(Eventlog)</onclick>
+			<property name="id">$NUMBER[41]</property>
+			<property name="name">settings-eventlog</property>
+			<property name="menu">settings</property>
+			<property name="action">ActivateWindow(Eventlog)</property>
+			<property name="path">ActivateWindow(Eventlog)</property>
+			<property name="submenuVisibility">settings-eventlog</property>
+			<property name="parent">settings</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),settings)</visible>
+		</item>
+		<item id="42">
+			<label>$LOCALIZE[13016]</label>
+			<onclick>Powerdown()</onclick>
+			<property name="id">$NUMBER[42]</property>
+			<property name="name">power-shutdown</property>
+			<property name="menu">power</property>
+			<property name="action">Powerdown()</property>
+			<property name="path">Powerdown()</property>
+			<property name="submenuVisibility">power-shutdown</property>
+			<property name="parent">power</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),power)</visible>
+		</item>
+		<item id="43">
+			<label>$LOCALIZE[13013]</label>
+			<onclick>Reset()</onclick>
+			<property name="id">$NUMBER[43]</property>
+			<property name="name">power-reboot</property>
+			<property name="menu">power</property>
+			<property name="action">Reset()</property>
+			<property name="path">Reset()</property>
+			<property name="submenuVisibility">power-reboot</property>
+			<property name="parent">power</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),power)</visible>
+		</item>
+		<item id="44">
+			<label>$LOCALIZE[13011]</label>
+			<onclick>Suspend()</onclick>
+			<property name="id">$NUMBER[44]</property>
+			<property name="name">power-suspend</property>
+			<property name="menu">power</property>
+			<property name="action">Suspend()</property>
+			<property name="path">Suspend()</property>
+			<property name="submenuVisibility">power-suspend</property>
+			<property name="parent">power</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),power)</visible>
+		</item>
+		<item id="45">
+			<label>$LOCALIZE[13010]</label>
+			<onclick>Hibernate()</onclick>
+			<property name="id">$NUMBER[45]</property>
+			<property name="name">power-hibernate</property>
+			<property name="menu">power</property>
+			<property name="action">Hibernate()</property>
+			<property name="path">Hibernate()</property>
+			<property name="submenuVisibility">power-hibernate</property>
+			<property name="parent">power</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),power)</visible>
+		</item>
+		<item id="46">
+			<label>$LOCALIZE[20126]</label>
+			<onclick>System.LogOff</onclick>
+			<property name="id">$NUMBER[46]</property>
+			<property name="name">power-logoff</property>
+			<property name="menu">power</property>
+			<property name="action">System.LogOff</property>
+			<property name="path">System.LogOff</property>
+			<property name="submenuVisibility">power-logoff</property>
+			<property name="parent">power</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),power)</visible>
+		</item>
+		<item id="47">
+			<label>$LOCALIZE[13009]</label>
+			<onclick>Quit()</onclick>
+			<property name="id">$NUMBER[47]</property>
+			<property name="name">power-quit</property>
+			<property name="menu">power</property>
+			<property name="action">Quit()</property>
+			<property name="path">Quit()</property>
+			<property name="submenuVisibility">power-quit</property>
+			<property name="parent">power</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),power)</visible>
+		</item>
+		<item id="48">
+			<label>$LOCALIZE[133]</label>
+			<onclick>ActivateWindow(Videos,videodb://musicvideos/artists/,return)</onclick>
+			<property name="id">$NUMBER[48]</property>
+			<property name="name">musicvideos-artists</property>
+			<property name="menu">musicvideos</property>
+			<property name="action">ActivateWindow(Videos,videodb://musicvideos/artists/,return)</property>
+			<property name="path">videodb://musicvideos/artists/</property>
+			<property name="submenuVisibility">musicvideos-artists</property>
+			<property name="parent">musicvideos</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),musicvideos)</visible>
+		</item>
+		<item id="49">
+			<label>$LOCALIZE[135]</label>
+			<onclick>ActivateWindow(Videos,videodb://musicvideos/genres,return)</onclick>
+			<property name="id">$NUMBER[49]</property>
+			<property name="name">musicvideos-genres</property>
+			<property name="menu">musicvideos</property>
+			<property name="action">ActivateWindow(Videos,videodb://musicvideos/genres,return)</property>
+			<property name="path">videodb://musicvideos/genres</property>
+			<property name="submenuVisibility">musicvideos-genres</property>
+			<property name="parent">musicvideos</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),musicvideos)</visible>
+		</item>
+		<item id="50">
+			<label>$LOCALIZE[31328]</label>
+			<onclick>ActivateWindow(Videos,videodb://recentlyaddedmusicvideos/,return)</onclick>
+			<property name="id">$NUMBER[50]</property>
+			<property name="name">musicvideos-recent</property>
+			<property name="menu">musicvideos</property>
+			<property name="action">ActivateWindow(Videos,videodb://recentlyaddedmusicvideos/,return)</property>
+			<property name="path">videodb://recentlyaddedmusicvideos/</property>
+			<property name="submenuVisibility">musicvideos-recent</property>
+			<property name="parent">musicvideos</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),musicvideos)</visible>
+		</item>
+		<item id="51">
+			<label>$LOCALIZE[652]</label>
+			<onclick>ActivateWindow(Videos,videodb://musicvideos/years/,return)</onclick>
+			<property name="id">$NUMBER[51]</property>
+			<property name="name">musicvideos-years</property>
+			<property name="menu">musicvideos</property>
+			<property name="action">ActivateWindow(Videos,videodb://musicvideos/years/,return)</property>
+			<property name="path">videodb://musicvideos/years/</property>
+			<property name="submenuVisibility">musicvideos-years</property>
+			<property name="parent">musicvideos</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),musicvideos)</visible>
+		</item>
+		<item id="52">
+			<label>$LOCALIZE[20459]</label>
+			<onclick>ActivateWindow(Videos,videodb://musicvideos/tags/,return)</onclick>
+			<property name="id">$NUMBER[52]</property>
+			<property name="name">musicvideos-tags</property>
+			<property name="menu">musicvideos</property>
+			<property name="action">ActivateWindow(Videos,videodb://musicvideos/tags/,return)</property>
+			<property name="path">videodb://musicvideos/tags/</property>
+			<property name="submenuVisibility">musicvideos-tags</property>
+			<property name="parent">musicvideos</property>
+			<visible>String.IsEqual(Container(9000).ListItem.Property(name),musicvideos)</visible>
+		</item>
+	</include>
+	<include name="skinshortcuts-buttonmenu">
+		<control type="button" id="1">
+			<label>$LOCALIZE[1036]</label>
+			<include>ButtonMenuCommonValues</include>
+			<onclick>Dialog.Close(all,true)</onclick>
+			<onclick>ActivateWindow(favouritesbrowser)</onclick>
+		</control>
+		<control type="button" id="2">
+			<label>$LOCALIZE[20183]</label>
+			<include>ButtonMenuCommonValues</include>
+			<onclick>ReloadSkin()</onclick>
+		</control>
+		<control type="button" id="3">
+			<label>$LOCALIZE[20077]</label>
+			<include>ButtonMenuCommonValues</include>
+			<onclick>Dialog.Close(all,true)</onclick>
+			<onclick>ActivateWindow(skinsettings)</onclick>
+		</control>
+		<control type="button" id="4">
+			<label>Settings</label>
+			<include>ButtonMenuCommonValues</include>
+			<onclick>Dialog.Close(all,true)</onclick>
+			<onclick>ActivateWindow(Settings)</onclick>
+		</control>
+	</include>
+	<variable name="MainMenuBackgroundPathVar">
+		<value />
+	</variable>
+	<variable name="PlaylistBackgroundFanartVar">
+		<value />
+	</variable>
+	<variable name="PlaylistBackgroundTitleVar">
+		<value />
+	</variable>
+	<variable name="SubMenuPlaylistBackgroundFanartVar">
+		<value />
+	</variable>
+	<variable name="SubMenuPlaylistBackgroundTitleVar">
+		<value />
+	</variable>
+	<include name="skinshortcuts-template-widget1">
+		<description>Automatically generated - no menu items matched this template (see log)</description>
+	</include>
+	<include name="skinshortcuts-template-widget2">
+		<description>Automatically generated - no menu items matched this template (see log)</description>
+	</include>
+	<include name="skinshortcuts-template-SkinInfoPlaylistPaths">
+		<description>Automatically generated - no menu items matched this template (see log)</description>
+	</include>
+	<expression name="ShortcutView_50">[Container.Content(videos)] | [Container.Content(addons)] | [!Window.IsVisible(MyMusicNav.xml) + Container.Content(genres)] | [Container.Content(musicvideos)] | [Container.Content(games)] | [Container.Content(images)] | [!Window.IsVisible(MyMusicNav.xml) + Container.Content(files)] | [Container.Content() + Window.IsVisible(MyVideoNav.xml)] | [Container.Content(playlists)] | [Container.Content(actors)] | [Container.Content(directors)] | [Container.Content(studios)] | [Container.Content(years)] | [Container.Content(tags)] | [Container.Content(countries)] | [Container.Content(videoversions) + String.StartsWith(Container.FolderPath,videodb://movies/videoversions)]</expression>
+	<expression name="ShortcutView_51">False</expression>
+	<expression name="ShortcutView_52">False</expression>
+	<expression name="ShortcutView_53">False</expression>
+	<expression name="ShortcutView_54">False</expression>
+	<expression name="ShortcutView_55">[Container.Content(artists)]</expression>
+	<expression name="ShortcutView_56">False</expression>
+	<expression name="ShortcutView_57">False</expression>
+	<expression name="ShortcutView_58">False</expression>
+	<expression name="ShortcutView_59">[Container.Content(tvshows)]</expression>
+	<expression name="ShortcutView_500">False</expression>
+	<expression name="ShortcutView_501">[Container.Content(albums)]</expression>
+	<expression name="ShortcutView_502">False</expression>
+	<expression name="ShortcutView_503">False</expression>
+	<expression name="ShortcutView_504">False</expression>
+	<expression name="ShortcutView_505">False</expression>
+	<expression name="ShortcutView_506">[Container.Content(movies) + !String.StartsWith(Container.FolderPath,videodb://movies/sets)] | [Container.Content(movies) + String.StartsWith(Container.FolderPath,videodb://movies/sets)] | [[Container.Content(videoversions) | Container.Content(videoextras)] + !String.StartsWith(Container.FolderPath,videodb://movies/videoversions)] | [Container.Content(episodes)] | [Container.Content(seasons)] | [Container.Content(songs)]</expression>
+	<expression name="ShortcutView_507">False</expression>
+	<expression name="ShortcutView_508">False</expression>
+	<expression name="ShortcutView_509">[Container.Content(sets)]</expression>
+	<expression name="ShortcutView_510">False</expression>
+	<expression name="ShortcutView_511">False</expression>
+	<expression name="ShortcutView_512">False</expression>
+	<expression name="ShortcutView_513">False</expression>
+	<expression name="ShortcutView_50_Include">True</expression>
+	<expression name="ShortcutView_51_Include">False</expression>
+	<expression name="ShortcutView_52_Include">False</expression>
+	<expression name="ShortcutView_53_Include">False</expression>
+	<expression name="ShortcutView_54_Include">False</expression>
+	<expression name="ShortcutView_55_Include">True</expression>
+	<expression name="ShortcutView_56_Include">False</expression>
+	<expression name="ShortcutView_57_Include">False</expression>
+	<expression name="ShortcutView_58_Include">False</expression>
+	<expression name="ShortcutView_59_Include">True</expression>
+	<expression name="ShortcutView_500_Include">False</expression>
+	<expression name="ShortcutView_501_Include">True</expression>
+	<expression name="ShortcutView_502_Include">False</expression>
+	<expression name="ShortcutView_503_Include">False</expression>
+	<expression name="ShortcutView_504_Include">False</expression>
+	<expression name="ShortcutView_505_Include">False</expression>
+	<expression name="ShortcutView_506_Include">True</expression>
+	<expression name="ShortcutView_507_Include">False</expression>
+	<expression name="ShortcutView_508_Include">False</expression>
+	<expression name="ShortcutView_509_Include">True</expression>
+	<expression name="ShortcutView_510_Include">False</expression>
+	<expression name="ShortcutView_511_Include">False</expression>
+	<expression name="ShortcutView_512_Include">False</expression>
+	<expression name="ShortcutView_513_Include">False</expression>
+</includes>

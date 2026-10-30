@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<backgrounds>
+    <background name="custom-image" label="Custom Image" type="browse">
+        <icon>DefaultPicture.png</icon>
+        <source label="Skin Backgrounds">special://skin/extras/backgrounds/</source>
+        <source label="Browse...">browse</source>
+    </background>
+    <background name="custom-folder" label="Custom Slideshow" type="multi">
+        <icon>DefaultFolder.png</icon>
+        <source label="Skin Backgrounds">special://skin/extras/backgrounds/</source>
+        <source label="Browse...">browse</source>
+    </background>
+</backgrounds>

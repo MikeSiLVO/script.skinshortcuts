@@ -1,0 +1,135 @@
+{
+ "menus": {
+  "mainmenu": {
+   "items": [
+    {
+     "name": "movies",
+     "position": 1,
+     "properties": {
+      "background": "custom-image",
+      "backgroundPath": "special://skin/media/movies.jpg"
+     }
+    },
+    {
+     "label": "Tunes",
+     "name": "music",
+     "position": 3
+    },
+    {
+     "name": "weather",
+     "position": 6
+    },
+    {
+     "name": "favourites",
+     "position": 8
+    },
+    {
+     "name": "disc",
+     "position": 9
+    },
+    {
+     "name": "programs",
+     "position": 10
+    },
+    {
+     "actions": [
+      {
+       "action": "ActivateWindow(Videos,plugin://plugin.video.youtube/,return)"
+      }
+     ],
+     "icon": "DefaultAddonVideo.png",
+     "is_new": true,
+     "label": "YouTube",
+     "name": "user-youtube",
+     "position": 11
+    }
+   ],
+   "removed": [
+    "games"
+   ]
+  },
+  "mainmenu/tvshows": {
+   "items": [
+    {
+     "name": "tvshows-actors",
+     "position": 4
+    },
+    {
+     "name": "tvshows-studios",
+     "position": 5
+    },
+    {
+     "name": "tvshows-library",
+     "position": 6
+    }
+   ],
+   "removed": [
+    "tvshows-years"
+   ]
+  },
+  "movies.1": {
+   "items": [
+    {
+     "label": "Popular Now",
+     "name": "movies-tmdb-popular",
+     "position": 1
+    },
+    {
+     "name": "movies-new",
+     "position": 2
+    },
+    {
+     "name": "movies-tmdb-most-voted",
+     "position": 3
+    }
+   ],
+   "removed": [
+    "movies-random"
+   ]
+  },
+  "pictures.1": {
+   "items": [
+    {
+     "actions": [],
+     "icon": "special://skin/extras/icons/film.png",
+     "is_new": true,
+     "label": "$LOCALIZE[31028]",
+     "name": "RandomMovies",
+     "position": 0,
+     "properties": {
+      "widgetLabel": "$LOCALIZE[31028]",
+      "widgetPath": "special://skin/extras/playlists/RandomMovies.xsp",
+      "widgetTarget": "videos"
+     }
+    }
+   ]
+  },
+  "powermenu": {
+   "items": [
+    {
+     "disabled": true,
+     "name": "power-rebootandroid",
+     "position": 9
+    },
+    {
+     "name": "power-quit",
+     "position": 14
+    }
+   ],
+   "removed": [
+    "power-mastermode"
+   ]
+  },
+  "tvshows.1": {
+   "items": [
+    {
+     "name": "tvshows-random",
+     "position": 3,
+     "removed_properties": [
+      "widgetaspect"
+     ]
+    }
+   ]
+  }
+ }
+}

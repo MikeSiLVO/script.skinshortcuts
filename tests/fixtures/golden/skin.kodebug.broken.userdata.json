@@ -1,0 +1,121 @@
+{
+ "menus": {
+  "buttonmenu": {
+   "items": [
+    {
+     "name": "quit",
+     "position": 1
+    }
+   ],
+   "removed": [
+    "reboot"
+   ]
+  },
+  "custom-9fcf9e4a": {
+   "items": [
+    {
+     "actions": [],
+     "icon": "logos/kodi-pl.png",
+     "is_new": true,
+     "label": "Random movies",
+     "name": "random-movies-pl",
+     "position": 0,
+     "properties": {
+      "widgetLabel": "Random movies",
+      "widgetPath": "special://skin/extras/playlists/randommovies.xsp",
+      "widgetSource": "playlist",
+      "widgetTarget": "videos",
+      "widgetType": "movies"
+     }
+    },
+    {
+     "actions": [],
+     "icon": "logos/kodi-pl.png",
+     "is_new": true,
+     "label": "In progress movies",
+     "name": "inprogress-movies-pl",
+     "position": 1,
+     "properties": {
+      "widgetLabel": "In progress movies",
+      "widgetPath": "special://skin/extras/playlists/inprogressmovies.xsp",
+      "widgetSource": "playlist",
+      "widgetTarget": "videos",
+      "widgetType": "movies"
+     }
+    }
+   ]
+  },
+  "mainmenu": {
+   "items": [
+    {
+     "name": "movies-a",
+     "position": 0,
+     "properties": {
+      "widget": "recentlyadded-movies",
+      "widget.2": "top250-movies",
+      "widgetStyle": "Panel"
+     }
+    },
+    {
+     "actions": [
+      {
+       "action": "ActivateWindow(Music,musicdb://albums/,return)"
+      }
+     ],
+     "icon": "DefaultMusicAlbums.png",
+     "is_new": true,
+     "label": "My Music",
+     "name": "user-music",
+     "position": 1
+    },
+    {
+     "name": "movies-b",
+     "position": 2,
+     "properties": {
+      "customWidget": "custom-9fcf9e4a",
+      "widget": "customwidget"
+     }
+    },
+    {
+     "label": "Series",
+     "name": "tvshows",
+     "position": 3,
+     "properties": {
+      "background": "weather-fanart"
+     }
+    },
+    {
+     "name": "settings",
+     "position": 5,
+     "properties": {
+      "background": "custom-image",
+      "backgroundPath": "special://skin/media/settings.jpg"
+     }
+    }
+   ]
+  },
+  "mainmenu/movies-a": {
+   "items": [
+    {
+     "label": "Every Movie",
+     "name": "all-movies",
+     "position": 0
+    }
+   ]
+  },
+  "mainmenu/movies-b": {
+   "removed": [
+    "recent-movies"
+   ]
+  },
+  "mainmenu/settings": {
+   "items": [
+    {
+     "disabled": true,
+     "name": "addons",
+     "position": 2
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,93 @@
+{
+  "menus": {
+    "mainmenu": {
+      "items": [
+        {
+          "name": "settings",
+          "position": 3
+        },
+        {
+          "name": "power",
+          "position": 4
+        }
+      ]
+    },
+    "mainmenu/settings": {
+      "items": [
+        {
+          "name": "sub-be5ae35d",
+          "label": "$LOCALIZE[10035]",
+          "actions": [
+            {
+              "action": "ActivateWindow(SkinSettings)"
+            }
+          ],
+          "icon": "DefaultAddonService.png",
+          "position": 1,
+          "is_new": true
+        },
+        {
+          "name": "profiles",
+          "position": 2
+        },
+        {
+          "name": "systeminfo",
+          "position": 3
+        },
+        {
+          "name": "eventlog",
+          "position": 4
+        }
+      ]
+    },
+    "powermenu": {
+      "items": [
+        {
+          "name": "settings",
+          "position": 10
+        }
+      ]
+    },
+    "movies.widgets": {
+      "items": [
+        {
+          "name": "sub-movies.w",
+          "label": "31045",
+          "actions": [
+            {
+              "action": "noop"
+            }
+          ],
+          "icon": "special://skin/extras/icons/recentlyadded.png",
+          "properties": {
+            "widget": "NewMovies",
+            "widgetLabel": "New Movies",
+            "widgetPath": "special://skin/extras/playlists/NewMovies.xsp",
+            "widgetType": "movies",
+            "widgetTarget": "videos"
+          },
+          "position": 0,
+          "is_new": true
+        }
+      ]
+    },
+    "settings.widgets": {
+      "items": [
+        {
+          "name": "sub-settings",
+          "label": "5",
+          "actions": [],
+          "icon": "special://skin/extras/icons/settings.png",
+          "properties": {
+            "widget": "settings",
+            "widgetLabel": "Settings",
+            "widgetPath": "Settings",
+            "widgetTarget": "videos"
+          },
+          "position": 0,
+          "is_new": true
+        }
+      ]
+    }
+  }
+}

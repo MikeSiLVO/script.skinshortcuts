@@ -1,0 +1,693 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menus>
+	<menu name="mainmenu" container="99">
+		<allow widgets="false" backgrounds="false" submenus="false"/>
+		<item name="script.globalsearch">
+			<label>137</label>
+			<label2>script.globalsearch</label2>
+			<icon>DefaultShortcut.png</icon>
+			<property name="widgetName">Global search</property>
+			<action>RunScript(script.globalsearch)</action>
+			<property name="defaultID">script.globalsearch</property>
+		</item>
+		<item name="home">
+			<property name="widgetgroup">widget1</property>
+			<label>10000</label>
+			<label2>widget1</label2>
+			<icon>DefaultShortcut.png</icon>
+			<property name="widgetName">Widget Group 1</property>
+			<visible>Library.HasContent(Movies) | Library.HasContent(TVShows)</visible>
+			<action>noop</action>
+			<property name="defaultID">home</property>
+		</item>
+		<item name="movies">
+			<property name="widgetgroup">widget2</property>
+			<label>20342</label>
+			<label2>widget2</label2>
+			<icon>DefaultMovies.png</icon>
+			<property name="widgetName">Widget Group 2</property>
+			<action>ActivateWindow(Videos,MovieTitles,return)</action>
+			<property name="defaultID">movies</property>
+		</item>
+		<item name="tvshows">
+			<property name="widgetgroup">widget3</property>
+			<label>36903</label>
+			<label2>widget3</label2>
+			<icon>DefaultTVShows.png</icon>
+			<property name="widgetName">Widget Group 3</property>
+			<action>ActivateWindow(Videos,TVShowTitles,return)</action>
+			<property name="defaultID">tvshows</property>
+		</item>
+		<item name="favourites">
+			<property name="widgetgroup">favourites</property>
+			<label>1036</label>
+			<label2>favourites</label2>
+			<icon>DefaultShortcut.png</icon>
+			<property name="widgetName">Favourites</property>
+			<action>ActivateWindow(favouritesbrowser,return)</action>
+			<property name="defaultID">favourites</property>
+		</item>
+		<item name="videos">
+			<property name="widgetgroup">widget4</property>
+			<label>10025</label>
+			<label2>widget4</label2>
+			<icon>DefaultVideo.png</icon>
+			<property name="widgetName">Widget Group 4</property>
+			<action>ActivateWindow(Videos,root)</action>
+			<property name="defaultID">videos</property>
+		</item>
+		<item name="music">
+			<property name="widgetgroup">widget5</property>
+			<label>10502</label>
+			<label2>widget5</label2>
+			<icon>DefaultMusicAlbums.png</icon>
+			<property name="widgetName">Widget Group 5</property>
+			<action>ActivateWindow(Music,root)</action>
+			<property name="defaultID">music</property>
+		</item>
+		<item name="games">
+			<property name="widgetgroup">widget6</property>
+			<label>15016</label>
+			<label2>widget6</label2>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetName">Widget Group 6</property>
+			<visible>System.GetBool(gamesgeneral.enable)</visible>
+			<action>ActivateWindow(Games)</action>
+			<property name="defaultID">games</property>
+		</item>
+		<item name="programs">
+			<property name="widgetgroup">widget7</property>
+			<label>10506</label>
+			<label2>widget7</label2>
+			<icon>DefaultProgram.png</icon>
+			<property name="widgetName">Widget Group 7</property>
+			<action>ActivateWindow(1112)</action>
+			<property name="defaultID">programs</property>
+		</item>
+		<item name="pictures">
+			<property name="widgetgroup">widget8</property>
+			<label>1213</label>
+			<label2>widget8</label2>
+			<icon>DefaultPicture.png</icon>
+			<property name="widgetName">Widget Group 8</property>
+			<action>ActivateWindow(Pictures)</action>
+			<property name="defaultID">pictures</property>
+		</item>
+		<item name="weather">
+			<property name="widgetgroup">weather</property>
+			<label>12600</label>
+			<label2>weather</label2>
+			<icon>DefaultShortcut.png</icon>
+			<property name="widgetName">Weather</property>
+			<action>ActivateWindow(Weather)</action>
+			<property name="defaultID">weather</property>
+		</item>
+		<item name="settings">
+			<label>10004</label>
+			<label2>settings</label2>
+			<icon>DefaultShortcut.png</icon>
+			<property name="widgetName">Settings</property>
+			<action>ActivateWindowAndFocus(Settings,9000,0)</action>
+			<property name="defaultID">settings</property>
+		</item>
+		<item name="exit">
+			<label>13012</label>
+			<label2>exit</label2>
+			<icon>DefaultShortcut.png</icon>
+			<property name="widgetName">Exit</property>
+			<action>ActivateWindow(ShutdownMenu)</action>
+			<property name="defaultID">exit</property>
+		</item>
+	</menu>
+	<menu name="shutdown">
+		<allow widgets="false" backgrounds="false" submenus="false"/>
+		<defaults>
+			<action when="after">Close</action>
+		</defaults>
+		<item name="quit">
+			<label>13009</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultQuit.png</icon>
+			<action>Quit</action>
+			<property name="defaultID">13009</property>
+		</item>
+		<item name="suspend">
+			<label>13011</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultSleep.png</icon>
+			<action>Suspend</action>
+			<property name="defaultID">13011</property>
+		</item>
+		<item name="hibernate">
+			<label>13010</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultSleep.png</icon>
+			<action>Hibernate</action>
+			<property name="defaultID">13010</property>
+		</item>
+		<item name="reboot">
+			<label>13013</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultReboot.png</icon>
+			<action>Reboot</action>
+			<property name="defaultID">13013</property>
+		</item>
+		<item name="powerdown">
+			<label>13016</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultShutdown.png</icon>
+			<action>PowerDown</action>
+			<property name="defaultID">13016</property>
+		</item>
+		<item name="shutdown">
+			<label>13005</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultShutdown.png</icon>
+			<action>ShutDown</action>
+			<property name="defaultID">13005</property>
+		</item>
+		<item name="shutdown_timer">
+			<label>19026</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultTimer.png</icon>
+			<action>AlarmClock(shutdowntimer,XBMC.Shutdown())</action>
+			<property name="defaultID">19026</property>
+		</item>
+		<item name="cancel_shutdown_timer">
+			<label>20151</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultTimer.png</icon>
+			<action>CancelAlarm(shutdowntimer)</action>
+			<property name="defaultID">20151</property>
+		</item>
+		<item name="screensaver">
+			<label>360</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultScreensaver.png</icon>
+			<action>ActivateScreensaver</action>
+			<property name="defaultID">360</property>
+		</item>
+		<item name="mastermode">
+			<label>20045</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultMasterMode.png</icon>
+			<action>Mastermode</action>
+			<property name="defaultID">20045</property>
+		</item>
+		<item name="logoff">
+			<label>20126</label>
+			<label2>Kodi Command</label2>
+			<icon>DefaultActor.png</icon>
+			<action>System.LogOff</action>
+			<property name="defaultID">20126</property>
+		</item>
+		<item name="settings">
+			<label>10004</label>
+			<label2>Common Shortcut</label2>
+			<icon>DefaultSettings.png</icon>
+			<action>ActivateWindow(Settings)</action>
+			<property name="defaultID">settings</property>
+		</item>
+	</menu>
+	<menu name="widget1" type="widgets">
+		<allow widgets="true" backgrounds="false" submenus="false"/>
+		<defaults>
+			<property name="groupId">1000</property>
+		</defaults>
+		<item name="widget1-1">
+			<label>31177</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31177</property>
+			<property name="widget">inprogress-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/InProgressTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">lastplayed</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget1-2">
+			<label>31167</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31167</property>
+			<property name="widget">recent-movies</property>
+			<property name="widgetPath">special://skin/extras/video/RecentlyAddedMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">dateadded</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget1-3">
+			<label>31175</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31175</property>
+			<property name="widget">recent-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/RecentlyUpdatedTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">dateadded</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget1-4">
+			<label>31169</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31169</property>
+			<property name="widget">inprogress-movies</property>
+			<property name="widgetPath">special://skin/extras/video/InProgressMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">lastplayed</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget1-5">
+			<label>31183</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31183</property>
+			<property name="widget">recently-played-albums</property>
+			<property name="widgetPath">musicdb://recentlyplayedalbums/</property>
+			<property name="widgetType">albums</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">lastplayed</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">square</property>
+		</item>
+		<item name="widget1-6">
+			<label>31185</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31185</property>
+			<property name="widget">recently-added-albums</property>
+			<property name="widgetPath">musicdb://recentlyaddedalbums/</property>
+			<property name="widgetType">albums</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">dateadded</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">square</property>
+		</item>
+	</menu>
+	<menu name="widget2" type="widgets">
+		<allow widgets="true" backgrounds="false" submenus="false"/>
+		<defaults>
+			<property name="groupId">2000</property>
+		</defaults>
+		<item name="widget2-1">
+			<label>31168</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31168</property>
+			<property name="widget">your-movies</property>
+			<property name="widgetPath">special://skin/extras/video/YourMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">name</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget2-2">
+			<label>31167</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31167</property>
+			<property name="widget">recent-movies</property>
+			<property name="widgetPath">special://skin/extras/video/RecentlyAddedMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">dateadded</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget2-3">
+			<label>31169</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31169</property>
+			<property name="widget">inprogress-movies</property>
+			<property name="widgetPath">special://skin/extras/video/InProgressMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">lastplayed</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget2-4">
+			<label>31170</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31170</property>
+			<property name="widget">kids-movies</property>
+			<property name="widgetPath">special://skin/extras/video/KidsMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">name</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget2-5">
+			<label>31174</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31174</property>
+			<property name="widget">toprated-movies</property>
+			<property name="widgetPath">special://skin/extras/video/TopRatedMovies.xsp</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">rating</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget2-6">
+			<label>31024</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31024</property>
+			<property name="widgetPath">library://video/movies/sets.xml/</property>
+			<property name="widgetType">movies</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">name</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+	</menu>
+	<menu name="widget3" type="widgets">
+		<allow widgets="true" backgrounds="false" submenus="false"/>
+		<defaults>
+			<property name="groupId">3000</property>
+		</defaults>
+		<item name="widget3-1">
+			<label>31176</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31176</property>
+			<property name="widget">your-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/YourTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">name</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget3-2">
+			<label>31175</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31175</property>
+			<property name="widget">recent-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/RecentlyUpdatedTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">dateadded</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget3-3">
+			<label>31177</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31177</property>
+			<property name="widget">inprogress-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/InProgressTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">lastplayed</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget3-4">
+			<label>31178</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31178</property>
+			<property name="widget">kids-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/KidsTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">name</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+		<item name="widget3-5">
+			<label>31182</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31182</property>
+			<property name="widget">toprated-tvshows</property>
+			<property name="widgetPath">special://skin/extras/video/TopRatedTVShows.xsp</property>
+			<property name="widgetType">tvshows</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">rating</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">poster</property>
+		</item>
+	</menu>
+	<menu name="widget4" type="widgets">
+		<allow widgets="true" backgrounds="false" submenus="false"/>
+		<defaults>
+			<property name="groupId">4000</property>
+		</defaults>
+		<item name="widget4-1">
+			<label>31223</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31223</property>
+			<property name="widgetPath">addons://sources/video/</property>
+			<property name="widgetType">addons</property>
+			<property name="widgetTarget">videos</property>
+			<property name="widgetSortBy">label</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+	</menu>
+	<menu name="widget5" type="widgets">
+		<allow widgets="true" backgrounds="false" submenus="false"/>
+		<defaults>
+			<property name="groupId">5000</property>
+		</defaults>
+		<item name="widget5-1">
+			<label>31183</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31183</property>
+			<property name="widget">recently-played-albums</property>
+			<property name="widgetPath">musicdb://recentlyplayedalbums/</property>
+			<property name="widgetType">albums</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">lastplayed</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+		<item name="widget5-2">
+			<label>31185</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31185</property>
+			<property name="widget">recently-added-albums</property>
+			<property name="widgetPath">musicdb://recentlyaddedalbums/</property>
+			<property name="widgetType">albums</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">dateadded</property>
+			<property name="widgetSortOrder">descending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+		<item name="widget5-3">
+			<label>31184</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31184</property>
+			<property name="widget">your-albums</property>
+			<property name="widgetPath">special://skin/extras/music/YourAlbums.xsp</property>
+			<property name="widgetType">albums</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">artist</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+		<item name="widget5-4">
+			<label>31186</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31186</property>
+			<property name="widget">your-artists</property>
+			<property name="widgetPath">special://skin/extras/music/YourArtists.xsp</property>
+			<property name="widgetType">artists</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">artist</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+		<item name="widget5-5">
+			<label>31187</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31187</property>
+			<property name="widget">music-genres</property>
+			<property name="widgetPath">musicdb://genres/</property>
+			<property name="widgetType">music</property>
+			<property name="widgetTarget">music</property>
+			<property name="widgetSortBy">genre</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+	</menu>
+	<menu name="widget6" type="widgets">
+		<allow widgets="true" backgrounds="false" submenus="false"/>
+		<defaults>
+			<property name="groupId">6000</property>
+		</defaults>
+		<item name="widget6-1">
+			<label>31100</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31100</property>
+			<property name="widgetPath">addons://sources/game/</property>
+			<property name="widgetType">addons</property>
+			<property name="widgetTarget">games</property>
+			<property name="widgetSortBy">label</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+	</menu>
+	<menu name="widget7" type="widgets">
+		<allow widgets="true" backgrounds="false" submenus="false"/>
+		<defaults>
+			<property name="groupId">7000</property>
+		</defaults>
+		<item name="widget7-1">
+			<label>31222</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">31222</property>
+			<property name="widgetPath">addons://sources/executable/</property>
+			<property name="widgetType">addons</property>
+			<property name="widgetTarget">programs</property>
+			<property name="widgetSortBy">label</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+	</menu>
+	<menu name="widget8" type="widgets">
+		<allow widgets="true" backgrounds="false" submenus="false"/>
+		<defaults>
+			<property name="groupId">8000</property>
+		</defaults>
+		<item name="widget8-1">
+			<label>1039</label>
+			<icon>ftv_icon.png</icon>
+			<property name="widgetLabel">1039</property>
+			<property name="widgetPath">addons://sources/image/</property>
+			<property name="widgetType">addons</property>
+			<property name="widgetTarget">pictures</property>
+			<property name="widgetSortBy">name</property>
+			<property name="widgetSortOrder">ascending</property>
+			<property name="widgetStyle">squareinfo</property>
+		</item>
+	</menu>
+	<dialogs>
+		<subdialog buttonID="9101" menu="widget1"/>
+		<subdialog buttonID="9102" menu="widget2"/>
+		<subdialog buttonID="9103" menu="widget3"/>
+		<subdialog buttonID="9104" menu="widget4"/>
+		<subdialog buttonID="9105" menu="widget5"/>
+		<subdialog buttonID="9106" menu="widget6"/>
+		<subdialog buttonID="9107" menu="widget7"/>
+		<subdialog buttonID="9108" menu="widget8"/>
+	</dialogs>
+	<groupings>
+		<group name="ftv" label="fTV" icon="ftv_icon.png">
+			<shortcut name="ftv-favourites" label="10134" icon="ftv_icon.png">
+				<action>ActivateWindow(favouritesbrowser,return)</action>
+			</shortcut>
+			<shortcut name="ftv-games" label="15016" icon="ftv_icon.png" type="game">
+				<action>ActivateWindow(Games)</action>
+			</shortcut>
+			<group name="ftv-movies" label="342" icon="DefaultMovies.png">
+				<shortcut name="recent-movies" label="31167" type="movie" icon="ftv_icon.png">
+					<action>ActivateWindow(Videos,special://skin/extras/video/RecentlyAddedMovies.xsp,return)</action>
+				</shortcut>
+				<shortcut name="your-movies" label="31168" type="movie" icon="ftv_icon.png">
+					<action>ActivateWindow(Videos,special://skin/extras/video/YourMovies.xsp,return)</action>
+				</shortcut>
+				<shortcut name="inprogress-movies" label="31169" type="movie" icon="ftv_icon.png">
+					<action>ActivateWindow(Videos,special://skin/extras/video/InProgressMovies.xsp,return)</action>
+				</shortcut>
+				<shortcut name="kids-movies" label="31170" type="movie" icon="ftv_icon.png">
+					<action>ActivateWindow(Videos,special://skin/extras/video/KidsMovies.xsp,return)</action>
+				</shortcut>
+				<shortcut name="toprated-movies" label="31174" type="movie" icon="ftv_icon.png">
+					<action>ActivateWindow(Videos,special://skin/extras/video/TopRatedMovies.xsp,return)</action>
+				</shortcut>
+				<shortcut name="movie-sets" label="31024" type="movie" icon="ftv_icon.png">
+					<action>ActivateWindow(Videos,&quot;library://video/movies/sets.xml/&quot;,return)</action>
+				</shortcut>
+			</group>
+			<group name="ftv-tvshows" label="20343" icon="DefaultTVShows.png">
+				<shortcut name="recent-tvshows" label="31175" type="tvshow" icon="ftv_icon.png">
+					<action>ActivateWindow(Videos,special://skin/extras/video/RecentlyUpdatedTVShows.xsp,return)</action>
+				</shortcut>
+				<shortcut name="your-tvshows" label="31176" type="tvshow" icon="ftv_icon.png">
+					<action>ActivateWindow(Videos,special://skin/extras/video/YourTVShows.xsp,return)</action>
+				</shortcut>
+				<shortcut name="inprogress-tvshows" label="31177" type="tvshow" icon="ftv_icon.png">
+					<action>ActivateWindow(Videos,special://skin/extras/video/InProgressTVShows.xsp,return)</action>
+				</shortcut>
+				<shortcut name="kids-tvshows" label="31178" type="tvshow" icon="ftv_icon.png">
+					<action>ActivateWindow(Videos,special://skin/extras/video/KidsTVShows.xsp,return)</action>
+				</shortcut>
+				<shortcut name="toprated-tvshows" label="31182" type="tvshow" icon="ftv_icon.png">
+					<action>ActivateWindow(Videos,special://skin/extras/video/TopRatedTVShows.xsp,return)</action>
+				</shortcut>
+			</group>
+			<group name="ftv-music" label="2" icon="DefaultMusicAlbums.png">
+				<shortcut name="recently-played-albums" label="31183" type="music" icon="ftv_icon.png">
+					<action>ActivateWindow(Music,musicdb://recentlyplayedalbums/,return)</action>
+				</shortcut>
+				<shortcut name="your-albums" label="31184" type="music" icon="ftv_icon.png">
+					<action>ActivateWindow(Music,special://skin/extras/music/YourAlbums.xsp,return)</action>
+				</shortcut>
+				<shortcut name="recently-added-albums" label="31185" type="music" icon="ftv_icon.png">
+					<action>ActivateWindow(Music,musicdb://recentlyaddedalbums/,return)</action>
+				</shortcut>
+				<shortcut name="your-artists" label="31186" type="music" icon="ftv_icon.png">
+					<action>ActivateWindow(Music,special://skin/extras/music/YourArtists.xsp,return)</action>
+				</shortcut>
+				<shortcut name="music-genres" label="31187" type="music" icon="ftv_icon.png">
+					<action>ActivateWindow(Music,musicdb://genres/,return)</action>
+				</shortcut>
+			</group>
+			<group name="ftv-addons" label="24001" icon="DefaultAddon.png">
+				<shortcut name="music-addons" label="31221" type="music" icon="ftv_icon.png">
+					<action>ActivateWindow(Music,addons://sources/audio/,return)</action>
+				</shortcut>
+				<shortcut name="program-addons" label="31222" type="program" icon="ftv_icon.png">
+					<action>ActivateWindow(Programs,addons://sources/executable/,return)</action>
+				</shortcut>
+				<shortcut name="video-addons" label="31223" type="video" icon="ftv_icon.png">
+					<action>ActivateWindow(Videos,addons://sources/video/,return)</action>
+				</shortcut>
+				<shortcut name="picture-addons" label="31224" type="picture" icon="ftv_icon.png">
+					<action>ActivateWindow(Pictures,addons://sources/image/,return)</action>
+				</shortcut>
+				<shortcut name="all-addons" label="31234" type="addons" icon="ftv_icon.png">
+					<action>ActivateWindow(AddonBrowser,&quot;addons://all/&quot;,return)</action>
+				</shortcut>
+			</group>
+		</group>
+		<group name="common" label="32029">
+			<content source="favourites"/>
+		</group>
+		<group name="video" label="32030">
+			<content source="nodes" target="video"/>
+			<content source="playlists" target="video"/>
+			<content source="addons" target="video"/>
+			<content source="sources" target="video"/>
+		</group>
+		<group name="music" label="32031">
+			<content source="nodes" target="music"/>
+			<content source="playlists" target="music"/>
+			<content source="addons" target="music"/>
+			<content source="sources" target="music"/>
+		</group>
+		<group name="pictures" label="32020">
+			<content source="sources" target="pictures"/>
+		</group>
+		<group name="addons" label="32007">
+			<content source="addons" target="programs"/>
+			<content source="addons" target="video"/>
+			<content source="addons" target="music"/>
+			<content source="addons" target="pictures"/>
+			<content source="addons" target="games"/>
+		</group>
+		<group name="settings" label="10004">
+			<content source="settings"/>
+		</group>
+		<group name="commands" label="32054">
+			<content source="commands"/>
+		</group>
+	</groupings>
+	<overrides>
+		<action replace="ActivateWindow(favourites)">ActivateWindow(favouritesbrowser)</action>
+	</overrides>
+	<contextmenu>true</contextmenu>
+</menus>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<backgrounds>
+	<overrides>
+		<background replace="kodi-movie-fanart">movie-fanart</background>
+		<background replace="kodi-tv-fanart">tv-fanart</background>
+		<background replace="kodi-music-fanart">music-fanart</background>
+		<background replace="kodi-musicvideo-fanart">musicvideo-fanart</background>
+	</overrides>
+	<background name="custom-image" label="$LOCALIZE[31023]" type="browse">
+		<icon>special://skin/extras/icons/DefaultPicture.png</icon>
+		<source label="$LOCALIZE[1024]">browse</source>
+		<source label="Skin Backgrounds">special://skin/extras/backgrounds/</source>
+	</background>
+	<background name="custom-folder" label="$LOCALIZE[31022]" type="multi">
+		<icon>special://skin/extras/icons/DefaultFolder.png</icon>
+		<source label="$LOCALIZE[1024]">browse</source>
+		<source label="Skin Backgrounds">special://skin/extras/backgrounds/</source>
+	</background>
+	<group name="skininfo-fanart" flat="true" visible="System.AddonIsEnabled(script.skin.info.service)">
+		<background name="movie-fanart" label="$LOCALIZE[31062]" type="property" visible="System.AddonIsEnabled(script.skin.info.service) + Library.HasContent(movies)">
+			<path>$INFO[Window(Home).Property(SkinInfo.Slideshow.Movie.FanArt)]</path>
+			<icon>special://skin/extras/icons/DefaultMovies.png</icon>
+		</background>
+		<background name="tv-fanart" label="$LOCALIZE[31063]" type="property" visible="System.AddonIsEnabled(script.skin.info.service) + Library.HasContent(tvshows)">
+			<path>$INFO[Window(Home).Property(SkinInfo.Slideshow.TV.FanArt)]</path>
+			<icon>special://skin/extras/icons/DefaultTVShows.png</icon>
+		</background>
+		<background name="video-fanart" label="$LOCALIZE[31064]" type="property" visible="System.AddonIsEnabled(script.skin.info.service)">
+			<path>$INFO[Window(Home).Property(SkinInfo.Slideshow.Video.FanArt)]</path>
+			<icon>special://skin/extras/icons/DefaultVideo.png</icon>
+		</background>
+		<background name="music-fanart" label="$LOCALIZE[31065]" type="property" visible="System.AddonIsEnabled(script.skin.info.service) + Library.HasContent(music)">
+			<path>$INFO[Window(Home).Property(SkinInfo.Slideshow.Music.FanArt)]</path>
+			<icon>special://skin/extras/icons/DefaultAudio.png</icon>
+		</background>
+		<background name="musicvideo-fanart" label="$LOCALIZE[31575]" type="property" visible="System.AddonIsEnabled(script.skin.info.service) + Library.HasContent(musicvideos)">
+			<path>$INFO[Window(Home).Property(SkinInfo.Slideshow.MusicVideo.FanArt)]</path>
+			<icon>special://skin/extras/icons/DefaultMusicVideos.png</icon>
+		</background>
+		<background name="global-fanart" label="$LOCALIZE[31066]" type="property" visible="System.AddonIsEnabled(script.skin.info.service)">
+			<path>$INFO[Window(Home).Property(SkinInfo.Slideshow.Global.FanArt)]</path>
+			<icon>special://skin/extras/icons/DefaultPicture.png</icon>
+		</background>
+	</group>
+	<background name="weather-fanart" label="$LOCALIZE[31084]" type="property" visible="!String.IsEmpty(Skin.String(weatherfanart.path))">
+		<path>$INFO[Skin.String(weatherfanart.path)]$INFO[Window(Weather).Property(Current.FanartCode)]$VAR[WeatherBackgroundTypeVar]</path>
+		<icon>special://skin/extras/icons/DefaultAddonWeather.png</icon>
+	</background>
+	<background name="playlist" label="$LOCALIZE[136]" type="playlist">
+		<icon>DefaultPlaylist.png</icon>
+		<source label="$LOCALIZE[31120]" icon="DefaultPlaylist.png">special://skin/extras/playlists/</source>
+		<source label="$LOCALIZE[20012]" icon="DefaultVideoPlaylists.png">special://videoplaylists/</source>
+		<source label="$LOCALIZE[20011]" icon="DefaultMusicPlaylists.png">special://musicplaylists/</source>
+	</background>
+	<background name="live-playlist" label="$LOCALIZE[31123]" type="live-playlist">
+		<icon>DefaultPlaylist.png</icon>
+		<source label="$LOCALIZE[31120]" icon="DefaultPlaylist.png">special://skin/extras/playlists/</source>
+		<source label="$LOCALIZE[20012]" icon="DefaultVideoPlaylists.png">special://videoplaylists/</source>
+		<source label="$LOCALIZE[20011]" icon="DefaultMusicPlaylists.png">special://musicplaylists/</source>
+	</background>
+</backgrounds>

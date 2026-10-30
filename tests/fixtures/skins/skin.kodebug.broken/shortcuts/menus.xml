@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menus>
+
+    <!--
+        Scenario 1: duplicate items linking the same submenu template.
+        Editing one should NOT affect the other.
+
+        Scenario 2: picker auto-attach. The <submenu name="musicvideos"> below
+        has no corresponding default <item>. Adding a new item via picker and
+        selecting the "Music Videos" shortcut should auto-link it.
+    -->
+
+    <menu name="mainmenu" container="300">
+        <item name="movies-a" submenu="movies">
+            <label>Movies A</label>
+            <action>ActivateWindow(Videos,videodb://movies/titles/,return)</action>
+            <icon>DefaultMovies.png</icon>
+        </item>
+        <item name="movies-b" submenu="movies">
+            <label>Movies B</label>
+            <action>ActivateWindow(Videos,videodb://movies/titles/,return)</action>
+            <icon>DefaultMovies.png</icon>
+        </item>
+        <item name="tvshows" submenu="tvshows">
+            <label>TV Shows</label>
+            <action>ActivateWindow(Videos,videodb://tvshows/titles/,return)</action>
+            <icon>DefaultTVShows.png</icon>
+        </item>
+        <item name="settings" submenu="settings">
+            <label>Settings</label>
+            <action>ActivateWindow(Settings)</action>
+            <icon>DefaultAddonService.png</icon>
+        </item>
+        <item name="power">
+            <label>Power</label>
+            <action>ActivateWindow(ShutdownMenu)</action>
+            <icon>DefaultAddonPowerManager.png</icon>
+        </item>
+    </menu>
+
+    <menu name="buttonmenu" controltype="button">
+        <item name="shutdown">
+            <label>$LOCALIZE[13005]</label>
+            <action>System.Shutdown</action>
+            <icon>DefaultAddonPowerManager.png</icon>
+        </item>
+        <item name="reboot">
+            <label>$LOCALIZE[13013]</label>
+            <action>System.Reboot</action>
+            <icon>DefaultAddonPowerManager.png</icon>
+        </item>
+        <item name="quit">
+            <label>$LOCALIZE[13009]</label>
+            <action>Quit</action>
+            <icon>DefaultAddonPowerManager.png</icon>
+        </item>
+    </menu>
+
+    <submenu name="movies">
+        <item name="all-movies">
+            <label>All Movies</label>
+            <action>ActivateWindow(Videos,videodb://movies/titles/,return)</action>
+        </item>
+        <item name="recent-movies">
+            <label>Recently Added Movies</label>
+            <action>ActivateWindow(Videos,videodb://recentlyaddedmovies/,return)</action>
+        </item>
+    </submenu>
+
+    <submenu name="tvshows">
+        <item name="all-tv">
+            <label>All TV Shows</label>
+            <action>ActivateWindow(Videos,videodb://tvshows/titles/,return)</action>
+        </item>
+    </submenu>
+
+    <submenu name="musicvideos">
+        <item name="all-mv">
+            <label>All Music Videos</label>
+            <action>ActivateWindow(Videos,videodb://musicvideos/titles/,return)</action>
+        </item>
+        <item name="recent-mv">
+            <label>Recently Added Music Videos</label>
+            <action>ActivateWindow(Videos,videodb://recentlyaddedmusicvideos/,return)</action>
+        </item>
+    </submenu>
+
+    <submenu name="settings">
+        <item name="system-settings">
+            <label>$LOCALIZE[13000]</label>
+            <action>ActivateWindow(SystemSettings)</action>
+        </item>
+        <item name="skin-settings">
+            <label>$LOCALIZE[20077]</label>
+            <action>ActivateWindow(SkinSettings)</action>
+        </item>
+        <item name="addons">
+            <label>$LOCALIZE[24001]</label>
+            <action>ActivateWindow(AddonBrowser)</action>
+        </item>
+    </submenu>
+
+    <shortcuts>
+        <group name="library">
+            <shortcut name="movies" label="Movies" icon="DefaultMovies.png">
+                <action>ActivateWindow(Videos,videodb://movies/titles/,return)</action>
+            </shortcut>
+            <shortcut name="tvshows" label="TV Shows" icon="DefaultTVShows.png">
+                <action>ActivateWindow(Videos,videodb://tvshows/titles/,return)</action>
+            </shortcut>
+            <shortcut name="musicvideos" label="Music Videos" icon="DefaultMusicVideos.png">
+                <action>ActivateWindow(Videos,videodb://musicvideos/titles/,return)</action>
+            </shortcut>
+        </group>
+    </shortcuts>
+
+</menus>

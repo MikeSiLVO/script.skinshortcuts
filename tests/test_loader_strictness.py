@@ -1,0 +1,158 @@
+"""A broken definition is skipped with a warning, and a repeated name warns and keeps the first."""
+
+from __future__ import annotations
+
+from collections.abc import Callable
+from pathlib import Path
+
+import pytest
+
+from skinshortcuts.loaders.background import load_backgrounds
+from skinshortcuts.loaders.menu import load_groupings, load_menus
+from skinshortcuts.loaders.property import load_properties
+from skinshortcuts.loaders.template import load_templates
+from skinshortcuts.loaders.views import load_views
+from skinshortcuts.loaders.widget import load_widgets
+from skinshortcuts.log import Logger
+
+ITEM = '<item name="a"><label>A</label><action>Noop</action></item>'
+
+BROKEN = [
+    ("widget name", load_widgets, '<widgets><widget label="W"><path>x://</path></widget></widgets>'),
+    ("widget label", load_widgets, '<widgets><widget name="w"><path>x://</path></widget></widgets>'),
+    ("widget path", load_widgets, '<widgets><widget name="w" label="W"/></widgets>'),
+    ("background name", load_backgrounds, '<backgrounds><background label="B"><path>x</path>'
+     "</background></backgrounds>"),
+    ("background path", load_backgrounds,
+     '<backgrounds><background name="b" label="B"/></backgrounds>'),
+    ("property name", load_properties, "<properties><property/></properties>"),
+    ("button id", load_properties,
+     '<properties><buttons><button id="abc" property="x"/></buttons></properties>'),
+    ("button property", load_properties,
+     '<properties><buttons><button id="301"/></buttons></properties>'),
+    ("fallback property", load_properties,
+     "<properties><fallbacks><fallback><default>x</default></fallback></fallbacks></properties>"),
+    ("preset name", load_templates, "<templates><presets><preset/></presets></templates>"),
+    ("template include", load_templates, "<templates><template/></templates>"),
+    ("menu name", load_menus, f"<menus><menu>{ITEM}</menu></menus>"),
+    ("item name", load_menus, '<menus><menu name="m"><item><label>A</label></item></menu></menus>'),
+    ("item label", load_menus, '<menus><menu name="m"><item name="a"/></menu></menus>'),
+    ("view id", load_views, '<views><view label="V"/></views>'),
+    ("view label", load_views, '<views><view id="50"/></views>'),
+]
+
+DUPLICATES = [
+    (
+        "property",
+        load_properties,
+        '<properties><property name="style" value="a"/><property name="style" value="b"/>'
+        "</properties>",
+        lambda c: c.properties["style"].value,
+    ),
+    (
+        "property differing in case",
+        load_properties,
+        '<properties><property name="Style" value="a"/><property name="style" value="b"/>'
+        "</properties>",
+        lambda c: c.get_property("STYLE").value,
+    ),
+    (
+        "button",
+        load_properties,
+        '<properties><buttons><button id="301" property="a"/><button id="301" property="b"/>'
+        "</buttons></properties>",
+        lambda c: c.buttons[301].property_name,
+    ),
+    (
+        "fallback",
+        load_properties,
+        '<properties><fallbacks><fallback property="p"><default>a</default></fallback>'
+        '<fallback property="p"><default>b</default></fallback></fallbacks></properties>',
+        lambda c: c.fallbacks["p"].rules[0].value,
+    ),
+    (
+        "expression",
+        load_templates,
+        '<templates><expressions><expression name="e">a</expression>'
+        '<expression name="e">b</expression></expressions></templates>',
+        lambda s: s.expressions["e"].value.strip("[]"),
+    ),
+    (
+        "preset",
+        load_templates,
+        '<templates><presets><preset name="p"><values top="a"/></preset>'
+        '<preset name="p"><values top="b"/></preset></presets></templates>',
+        lambda s: s.presets["p"].rows[0].values["top"],
+    ),
+    (
+        "include",
+        load_templates,
+        '<templates><includes><include name="i"><a/></include><include name="i"><b/></include>'
+        "</includes></templates>",
+        lambda s: s.includes["i"].controls[0].tag,
+    ),
+]
+
+
+@pytest.fixture
+def warned(monkeypatch) -> list[str]:
+    captured: list[str] = []
+    monkeypatch.setattr(Logger, "warning", lambda _self, msg: captured.append(msg))
+    return captured
+
+
+def write(tmp_path: Path, xml: str) -> Path:
+    """Write the config under a throwaway name; loaders check only the root element."""
+    path = tmp_path / "config.xml"
+    path.write_text(xml, encoding="utf-8")
+    return path
+
+
+def test_nameless_widget_group_is_skipped(tmp_path: Path, warned: list[str]) -> None:
+    xml = '<widgets><group label="G"><widget name="w" label="W"><path>x://</path></widget>' \
+        "</group></widgets>"
+    assert load_widgets(write(tmp_path, xml)).groupings == []
+    assert warned
+
+
+@pytest.mark.xfail(strict=True, reason="loader strictness and duplicate handling vary by file")
+@pytest.mark.parametrize(("case", "loader", "xml"), BROKEN, ids=[b[0] for b in BROKEN])
+def test_broken_definition_warns_instead_of_raising(
+    tmp_path: Path, warned: list[str], case: str, loader: Callable, xml: str
+) -> None:
+    loader(write(tmp_path, xml))
+    assert warned
+
+
+@pytest.mark.xfail(strict=True, reason="loader strictness and duplicate handling vary by file")
+def test_invalid_subdialog_button_id_warns(tmp_path: Path, warned: list[str]) -> None:
+    xml = f'<menus><menu name="m">{ITEM}</menu>' \
+        '<dialogs><subdialog buttonID="abc" mode="x"/></dialogs></menus>'
+    assert load_menus(write(tmp_path, xml)).subdialogs == []
+    assert warned
+
+
+@pytest.mark.xfail(strict=True, reason="loader strictness and duplicate handling vary by file")
+@pytest.mark.parametrize(
+    ("kind", "loader", "xml", "pick"), DUPLICATES, ids=[d[0] for d in DUPLICATES]
+)
+def test_repeated_name_warns_and_keeps_the_first(
+    tmp_path: Path, warned: list[str], kind: str, loader: Callable, xml: str, pick: Callable
+) -> None:
+    assert pick(loader(write(tmp_path, xml))) == "a"
+    assert warned
+
+
+@pytest.mark.xfail(strict=True, reason="loader strictness and duplicate handling vary by file")
+def test_unknown_options_include_warns(tmp_path: Path, warned: list[str]) -> None:
+    xml = '<properties><property name="x"><options><include content="missing"/></options>' \
+        "</property></properties>"
+    assert load_properties(write(tmp_path, xml)).properties["x"].options == []
+    assert warned
+
+
+@pytest.mark.xfail(strict=True, reason="loader strictness and duplicate handling vary by file")
+def test_shortcut_without_action_warns(tmp_path: Path, warned: list[str]) -> None:
+    xml = '<menus><groupings><shortcut name="s" label="S"/></groupings></menus>'
+    assert load_groupings(write(tmp_path, xml)) == []
+    assert warned

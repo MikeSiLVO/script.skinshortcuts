@@ -1,0 +1,121 @@
+{
+  "menus": {
+    "mainmenu": {
+      "items": [
+        {
+          "name": "movies-a",
+          "properties": {
+            "widget": "recentlyadded-movies",
+            "widget.2": "top250-movies",
+            "widgetStyle": "Panel"
+          },
+          "position": 0
+        },
+        {
+          "name": "user-music",
+          "label": "My Music",
+          "actions": [
+            {
+              "action": "ActivateWindow(Music,musicdb://albums/,return)"
+            }
+          ],
+          "icon": "DefaultMusicAlbums.png",
+          "position": 1,
+          "is_new": true
+        },
+        {
+          "name": "movies-b",
+          "properties": {
+            "customWidget": "custom-9fcf9e4a",
+            "widget": "customwidget"
+          },
+          "position": 2
+        },
+        {
+          "name": "tvshows",
+          "label": "Series",
+          "properties": {
+            "background": "weather-fanart"
+          },
+          "position": 3
+        },
+        {
+          "name": "settings",
+          "properties": {
+            "background": "custom-image",
+            "backgroundPath": "special://skin/media/settings.jpg"
+          },
+          "position": 5
+        }
+      ]
+    },
+    "mainmenu/movies-a": {
+      "items": [
+        {
+          "name": "all-movies",
+          "label": "Every Movie",
+          "position": 0
+        }
+      ]
+    },
+    "mainmenu/movies-b": {
+      "removed": [
+        "recent-movies"
+      ]
+    },
+    "mainmenu/settings": {
+      "items": [
+        {
+          "name": "addons",
+          "disabled": true,
+          "position": 2
+        }
+      ]
+    },
+    "buttonmenu": {
+      "items": [
+        {
+          "name": "quit",
+          "position": 1
+        }
+      ],
+      "removed": [
+        "reboot"
+      ]
+    },
+    "custom-9fcf9e4a": {
+      "items": [
+        {
+          "name": "random-movies-pl",
+          "label": "Random movies",
+          "actions": [],
+          "icon": "logos/kodi-pl.png",
+          "properties": {
+            "widgetPath": "special://skin/extras/playlists/randommovies.xsp",
+            "widgetType": "movies",
+            "widgetTarget": "videos",
+            "widgetSource": "playlist",
+            "widgetLabel": "Random movies"
+          },
+          "position": 0,
+          "is_new": true
+        },
+        {
+          "name": "inprogress-movies-pl",
+          "label": "In progress movies",
+          "actions": [],
+          "icon": "logos/kodi-pl.png",
+          "properties": {
+            "widgetPath": "special://skin/extras/playlists/inprogressmovies.xsp",
+            "widgetType": "movies",
+            "widgetTarget": "videos",
+            "widgetSource": "playlist",
+            "widgetLabel": "In progress movies"
+          },
+          "position": 1,
+          "is_new": true
+        }
+      ]
+    }
+  }
+}

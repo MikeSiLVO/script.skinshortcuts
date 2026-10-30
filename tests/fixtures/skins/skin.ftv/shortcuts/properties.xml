@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+	<property name="widget" type="widget"/>
+	<property name="widgetgroup" type="options">
+		<options>
+			<option value="favourites" label="1036">
+				<icon>ftv_icon.png</icon>
+			</option>
+			<option value="weather" label="10508">
+				<icon>ftv_icon.png</icon>
+			</option>
+			<option value="widget1" label="31210">
+				<icon>ftv_icon.png</icon>
+			</option>
+			<option value="widget2" label="31211">
+				<icon>ftv_icon.png</icon>
+			</option>
+			<option value="widget3" label="31212">
+				<icon>ftv_icon.png</icon>
+			</option>
+			<option value="widget4" label="31213">
+				<icon>ftv_icon.png</icon>
+			</option>
+			<option value="widget5" label="31214">
+				<icon>ftv_icon.png</icon>
+			</option>
+			<option value="widget6" label="31215">
+				<icon>ftv_icon.png</icon>
+			</option>
+			<option value="widget7" label="31216">
+				<icon>ftv_icon.png</icon>
+			</option>
+			<option value="widget8" label="31217">
+				<icon>ftv_icon.png</icon>
+			</option>
+		</options>
+	</property>
+	<property name="widgetStyle" type="options">
+		<options>
+			<option value="wide" label="31159"/>
+			<option value="poster" label="31160"/>
+			<option value="square" label="31203"/>
+			<option value="squareinfo" label="31161"/>
+		</options>
+	</property>
+	<property name="widgetSortBy" type="options">
+		<options>
+			<option value="label" label="label"/>
+			<option value="name" label="name"/>
+			<option value="dateadded" label="dateadded"/>
+			<option value="lastplayed" label="lastplayed"/>
+			<option value="playcount" label="playcount"/>
+			<option value="year" label="year"/>
+			<option value="rating" label="rating"/>
+			<option value="userrating" label="userrating"/>
+			<option value="votes" label="votes"/>
+			<option value="genre" label="genre"/>
+			<option value="country" label="country"/>
+			<option value="studio" label="studio"/>
+			<option value="playlistorder" label="playlistorder"/>
+			<option value="episodenumber" label="episodenumber"/>
+			<option value="season" label="season"/>
+			<option value="numberofepisodes" label="numberofepisodes"/>
+			<option value="numberofwatchedepisodes" label="numberofwatchedepisodes"/>
+			<option value="tvshowstatus" label="tvshowstatus"/>
+			<option value="tvshowtitle" label="tvshowtitle"/>
+			<option value="file" label="file"/>
+			<option value="title" label="title"/>
+			<option value="tracknumber" label="tracknumber"/>
+			<option value="time" label="time"/>
+			<option value="artist" label="artist"/>
+			<option value="album" label="album"/>
+			<option value="lastupdated" label="lastupdated"/>
+			<option value="lastused" label="lastused"/>
+			<option value="date" label="date"/>
+		</options>
+	</property>
+	<property name="widgetSortOrder" type="options">
+		<options>
+			<option value="ascending" label="21430"/>
+			<option value="descending" label="21431"/>
+		</options>
+	</property>
+	<buttons>
+		<button id="309" property="widgetgroup" title="31218" showNone="true"/>
+		<button id="310" property="widget"/>
+		<button id="350" property="widgetStyle" title="31198" showNone="true"/>
+		<button id="351" property="widgetSortBy" title="31092" showNone="true"/>
+		<button id="352" property="widgetSortOrder" title="31202" showNone="true"/>
+	</buttons>
+</properties>

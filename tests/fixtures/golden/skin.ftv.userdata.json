@@ -1,0 +1,57 @@
+{
+ "menus": {
+  "mainmenu": {
+   "items": [
+    {
+     "actions": [
+      {
+       "action": "ActivateWindow(Music,addons://sources/audio/,return)"
+      }
+     ],
+     "icon": "ftv_icon.png",
+     "is_new": true,
+     "label": "31221",
+     "name": "user-ea38a816",
+     "position": 1,
+     "properties": {
+      "widgetgroup": "widget1"
+     }
+    },
+    {
+     "name": "home",
+     "position": 2
+    },
+    {
+     "name": "movies",
+     "position": 3
+    },
+    {
+     "name": "tvshows",
+     "position": 4
+    },
+    {
+     "name": "favourites",
+     "position": 5
+    },
+    {
+     "name": "videos",
+     "position": 6
+    },
+    {
+     "name": "music",
+     "position": 7
+    },
+    {
+     "name": "settings",
+     "position": 9
+    }
+   ],
+   "removed": [
+    "games",
+    "pictures",
+    "weather",
+    "exit"
+   ]
+  }
+ }
+}
