@@ -631,7 +631,6 @@ class PickersMixin:
         current_value: str = "",
         content_resolver: Callable[[Content], list] | None = None,
         create_folder_group: Callable[[str, list, str, str], Any] | None = None,
-        custom_action: tuple[str, str, Callable[[], Any | None]] | None = None,
         positions: dict[str, int] | None = None,
     ) -> Any | None | Literal[False]:
         """Pick from a hierarchy with back navigation. False when the user picks "None"."""
@@ -689,12 +688,6 @@ class PickersMixin:
                 stamp_picker_props(listitem, vis_item, item_props, content_resolver)
                 listitems.append(listitem)
 
-            if custom_action:
-                action_label, action_icon, _callback = custom_action
-                action_item = xbmcgui.ListItem(action_label, offscreen=True)
-                action_item.setArt({"icon": resolve_label(overrides.get(action_icon, action_icon))})
-                listitems.append(action_item)
-
             selected = picker_select(
                 picker_kind(leaf_types),
                 title or LANGUAGE(32181),
@@ -708,13 +701,6 @@ class PickersMixin:
 
             if show_none and selected == 0:
                 return False
-
-            if custom_action and selected == len(listitems) - 1:
-                _label, _icon, callback = custom_action
-                result = callback()
-                if result is not None:
-                    return result
-                continue
 
             preselect = selected
             positions[""] = selected
