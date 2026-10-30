@@ -18,6 +18,7 @@ except ImportError:
     IN_KODI = False
 
 from .constants import (
+    DATA_DIR,
     INCLUDES_FILE,
     MENUS_FILE,
     VIEWS_FILE,
@@ -68,7 +69,7 @@ def get_output_paths() -> list[str]:
 
 def _unsupported_marker() -> Path:
     """Per-skin marker; present means the user chose to ignore the unsupported-skin warning."""
-    data = xbmcvfs.translatePath("special://profile/addon_data/script.skinshortcuts/")
+    data = xbmcvfs.translatePath(DATA_DIR)
     return Path(data) / f"{xbmc.getSkinDir()}.unsupported-ack"
 
 

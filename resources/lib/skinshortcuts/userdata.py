@@ -18,7 +18,7 @@ except ImportError:
     IN_KODI = False
 
 from .conditions import check_visible
-from .constants import DEFAULT_ICON
+from .constants import DATA_DIR, DEFAULT_ICON
 from .log import get_logger
 from .models.menu import Action, IconOverrides, Menu, MenuItem
 
@@ -27,10 +27,10 @@ log = get_logger("UserData")
 
 
 def get_userdata_path() -> str:
-    """Get path to userdata file for current skin."""
+    """Get path to userdata file for current skin; empty outside Kodi."""
     if IN_KODI:
         skin_dir = xbmc.getSkinDir()
-        data_path = xbmcvfs.translatePath("special://profile/addon_data/script.skinshortcuts/")
+        data_path = xbmcvfs.translatePath(DATA_DIR)
         return str(Path(data_path) / f"{skin_dir}.userdata.json")
     return ""
 

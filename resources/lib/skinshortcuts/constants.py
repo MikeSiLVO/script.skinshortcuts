@@ -16,6 +16,7 @@ PROPERTIES_FILE = "properties.xml"
 TEMPLATES_FILE = "templates.xml"
 VIEWS_FILE = "views.xml"
 INCLUDES_FILE = "script-skinshortcuts-includes.xml"
+DATA_DIR = "special://profile/addon_data/script.skinshortcuts/"
 
 DEFAULT_ICON = "DefaultShortcut.png"
 DEFAULT_TARGET = "videos"

@@ -12,11 +12,11 @@ from xml.sax.saxutils import escape
 import xbmc
 import xbmcvfs
 
+from .constants import DATA_DIR
 from .log import get_logger
 
 log = get_logger("playlists")
 
-DATA_DIR = "special://profile/addon_data/script.skinshortcuts/"
 PLAYLISTS_SUBDIR = "playlists"
 FILENAME_PREFIX = "source-"
 DEFAULT_PLAYLISTS_PATH = "special://profile/playlists/"

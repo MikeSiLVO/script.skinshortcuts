@@ -18,6 +18,7 @@ except ImportError:
 from .conditions import check_visible
 from .constants import (
     BACKGROUNDS_FILE,
+    DATA_DIR,
     INCLUDES_FILE,
     MENUS_FILE,
     PROPERTIES_FILE,
@@ -33,10 +34,10 @@ HASH_PREFIX_LEN = 8
 
 
 def get_hash_file_path() -> str:
-    """Get path to hashes file for current skin."""
+    """Get path to hashes file for current skin; empty outside Kodi."""
     if IN_KODI:
         skin_dir = xbmc.getSkinDir()
-        data_path = xbmcvfs.translatePath("special://profile/addon_data/script.skinshortcuts/")
+        data_path = xbmcvfs.translatePath(DATA_DIR)
         return str(Path(data_path) / f"{skin_dir}.hashes")
     return ""
 
