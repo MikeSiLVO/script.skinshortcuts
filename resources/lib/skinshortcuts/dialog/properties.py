@@ -93,10 +93,6 @@ class PropertiesMixin:
             slot: str = "",
         ) -> Widget | None | Literal[False]: ...
 
-        def _pick_widget_flat(
-            self, widgets: list, item_props: dict[str, str] | None = None, slot: str = ""
-        ) -> Widget | None | Literal[False]: ...
-
         def _pick_background(
             self,
             item_props: dict[str, str],
@@ -198,20 +194,12 @@ class PropertiesMixin:
         widgets_path = Path(self.shortcuts_path) / "widgets.xml"
         widget_config = load_widgets(widgets_path)
 
+        if not widget_config.groupings:
+            xbmcgui.Dialog().notification(LANGUAGE(32147), LANGUAGE(32148))
+            return None
+
         item_props = self._get_item_properties(item)
-        result = None
-
-        if widget_config.groupings:
-            result = self._pick_widget_from_groups(
-                widget_config.groupings, item_props, slot
-            )
-        else:
-            widgets = self.manager.get_widgets()
-            if not widgets:
-                xbmcgui.Dialog().notification(LANGUAGE(32147), LANGUAGE(32148))
-                return None
-            result = self._pick_widget_flat(widgets, item_props, slot)
-
+        result = self._pick_widget_from_groups(widget_config.groupings, item_props, slot)
         if result is None:
             return None
 

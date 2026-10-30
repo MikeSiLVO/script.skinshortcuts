@@ -444,46 +444,6 @@ class PickersMixin:
 
         return result
 
-    def _pick_widget_flat(
-        self, widgets: list, item_props: dict[str, str] | None = None, slot: str = ""
-    ) -> Widget | None | Literal[False]:
-        """Pick from a flat widget list. False when the user picks "None"."""
-        current_widget = item_props.get(slot, "") if item_props else ""
-        preselect = -1
-        overrides = self._icon_overrides()
-
-        listitems = []
-        none_item = xbmcgui.ListItem(xbmc.getLocalizedString(231), offscreen=True)
-        none_icon = overrides.get("DefaultAddonNone.png", "DefaultAddonNone.png")
-        none_item.setArt({"icon": resolve_label(none_icon)})
-        listitems.append(none_item)
-
-        for i, w in enumerate(widgets):
-            listitem = xbmcgui.ListItem(resolve_label(w[1]), offscreen=True)
-            icon = w[2] if len(w) > 2 and w[2] else "DefaultAddonNone.png"
-            listitem.setArt({"icon": resolve_label(overrides.get(icon, icon))})
-            if self.manager is not None:
-                widget_obj = self.manager.config.get_widget(w[0])
-                if widget_obj is not None:
-                    stamp_picker_props(listitem, widget_obj)
-            listitems.append(listitem)
-            if preselect == -1 and w[0] == current_widget:
-                preselect = i + 1  # +1 for "None" option
-
-        selected = picker_select(
-            "widget", LANGUAGE(32044), listitems, useDetails=True, preselect=preselect
-        )
-
-        if selected == -1:
-            return None
-        if selected == 0:
-            return False
-
-        widget_name = widgets[selected - 1][0]
-        if self.manager is None:
-            return None
-        return self.manager.config.get_widget(widget_name)
-
     def _get_content_provider(self) -> ContentProvider:
         """One provider per dialog, so its cache outlives a single picker redraw."""
         if self._content_provider is None:

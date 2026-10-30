@@ -64,15 +64,11 @@ def pick_widget_skinstring(shortcuts_path: str, params: dict[str, str]) -> None:
     menu_config = load_menus(Path(shortcuts_path) / "menus.xml")
     picker = _StandalonePicker(shortcuts_path, menu_config.icon_overrides)
 
-    if widget_config.groupings:
-        result = picker._pick_widget_from_groups(widget_config.groupings, {})
-    elif widget_config.widgets:
-        flat = [(w.name, w.label, w.icon) for w in widget_config.widgets]
-        result = picker._pick_widget_flat(flat, {})
-    else:
+    if not widget_config.groupings:
         xbmcgui.Dialog().notification(LANGUAGE(32147), LANGUAGE(32148))
         return
 
+    result = picker._pick_widget_from_groups(widget_config.groupings, {})
     if result is None:
         return
 

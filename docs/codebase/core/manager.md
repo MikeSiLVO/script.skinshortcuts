@@ -32,7 +32,6 @@ Initialize manager. Loads config and creates working copy.
 |--------|---------|-------------|
 | `get_menu_ids()` | list[str] | All menu names |
 | `get_menu_items(menu_id)` | list[MenuItem] | Items for a menu |
-| `get_widgets()` | list[tuple[str,str]] | Available widgets as (name, label) |
 
 ### Item Operations
 

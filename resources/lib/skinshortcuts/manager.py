@@ -58,10 +58,6 @@ class MenuManager:
             return self.working[menu_id].items
         return []
 
-    def get_widgets(self) -> list[tuple[str, str]]:
-        """Get available widgets as (name, label) tuples."""
-        return [(w.name, w.label) for w in self.config.widgets]
-
     def _get_working_item(self, menu_id: str, item_name: str) -> MenuItem | None:
         """Get item from working copy."""
         menu = self.working.get(menu_id)

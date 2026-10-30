@@ -28,7 +28,6 @@ PickersMixin provides picker dialogs for selecting shortcuts and widgets with hi
 | Method | Purpose |
 |--------|---------|
 | `_pick_widget_from_groups` | Show widget picker, returns Widget/None/False |
-| `_pick_widget_flat` | Pick from flat widget list |
 
 **Returns:** Widget if selected, None if cancelled, False if "None" chosen (clear widget)
 
