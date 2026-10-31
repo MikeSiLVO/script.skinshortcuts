@@ -19,24 +19,11 @@ INCLUDES_FILE = "script-skinshortcuts-includes.xml"
 DATA_DIR = "special://profile/addon_data/script.skinshortcuts/"
 
 DEFAULT_ICON = "DefaultShortcut.png"
-DEFAULT_TARGET = "videos"
 DEFAULT_VIEW_PREFIX = "ShortcutView_"
 
 WIDGET_SIBLINGS = ("Label", "Path", "Type", "Target", "Source")
 BACKGROUND_SIBLINGS = ("Label", "Path", "Type", "PlaylistType")
 WIDGET_EXTRAS = ("Limit", "SortBy", "SortOrder")
-
-PROPERTY_TYPES = frozenset(
-    {
-        "select",
-        "text",
-        "number",
-        "bool",
-        "image",
-        "path",
-    }
-)
-
 
 WINDOW_MAP: dict[str, str] = {
     "video": "Videos",
