@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from skinshortcuts.loaders.menu import load_groupings, load_menus
 
 
@@ -149,7 +147,6 @@ def test_absolute_replacement_path_kept_as_is(tmp_path: Path):
     assert config.icon_overrides["DefaultFolder.png"] == "special://skin/extras/icons/files.png"
 
 
-@pytest.mark.xfail(strict=True, reason="Shortcut groupings ignore the skin's icon overrides")
 def test_shortcut_icon_falls_back_to_override(tmp_path: Path):
     """A shortcut with no icon gets the default icon's override; an explicit one stays literal."""
     icons_dir = tmp_path / "icons"

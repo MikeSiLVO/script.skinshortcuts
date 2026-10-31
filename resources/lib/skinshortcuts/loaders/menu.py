@@ -500,13 +500,13 @@ def _parse_allow(elem) -> MenuAllow:
 def load_groupings(
     path: str | Path, menu_id: str = ""
 ) -> list[Shortcut | ShortcutGroup | Content | Input]:
-    """Load shortcut groupings from a menus.xml file."""
+    """Load shortcut groupings for a menu from menus.xml, with the skin's icon overrides applied."""
     path = Path(path)
     if not path.exists():
         return []
 
     root = parse_xml(path, "menus", MenuConfigError)
-    return _parse_shortcut_groupings(root, str(path), menu_id)
+    return _parse_shortcut_groupings(root, str(path), menu_id, _parse_icon_overrides(root))
 
 
 def _parse_shortcut_groupings(
