@@ -532,7 +532,7 @@ class TemplateBuilder:
                     )
 
     def _combine_suffixes(self, base_suffix: str, ref_suffix: str) -> str:
-        """Combine output suffix with reference suffix."""
+        """Combine the suffixes: the reference's when it has one, else the output's."""
         return ref_suffix if ref_suffix else base_suffix
 
     def _build_context(
@@ -624,7 +624,7 @@ class TemplateBuilder:
         parent_context: dict[str, str] | None = None,
         parent_item: MenuItem | None = None,
     ) -> ET.Element | None:
-        """Build a Kodi <variable> element, $PARENT[] and $MATH[] resolving in items scope."""
+        """Build a Kodi <variable> element, $PARENT[] resolving in items scope."""
         if var_def.condition:
             condition = self._expand_expressions(var_def.condition)
             if not self._eval_condition(condition, item, context):
@@ -643,7 +643,7 @@ class TemplateBuilder:
             output_name = self._substitute_property_refs(raw_name, item, context)
 
         var_elem.set("name", output_name)
-        # output/condition are build-time directives; drop them so they don't leak into Kodi XML
+        # output/condition are build-time directives, not Kodi attributes
         if "output" in var_elem.attrib:
             del var_elem.attrib["output"]
         if "condition" in var_elem.attrib:

@@ -730,7 +730,7 @@ class TemplateLoader:
         )
 
     def _parse_variable_definition(self, elem: ET.Element) -> VariableDefinition | None:
-        """Parse a variable definition inside a template's <variables> section."""
+        """Parse a variable definition, global or a template's; a nameless one warns and skips."""
         name = (elem.get("name") or "").strip()
         if not name:
             log.warning(f"{self.path}: <{elem.tag}> missing 'name' attribute, skipping")
