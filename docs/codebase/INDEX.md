@@ -1,258 +1,83 @@
-# Skin Shortcuts v3 - Codebase Documentation Index
+# Codebase Docs
 
-**Version:** 3.0.0
+Internal docs for script.skinshortcuts: what the add-on does, where each part lives and how the parts fit together. Every class, function and method has a docstring, and those are the API reference; these pages cover what no single docstring can. Skinner-facing behavior lives in [docs/skinning/](../skinning/index.md).
 
-**Quick Start:** See [OVERVIEW.md](OVERVIEW.md)
+## Pages
 
-***
+| Page | Covers |
+|------|--------|
+| [OVERVIEW.md](OVERVIEW.md) | Architecture and data flow: entry, config load, build pipeline, rebuild detection, dialog, pickers |
+| [CONCEPTS.md](CONCEPTS.md) | Rules that span modules: the userdata diff, derived properties, hidden items, per-item submenus, custom widget menus, slots, overrides, view locking |
+| [FORMATS.md](FORMATS.md) | The per-skin data folder, userdata.json, generated includes, the hashes file |
+| [core/README.md](core/README.md) | The top-level modules |
+| [builders/README.md](builders/README.md) | Includes and view expression builders |
+| [builders/template.md](builders/template.md) | The template builder's stages |
+| [dialog/README.md](dialog/README.md) | The management dialog's mixins, child dialogs, pickers |
+| [loaders/README.md](loaders/README.md) | Config file loaders |
+| [models/README.md](models/README.md) | Config models |
+| [providers/README.md](providers/README.md) | Content and browse providers |
 
-## Documentation Files
+## File map
 
-### Core Modules (`core/`)
+Paths are relative to `resources/lib/skinshortcuts/`, except `default.py` at the add-on root.
 
-| File | Doc | Purpose |
-|------|-----|---------|
-| conditions.py | [conditions.md](core/conditions.md) | Condition evaluation |
-| expressions.py | [expressions.md](core/expressions.md) | $MATH and $IF expressions |
-| constants.py | [constants.md](core/constants.md) | All constants |
-| exceptions.py | [exceptions.md](core/exceptions.md) | Exception hierarchy |
-| localize.py | [localize.md](core/localize.md) | Label localization |
-| hashing.py | [hashing.md](core/hashing.md) | Rebuild detection |
-| userdata.py | [userdata.md](core/userdata.md) | User data storage |
-| manager.py | [manager.md](core/manager.md) | Menu manager API |
-| config.py | [config.md](core/config.md) | Config loader |
-| entry.py | [entry.md](core/entry.md) | Entry point |
-| skinstring.py | [entry.md](core/entry.md) | Skin-string widget picker |
-| log.py | [log.md](core/log.md) | Logging and notifications |
+| File | Purpose | Docs |
+|------|---------|------|
+| `default.py` | Add-on script; calls `entry.main` | [OVERVIEW](OVERVIEW.md#entry) |
+| `__init__.py` | Package docstring only | |
+| `entry.py` | RunScript dispatch; build, reset, clear and view actions; the v3 config check | [core](core/README.md#entrypy) |
+| `config.py` | `SkinConfig`: loads every config file, merges userdata, builds the includes file | [core](core/README.md#configpy) |
+| `manager.py` | `MenuManager`: the dialog's working copy of the menus, saved as a diff | [core](core/README.md#managerpy) |
+| `userdata.py` | Userdata file reading and writing, and the merge of skin defaults with user diffs | [core](core/README.md#userdatapy) |
+| `migrations.py` | Rewrites userdata for names the skin retired | [core](core/README.md#migrationspy) |
+| `hashing.py` | Hashes for rebuild detection | [core](core/README.md#hashingpy) |
+| `conditions.py` | Property condition evaluation, case-insensitive property lookup, suffix rules | [core](core/README.md#conditionspy) |
+| `expressions.py` | `$MATH` and `$IF` evaluation | [core](core/README.md#expressionspy) |
+| `localize.py` | Label resolution and this add-on's strings | [core](core/README.md#localizepy) |
+| `log.py` | Component loggers and skinner-facing notifications | [core](core/README.md#logpy) |
+| `constants.py` | File names, the data folder, sibling suffixes, target maps, builtin parameter parsing | [core](core/README.md#constantspy) |
+| `exceptions.py` | Config error hierarchy | [core](core/README.md#exceptionspy) |
+| `playlists.py` | Smart playlists for source shortcuts, playlist folder helpers | [core](core/README.md#playlistspy) |
+| `skinstring.py` | The widget picker outside the dialog, writing skin strings | [core](core/README.md#skinstringpy) |
+| `builders/__init__.py` | Package docstring only | |
+| `builders/includes.py` | Menu, submenu and custom widget includes; runs the other builders and writes the file | [builders](builders/README.md) |
+| `builders/template.py` | Includes and variables from templates.xml | [template](builders/template.md) |
+| `builders/views.py` | View locking expressions | [builders](builders/README.md#view-expressions) |
+| `dialog/__init__.py` | Composes `ManagementDialog`; `show_management_dialog`; re-exports the control IDs | [dialog](dialog/README.md#composition) |
+| `dialog/base.py` | Dialog setup, list controls, ListItem and window properties, event routing | [dialog](dialog/README.md) |
+| `dialog/items.py` | Item operations, the context menu, property writes | [dialog](dialog/README.md) |
+| `dialog/pickers.py` | Shortcut, widget and background pickers; shared picker helpers | [dialog](dialog/README.md#pickers) |
+| `dialog/properties.py` | Property buttons from properties.xml | [dialog](dialog/README.md) |
+| `dialog/subdialogs.py` | Child dialogs, onclose actions, custom widget menu references | [dialog](dialog/README.md#child-dialogs) |
+| `dialog/views.py` | View browser and view picker | [dialog](dialog/README.md) |
+| `loaders/__init__.py` | Package docstring only | |
+| `loaders/base.py` | XML helpers the loaders share | [loaders](loaders/README.md#shared-helpers-basepy) |
+| `loaders/menu.py` | menus.xml | [loaders](loaders/README.md#per-loader) |
+| `loaders/widget.py` | widgets.xml | [loaders](loaders/README.md#per-loader) |
+| `loaders/background.py` | backgrounds.xml | [loaders](loaders/README.md#per-loader) |
+| `loaders/property.py` | properties.xml | [loaders](loaders/README.md#per-loader) |
+| `loaders/template.py` | templates.xml | [loaders](loaders/README.md#per-loader) |
+| `loaders/views.py` | views.xml | [loaders](loaders/README.md#per-loader) |
+| `models/__init__.py` | Package docstring only | |
+| `models/menu.py` | Menus, items, shortcuts and groups, subdialogs, context menu, icon overrides | [models](models/README.md#menus-and-items) |
+| `models/widget.py` | Widgets and widget groups | [models](models/README.md) |
+| `models/background.py` | Backgrounds, background groups and sources | [models](models/README.md) |
+| `models/property.py` | Property schema: properties, buttons, fallbacks | [models](models/README.md#lookups) |
+| `models/template.py` | Template schema | [models](models/README.md#lookups) |
+| `models/views.py` | Views and content rules | [models](models/README.md) |
+| `models/override.py` | `Override`, shared by every `<overrides>` block | [CONCEPTS](CONCEPTS.md#overrides-and-retired-names) |
+| `providers/__init__.py` | Package docstring only | |
+| `providers/content.py` | Resolves `<content>` elements to shortcuts | [providers](providers/README.md#contentprovider) |
+| `providers/browse.py` | Lists paths for browse-into | [providers](providers/README.md#browseprovider) |
 
-### Dialog Package (`dialog/`)
+## Where to change what
 
-| File | Doc | Purpose |
-|------|-----|---------|
-| Overview | [README.md](dialog/README.md) | Package overview |
-| `__init__.py` | [init.md](dialog/init.md) | Public API |
-| base.py | [base.md](dialog/base.md) | Core initialization, events |
-| items.py | [items.md](dialog/items.md) | Item operations |
-| pickers.py | [pickers.md](dialog/pickers.md) | Shortcut/widget pickers |
-| properties.py | [properties.md](dialog/properties.md) | Property management |
-| subdialogs.py | [subdialogs.md](dialog/subdialogs.md) | Subdialog handling |
-| views.py | [views.md](dialog/views.md) | View selection dialogs |
-
-### Models Package (`models/`)
-
-| File | Doc | Purpose |
-|------|-----|---------|
-| Overview | [README.md](models/README.md) | Package overview |
-| menu.py | [menu.md](models/menu.md) | Menu/item models |
-| widget.py | [widget.md](models/widget.md) | Widget models |
-| background.py | [background.md](models/background.md) | Background models |
-| property.py | [property.md](models/property.md) | Property schema models |
-| template.py | [template.md](models/template.md) | Template models |
-| views.py | [views.md](models/views.md) | View lock models |
-
-### Loaders Package (`loaders/`)
-
-| File | Doc | Purpose |
-|------|-----|---------|
-| Overview | [README.md](loaders/README.md) | Package overview |
-| base.py | [base.md](loaders/base.md) | Base XML utilities |
-| menu.py | [menu.md](loaders/menu.md) | Menu config loader |
-| widget.py | [widget.md](loaders/widget.md) | Widget config loader |
-| background.py | [background.md](loaders/background.md) | Background loader |
-| property.py | [property.md](loaders/property.md) | Property schema loader |
-| template.py | [template.md](loaders/template.md) | Template schema loader |
-| views.py | [views.md](loaders/views.md) | View config loader |
-
-### Builders Package (`builders/`)
-
-| File | Doc | Purpose |
-|------|-----|---------|
-| Overview | [README.md](builders/README.md) | Package overview |
-| includes.py | [includes.md](builders/includes.md) | Includes.xml builder |
-| template.py | [template.md](builders/template.md) | Template processor |
-| views.py | [views.md](builders/views.md) | View expression builder |
-
-### Providers Package (`providers/`)
-
-| File | Doc | Purpose |
-|------|-----|---------|
-| Overview | [README.md](providers/README.md) | Package overview |
-| content.py | [content.md](providers/content.md) | Dynamic content resolver |
-| browse.py | [browse.md](providers/browse.md) | Directory browsing via Files.GetDirectory |
-
-***
-
-## Cross-Reference: Who Calls What
-
-### Entry Points
-
-```
-RunScript(script.skinshortcuts,...)
-    └── entry.main()
-        ├── build_includes() → SkinConfig.load() → build_includes()
-        ├── show_management_dialog() → ManagementDialog
-        ├── view_select() → show_view_browser() / show_view_picker()
-        ├── reset_all() / reset_menus() / reset_views()
-        └── clear_custom_menu()
-```
-
-### Configuration Loading
-
-```
-SkinConfig.load()
-    ├── load_menus() → MenuConfig
-    ├── load_widgets() → WidgetConfig
-    ├── load_backgrounds() → BackgroundConfig
-    ├── load_templates() → TemplateSchema
-    ├── load_properties() → PropertySchema
-    ├── load_views() → ViewConfig
-    └── load_userdata() → UserData
-        └── merge_menu() for each menu
-```
-
-### Includes Building
-
-```
-SkinConfig.build_includes()
-    └── IncludesBuilder.write()
-        ├── _build_menu_include()
-        ├── _build_submenu_include()
-        ├── _build_custom_widget_includes()
-        ├── TemplateBuilder.build() if templates exist
-        └── ViewExpressionBuilder.build() if views exist
-```
-
-### Dialog Flow
-
-```
-ManagementDialog.onInit()
-    ├── MenuManager (creates or uses shared)
-    ├── PropertySchema (loads or uses shared)
-    └── _load_items() → _display_items()
-
-ManagementDialog.onClick()
-    ├── _add_item() / _delete_item() / _move_item()
-    ├── _set_label() / _set_icon() / _set_action()
-    ├── _choose_shortcut() → _pick_from_groups()
-    ├── _handle_property_button()
-    │   ├── _handle_widget_property() → _pick_widget_from_groups()
-    │   ├── _handle_background_property() → _pick_background()
-    │   └── _handle_options_property()
-    ├── _edit_submenu() → spawn child dialog
-    └── _spawn_subdialog() → _handle_onclose()
-
-ManagementDialog.close()
-    └── manager.save() if root and has_changes
-```
-
-***
-
-## Cross-Reference: Model Usage
-
-### MenuItem
-
-* **Created by:** loaders/menu.py, userdata.py, manager.py
-* **Used by:** Menu, dialog/, builders/includes.py
-
-### Widget
-
-* **Created by:** loaders/widget.py, dialog/pickers.py
-* **Used by:** config.py, dialog/, builders/includes.py
-
-### Background
-
-* **Created by:** loaders/background.py
-* **Used by:** config.py, dialog/
-
-### PropertySchema
-
-* **Created by:** loaders/property.py
-* **Used by:** config.py, dialog/, builders/template.py
-
-### TemplateSchema
-
-* **Created by:** loaders/template.py
-* **Used by:** config.py, builders/template.py
-* **Key components:** templates, submenus, items_templates, presets, property_groups, variable_definitions, variable_groups, includes, expressions
-
-### ViewConfig
-
-* **Created by:** loaders/views.py
-* **Used by:** config.py, builders/views.py, dialog/views.py
-
-### UserData
-
-* **Created by:** userdata.py (load_userdata)
-* **Used by:** config.py, manager.py, builders/views.py, dialog/views.py
-
-***
-
-## Architecture Overview
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│                        entry.py                               │
-│                  (RunScript entry point)                      │
-└─────────────────────────┬────────────────────────────────────┘
-                          │
-          ┌───────────────┼───────────────┐
-          │               │               │
-          ▼               ▼               ▼
-    ┌──────────┐    ┌──────────┐    ┌──────────┐
-    │ dialog/  │    │config.py │    │hashing.py│
-    │   (UI)   │    │ (loader) │    │(rebuild) │
-    └────┬─────┘    └────┬─────┘    └──────────┘
-         │               │
-         ▼               ▼
-    ┌──────────┐    ┌──────────────────────────┐
-    │manager.py│    │       loaders/           │
-    │  (API)   │    │ menu, widget, background │
-    └────┬─────┘    │ property, template, views│
-         │          └────────────┬─────────────┘
-         ▼                       │
-    ┌──────────┐                 ▼
-    │userdata  │    ┌──────────────────────────┐
-    │  .py     │    │        models/           │
-    └──────────┘    │ Menu, Widget, Background │
-                    │ Property, Template, View │
-                    └────────────┬─────────────┘
-                                 │
-                                 ▼
-                    ┌──────────────────────────┐
-                    │       builders/          │
-                    │ includes, template, views│
-                    └──────────────────────────┘
-                                 │
-                                 ▼
-                    ┌──────────────────────────┐
-                    │  script-skinshortcuts-   │
-                    │      includes.xml        │
-                    └──────────────────────────┘
-```
-
-***
-
-## Quick Reference: File by Purpose
-
-### "I need to..."
-
-| Task | File(s) |
-|------|---------|
-| Parse menus.xml | loaders/menu.py |
-| Parse widgets.xml | loaders/widget.py |
-| Parse templates.xml | loaders/template.py |
-| Parse views.xml | loaders/views.py |
-| Build includes.xml | builders/includes.py |
-| Build view expressions | builders/views.py |
-| Process templates | builders/template.py |
-| Handle items iteration | builders/template.py (_handle_skinshortcuts_items) |
-| Show management dialog | dialog/ |
-| Show view selection | dialog/views.py |
-| Save user changes | userdata.py, manager.py |
-| Check if rebuild needed | hashing.py |
-| Resolve dynamic content | providers/content.py |
-| Add new model class | models/\*.py |
-| Add new exception | exceptions.py |
-| Add new constant | constants.py |
-| Evaluate conditions | conditions.py |
-| Evaluate $MATH/$IF | expressions.py |
+| Change | Start in |
+|--------|----------|
+| What a config file accepts | Its loader and model, then the matching page in docs/skinning |
+| Menu include output | `builders/includes.py` |
+| Template output | `builders/template.py` |
+| What a dialog button does | `DialogBaseMixin.onClick`, then the mixin that owns the handler |
+| What a user edit stores | `MenuManager._diff_item` and `userdata.py` |
+| A `<content>` source | `providers/content.py` |
+| A skinner-facing error | `log.notify`, plus a row in [troubleshooting.md](../skinning/troubleshooting.md) |

@@ -1,50 +1,35 @@
-# loaders/ Package
+# loaders/
 
-**Path:** `resources/lib/skinshortcuts/loaders/`
-**Purpose:** XML configuration file parsers.
+One loader per skin config file, each turning the XML into the models in `models/`. The XML syntax is documented for skinners in [skinning/](../../skinning/index.md); this page covers how the loaders behave.
 
-***
+| Module | File | Model |
+|--------|------|---------|
+| `menu.py` | menus.xml | `MenuConfig` |
+| `widget.py` | widgets.xml | `WidgetConfig` |
+| `background.py` | backgrounds.xml | `BackgroundConfig` |
+| `property.py` | properties.xml | `PropertySchema` |
+| `template.py` | templates.xml | `TemplateSchema` |
+| `views.py` | views.xml | `ViewConfig` |
+| `base.py` | | Helpers the loaders share |
 
-## Overview
+## Errors
 
-Parses skin XML configuration files into model objects. Each loader handles a specific file type.
+- A missing file loads as an empty config, so a skin can leave out any file it does not use.
+- A file the loader cannot use (bad XML, wrong root element, a required name, label or path missing) raises the `ConfigError` subclass for that file, with the path and, for a parse error, the line. Nothing catches these by type: the action stops, and `build_includes` and the `manage` handler log the error.
+- Smaller problems are reported and the element skipped: duplicate names (`base.warn_duplicate_names`), a group with no name, content a file does not support. Reports a skinner should see go through `log.notify`.
 
-***
+## Shared helpers (base.py)
 
-## Modules
+- `parse_xml` validates the root element; `get_text`, `get_attr`, `get_int` and `get_bool` read values with defaults. `get_bool` accepts only `true` and `false`, in any case.
+- `parse_content` reads a `<content>` element into `Content`, which stays unresolved until a picker opens.
+- `parse_name_overrides` reads the retired-name `<overrides>` block of widgets.xml, backgrounds.xml and properties.xml (see [Overrides and retired names](../CONCEPTS.md#overrides-and-retired-names)).
+- `iter_nested` walks a picker hierarchy, nested groups included.
 
-| File | Doc | Purpose |
-|------|-----|---------|
-| `base.py` | [base.md](base.md) | Shared XML utilities |
-| `menu.py` | [menu.md](menu.md) | menus.xml parser |
-| `widget.py` | [widget.md](widget.md) | widgets.xml parser |
-| `background.py` | [background.md](background.md) | backgrounds.xml parser |
-| `property.py` | [property.md](property.md) | properties.xml parser |
-| `template.py` | [template.md](template.md) | templates.xml parser |
-| `views.py` | [views.md](views.md) | views.xml parser |
+## Per loader
 
-***
-
-## Public Functions
-
-| Function | Module | Purpose |
-|----------|--------|---------|
-| `load_menus(path)` | menu.py | Load menus.xml |
-| `load_groupings(path)` | menu.py | Load shortcut groupings only |
-| `load_widgets(path)` | widget.py | Load widgets.xml |
-| `load_backgrounds(path)` | background.py | Load backgrounds.xml |
-| `load_properties(path)` | property.py | Load properties.xml |
-| `load_templates(path)` | template.py | Load templates.xml |
-| `load_views(path)` | views.py | Load views.xml |
-
-***
-
-## XML File Documentation
-
-For XML file format documentation, see:
-- [skinning/menus.md](../../skinning/menus.md)
-- [skinning/widgets.md](../../skinning/widgets.md)
-- [skinning/backgrounds.md](../../skinning/backgrounds.md)
-- [skinning/properties.md](../../skinning/properties.md)
-- [skinning/templates.md](../../skinning/templates.md)
-- [skinning/views.md](../../skinning/views.md)
+- **menu.py**: `load_menus` reads menus, `<submenu>` templates, groupings, icon sources, subdialogs, action and icon overrides, the context menu and `<submenuPath>`. Icon overrides are read first, since menu items, shortcuts and inputs with no icon get the override of their default icon. Several `<visible>` children on an item join with ` + `. An item's `<skinshortcuts include>` records whether it came before or after the first `<action>`. `load_groupings` reads only the groupings and is what the shortcut picker calls: a `<groupings menu="X">` replaces the default `<groupings>` for menu X.
+- **widget.py**: a group passes its `source` down to its widgets. A target in `constants.TARGET_MAP` is normalized; any other target passes through, as skins use it as their own vocabulary. `WidgetConfig.widgets` holds root-level widgets only; nested ones are reached through `groupings`.
+- **background.py**: `load_backgrounds` takes the icon overrides from menus.xml, so `SkinConfig.load` parses menus.xml first. `<source>` children become `BrowseSource` for browse and multi backgrounds and `PlaylistSource` for the rest.
+- **property.py**: `<include>` definitions are expanded where `<options>` or a `<fallback>` reference them, with any suffix applied to their `condition` attributes. Buttons inherit `suffix` from `<buttons>` or their `<group>`. A `rename="true"` on a button that is not a widget button is logged and ignored.
+- **template.py**: sections parse in order: expressions, presets, presetGroups, propertyGroups, variables, includes, then `<template>` elements and `<submenu>` templates. A `<template items="X">` becomes an `ItemsDefinition`; every other `<template>` a `Template`. The loader reports and drops what the builder would mishandle: a `<var>` or `<property>` that clashes with a `<var>` of the same name (several `<property>` elements may share one), include markers in raw templates, and content submenu templates do not build.
+- **views.py**: every view needs an id and label, every content rule a name, label, library default, `<visible>` and `<views>`; default view ids must exist. A failure raises `ViewConfigError`.

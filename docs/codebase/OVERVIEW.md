@@ -1,151 +1,59 @@
-# Skin Shortcuts v3 - Codebase Overview
+# Overview
 
-For detailed docs, see [INDEX.md](INDEX.md).
-
-***
-
-## Architecture
+Skin Shortcuts lets a Kodi skin declare menus, widgets, backgrounds, custom properties, templates and view rules in XML under `special://skin/shortcuts/`. Users customize the menus in a management dialog, the add-on stores their changes as a diff, and every build merges the two and writes `script-skinshortcuts-includes.xml`, which the skin includes. The file map is in [INDEX.md](INDEX.md).
 
 ```
-entry.py (RunScript entry point)
-    │
-    ├── build_includes() ──► config.py ──► loaders/ ──► models/
-    │                                          │
-    │                                          ▼
-    │                                     builders/ ──► includes.xml
-    │
-    ├── show_management_dialog() ──► dialog/ ──► manager.py ──► userdata.py
-    │
-    └── reset_all() / clear_custom_widget()
+default.py -> entry.main -> _dispatch
+  buildxml     build_includes -> hashing.needs_rebuild -> SkinConfig.load -> builders/ -> includes file
+  manage       dialog/ ManagementDialog -> MenuManager -> userdata file, then a forced build
+  viewselect   dialog/views.py -> userdata views, then a forced build
+  skinstring   skinstring.py -> PickersMixin -> skin strings
+  reset, ...   MenuManager or userdata.py, then a forced build
 ```
 
-***
+## Entry
 
-## Package Summary
+`default.py` calls `entry.main`, which parses the RunScript arguments and dispatches on `type`. The action map and the v3 config check are in [core/README.md](core/README.md#entrypy); the skin-facing commands are in [skinning/management-dialog.md](../skinning/management-dialog.md#script-commands).
 
-| Package | Purpose | Key Files |
-|---------|---------|-----------|
-| `dialog/` | Management UI | `base.py` (init/events), `items.py` (CRUD), `pickers.py` (selection), `properties.py` (widget/bg), `subdialogs.py` (child dialogs) |
-| `models/` | Data classes | `menu.py` (Menu, MenuItem), `widget.py` (Widget), `background.py` (Background), `property.py` (PropertySchema), `template.py` (Template) |
-| `loaders/` | XML parsers | `menu.py` (menus.xml), `widget.py` (widgets.xml), `property.py` (properties.xml), `template.py` (templates.xml) |
-| `builders/` | XML output | `includes.py` (main builder), `template.py` (template processor) |
-| `providers/` | Dynamic content | `content.py` (JSON-RPC resolver for sources, addons, favourites, etc.) |
+## Config load
 
-***
+`SkinConfig.load(shortcuts_path)` in `config.py`:
 
-## Core Modules
+1. The loaders parse menus.xml, widgets.xml, backgrounds.xml, templates.xml, properties.xml and views.xml into models. menus.xml goes first, as backgrounds.xml needs its icon overrides.
+2. `load_userdata` reads the user's diff, and `migrations.apply_overrides` rewrites it for any names the skin retired.
+3. Each root `<menu>` is merged with its diff (`merge_menu`). Each of its items that links a `<submenu>`, or has a stored submenu diff, gets a per-item submenu instance. A `<submenu>` no item links stays as a flat menu, merged with any diff stored under its name. Menus that exist only in userdata, such as custom widget menus, are built from their diffs.
 
-| File | Purpose |
-|------|---------|
-| `entry.py` | RunScript entry point, dispatches to build/manage/reset |
-| `config.py` | SkinConfig loader, merges skin defaults with userdata |
-| `manager.py` | MenuManager API for dialog, tracks changes |
-| `userdata.py` | User customizations (JSON), merge with skin defaults |
-| `hashing.py` | Rebuild detection via config hashes |
-| `localize.py` | Label resolution ($LOCALIZE, $INFO, etc.) |
-| `conditions.py` | Condition evaluation (=, ~, AND, OR, NOT, EMPTY, IN) |
-| `expressions.py` | Dynamic expressions ($MATH, $IF) for templates |
-| `constants.py` | Shared constants (file names, target maps) |
-| `exceptions.py` | Custom exception hierarchy |
+The result holds the merged `menus`, the untouched `default_menus`, and the widget, background, template, property and view config. The rules behind step 3 are in [CONCEPTS.md](CONCEPTS.md).
 
-***
+## Build pipeline
 
-## Key Entry Points
+`entry.build_includes`:
 
-```python
-# Build includes.xml
-RunScript(script.skinshortcuts,type=buildxml)
-    → entry.build_includes() → SkinConfig.load() → IncludesBuilder.write()
+1. Returns at once when the Home property `skinshortcuts-isbuilding` shows a build already running, and sets it otherwise.
+2. Checks the skin has v3 config, and finds the output folders from the skin's addon.xml unless `output` is given.
+3. Unless forced, asks `hashing.needs_rebuild` and stops when nothing changed.
+4. Loads `SkinConfig`, then for each output folder calls `SkinConfig.build_includes`, which:
+   - fills derived widget and background properties into the merged menus;
+   - applies action overrides to copies of the menus;
+   - runs `IncludesBuilder`, which emits the menu, submenu and custom widget includes, then runs `TemplateBuilder` when templates.xml has templates and `ViewExpressionBuilder` when views.xml has content rules;
+   - writes the file.
+5. Saves the userdata when migrations changed it, then writes the hashes, including one per includes file.
+6. Runs `ReloadSkin()` when any includes file changed, after waiting for open modal dialogs to close.
 
-# Show management dialog
-RunScript(script.skinshortcuts,type=manage,menu=mainmenu)
-    → entry.show_management_dialog() → ManagementDialog.doModal()
+Details per builder: [builders/README.md](builders/README.md) and [builders/template.md](builders/template.md).
 
-# Reset all menus
-RunScript(script.skinshortcuts,type=resetall)
-    → entry.reset_all() → delete userdata → rebuild
+## Rebuild detection
 
-# Clear custom widget menu
-RunScript(script.skinshortcuts,type=clear,menu=movies.customwidget)
-    → entry.clear_custom_menu() → clear menu items → rebuild
-```
+A plain `buildxml` builds only when something it hashes changed; every action that writes userdata forces the build instead. The hashes are listed in [FORMATS.md](FORMATS.md#hashes-file).
 
-***
+## Management dialog
 
-## Data Flow
+`type=manage` opens `ManagementDialog`, a `WindowXMLDialog` composed of mixins, on the skin's `script-skinshortcuts.xml`. The root dialog creates a `MenuManager`, which loads `SkinConfig` and keeps a working copy of the menus. Submenus, widget slots and custom widget menus open in child dialogs that share the root's manager. When the root closes with changes, the manager saves the diff, and `entry` forces a build. See [dialog/README.md](dialog/README.md).
 
-### Configuration Loading
+## Pickers and providers
 
-```
-menus.xml ──► load_menus() ──► MenuConfig (menus, groupings, subdialogs)
-widgets.xml ──► load_widgets() ──► WidgetConfig (widgets, groups)
-backgrounds.xml ──► load_backgrounds() ──► BackgroundConfig
-properties.xml ──► load_properties() ──► PropertySchema
-templates.xml ──► load_templates() ──► TemplateSchema (templates, items_templates, presets, etc.)
-userdata.json ──► load_userdata() ──► merge into menus
-```
+The shortcut picker reads groupings from menus.xml for the open menu; the widget and background pickers use widgets.xml and backgrounds.xml. `<content>` entries resolve at pick time through `providers/content.py`; browse-into lists paths through `providers/browse.py`; a media source can become a generated smart playlist through `playlists.py`. `skinstring.py` reuses the widget picker outside the dialog. See [providers/README.md](providers/README.md).
 
-### Dialog State
+## View locking
 
-```
-ManagementDialog (root)
-    ├── MenuManager (shared) ──► tracks all changes
-    ├── PropertySchema (shared)
-    ├── icon_sources, subdialogs (shared)
-    │
-    └── Child dialogs (submenu/widget slot)
-            └── Same shared state, different menu_id/suffix
-
-Only root dialog saves on close.
-```
-
-***
-
-## File Locations
-
-| Type | Path |
-|------|------|
-| Skin config | `special://skin/shortcuts/` |
-| User data | `special://profile/addon_data/script.skinshortcuts/{skin_dir}.userdata.json` |
-| Output | `special://skin/{resolution}/script-skinshortcuts-includes.xml` |
-| Hashes | `special://profile/addon_data/script.skinshortcuts/{skin_id}.hashes` |
-
-***
-
-## Common Patterns
-
-### Condition Evaluation
-
-```python
-from loaders import evaluate_condition
-if evaluate_condition("widgetType=custom", item_props):
-    ...
-```
-
-### Property Suffix (Widget Slots)
-
-```python
-# Widget slot 2 uses suffix ".2"
-widget.2, widgetPath.2, widgetType.2, etc.
-```
-
-### Content Resolution
-
-```python
-from providers import resolve_content
-shortcuts = resolve_content(Content(source="addons", target="videos"))
-```
-
-***
-
-## Quick Reference: "I need to..."
-
-| Task | Location |
-|------|----------|
-| Add menu item property | `models/menu.py` MenuItem, `dialog/properties.py` |
-| Add new widget type | `models/widget.py`, `loaders/widget.py` |
-| Change includes output | `builders/includes.py`, `builders/template.py` |
-| Add items template | `loaders/template.py`, `models/template.py` (ItemsDefinition) |
-| Add dynamic content source | `providers/content.py` |
-| Modify dialog behavior | `dialog/` (see package README) |
-| Add skin config option | `loaders/menu.py` (menus.xml parsing) |
+views.xml declares views and content rules, and userdata holds the user's choice per content. The build turns them into Kodi `<expression>` elements in the includes file; `type=viewselect` changes the choices. See [View locking](CONCEPTS.md#view-locking).

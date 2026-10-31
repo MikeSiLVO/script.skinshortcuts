@@ -1,135 +1,86 @@
-# builders/template.py
+# Template Builder
 
-**Path:** `resources/lib/skinshortcuts/builders/template.py`
-**Purpose:** Build Kodi include XML from templates.xml and menu data.
+`builders/template.py` turns templates.xml, parsed into a `TemplateSchema` by `loaders/template.py`, and the merged menus into Kodi includes and variables. `IncludesBuilder` runs it when the schema has at least one `<template>` and appends everything it builds to the includes file. The XML syntax is in [skinning/templates.md](../../skinning/templates.md); this page covers how the builder processes it.
 
-***
+## Pass order
 
-## Overview
+`TemplateBuilder.build`:
 
-Processes templates defined in templates.xml, iterating over menu items and generating controls, properties, and variables with substitutions. The most complex part of the build system.
+1. For each `<template>` and each of its outputs (`Template.get_outputs`: the declared outputs, else one from `include` and `idprefix`), it gets or creates the include `skinshortcuts-template-{include}`. Outputs that share a name build into the same include.
+2. A raw template (`build="true"`) builds through `_build_raw_template`, every other one through `_build_template_into`.
+3. Each templates.xml `<submenu>` builds into `skinshortcuts-{include}` (`_build_submenu_template`).
+4. Every fixed variable name a template declares, directly or through a variableGroup, gets an empty placeholder variable when no item built it (`_add_placeholder_variables`), so a skin naming it still resolves.
+5. Variables are emitted first, then includes. Includes from a `templateonly="true"` template are left out, as are `templateonly="auto"` ones no menu item property assigns with `$INCLUDE[skinshortcuts-template-{include}]`. An include that ends up empty gets a `<description>` saying no items matched.
 
-***
+## Menu templates
 
-## TemplateBuilder Class
+`_build_template_into` runs once per output:
 
-### `__init__`(schema, menus, property_schema=None)
+- It walks every menu, or only the one named by `menu`, and every enabled item in it.
+- It skips items that fail the template's conditions, after `$EXP` expansion and the output's suffix. When the controls hold `<skinshortcuts insert>` markers, it also skips items for which none of the inserted submenus has items (`_has_required_submenus`).
+- For each remaining item it builds the item context, processes a copy of the controls against it, and builds the template's variables and variableGroups into the shared variable map.
 
-| Parameter | Description |
-|-----------|-------------|
-| `schema` | TemplateSchema from templates.xml |
-| `menus` | list[Menu] to build from |
-| `property_schema` | Optional PropertySchema for fallbacks |
+## The item context
 
-### build() → ET.Element
+`_build_context` builds the dict of values the substitutions read, in this order:
 
-Build all template includes and variables.
+1. The menu's default properties under the item's own properties.
+2. Built-ins: `index`, `name`, `menu`, `idprefix`, `id`, `suffix`, `label`, `label2`, `icon`, `visible`, `action`, `path`, `submenuVisibility`. These overwrite item properties of the same name.
+3. properties.xml fallbacks, for each property still unset in each slot the item uses.
+4. The template's `<property>` elements, first match per name.
+5. The template's `<var>` elements, first matching value.
+6. Preset references, presetGroup references and propertyGroup references, each gated by its own condition.
 
-- Templates with same include name are merged
-- Variables with same name are merged (children appended)
-- Empty includes get `<description>` to avoid Kodi warnings
-- `templateonly="true"` templates never output
-- `templateonly="auto"` templates skipped if not assigned to any menu item
+Template properties and vars overwrite earlier values. Fallbacks, presets and presetGroups only fill names still unset. In a propertyGroup, entries with `from` overwrite and literal values only fill unset names.
 
-### write(path, indent=True)
+Every condition and `from` source in steps 4 to 6 takes the output's suffix, or the reference's own suffix when it sets one (`_combine_suffixes`). See [Property slots and suffixes](../CONCEPTS.md#property-slots-and-suffixes).
 
-Write template includes to file.
+## Processing controls
 
-***
+`_process_element` walks the copy of the controls:
 
-## Substitution Patterns
+- `<skinshortcuts>visibility</skinshortcuts>` becomes a `<visible>` that tests the menu's container for this item; with no container it is dropped and a warning is raised.
+- `<skinshortcuts>onclick</skinshortcuts>` becomes the item's `<onclick>` elements, in the same order as menu includes ([Entries](README.md#entries)).
+- `<skinshortcuts include="X">` is replaced by the controls of templates.xml include `X`, processed in the same context, inline or inside a Kodi `<include name="X">` with `wrap="true"`. It is dropped when its `condition` fails; a loop is reported and cut.
+- `<skinshortcuts insert="X">` expands an items template, below.
+- Text, tails and attribute values go through `_substitute_text`, which replaces `$EXP`, `$PARENT`, `$PROPERTY`, `$MATH` and `$IF` in that order. `$INCLUDE[X]` in text becomes an `<include>` child.
+- Leaf elements left with no text and no attributes are removed (`_remove_empty_elements`).
 
-| Pattern | Description |
-|---------|-------------|
-| `$PROPERTY[name]` | Property/var value from context or item |
-| `$PARENT[name]` | Parent item property (items iteration only) |
-| `$EXP[name]` | Expression from templates.xml (recursive) |
-| `$INCLUDE[name]` | Converted to Kodi `<include>` element |
-| `$MATH[expr]` | Arithmetic expression (via expressions.py) |
-| `$IF[cond THEN val]` | Conditional expression (via expressions.py) |
+## Items templates
 
-Processing order: `$EXP` → `$PARENT` → `$PROPERTY` → `$MATH` → `$IF`
+`<skinshortcuts insert="X">` inside a menu template expands `<template items="X">` (an `ItemsDefinition`) once per enabled item of the flat menu `{item}.{source}`, where `source` defaults to the items template's name.
 
-***
+- The items template's `condition` is tested against the parent item, and its `filter` against each submenu item.
+- Each submenu item gets its own context (`_build_items_context`: menu defaults, its properties, built-ins, fallbacks), then the items template's properties, vars, presets and propertyGroups, without a suffix.
+- In its controls `$PROPERTY[...]` reads the submenu item and `$PARENT[...]` reads the parent item's context.
+- Its variableGroups build into the same variable map as the parent template's.
 
-## Context Building
+## Raw templates
 
-Property context built in order (later overrides earlier):
+A raw template emits its controls once rather than once per item. `_collect_raw_matching_items` gathers the enabled items that pass the conditions, from menus that have a container (`menu` limits it to one).
 
-1. Menu defaults + item properties
-2. Built-ins: `index`, `name`, `menu`, `idprefix`, `id`, `suffix`
-3. Item attributes: `label`, `label2`, `icon`, `visible`, `path`
-4. Fallback values from PropertySchema
-5. Template properties
-6. Template vars (first matching condition wins)
-7. Preset references
-8. Preset group references (presetGroup - first matching condition selects a preset or inline values)
-9. Property group references
+- With no properties, vars, presets, presetGroups or propertyGroups, the controls are copied once and each `<skinshortcuts>visibility</skinshortcuts>` becomes an OR over every matching item.
+- Otherwise each item's context is resolved, items whose substituted controls come out identical are grouped, and one copy is emitted per group with visibility over that group.
 
-***
+Raw templates build no variables and expand no `<skinshortcuts include>`; the loader reports either and drops the include markers.
 
-## Skinshortcuts Elements
+## Variables
 
-Special elements processed within `<controls>`:
+- A template's `<variable>` definitions, and those of the variableGroups it references, build once per matching item. A name holding `$PROPERTY[...]` gives each item its own variable; a fixed name collects every item's `<value>` elements in one variable (`_add_variable`).
+- `<value iterate="..." as="x">` expands before substitution into one value per slot, by count or by the slots the item holds, filling `$PROPERTY[xIndex]` and `$PROPERTY[xSuffix]` and suffixing the other property names (`_expand_iterate_values`).
+- The `output` and `condition` attributes control the build and are stripped from the emitted variable.
 
-| Element | Output |
-|---------|--------|
-| `<skinshortcuts>visibility</skinshortcuts>` | `<visible>` condition matching current item (per-item in menu mode). In raw mode (`build="true"`), generates OR'd visibility across matching items (per-group when properties are defined, all items when no properties) |
-| `<skinshortcuts>onclick</skinshortcuts>` | `<onclick>` elements from item actions (before/conditional/unconditional/after) |
-| `<skinshortcuts include="name" />` | Unwrapped include contents |
-| `<skinshortcuts include="name" wrap="true" />` | Kodi `<include>` element |
-| `<skinshortcuts include="name" condition="prop" />` | Conditional include |
-| `<skinshortcuts insert="name" />` | Items template insert point |
+## Submenu templates
 
-***
+A templates.xml `<submenu include="X">` builds into `skinshortcuts-X`, applying only its properties and vars:
 
-## Items Iteration
+- With `name`, it builds once against that menu, with a context holding only `menu`. An insert expands its items template over that menu's items.
+- With a `level` above 0, it builds once per enabled item of the menu named `mainmenu` that has a per-item submenu, with a context from the main item. An insert expands over that item's per-item submenu.
 
-Handles `<template items="name">` elements that iterate over submenu items.
+The submenu's own controls get `$PROPERTY`, `$EXP` and `$MATH` substitution; inserted items get the full set. Content a submenu template cannot build is reported by the loader and ignored.
 
-- Looks up submenu as `{parent_item.name}.{source}` (e.g., `movies.widgets`)
-- `$PROPERTY[...]` references submenu item properties
-- `$PARENT[...]` references parent menu item properties
-- Skips disabled items
-- Applies filter condition to each submenu item
-- Supports vars, presets, propertyGroups within items block
+`IncludesBuilder` gives no menu include to a root menu that a templates.xml `<submenu name>` names, since the template builds it.
 
-***
+## Warnings
 
-## Key Internal Methods
-
-| Method | Purpose |
-|--------|---------|
-| `_build_context` | Build property context for menu item |
-| `_apply_fallbacks` | Apply PropertySchema fallbacks with suffix support |
-| `_resolve_property` | Resolve property value (from_source or literal) |
-| `_resolve_var` | Resolve var (first matching condition) |
-| `_apply_property_group` | Apply property group with suffix transforms |
-| `_apply_preset` | Apply preset values as properties |
-| `_apply_preset_group` | Apply presetGroup (first matching condition selects a preset or inline values) |
-| `_get_preset_values` | Get first matching values row from a preset |
-| `_process_controls` | Process controls XML with substitutions |
-| `_remove_empty_elements` | Remove leaf elements with no text/attributes |
-| `_substitute_text` | Substitute all dynamic expressions in text |
-| `_build_variable` | Build Kodi `<variable>` element |
-| `_build_variable_group` | Build variables from variableGroup reference |
-| `_expand_iterate_values` | Expand `<value iterate=... as=...>` into N `<value>` siblings before substitution |
-| `_resolve_iterate_suffixes` | Return suffix list for an iterate expression (numeric or family scan) |
-| `_apply_iterate_to_text` | Rewrite loop-local and auto-suffix `$PROPERTY[]` refs for one iteration |
-| `_handle_skinshortcuts_include` | Process include expansions |
-| `_handle_skinshortcuts_items` | Process items iteration |
-| `_handle_skinshortcuts_onclick` | Process onclick expansions |
-| `_collect_raw_matching_items` | Collect menu items matching a raw template's filters |
-| `_substitute_raw_controls` | Substitute $PROPERTY/$EXP/$MATH/$IF in raw controls (preserves visibility markers) |
-| `_resolve_raw_visibility` | Replace visibility markers with OR'd conditions for an item group |
-| `_eval_condition` | Evaluate condition against item |
-
-***
-
-## Suffix Transforms
-
-When suffix is specified (e.g., `.2` for widget slot 2):
-
-- `from="widgetPath"` → `from="widgetPath.2"`
-- `condition="widgetType=movies"` → `condition="widgetType.2=movies"`
-- Conditions go through `suffix_condition` in conditions.py after `$EXP` expansion; built-ins in `NO_SUFFIX_PROPERTIES` and `{NOSUFFIX:...}` content stay unsuffixed
+Problems a skinner can fix (an include or insert that names nothing, a circular reference, a menu with no container, unsupported submenu content) go through `log.notify`, and the builder carries on without the offending piece. The notifications are listed in [skinning/troubleshooting.md](../../skinning/troubleshooting.md).
