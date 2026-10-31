@@ -236,20 +236,19 @@ Generates one copy of `<controls>` per menu item, with `$PROPERTY[name]` replace
 
 ### Raw Mode
 
-No iteration, outputs controls once with parameter substitution:
+No iteration, outputs controls once:
 
 ```xml
 <template include="UtilityInclude" build="true">
-  <param name="id" default="9000" />
   <controls>
     <control type="group" id="$PARAM[id]" />
   </controls>
 </template>
 ```
 
-Use as `<include content="skinshortcuts-UtilityInclude"><param name="id">9001</param></include>`.
+Use as `<include content="skinshortcuts-template-UtilityInclude"><param name="id">9001</param></include>`.
 
-`$PARAM` is native Kodi include-parameter syntax, not a script feature; the script passes it through untouched. The template's `<param name="id" default="9000" />` declaration is not carried into the generated include, so the default is lost: always pass the param from the consuming include.
+`$PARAM` is native Kodi include-parameter syntax, not a script feature; the script passes it through untouched. Pass every param from the consuming include: the generated include sets no defaults, and a param left out comes through empty.
 
 Raw mode also supports `<skinshortcuts>visibility</skinshortcuts>` markers. Instead of per-item visibility, the marker generates an OR'd condition across all matching menu items, outputting controls once with combined visibility. This is useful for elements that should be visible when *any* matching item is focused:
 
@@ -436,7 +435,7 @@ XML content output per item:
 |-------------|-------------|
 | `$PROPERTY[name]` | Property or var value |
 | `$EXP[name]` | Expression value (expanded in conditions) |
-| `$PARAM[name]` | Native Kodi include parameter (raw mode); resolved by Kodi, not the script, and the `<param>` default is not emitted |
+| `$PARAM[name]` | Native Kodi include parameter (raw mode); resolved by Kodi, not the script |
 
 Note: Vars defined with `<var>` are resolved during context building and accessible via `$PROPERTY[name]`.
 

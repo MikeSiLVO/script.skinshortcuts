@@ -24,7 +24,6 @@ from ..models.template import (
     SubmenuTemplate,
     Template,
     TemplateOutput,
-    TemplateParam,
     TemplateProperty,
     TemplateSchema,
     TemplateVar,
@@ -330,15 +329,6 @@ class TemplateLoader:
                 controls=copy.deepcopy(elem) if len(elem) > 0 else None,
             )
 
-    def _parse_param(self, elem: ET.Element) -> TemplateParam | None:
-        """Parse a param element."""
-        name = (elem.get("name") or "").strip()
-        if not name:
-            log.warning(f"{self.path}: <{elem.tag}> missing 'name' attribute, skipping")
-            return None
-        default = (elem.get("default") or "").strip()
-        return TemplateParam(name=name, default=default)
-
     def _parse_property(self, elem: ET.Element, suffix: str = "") -> TemplateProperty | None:
         """Parse a property element; one with no name is skipped with a warning."""
         name = (elem.get("name") or "").strip()
@@ -432,12 +422,6 @@ class TemplateLoader:
             if cond_text:
                 conditions.append(cond_text)
 
-        params = []
-        for param_elem in elem.findall("param"):
-            param = self._parse_param(param_elem)
-            if param:
-                params.append(param)
-
         name = include or outputs[0].include
         _drop_duplicate_definitions(elem, "Template Error", f'<template include="{name}">')
 
@@ -511,7 +495,6 @@ class TemplateLoader:
             menu=menu,
             outputs=outputs,
             conditions=conditions,
-            params=params,
             properties=properties,
             vars=vars_list,
             property_groups=property_groups,

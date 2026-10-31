@@ -540,7 +540,6 @@ Defines templates for generating skin includes. For detailed documentation, see 
 
   <!-- Raw mode template -->
   <template include="UtilityInclude" build="true">
-    <param name="id" default="9000" />
     <controls>
       <control type="group" id="$PARAM[id]" />
     </controls>
@@ -589,7 +588,6 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `<presetGroup/>` | template | `content` | `condition`, `suffix` | Apply a presetGroup reference |
 | `<propertyGroup/>` | template/items/submenu | `content` | `condition`, `suffix` | Apply property group |
 | `<variableGroup/>` | template/items | `content` | `condition`, `suffix` | Apply variable group |
-| `<param>` | template | `name` | `default` | Parameter (build="true") |
 | `<controls>` | template/submenu | - | - | Control container |
 | `<skinshortcuts>` | controls | - | `include`, `condition`, `wrap`, `insert` | Special tag |
 | `<submenu>` | templates | - | `include`, `level`, `name` | Submenu template |
