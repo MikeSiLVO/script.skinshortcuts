@@ -35,7 +35,7 @@ The result holds the merged `menus`, the untouched `default_menus`, and the widg
 4. Loads `SkinConfig`, then for each output folder calls `SkinConfig.build_includes`, which:
    - fills derived widget and background properties into the merged menus;
    - applies action overrides to copies of the menus;
-   - runs `IncludesBuilder`, which emits the menu, submenu and custom widget includes, then runs `TemplateBuilder` when templates.xml has templates and `ViewExpressionBuilder` when views.xml has content rules;
+   - runs `IncludesBuilder`, which emits the menu, submenu and custom widget includes, then runs `TemplateBuilder` when templates.xml has templates or submenu templates and `ViewExpressionBuilder` when views.xml has content rules;
    - writes the file.
 5. Saves the userdata when migrations changed it, then writes the hashes, including one per includes file.
 6. Runs `ReloadSkin()` when any includes file changed, after waiting for open modal dialogs to close.

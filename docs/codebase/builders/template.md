@@ -1,6 +1,6 @@
 # Template Builder
 
-`builders/template.py` turns templates.xml, parsed into a `TemplateSchema` by `loaders/template.py`, and the merged menus into Kodi includes and variables. `IncludesBuilder` runs it when the schema has at least one `<template>` and appends everything it builds to the includes file. The XML syntax is in [skinning/templates.md](../../skinning/templates.md); this page covers how the builder processes it.
+`builders/template.py` turns templates.xml, parsed into a `TemplateSchema` by `loaders/template.py`, and the merged menus into Kodi includes and variables. `IncludesBuilder` runs it when the schema has at least one `<template>` or `<submenu>` and appends everything it builds to the includes file. The XML syntax is in [skinning/templates.md](../../skinning/templates.md); this page covers how the builder processes it.
 
 ## Pass order
 

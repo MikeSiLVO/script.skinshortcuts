@@ -5,8 +5,6 @@ from __future__ import annotations
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-import pytest
-
 from skinshortcuts.builders.includes import IncludesBuilder
 from skinshortcuts.loaders.template import load_templates
 from skinshortcuts.models.menu import Menu, MenuItem
@@ -28,7 +26,6 @@ def labels(root: ET.Element, include: str) -> list[str]:
     return [label.text or "" for label in root.findall(f"include[@name='{include}']//label")]
 
 
-@pytest.mark.xfail(strict=True, reason="Submenu templates build only when a template is present")
 def test_named_submenu_template_builds_its_menu(tmp_path: Path) -> None:
     """Named submenu template builds its include from the named menu's rows."""
     named = """<submenu include="Power" name="powermenu">
@@ -39,7 +36,6 @@ def test_named_submenu_template_builds_its_menu(tmp_path: Path) -> None:
     assert labels(root, "skinshortcuts-Power") == ["Quit"]
 
 
-@pytest.mark.xfail(strict=True, reason="Submenu templates build only when a template is present")
 def test_level_submenu_template_builds(tmp_path: Path) -> None:
     """Level submenu template builds one copy per root item that has a submenu."""
     level = """<submenu include="Sub" level="1">
