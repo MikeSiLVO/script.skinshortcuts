@@ -77,7 +77,9 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
       <shortcut name="movies" label="Movies" icon="DefaultMovies.png" type="Video" condition="..." visible="...">
         <action>ActivateWindow(Videos,videodb://movies/)</action>
       </shortcut>
-      <shortcut name="playlists" label="Playlists" icon="DefaultPlaylist.png" path="special://profile/playlists/video/" browse="videos" />
+      <shortcut name="playlists" label="Playlists" icon="DefaultPlaylist.png" browse="videos">
+        <path>special://profile/playlists/video/</path>
+      </shortcut>
       <group name="nested" label="Nested Group">...</group>
       <content source="playlists" target="videos" folder="Video Playlists" label="..." icon="..." condition="..." visible="..." />
     </group>
@@ -136,7 +138,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 | `<protect>` | item | - | `type`, `heading`, `message` | Protection rule |
 | `<groupings>` | menus | - | - | Shortcut picker structure |
 | `<group>` | groupings/group | `name`, `label` (unless `flat="true"`) | `condition`, `visible`, `icon`, `flat` | Shortcut group |
-| `<shortcut>` | group | `name`, `label` | `icon`, `type`, `condition`, `visible`, `path`, `browse` | Shortcut option |
+| `<shortcut>` | group | `name`, `label` | `icon`, `type`, `condition`, `visible`, `browse` | Shortcut option |
 | `<action>` | shortcut | - | `primary` | Shortcut action (multiple allowed) |
 | `<path>` | shortcut | - | - | Browse path (for browse mode) |
 | `<content>` | group | `source` | `target`, `path`, `condition`, `visible`, `icon`, `label`, `folder` | Dynamic content |
