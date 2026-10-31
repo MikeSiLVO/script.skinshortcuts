@@ -123,11 +123,11 @@ def display_action(actions: list[Action]) -> str:
 
 @dataclass
 class IncludeRef:
-    """A reference to an include, output as <include>name</include>."""
+    """A reference to an include, output as <include>name</include> before or after the onclicks."""
 
     name: str
     condition: str = ""
-    position: str = "end"
+    after_onclick: bool = False
 
 
 @dataclass

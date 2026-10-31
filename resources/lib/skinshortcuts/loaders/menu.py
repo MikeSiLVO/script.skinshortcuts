@@ -355,7 +355,7 @@ def _parse_item(
     is_widget_submenu: bool = False,
     icon_overrides: IconOverrides | None = None,
 ) -> MenuItem:
-    """Parse an item element: label, icon, actions, properties and protection."""
+    """Parse an item element: label, icon, actions, includes, properties and protection."""
     overrides = icon_overrides or IconOverrides()
     item_name = get_attr(elem, "name")
     if not item_name:
@@ -379,11 +379,10 @@ def _parse_item(
         elif child.tag == "skinshortcuts":
             include_name = get_attr(child, "include")
             if include_name:
-                position = "after-onclick" if seen_action else "before-onclick"
                 includes.append(IncludeRef(
                     name=include_name,
                     condition=get_attr(child, "condition") or "",
-                    position=position,
+                    after_onclick=seen_action,
                 ))
 
     properties = {}
@@ -436,7 +435,7 @@ def _parse_item(
 
 
 def _parse_defaults(elem) -> MenuDefaults:
-    """Parse a defaults element: properties and actions every item in the menu starts with."""
+    """Parse a defaults element: properties, actions and includes every item in the menu gets."""
     if elem is None:
         return MenuDefaults()
 
@@ -468,11 +467,10 @@ def _parse_defaults(elem) -> MenuDefaults:
         elif child.tag == "skinshortcuts":
             include_name = get_attr(child, "include")
             if include_name:
-                position = "after-onclick" if seen_action else "before-onclick"
                 includes.append(IncludeRef(
                     name=include_name,
                     condition=get_attr(child, "condition") or "",
-                    position=position,
+                    after_onclick=seen_action,
                 ))
 
     return MenuDefaults(

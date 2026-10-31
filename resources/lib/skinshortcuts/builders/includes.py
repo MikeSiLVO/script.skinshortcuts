@@ -246,8 +246,8 @@ class IncludesBuilder:
             ET.SubElement(elem, "thumb").text = item.thumb
 
         all_includes = menu.defaults.includes + item.includes
-        before_includes = [i for i in all_includes if i.position == "before-onclick"]
-        after_includes = [i for i in all_includes if i.position == "after-onclick"]
+        before_includes = [i for i in all_includes if not i.after_onclick]
+        after_includes = [i for i in all_includes if i.after_onclick]
 
         for inc in before_includes:
             include_elem = ET.SubElement(elem, "include")
