@@ -42,19 +42,17 @@ log = get_logger("MenuLoader")
 
 
 def load_menus(path: str | Path) -> MenuConfig:
-    """Load complete menu configuration from menus.xml."""
+    """Load menu configuration from menus.xml, all but the shortcut groupings."""
     path = Path(path)
     if not path.exists():
         return MenuConfig()
 
     root = parse_xml(path, "menus", MenuConfigError)
-    path_str = str(path)
 
     icon_sources = _parse_icons(root)
     icon_overrides = _parse_icon_overrides(root)
 
-    menus = _parse_menus(root, path_str, icon_overrides)
-    groupings = _parse_shortcut_groupings(root, path_str, icon_overrides=icon_overrides)
+    menus = _parse_menus(root, str(path), icon_overrides)
     subdialogs = _parse_dialogs(root)
     action_overrides = _parse_overrides(root)
     context_menu = _parse_context_menu(root)
@@ -62,7 +60,6 @@ def load_menus(path: str | Path) -> MenuConfig:
 
     return MenuConfig(
         menus=menus,
-        groupings=groupings,
         icon_sources=icon_sources,
         subdialogs=subdialogs,
         action_overrides=action_overrides,

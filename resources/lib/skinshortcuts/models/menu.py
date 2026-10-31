@@ -363,10 +363,9 @@ class ContextMenu:
 
 @dataclass
 class MenuConfig:
-    """Menu configuration including menus, groupings, and icon sources."""
+    """Menu configuration including menus, dialog settings and icon sources."""
 
     menus: list[Menu] = field(default_factory=list)
-    groupings: list[Shortcut | ShortcutGroup | Content | Input] = field(default_factory=list)
     icon_sources: list[IconSource] = field(default_factory=list)
     subdialogs: list[SubDialog] = field(default_factory=list)
     action_overrides: list[Override] = field(default_factory=list)

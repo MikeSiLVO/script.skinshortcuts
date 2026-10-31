@@ -4,7 +4,7 @@ Dataclasses for everything the config files describe, plus the `BuildMode` and `
 
 | Module | Top-level container | Holds |
 |--------|---------------------|-------|
-| `menu.py` | `MenuConfig` | Menus and items, shortcut groupings, icon sources, subdialogs, context menu, icon overrides |
+| `menu.py` | `MenuConfig` | Menus and items, icon sources, subdialogs, context menu, icon overrides |
 | `widget.py` | `WidgetConfig` | Widgets and widget groups |
 | `background.py` | `BackgroundConfig` | Backgrounds, background groups and their sources |
 | `property.py` | `PropertySchema` | Property definitions, button mappings, fallbacks |
