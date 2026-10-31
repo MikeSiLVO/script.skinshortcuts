@@ -4,8 +4,7 @@
     "**/__pycache__",
     "**/.pytest_cache",
     "**/node_modules",
-    ".venv",
-    "tests/mocks"
+    ".venv"
   ],
   "pythonVersion": "3.8",
   "pythonPlatform": "All",
