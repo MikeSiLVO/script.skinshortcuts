@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
 from harness import HarnessDialog, harness_fixture, open_root, write_skin  # noqa: F401
 
 from skinshortcuts.models.menu import Action, MenuItem
@@ -32,7 +31,6 @@ def test_saved_change_keeps_the_skin_action(harness, tmp_path: Path) -> None:
     assert original(open_root(skin, tmp_path), "movies") == "ActivateWindow(Videos)"
 
 
-@pytest.mark.xfail(strict=True, reason="originalAction follows an unsaved action change")
 def test_unsaved_change_keeps_the_skin_action(harness, tmp_path: Path) -> None:
     """An action changed in this session still shows the skin's."""
     dialog = open_root(write_skin(tmp_path, MENUS), tmp_path)

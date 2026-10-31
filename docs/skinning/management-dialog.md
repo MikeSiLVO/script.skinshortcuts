@@ -226,7 +226,7 @@ Properties available on items in the menu list (control 211):
 | `ListItem.Icon` | Icon path |
 | `ListItem.Property(name)` | Item identifier |
 | `ListItem.Property(action)` | Full action string |
-| `ListItem.Property(originalAction)` | Original action string before any override is applied |
+| `ListItem.Property(originalAction)` | The action menus.xml gives the item, unchanged by the user's edits; an item the user added shows its current action |
 | `ListItem.Property(path)` | Bare content path |
 | `ListItem.Property(skinshortcuts-disabled)` | `True` or `False` |
 

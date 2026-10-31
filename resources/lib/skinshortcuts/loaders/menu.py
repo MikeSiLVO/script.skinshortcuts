@@ -26,6 +26,7 @@ from ..models.menu import (
     Shortcut,
     ShortcutGroup,
     SubDialog,
+    display_action,
 )
 from ..log import get_logger, notify
 from .base import (
@@ -432,6 +433,7 @@ def _parse_item(
         protection=protection,
         properties=properties,
         submenu=get_attr(elem, "submenu"),
+        original_action=display_action(actions),
         includes=includes,
     )
 

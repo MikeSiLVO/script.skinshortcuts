@@ -308,7 +308,7 @@ def merge_menu(
 
 
 def _apply_diff(item: MenuItem, diff: MenuItemDiff) -> MenuItem:
-    """Apply a user diff to a menu item."""
+    """Apply a user diff to a menu item, returning a new item."""
     properties = {**item.properties, **diff.properties}
     for key in diff.removed_properties:
         properties.pop(key, None)
@@ -325,7 +325,7 @@ def _apply_diff(item: MenuItem, diff: MenuItemDiff) -> MenuItem:
         protection=item.protection,
         properties=properties,
         submenu=diff.submenu if diff.submenu is not None else item.submenu,
-        original_action=item.action,  # Store original for protection matching
+        original_action=item.original_action,
         includes=item.includes,
     )
 
