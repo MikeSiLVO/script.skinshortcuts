@@ -228,17 +228,11 @@ class MenuManager:
 
     def remove_item(self, menu_id: str, item_id: str) -> bool:
         """Remove an item from a menu."""
-        if menu_id not in self.working:
+        menu = self.working.get(menu_id)
+        if menu is None or not menu.remove_item(item_id):
             return False
-
-        menu = self.working[menu_id]
-        for i, item in enumerate(menu.items):
-            if item.name == item_id:
-                menu.items.pop(i)
-                self._changed = True
-                return True
-
-        return False
+        self._changed = True
+        return True
 
     def restore_item(self, menu_id: str, item: MenuItem) -> bool:
         """Restore a deleted item, dropping any empty placeholder."""
@@ -379,28 +373,9 @@ class MenuManager:
 
     def move_item(self, menu_id: str, item_id: str, direction: int) -> bool:
         """Move an item up or down in the menu."""
-        if menu_id not in self.working:
+        menu = self.working.get(menu_id)
+        if menu is None or not menu.move_item(item_id, direction):
             return False
-
-        items = self.working[menu_id].items
-        if not items:
-            return False
-
-        current_index = None
-        for i, item in enumerate(items):
-            if item.name == item_id:
-                current_index = i
-                break
-
-        if current_index is None:
-            return False
-
-        new_index = current_index + direction
-        if new_index < 0 or new_index >= len(items):
-            return False
-
-        items[current_index], items[new_index] = items[new_index], items[current_index]
-
         self._changed = True
         return True
 
