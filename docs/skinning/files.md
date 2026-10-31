@@ -128,6 +128,7 @@ skin.name/
 |---------|---------|
 | Menu: `skinshortcuts-{menu}` | `skinshortcuts-mainmenu` |
 | Combined submenu: `skinshortcuts-{menu}-submenu` | `skinshortcuts-mainmenu-submenu` |
+| Submenu: `skinshortcuts-{submenu}` | `skinshortcuts-movies` |
 | Custom widget: `skinshortcuts-{item}-customwidget{n}` | `skinshortcuts-movies-customwidget`, `skinshortcuts-movies-customwidget2` |
 | Template: `skinshortcuts-template-{include}` | `skinshortcuts-template-Widgets` |
 | Submenu template: `skinshortcuts-{include}` | `skinshortcuts-Submenu` |
