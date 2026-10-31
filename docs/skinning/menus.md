@@ -751,10 +751,10 @@ Define subdialogs triggered by button clicks. Used for multi-widget support.
 ```xml
 <dialogs>
   <subdialog buttonID="800" mode="widget1" setfocus="309">
-    <onclose condition="widgetType=custom" action="menu" menu="{item}.customwidget" />
+    <onclose condition="widgetType=custom" action="menu" menu="{customWidget}" />
   </subdialog>
   <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2">
-    <onclose condition="widgetType.2=custom" action="menu" menu="{item}.customwidget.2" />
+    <onclose condition="widgetType.2=custom" action="menu" menu="{customWidget.2}" />
   </subdialog>
 </dialogs>
 ```
@@ -783,15 +783,14 @@ This opens the custom widget menu for slot 2 immediately when button 850 is clic
 <subdialog buttonID="800" menu="{item}.widgets" />
 ```
 
-Adding `mode` alongside `menu` is not a direct open: the subdialog opens in that mode and `menu` is
-ignored. Pair the mode with an `<onclose action="menu">` instead.
+Adding `mode` alongside `menu` is not a direct open: the subdialog opens in that mode and `menu` is ignored. Pair the mode with an `<onclose action="menu">` instead.
 
 ### `<onclose>` Attributes
 
 | Attribute | Description |
 |-----------|-------------|
 | `action` | Action type: `menu` |
-| `menu` | Menu name for `action="menu"`. Supports `{item}` and `{customWidget}` / `{customWidget.N}` placeholders |
+| `menu` | Menu name for `action="menu"`. Supports `{item}` and `{customWidget}` / `{customWidget.N}` placeholders; the older `{item}.customwidget` / `{item}.customwidget.N` form opens the same menu |
 | `condition` | Condition evaluated against item properties |
 
 > **See also:**

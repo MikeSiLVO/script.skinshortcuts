@@ -416,7 +416,7 @@ In `menus.xml`:
 <dialogs>
   <subdialog buttonID="800" mode="widget1" setfocus="309" />
   <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2">
-    <onclose condition="widgetType.2=custom" action="menu" menu="{item}.customwidget.2" />
+    <onclose condition="widgetType.2=custom" action="menu" menu="{customWidget.2}" />
   </subdialog>
   <!-- Direct menu opening (no mode change) -->
   <subdialog buttonID="850" menu="{customWidget}" suffix=".2" />
@@ -468,11 +468,10 @@ Use visibility conditions to show different controls:
 Execute actions when subdialog closes:
 
 ```xml
-<onclose condition="widgetType.2=custom" action="menu" menu="{item}.customwidget.2" />
+<onclose condition="widgetType.2=custom" action="menu" menu="{customWidget.2}" />
 ```
 
-* `{item}` is replaced with current item name
-* Opens item editor for custom widget menu
+This opens the selected item's custom widget menu for slot 2.
 
 ---
 

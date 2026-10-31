@@ -101,7 +101,7 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 
   <dialogs>
     <subdialog buttonID="800" mode="widget1" setfocus="309">
-      <onclose action="menu" menu="{item}.customwidget" condition="widgetType=custom" />
+      <onclose action="menu" menu="{customWidget}" condition="widgetType=custom" />
     </subdialog>
     <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2" />
   </dialogs>
