@@ -293,13 +293,6 @@ class Menu:
                 return item
         return None
 
-    def add_item(self, item: MenuItem, position: int | None = None) -> None:
-        """Add item at position (or end if None)."""
-        if position is None:
-            self.items.append(item)
-        else:
-            self.items.insert(position, item)
-
     def remove_item(self, item_name: str) -> bool:
         """Remove item by name. Returns True if found."""
         for i, item in enumerate(self.items):
