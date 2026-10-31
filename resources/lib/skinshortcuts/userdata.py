@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -301,26 +301,10 @@ def merge_menu(
     hidden = {
         item.name for item in default_menu.items if not check_visible(item.dialog_visible)
     }
-    return Menu(
-        name=default_menu.name,
-        items=[
-            item for item in merge_items(default_menu, diff, icon_overrides)
-            if item.name not in hidden
-        ],
-        defaults=default_menu.defaults,
-        container=default_menu.container,
-        allow=default_menu.allow,
-        is_submenu=default_menu.is_submenu,
-        menu_type=default_menu.menu_type,
-        controltype=default_menu.controltype,
-        icons=default_menu.icons,
-        startid=default_menu.startid,
-        template_only=default_menu.template_only,
-        build=default_menu.build,
-        action=default_menu.action,
-        standalone=default_menu.standalone,
-        submenu_path=default_menu.submenu_path,
-    )
+    return replace(default_menu, items=[
+        item for item in merge_items(default_menu, diff, icon_overrides)
+        if item.name not in hidden
+    ])
 
 
 def _apply_diff(item: MenuItem, diff: MenuItemDiff) -> MenuItem:
