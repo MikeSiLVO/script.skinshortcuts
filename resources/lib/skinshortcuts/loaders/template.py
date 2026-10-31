@@ -32,7 +32,6 @@ from ..models.template import (
     VariableGroupReference,
     VariableReference,
 )
-from ..conditions import suffix_condition, suffix_property
 from .base import get_bool
 
 log = get_logger("TemplateLoader")
@@ -329,30 +328,21 @@ class TemplateLoader:
                 controls=copy.deepcopy(elem) if len(elem) > 0 else None,
             )
 
-    def _parse_property(self, elem: ET.Element, suffix: str = "") -> TemplateProperty | None:
+    def _parse_property(self, elem: ET.Element) -> TemplateProperty | None:
         """Parse a property element; one with no name is skipped with a warning."""
         name = (elem.get("name") or "").strip()
         if not name:
             log.warning(f"{self.path}: <{elem.tag}> missing 'name' attribute, skipping")
             return None
 
-        value = (elem.get("value") or elem.text or "").strip()
-        from_source = (elem.get("from") or "").strip()
-        condition = (elem.get("condition") or "").strip()
-
-        if suffix:
-            from_source = suffix_property(from_source, suffix)
-            if condition:
-                condition = suffix_condition(condition, suffix)
-
         return TemplateProperty(
             name=name,
-            value=value,
-            from_source=from_source,
-            condition=condition,
+            value=(elem.get("value") or elem.text or "").strip(),
+            from_source=(elem.get("from") or "").strip(),
+            condition=(elem.get("condition") or "").strip(),
         )
 
-    def _parse_var(self, elem: ET.Element, suffix: str = "") -> TemplateVar | None:
+    def _parse_var(self, elem: ET.Element) -> TemplateVar | None:
         """Parse a var element for internal template resolution."""
         name = (elem.get("name") or "").strip()
         if not name:
@@ -363,10 +353,6 @@ class TemplateLoader:
         for value_elem in elem.findall("value"):
             value = (value_elem.text or "").strip()
             condition = (value_elem.get("condition") or "").strip()
-
-            if suffix and condition:
-                condition = suffix_condition(condition, suffix)
-
             values.append(TemplateProperty(name=name, value=value, condition=condition))
 
         return TemplateVar(name=name, values=values)

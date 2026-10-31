@@ -116,22 +116,14 @@ class PropertyLoader:
                 continue
             self._includes[name] = list(include_elem)
 
-    def _expand_include(
-        self, include_elem: ET.Element, suffix: str = ""
-    ) -> list[ET.Element]:
-        """Expand an include reference."""
+    def _expand_include(self, include_elem: ET.Element) -> list[ET.Element]:
+        """Expand an include reference to element copies, suffix= applied to their conditions."""
         content_name = (include_elem.get("content") or "").strip()
-        if not content_name or content_name not in self._includes:
-            return []
-
-        suffix = suffix or include_elem.get("suffix") or ""
-
-        result = []
-        for elem in self._includes[content_name]:
-            copied = self._copy_element_with_suffix(elem, suffix)
-            result.append(copied)
-
-        return result
+        suffix = include_elem.get("suffix") or ""
+        return [
+            self._copy_element_with_suffix(elem, suffix)
+            for elem in self._includes.get(content_name, [])
+        ]
 
     def _copy_element_with_suffix(self, elem: ET.Element, suffix: str) -> ET.Element:
         """Deep copy element, applying suffix transform to conditions."""
