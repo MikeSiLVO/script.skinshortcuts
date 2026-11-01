@@ -11,6 +11,6 @@ on:
 jobs:
   addon-checker:
     if: github.repository == 'MikeSiLVO/script.skinshortcuts'
-    uses: MikeSiLVO/workflows/.github/workflows/addon-checker.yml@v2.0.0
+    uses: MikeSiLVO/workflows/.github/workflows/addon-checker.yml@v2.4.1
     with:
       kodi_branch: piers

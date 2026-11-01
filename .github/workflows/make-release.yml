@@ -10,5 +10,5 @@ jobs:
     if: github.repository == 'MikeSiLVO/script.skinshortcuts'
     permissions:
       contents: write
-    uses: MikeSiLVO/workflows/.github/workflows/make-release.yml@v2.0.0
+    uses: MikeSiLVO/workflows/.github/workflows/make-release.yml@v2.4.1
     secrets: inherit

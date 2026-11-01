@@ -16,7 +16,7 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
-    uses: MikeSiLVO/workflows/.github/workflows/close-translation-prs.yml@v2.0.0
+    uses: MikeSiLVO/workflows/.github/workflows/close-translation-prs.yml@v2.4.1
     with:
       pr_number: ${{ github.event.inputs.pr_number }}
     secrets: inherit
