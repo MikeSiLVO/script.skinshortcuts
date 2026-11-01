@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.6~beta1" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.6~beta2" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.2"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
+3.0.6~beta2
+  - Fix: Add in a custom widget menu adds a shortcut
+  - Fix: closing a subdialog opens its menu without showing the main dialog first
+  - Fix: resetting submenus keeps custom widget menus
+  - Fix: a widget or background picked on a skin item keeps its path, label and type when the skin drops it
+  - Fix: actor, director, studio and tag shortcuts open the right library list
+  - Fix: items with a visible attribute show or hide when its result changes
+  - Fix: digit-only labels such as years are wrapped in $NUMBER
+  - Fix: an allow element leaves unlisted features allowed
+  - Fix: a menu defaults widget or background fills in its path, label and type
+  - Fix: a templates.xml holding only submenu templates builds them
+  - Fix: icon overrides apply to shortcut groupings and grouped backgrounds
+  - Fix: special:// paths work in the path and output arguments
+  - Fix: boolean attributes read true or false in any case, other values use the default
+  - Misc fixes and improvements
+
 3.0.6~beta1
   - Fix: a reset or restored item shows its widget and background without reopening the dialog
   - Fix: the id property is wrapped in $NUMBER
-
-3.0.5
-  - Fix: a skin made for Skin Shortcuts v2 shows a modal leading to the skin setting or Add-ons
-  - Fix: the menu shows on the first start after a Kodi upgrade
-  - Add: a visible condition on property options
-  - Add: more reset labels for skins
-  - Add: template content that cannot be built is reported, with the fix in the log
-  - Fix: PVR channel shortcuts play the channel
-  - Fix: edits to an item a visible condition hides are kept on save
-  - Fix: a damaged userdata file falls back to skin defaults, keeping a .bak copy
-  - Fix: picking a new shortcut replaces the previous item's visible condition
-  - Fix: custom widget includes are built for every widget slot
-  - Fix: editing in a subdialog stays on the item it was opened for
-  - Misc fixes and improvements
 
         </news>
         <platform>all</platform>
