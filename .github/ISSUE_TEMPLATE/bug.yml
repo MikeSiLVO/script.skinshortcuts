@@ -47,7 +47,7 @@ body:
     id: repro
     attributes:
       label: Steps to reproduce
-      description: If it's a skinning issue, include the full plugin:// path and the specific ListItem property or $INFO[] value that isn't working.
+      description: If it's a skinning issue, include the plugin:// path if there is one, and the specific ListItem property or $INFO[] value that isn't working.
       placeholder: |
         1.
         2.
