@@ -46,6 +46,7 @@ def playlists_base_path() -> str:
         return DEFAULT_PLAYLISTS_PATH
     return base if base.endswith("/") else f"{base}/"
 
+
 _PROBE_METHODS: dict[str, str] = {
     "movies": "VideoLibrary.GetMovies",
     "tvshows": "VideoLibrary.GetTVShows",
@@ -55,6 +56,7 @@ _PROBE_METHODS: dict[str, str] = {
     "songs": "AudioLibrary.GetSongs",
     "artists": "AudioLibrary.GetArtists",
 }
+
 
 @dataclass(frozen=True)
 class DisplayOption:

@@ -47,8 +47,10 @@ class SubdialogsMixin:
         def _refresh_selected_item(self) -> None: ...
         def _rebuild_list(self, focus_index: int | None = None) -> None:
             """Rebuild the list on the given row or row 0, plus 212 in a subdialog."""
+
         def _mirror_to_home(self) -> None:
             """Mirror the dialog mode and suffix to Home, for a native dialog over this one."""
+
         def _log(self, msg: str) -> None: ...
         def _get_content_provider(self) -> ContentProvider: ...
 

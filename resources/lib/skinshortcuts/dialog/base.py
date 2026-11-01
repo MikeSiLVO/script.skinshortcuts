@@ -77,7 +77,6 @@ def _create_listitem(values: _ListItemValues) -> xbmcgui.ListItem:
 class DialogBaseMixin(xbmcgui.WindowXMLDialog):
     """Core dialog functionality: initialization, list management, event routing."""
 
-
     menu_id: str
     shortcuts_path: str
     manager: MenuManager | None
@@ -184,7 +183,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             menu = self.manager.working.get(self.menu_id)
             if menu and menu.menu_type == "widgets":
                 self.dialog_mode = "widgets"
-
 
         if self.property_suffix:
             self.setProperty("skinshortcuts-suffix", self.property_suffix)
