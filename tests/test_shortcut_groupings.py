@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from skinshortcuts.loaders.menu import load_groupings
 from skinshortcuts.models.menu import Content, Input, Shortcut, ShortcutGroup
 
@@ -38,7 +36,6 @@ def test_menu_groupings_replace_the_default(tmp_path: Path) -> None:
     assert names(load(tmp_path, DEFAULT + POWER, "mainmenu")) == ["default"]
 
 
-@pytest.mark.xfail(strict=True, reason="An empty menu-specific groupings falls back to the default")
 def test_empty_menu_groupings_offer_nothing(tmp_path: Path) -> None:
     """An empty groupings for a menu replaces the default with nothing."""
     assert load(tmp_path, DEFAULT + '<groupings menu="powermenu" />', "powermenu") == []

@@ -510,7 +510,7 @@ def _parse_shortcut_groupings(
     menu_id: str = "",
     icon_overrides: IconOverrides | None = None,
 ) -> list[Shortcut | ShortcutGroup | Content | Input]:
-    """Parse groupings from root element."""
+    """Parse the groupings a menu gets: its own <groupings menu>, else the default one."""
     overrides = icon_overrides or IconOverrides()
     default_elem = None
     menu_elem = None
@@ -523,7 +523,7 @@ def _parse_shortcut_groupings(
         if not menu_attr and default_elem is None:
             default_elem = elem
 
-    groupings_elem = menu_elem or default_elem
+    groupings_elem = menu_elem if menu_elem is not None else default_elem
     if groupings_elem is None:
         return []
 
