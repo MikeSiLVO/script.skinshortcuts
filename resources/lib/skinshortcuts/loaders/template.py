@@ -32,7 +32,7 @@ from ..models.template import (
     VariableGroupReference,
     VariableReference,
 )
-from .base import get_bool, report_missing
+from .base import get_bool, keep_first, report_missing
 
 _SUBMENU_UNSUPPORTED = {
     "propertyGroup": "move its values into <property> elements",
@@ -127,7 +127,9 @@ class TemplateLoader:
             if items_name:
                 items_def = self._parse_items_template(elem, items_name)
                 if items_def:
-                    self._items_templates[items_name] = items_def
+                    keep_first(
+                        self._items_templates, items_name, items_def, "items template", self.path
+                    )
             else:
                 template = self._parse_template(elem)
                 if template:
@@ -163,9 +165,8 @@ class TemplateLoader:
                 continue
             value = (elem.text or "").strip()
             nosuffix = get_bool(elem, "nosuffix")
-            self._expressions[name] = Expression(
-                value=f"[{value}]" if value else "", nosuffix=nosuffix
-            )
+            expression = Expression(value=f"[{value}]" if value else "", nosuffix=nosuffix)
+            keep_first(self._expressions, name, expression, "expression", self.path)
 
     def _parse_presets_section(self, root: ET.Element) -> None:
         """Parse <presets> section, skipping a preset with no name."""
@@ -175,17 +176,17 @@ class TemplateLoader:
         for elem in section.findall("preset"):
             preset = self._parse_preset(elem)
             if preset:
-                self._presets[preset.name] = preset
+                keep_first(self._presets, preset.name, preset, "preset", self.path)
 
     def _parse_preset_groups_section(self, root: ET.Element) -> None:
-        """Parse <presetGroups> section."""
+        """Parse <presetGroups> section, reporting a repeated group name."""
         section = root.find("presetGroups")
         if section is None:
             return
         for elem in section.findall("presetGroup"):
             group = self._parse_preset_group(elem)
             if group:
-                self._preset_groups[group.name] = group
+                keep_first(self._preset_groups, group.name, group, "presetGroup", self.path)
 
     def _parse_preset_group(self, elem: ET.Element) -> PresetGroup | None:
         """Parse a presetGroup element into its preset and values children, in order."""
@@ -247,11 +248,8 @@ class TemplateLoader:
                 if var:
                     vars_list.append(var)
 
-            self._property_groups[name] = PropertyGroup(
-                name=name,
-                properties=properties,
-                vars=vars_list,
-            )
+            group = PropertyGroup(name=name, properties=properties, vars=vars_list)
+            keep_first(self._property_groups, name, group, "propertyGroup", self.path)
 
     def _parse_variables_section(self, root: ET.Element) -> None:
         """Parse <variables> section for global variable definitions and groups."""
@@ -262,12 +260,14 @@ class TemplateLoader:
         for elem in section.findall("variable"):
             var_def = self._parse_variable_definition(elem)
             if var_def:
-                self._variable_definitions[var_def.name] = var_def
+                keep_first(
+                    self._variable_definitions, var_def.name, var_def, "variable", self.path
+                )
 
         for elem in section.findall("variableGroup"):
             group = self._parse_variable_group(elem)
             if group:
-                self._variable_groups[group.name] = group
+                keep_first(self._variable_groups, group.name, group, "variableGroup", self.path)
 
     def _parse_variable_group(self, elem: ET.Element) -> VariableGroup | None:
         """Parse a variableGroup element: its variable references and nested group references."""
@@ -315,10 +315,10 @@ class TemplateLoader:
                 report_missing("Template Error", self.path, elem, "name")
                 continue
 
-            self._includes[name] = IncludeDefinition(
-                name=name,
-                controls=copy.deepcopy(elem) if len(elem) > 0 else None,
+            include = IncludeDefinition(
+                name=name, controls=copy.deepcopy(elem) if len(elem) > 0 else None
             )
+            keep_first(self._includes, name, include, "include", self.path)
 
     def _parse_property(self, elem: ET.Element) -> TemplateProperty | None:
         """Parse a property element, reporting one with no name."""

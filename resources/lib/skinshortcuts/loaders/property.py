@@ -17,7 +17,7 @@ from ..models.property import (
     SchemaProperty,
 )
 from ..conditions import suffix_condition
-from .base import get_bool, parse_name_overrides, report_missing
+from .base import get_bool, keep_first, parse_name_overrides, report_missing
 
 
 class PropertyLoader:
@@ -53,7 +53,7 @@ class PropertyLoader:
         for elem in root.findall("property"):
             prop = self._parse_property(elem)
             if prop:
-                properties[prop.name] = prop
+                keep_first(properties, prop.name, prop, "property", self.path)
 
         fallbacks = {}
         fallbacks_elem = root.find("fallbacks")
@@ -61,7 +61,7 @@ class PropertyLoader:
             for fb_elem in fallbacks_elem.findall("fallback"):
                 fb = self._parse_fallback(fb_elem)
                 if fb:
-                    fallbacks[fb.property_name] = fb
+                    keep_first(fallbacks, fb.property_name, fb, "fallback", self.path)
 
         buttons = {}
         buttons_elem = root.find("buttons")
@@ -71,13 +71,13 @@ class PropertyLoader:
                 if child.tag == "button":
                     btn = self._parse_button(child, default_suffix)
                     if btn:
-                        buttons[btn.button_id] = btn
+                        keep_first(buttons, btn.button_id, btn, "button", self.path)
                 elif child.tag == "group":
                     group_suffix = get_bool(child, "suffix", default_suffix)
                     for btn_elem in child.findall("button"):
                         btn = self._parse_button(btn_elem, group_suffix)
                         if btn:
-                            buttons[btn.button_id] = btn
+                            keep_first(buttons, btn.button_id, btn, "button", self.path)
 
         self._check_rename_buttons(properties, buttons)
 
@@ -116,7 +116,7 @@ class PropertyLoader:
             if not name:
                 report_missing("Property Error", self.path, include_elem, "name")
                 continue
-            self._includes[name] = list(include_elem)
+            keep_first(self._includes, name, list(include_elem), "property include", self.path)
 
     def _expand_include(self, include_elem: ET.Element) -> list[ET.Element]:
         """Expand an include reference to element copies, suffix= applied to their conditions."""

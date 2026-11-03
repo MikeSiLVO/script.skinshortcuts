@@ -108,7 +108,7 @@ DUPLICATES = [
         load_properties,
         '<properties><property name="Style" value="a"/><property name="style" value="b"/>'
         "</properties>",
-        lambda c: c.get_property("STYLE").value,
+        lambda c: "".join(p.value for p in c.properties.values()),
     ),
     (
         "button",
@@ -123,6 +123,56 @@ DUPLICATES = [
         '<properties><fallbacks><fallback property="p"><default>a</default></fallback>'
         '<fallback property="p"><default>b</default></fallback></fallbacks></properties>',
         lambda c: c.fallbacks["p"].rules[0].value,
+    ),
+    (
+        "fallback differing in case",
+        load_properties,
+        '<properties><fallbacks><fallback property="P"><default>a</default></fallback>'
+        '<fallback property="p"><default>b</default></fallback></fallbacks></properties>',
+        lambda c: "".join(f.rules[0].value for f in c.fallbacks.values()),
+    ),
+    (
+        "property include",
+        load_properties,
+        '<properties><includes><include name="i"><option value="a"/></include>'
+        '<include name="i"><option value="b"/></include></includes>'
+        '<property name="x"><options><include content="i"/></options></property></properties>',
+        lambda c: c.properties["x"].options[0].value,
+    ),
+    (
+        "preset group",
+        load_templates,
+        '<templates><presetGroups><presetGroup name="g"><values top="a"/></presetGroup>'
+        '<presetGroup name="g"><values top="b"/></presetGroup></presetGroups></templates>',
+        lambda s: s.preset_groups["g"].children[0].values["top"],
+    ),
+    (
+        "property group",
+        load_templates,
+        '<templates><propertyGroups><propertyGroup name="g"><property name="x" value="a"/>'
+        '</propertyGroup><propertyGroup name="g"><property name="x" value="b"/></propertyGroup>'
+        "</propertyGroups></templates>",
+        lambda s: s.property_groups["g"].properties[0].value,
+    ),
+    (
+        "variable",
+        load_templates,
+        '<templates><variables><variable name="v" output="a"/><variable name="v" output="b"/>'
+        "</variables></templates>",
+        lambda s: s.variable_definitions["v"].output,
+    ),
+    (
+        "variable group",
+        load_templates,
+        '<templates><variables><variableGroup name="g"><variable content="a"/></variableGroup>'
+        '<variableGroup name="g"><variable content="b"/></variableGroup></variables></templates>',
+        lambda s: s.variable_groups["g"].references[0].name,
+    ),
+    (
+        "items template",
+        load_templates,
+        '<templates><template items="i" source="a"/><template items="i" source="b"/></templates>',
+        lambda s: s.items_templates["i"].source,
     ),
     (
         "expression",
@@ -196,13 +246,13 @@ def test_invalid_subdialog_button_id_warns(tmp_path: Path, warned: list[str]) ->
     assert warned
 
 
-@pytest.mark.xfail(strict=True, reason="loader strictness and duplicate handling vary by file")
 @pytest.mark.parametrize(
     ("kind", "loader", "xml", "pick"), DUPLICATES, ids=[d[0] for d in DUPLICATES]
 )
 def test_repeated_name_warns_and_keeps_the_first(
     tmp_path: Path, warned: list[str], kind: str, loader: Callable, xml: str, pick: Callable
 ) -> None:
+    """Each case shows a toast and the loader keeps the first definition."""
     assert pick(loader(write(tmp_path, xml))) == "a"
     assert warned
 

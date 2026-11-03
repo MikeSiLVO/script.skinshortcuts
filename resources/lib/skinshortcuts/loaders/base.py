@@ -5,8 +5,9 @@ from __future__ import annotations
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable, Iterator
 from pathlib import Path
-from typing import TypeVar
+from typing import Any, TypeVar
 
+from ..conditions import lookup
 from ..exceptions import ConfigError
 from ..log import notify
 from ..models.override import Override
@@ -125,7 +126,21 @@ _DUPLICATE_HEADINGS = {
     "background": ("Background Error", ""),
     "view": ("View Error", ""),
     "content": ("View Error", "content "),
+    "property": ("Property Error", ""),
+    "fallback": ("Property Error", "fallback "),
+    "property include": ("Property Error", "include "),
+    "button": ("Property Button Error", ""),
+    "expression": ("Template Error", "expression "),
+    "preset": ("Template Error", "preset "),
+    "presetGroup": ("Template Error", "presetGroup "),
+    "propertyGroup": ("Template Error", "propertyGroup "),
+    "variable": ("Template Error", "variable "),
+    "variableGroup": ("Template Error", "variableGroup "),
+    "include": ("Template Error", "include "),
+    "items template": ("Items Template Error", ""),
 }
+
+_ANY_CASE = frozenset({"property", "fallback"})
 
 
 def warn_duplicate_names(names: Iterable[str], kind: str, path: str, scope: str = "") -> None:
@@ -142,6 +157,21 @@ def warn_duplicate_names(names: Iterable[str], kind: str, path: str, scope: str 
                 "reached; give each a unique name",
             )
         seen.add(name)
+
+
+def keep_first(found: dict, key: Any, value: Any, kind: str, path: str | Path) -> None:
+    """Keep the first definition of each name, reporting a repeat; property names ignore case."""
+    taken = lookup(key, found) is not None if kind in _ANY_CASE else key in found
+    if not taken:
+        found[key] = value
+        return
+    heading, prefix = _DUPLICATE_HEADINGS[kind]
+    notify(
+        heading,
+        f"{prefix}'{key}' defined twice",
+        f"{path}: {kind} '{key}' is defined more than once; the first is used; "
+        "give each a unique name",
+    )
 
 
 def iter_nested(items: Iterable, item_type: type[T], group_type: type) -> Iterator[T]:
