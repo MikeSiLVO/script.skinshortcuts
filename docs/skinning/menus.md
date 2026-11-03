@@ -210,7 +210,7 @@ Defines a menu item.
 
 | Attribute/Element | Where Applied | Purpose |
 |-------------------|---------------|---------|
-| `visible="..."` (attribute on `<item>`) | Config load (build time) | Whether the item applies to this system at all, such as an add-on being installed (`System.HasAddon(...)`), a platform or profiles. When it fails the item is left out of both the dialog and the generated include. A change in its result is picked up at the next startup build |
+| `visible="..."` (attribute on `<item>`) | Config load (build time) | Whether the item applies to this system at all, such as an add-on being installed (`System.HasAddon(...)`), a platform or profiles. When it fails the item is left out of both the dialog and the generated include. A change in its result is picked up at every `buildxml` call |
 | `<visible>` (child element) | Generated include | Whether to show the item right now, such as a disc being in the drive. Output as `<visible>` in the include file, so Kodi re-checks it as things change, and the item stays editable in the dialog |
 
 ### Multiple Visibility Conditions
@@ -878,7 +878,7 @@ The context action (`C` on a keyboard, the menu button on a remote) opens a menu
 <contextmenu>true</contextmenu>
 ```
 
-Default `true` when the `<contextmenu>` element is absent. Set its text to `false` to disable it. Any other text is treated as `true` and logged.
+Default `true` when the `<contextmenu>` element is absent. Set its text to `false` to disable it. Any other text is treated as `true`, with an [error notification](troubleshooting.md#error-notifications).
 
 ### Where It Opens
 

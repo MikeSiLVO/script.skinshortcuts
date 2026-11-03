@@ -582,7 +582,7 @@ A blank label is stored as a single space rather than an empty value, so it is s
 
 The prompt is skipped for custom widgets and inside widget menus, where the item label already drives `widgetLabel`.
 
-`rename` only applies to `type="widget"` buttons. On any other type it is ignored and logged as an error.
+`rename` only applies to `type="widget"` buttons. On any other type it is ignored, with an [error notification](troubleshooting.md#error-notifications).
 
 ### Multiple Widget Slots
 

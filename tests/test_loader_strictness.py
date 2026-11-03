@@ -13,9 +13,10 @@ from skinshortcuts.loaders.property import load_properties
 from skinshortcuts.loaders.template import load_templates
 from skinshortcuts.loaders.views import load_views
 from skinshortcuts.loaders.widget import load_widgets
-from skinshortcuts.log import Logger
 
 ITEM = '<item name="a"><label>A</label><action>Noop</action></item>'
+MENU = f'<menus><menu name="m">{ITEM}</menu>%s</menus>'
+ICON = "<overrides><icons>%s</icons></overrides>"
 
 
 def rule(library: str = "50", views: str = "50", visible: str = "x", plugin: str = "") -> str:
@@ -52,6 +53,46 @@ BROKEN = [
     ("content visible", load_views, rule(visible="")),
     ("content views", load_views, rule(views="99")),
     ("content library", load_views, rule(library="99")),
+    ("expression name", load_templates, "<templates><expressions><expression>a</expression>"
+     "</expressions></templates>"),
+    ("preset group name", load_templates,
+     "<templates><presetGroups><presetGroup/></presetGroups></templates>"),
+    ("preset group preset", load_templates,
+     '<templates><presetGroups><presetGroup name="g"><preset/></presetGroup></presetGroups>'
+     "</templates>"),
+    ("property group name", load_templates,
+     "<templates><propertyGroups><propertyGroup/></propertyGroups></templates>"),
+    ("variable name", load_templates, "<templates><variables><variable/></variables></templates>"),
+    ("variable group name", load_templates,
+     "<templates><variables><variableGroup/></variables></templates>"),
+    ("variable group nested", load_templates, '<templates><variables><variableGroup name="g">'
+     "<variableGroup/></variableGroup></variables></templates>"),
+    ("variable group reference", load_templates, '<templates><variables><variableGroup name="g">'
+     "<variable/></variableGroup></variables></templates>"),
+    ("include name", load_templates, "<templates><includes><include/></includes></templates>"),
+    ("template property", load_templates,
+     '<templates><template include="t"><property/></template></templates>'),
+    ("template var", load_templates,
+     '<templates><template include="t"><var/></template></templates>'),
+    ("template reference", load_templates,
+     '<templates><template include="t"><propertyGroup/></template></templates>'),
+    ("property include name", load_properties,
+     "<properties><includes><include/></includes></properties>"),
+    ("button no id", load_properties,
+     '<properties><buttons><button property="x"/></buttons></properties>'),
+    ("button rename", load_properties,
+     '<properties><buttons><button id="301" property="x" rename="true"/></buttons></properties>'),
+    ("context menu value", load_menus, MENU % "<contextmenu>yes</contextmenu>"),
+    ("context menu button", load_menus, MENU % '<contextmenu><button id="x"/></contextmenu>'),
+    ("context menu enableon", load_menus, MENU % '<contextmenu enableon="x"/>'),
+    ("icon override replace", load_menus, MENU % ICON % "<icon>a.png</icon>"),
+    ("icon override path", load_menus, MENU % ICON % '<icon replace="a.png"/>'),
+    ("icon override relative", load_menus, MENU % ICON % '<icon replace="a.png">b.png</icon>'),
+    ("shortcut name", load_groupings,
+     '<menus><groupings><shortcut label="S"><action>Noop</action></shortcut></groupings></menus>'),
+    ("shortcut label", load_groupings,
+     '<menus><groupings><shortcut name="s"><action>Noop</action></shortcut></groupings></menus>'),
+    ("input label", load_groupings, "<menus><groupings><input/></groupings></menus>"),
 ]
 
 DUPLICATES = [
@@ -109,8 +150,11 @@ DUPLICATES = [
 
 @pytest.fixture
 def warned(monkeypatch) -> list[str]:
+    """Toasts shown while the loader runs, as heading and message."""
     captured: list[str] = []
-    monkeypatch.setattr(Logger, "warning", lambda _self, msg: captured.append(msg))
+    monkeypatch.setattr(
+        "xbmcgui.Dialog.notification", lambda _self, h, m, *_: captured.append(f"{h}: {m}")
+    )
     return captured
 
 
@@ -129,9 +173,10 @@ def test_nameless_widget_group_is_skipped(tmp_path: Path, warned: list[str]) -> 
 
 
 @pytest.mark.parametrize(("case", "loader", "xml"), BROKEN, ids=[b[0] for b in BROKEN])
-def test_broken_definition_warns_instead_of_raising(
+def test_broken_definition_is_reported(
     tmp_path: Path, warned: list[str], case: str, loader: Callable, xml: str
 ) -> None:
+    """Each case shows a toast and the loader carries on."""
     loader(write(tmp_path, xml))
     assert warned
 

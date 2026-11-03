@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from ..exceptions import PropertyConfigError
-from ..log import get_logger, notify
+from ..log import notify
 from ..models.property import (
     ButtonMapping,
     FallbackRule,
@@ -18,8 +18,6 @@ from ..models.property import (
 )
 from ..conditions import suffix_condition
 from .base import get_bool, parse_name_overrides, report_missing
-
-log = get_logger("PropertyLoader")
 
 
 class PropertyLoader:
@@ -100,10 +98,12 @@ class PropertyLoader:
             prop = properties.get(button.property_name)
             effective_type = button.type or (prop.type if prop else "")
             if effective_type != "widget":
-                log.error(
-                    f"{self.path}: button {button.button_id} has rename=\"true\" but type is "
-                    f"'{effective_type or 'unset'}' - rename only applies to "
-                    'type="widget", ignoring'
+                notify(
+                    "Property Button Error",
+                    f"'{button.button_id}' rename needs a widget",
+                    f'{self.path}: <button id="{button.button_id}" rename="true"> has type '
+                    f"'{effective_type or 'unset'}'; rename ignored; rename applies to "
+                    'type="widget" only',
                 )
 
     def _parse_includes(self, root: ET.Element) -> None:
@@ -114,7 +114,7 @@ class PropertyLoader:
         for include_elem in includes_section.findall("include"):
             name = (include_elem.get("name") or "").strip()
             if not name:
-                log.warning(f"{self.path}: <include> definition missing 'name' attribute, skipping")
+                report_missing("Property Error", self.path, include_elem, "name")
                 continue
             self._includes[name] = list(include_elem)
 
@@ -179,10 +179,10 @@ class PropertyLoader:
     def _parse_button(
         self, elem: ET.Element, default_suffix: bool = False
     ) -> ButtonMapping | None:
-        """Parse a button element; no id skips it, a bad id or a missing property is reported."""
+        """Parse a button element, reporting one with no numeric id or no property."""
         button_id_str = (elem.get("id") or "").strip()
         if not button_id_str:
-            log.warning(f"{self.path}: <button> mapping missing 'id' attribute, skipping")
+            report_missing("Property Button Error", self.path, elem, "id", key="id")
             return None
 
         if not button_id_str.isdecimal():

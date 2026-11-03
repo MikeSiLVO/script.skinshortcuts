@@ -21,8 +21,12 @@ Enable either, reproduce the problem, then read the log.
 
 | Notification | Cause | Fix |
 |---|---|---|
-| \<Feature> Error: '\<name>' missing \<field>, or \<element> missing '\<field>' | A menu, item, widget, background, property, button, fallback, view, content rule, template, preset or group has no attribute or element it needs; it is skipped | Add what the log line names |
+| \<Feature> Error: '\<name>' missing \<field>, or \<element> missing '\<field>' | A definition has no attribute or element it needs; it is skipped | Add what the log line names |
 | Property Button Error: '\<id>' is not a control id | A `<button>` in `properties.xml` has an id that is not a number; it is skipped | Use the id of the dialog control |
+| Property Button Error: '\<id>' rename needs a widget | A `<button rename="true">` has a type other than `widget`; rename is ignored | Remove `rename`, or use it on a widget button |
+| Context Menu Error: '\<value>' is not true or false | `<contextmenu>` holds something other than `true` or `false`; it is treated as `true` | Write `true` or `false` |
+| Context Menu Error: '\<value>' is not a control id / enableon has no control id | A `<button id>` or an `enableon` entry in `<contextmenu>` is not a number; it is skipped, and with no `enableon` id left the context menu opens on every control | Use numeric control ids |
+| Override Error: '\<icon>' has no icon / has a relative path | An `<icon>` in `<overrides><icons>` has no path, or a relative path while `<icons>` has no `<source>`; it is skipped | Write the icon path, add `<source>`, or use a full path |
 | View Error: '\<name>' lists no defined view | No id in a content rule's `<views>` is a defined view; the rule is skipped | List the ids of defined views |
 | View Error: '\<name>' library view / plugin view not defined | A content rule's `library` or `plugin` default is not a defined view; a bad `library` skips the rule, a bad `plugin` is ignored | Use a defined view id |
 | Shortcut / Widget / Background Group Error: '\<name>' missing label | A group has a name but no `label`, required unless the group is `flat` | Add `label="..."`, or mark it `flat="true"` |

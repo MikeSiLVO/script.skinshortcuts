@@ -28,7 +28,7 @@ from ..models.menu import (
     SubDialog,
     display_action,
 )
-from ..log import get_logger, notify
+from ..log import notify
 from .base import (
     get_attr,
     get_bool,
@@ -38,8 +38,6 @@ from .base import (
     report_missing,
     warn_duplicate_names,
 )
-
-log = get_logger("MenuLoader")
 
 
 def load_menus(path: str | Path) -> MenuConfig:
@@ -120,14 +118,18 @@ def _parse_icons(root) -> list[IconSource]:
 
 
 def _parse_context_menu(root) -> ContextMenu:
-    """On/off, the controls the context action fires on, and the rows it lists."""
+    """On/off, the controls the context action fires on, and the rows it lists; reports bad text."""
     elem = root.find("contextmenu")
     if elem is None:
         return ContextMenu()
 
     text = (elem.text or "").strip().lower()
     if text and text not in ("true", "false"):
-        log.warning(f"<contextmenu>: '{text}' is not true or false, treating as true")
+        notify(
+            "Context Menu Error",
+            f"'{text}' is not true or false",
+            f"menus.xml: <contextmenu> holds '{text}'; treated as true; write true or false",
+        )
 
     return ContextMenu(
         enabled=text != "false",
@@ -137,12 +139,17 @@ def _parse_context_menu(root) -> ContextMenu:
 
 
 def _parse_context_buttons(rows) -> list[ContextMenuButton]:
-    """The rows a skin lists, in the order written."""
+    """The rows a skin lists, in the order written, reporting one with no numeric id."""
     buttons = []
     for child in rows:
         button_id = get_attr(child, "id")
         if not button_id.isdecimal():
-            log.warning("<contextmenu>: <button> has no valid id, skipping the row")
+            notify(
+                "Context Menu Error",
+                f"'{button_id}' is not a control id" if button_id else "button missing 'id'",
+                f'menus.xml: <contextmenu> <button id="{button_id}"> needs a numeric id; row '
+                "skipped; use the id of the dialog control",
+            )
             continue
 
         buttons.append(ContextMenuButton(
@@ -156,20 +163,29 @@ def _parse_context_buttons(rows) -> list[ContextMenuButton]:
 
 
 def _parse_enable_on(value: str) -> list[int]:
-    """Control IDs the context action fires on, from the comma separated list."""
+    """Control IDs the context action fires on, from a comma separated list; reports a bad one."""
     ids = []
     for part in value.split(","):
         part = part.strip()
         if not part:
             continue
         if not part.isdecimal():
-            log.warning(f"<contextmenu>: '{part}' is not a control ID, skipping")
+            notify(
+                "Context Menu Error",
+                f"'{part}' is not a control id",
+                f'menus.xml: <contextmenu enableon="{value}"> lists \'{part}\'; it is skipped; '
+                "list numeric control ids",
+            )
             continue
         ids.append(int(part))
 
     if value and not ids:
-        log.warning(f"<contextmenu>: enableon='{value}' has no control IDs, "
-                    "the context menu opens anywhere")
+        notify(
+            "Context Menu Error",
+            "enableon has no control id",
+            f'menus.xml: <contextmenu enableon="{value}"> has no control id; the context menu '
+            "opens on every control; list numeric control ids",
+        )
 
     return ids
 
@@ -283,16 +299,26 @@ def _parse_icon_overrides(root) -> IconOverrides:
     for icon_elem in icons_elem.findall("icon"):
         replace = get_attr(icon_elem, "replace")
         value = (icon_elem.text or "").strip()
-        if not replace or not value:
-            log.warning("Icon override missing 'replace' attribute or value, skipping")
+        if not replace:
+            report_missing("Override Error", "menus.xml", icon_elem, "replace", key="replace")
             continue
-        if "://" in value or value.startswith("/"):
+        written = f'<icon replace="{replace}">'
+        if not value:
+            notify(
+                "Override Error",
+                f"'{replace}' has no icon",
+                f"menus.xml: {written} has no path; icon skipped; write the icon path as its text",
+            )
+        elif "://" in value or value.startswith("/"):
             explicit[replace] = value
         elif source:
             explicit[replace] = source + value
         else:
-            log.warning(
-                f"Icon override '{replace}' has relative path '{value}' but no <source> declared"
+            notify(
+                "Override Error",
+                f"'{replace}' has a relative path",
+                f"menus.xml: {written} has the relative path '{value}' and <icons> has no "
+                "<source>; icon skipped; add <source> or use a full path",
             )
 
     return IconOverrides(source=source, explicit=explicit)
@@ -549,7 +575,7 @@ def _parse_shortcut_groupings(
             if content:
                 items.append(content)
         elif child.tag == "input":
-            input_item = _parse_input(child, overrides)
+            input_item = _parse_input(child, path, overrides)
             if input_item:
                 items.append(input_item)
 
@@ -597,7 +623,7 @@ def _parse_shortcut_group(
             if content:
                 items.append(content)
         elif child.tag == "input":
-            input_item = _parse_input(child, overrides)
+            input_item = _parse_input(child, path, overrides)
             if input_item:
                 items.append(input_item)
 
@@ -618,12 +644,12 @@ def _parse_shortcut(
     path: str,
     icon_overrides: IconOverrides | None = None,
 ) -> Shortcut | None:
-    """Parse a shortcut element."""
+    """Parse a shortcut element, reporting one with no name or label."""
     overrides = icon_overrides or IconOverrides()
     shortcut_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
     if not shortcut_name or not label:
-        log.warning(f"Shortcut in {path} missing 'name' or 'label', skipping")
+        report_missing("Shortcut Error", path, elem, "label" if shortcut_name else "name")
         return None
 
     actions = []
@@ -660,12 +686,12 @@ def _parse_shortcut(
     )
 
 
-def _parse_input(elem, icon_overrides: IconOverrides | None = None) -> Input | None:
-    """Parse an input element."""
+def _parse_input(elem, path: str, icon_overrides: IconOverrides | None = None) -> Input | None:
+    """Parse an input element, reporting one with no label."""
     overrides = icon_overrides or IconOverrides()
     label = get_attr(elem, "label")
     if not label:
-        log.warning("Input element missing 'label', skipping")
+        report_missing("Shortcut Error", path, elem, "label", key="label")
         return None
 
     return Input(
