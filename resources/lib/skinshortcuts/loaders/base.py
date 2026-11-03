@@ -69,12 +69,13 @@ def get_bool(elem: ET.Element, attr: str, default: bool = False) -> bool:
     return default
 
 
-def parse_content(elem: ET.Element):
-    """Parse a content reference element."""
+def parse_content(elem: ET.Element, path: str, heading: str):
+    """Parse a content reference element, reporting one with no source."""
     from ..models.menu import Content
 
     source = get_attr(elem, "source")
     if not source:
+        report_missing(heading, path, elem, "source", key="source")
         return None
 
     return Content(
@@ -89,8 +90,8 @@ def parse_content(elem: ET.Element):
     )
 
 
-def parse_name_overrides(root, tag: str) -> list[Override]:
-    """Parse an <overrides> section listing names the skin retired."""
+def parse_name_overrides(root, tag: str, path: str | Path) -> list[Override]:
+    """Parse an <overrides> section of names the skin retired, reporting one with no replace."""
     section = root.find("overrides")
     if section is None:
         return []
@@ -100,6 +101,8 @@ def parse_name_overrides(root, tag: str) -> list[Override]:
         replace = get_attr(elem, "replace")
         if replace:
             overrides.append(Override(replace=replace, value=(elem.text or "").strip()))
+        else:
+            report_missing("Override Error", path, elem, "replace", key="replace")
 
     return overrides
 

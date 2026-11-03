@@ -199,7 +199,7 @@ def _parse_submenu_path(root) -> bool:
 
 
 def _parse_dialogs(root) -> list[SubDialog]:
-    """Parse subdialog definitions from <dialogs> element."""
+    """Parse subdialog definitions from <dialogs> element, reporting each one skipped."""
     dialogs_elem = root.find("dialogs")
     if dialogs_elem is None:
         return []
@@ -207,19 +207,31 @@ def _parse_dialogs(root) -> list[SubDialog]:
     subdialogs = []
     for elem in dialogs_elem.findall("subdialog"):
         button_id_str = get_attr(elem, "buttonID")
+        written = f'<subdialog buttonID="{button_id_str}">'
         if not button_id_str:
+            report_missing("Subdialog Error", "menus.xml", elem, "buttonID", key="buttonID")
             continue
-
-        try:
-            button_id = int(button_id_str)
-        except ValueError:
+        if not button_id_str.isdecimal():
+            notify(
+                "Subdialog Error",
+                f"'{button_id_str}' is not a control id",
+                f"menus.xml: {written} is not a number; subdialog skipped; "
+                "use the id of the dialog control",
+            )
             continue
+        button_id = int(button_id_str)
 
         mode = get_attr(elem, "mode") or ""
         menu = get_attr(elem, "menu") or ""
         onclose_actions = _parse_onclose(elem)
 
         if not mode and not menu and not onclose_actions:
+            notify(
+                "Subdialog Error",
+                f"'{button_id}' does nothing",
+                f"menus.xml: {written} has no mode, menu or <onclose>; subdialog skipped; "
+                'add mode="..."',
+            )
             continue
 
         setfocus = None
@@ -244,11 +256,12 @@ def _parse_dialogs(root) -> list[SubDialog]:
 
 
 def _parse_onclose(subdialog_elem) -> list[OnCloseAction]:
-    """Parse onclose actions from a subdialog element."""
+    """Parse onclose actions from a subdialog element, reporting one with no action."""
     actions = []
     for elem in subdialog_elem.findall("onclose"):
         action = get_attr(elem, "action")
         if not action:
+            report_missing("Subdialog Error", "menus.xml", elem, "action", key="action")
             continue
 
         actions.append(
@@ -263,7 +276,7 @@ def _parse_onclose(subdialog_elem) -> list[OnCloseAction]:
 
 
 def _parse_overrides(root) -> list[Override]:
-    """Parse action overrides from <overrides> element."""
+    """Parse action overrides from <overrides> element, reporting one with no replace or text."""
     overrides_elem = root.find("overrides")
     if overrides_elem is None:
         return []
@@ -273,7 +286,16 @@ def _parse_overrides(root) -> list[Override]:
         replace = get_attr(elem, "replace")
         action = (elem.text or "").strip()
 
-        if replace and action:
+        if not replace:
+            report_missing("Override Error", "menus.xml", elem, "replace", key="replace")
+        elif not action:
+            notify(
+                "Override Error",
+                f"'{replace}' has no action",
+                f'menus.xml: <action replace="{replace}"> has no text; override skipped; '
+                "write the new action as its text",
+            )
+        else:
             overrides.append(Override(replace=replace, value=action))
 
     return overrides
@@ -571,7 +593,7 @@ def _parse_shortcut_groupings(
             if shortcut:
                 items.append(shortcut)
         elif child.tag == "content":
-            content = parse_content(child)
+            content = parse_content(child, path, "Shortcut Error")
             if content:
                 items.append(content)
         elif child.tag == "input":
@@ -619,7 +641,7 @@ def _parse_shortcut_group(
             if nested:
                 items.append(nested)
         elif child.tag == "content":
-            content = parse_content(child)
+            content = parse_content(child, path, "Shortcut Error")
             if content:
                 items.append(content)
         elif child.tag == "input":
@@ -644,7 +666,7 @@ def _parse_shortcut(
     path: str,
     icon_overrides: IconOverrides | None = None,
 ) -> Shortcut | None:
-    """Parse a shortcut element, reporting one with no name or label."""
+    """Parse a shortcut element, reporting one with no name, label, or action or browse path."""
     overrides = icon_overrides or IconOverrides()
     shortcut_name = get_attr(elem, "name")
     label = get_attr(elem, "label")
@@ -666,6 +688,12 @@ def _parse_shortcut(
     browse = get_attr(elem, "browse") or ""
 
     if not actions and not (browse and shortcut_path):
+        notify(
+            "Shortcut Error",
+            f"'{shortcut_name}' has no action",
+            f'{path}: <shortcut name="{shortcut_name}"> has no <action> and no browse <path>; '
+            "shortcut skipped; add an <action>",
+        )
         return None
 
     visible_parts = [v.text.strip() for v in elem.findall("visible") if v.text]

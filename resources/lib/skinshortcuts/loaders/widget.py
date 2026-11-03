@@ -45,7 +45,7 @@ def load_widgets(path: str | Path) -> WidgetConfig:
             if group:
                 groupings.append(group)
         elif child.tag == "content":
-            content = parse_content(child)
+            content = parse_content(child, str(path), "Widget Error")
             if content:
                 groupings.append(content)
 
@@ -55,7 +55,7 @@ def load_widgets(path: str | Path) -> WidgetConfig:
     return WidgetConfig(
         widgets=widgets,
         groupings=groupings,
-        overrides=parse_name_overrides(root, "widget"),
+        overrides=parse_name_overrides(root, "widget", path),
     )
 
 
@@ -133,7 +133,7 @@ def _parse_widget_group(elem, path: str, default_source: str = "") -> WidgetGrou
             if nested:
                 items.append(nested)
         elif child.tag == "content":
-            content = parse_content(child)
+            content = parse_content(child, path, "Widget Error")
             if content:
                 items.append(content)
 

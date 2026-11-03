@@ -93,6 +93,23 @@ BROKEN = [
     ("shortcut label", load_groupings,
      '<menus><groupings><shortcut name="s"><action>Noop</action></shortcut></groupings></menus>'),
     ("input label", load_groupings, "<menus><groupings><input/></groupings></menus>"),
+    ("subdialog button id", load_menus, MENU % '<dialogs><subdialog mode="x"/></dialogs>'),
+    ("subdialog does nothing", load_menus, MENU % '<dialogs><subdialog buttonID="401"/></dialogs>'),
+    ("onclose action", load_menus,
+     MENU % '<dialogs><subdialog buttonID="401" mode="x"><onclose/></subdialog></dialogs>'),
+    ("action override replace", load_menus, MENU % "<overrides><action>Noop</action></overrides>"),
+    ("action override text", load_menus,
+     MENU % '<overrides><action replace="ActivateWindow(Videos)"/></overrides>'),
+    ("name override replace", load_widgets,
+     "<widgets><overrides><widget>new</widget></overrides></widgets>"),
+    ("widget content source", load_widgets, "<widgets><content/></widgets>"),
+    ("shortcut content source", load_groupings, "<menus><groupings><content/></groupings></menus>"),
+    ("background source path", load_backgrounds,
+     '<backgrounds><background name="b" label="B" type="playlist"><source label="S"/>'
+     "</background></backgrounds>"),
+    ("include content", load_properties,
+     '<properties><property name="x"><options><include/></options></property></properties>'),
+    ("content undefined view", load_views, rule(views="50,99")),
 ]
 
 DUPLICATES = [
@@ -238,8 +255,8 @@ def test_undefined_plugin_view_is_dropped(tmp_path: Path, warned: list[str]) -> 
     assert warned
 
 
-@pytest.mark.xfail(strict=True, reason="loader strictness and duplicate handling vary by file")
 def test_invalid_subdialog_button_id_warns(tmp_path: Path, warned: list[str]) -> None:
+    """A non-numeric buttonID drops the subdialog with a toast."""
     xml = f'<menus><menu name="m">{ITEM}</menu>' \
         '<dialogs><subdialog buttonID="abc" mode="x"/></dialogs></menus>'
     assert load_menus(write(tmp_path, xml)).subdialogs == []
@@ -257,16 +274,16 @@ def test_repeated_name_warns_and_keeps_the_first(
     assert warned
 
 
-@pytest.mark.xfail(strict=True, reason="loader strictness and duplicate handling vary by file")
 def test_unknown_options_include_warns(tmp_path: Path, warned: list[str]) -> None:
-    xml = '<properties><property name="x"><options><include content="missing"/></options>' \
+    """An include naming no defined include adds no options and shows a toast."""
+    xml ='<properties><property name="x"><options><include content="missing"/></options>' \
         "</property></properties>"
     assert load_properties(write(tmp_path, xml)).properties["x"].options == []
     assert warned
 
 
-@pytest.mark.xfail(strict=True, reason="loader strictness and duplicate handling vary by file")
 def test_shortcut_without_action_warns(tmp_path: Path, warned: list[str]) -> None:
-    xml = '<menus><groupings><shortcut name="s" label="S"/></groupings></menus>'
+    """A shortcut with neither an action nor a browse path is dropped with a toast."""
+    xml ='<menus><groupings><shortcut name="s" label="S"/></groupings></menus>'
     assert load_groupings(write(tmp_path, xml)) == []
     assert warned

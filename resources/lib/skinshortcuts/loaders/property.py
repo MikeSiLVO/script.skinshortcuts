@@ -85,7 +85,7 @@ class PropertyLoader:
             properties=properties,
             fallbacks=fallbacks,
             buttons=buttons,
-            overrides=parse_name_overrides(root, "property"),
+            overrides=parse_name_overrides(root, "property", self.path),
         )
 
     def _check_rename_buttons(
@@ -119,12 +119,23 @@ class PropertyLoader:
             keep_first(self._includes, name, list(include_elem), "property include", self.path)
 
     def _expand_include(self, include_elem: ET.Element) -> list[ET.Element]:
-        """Expand an include reference to element copies, suffix= applied to their conditions."""
+        """Expand an include to suffixed element copies, reporting one unnamed or undefined."""
         content_name = (include_elem.get("content") or "").strip()
         suffix = include_elem.get("suffix") or ""
+        if not content_name:
+            report_missing("Property Error", self.path, include_elem, "content", key="content")
+            return []
+        if content_name not in self._includes:
+            notify(
+                "Property Error",
+                f"include '{content_name}' not defined",
+                f'{self.path}: <include content="{content_name}"> names no include in '
+                "<includes>; nothing included; define the include, or correct the name",
+            )
+            return []
         return [
             self._copy_element_with_suffix(elem, suffix)
-            for elem in self._includes.get(content_name, [])
+            for elem in self._includes[content_name]
         ]
 
     def _copy_element_with_suffix(self, elem: ET.Element, suffix: str) -> ET.Element:

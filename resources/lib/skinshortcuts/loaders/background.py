@@ -81,7 +81,7 @@ def load_backgrounds(
     return BackgroundConfig(
         backgrounds=backgrounds,
         groupings=groupings,
-        overrides=parse_name_overrides(root, "background"),
+        overrides=parse_name_overrides(root, "background", path),
     )
 
 
@@ -125,6 +125,12 @@ def _parse_background(
         source_label = get_attr(source_elem, "label", "")
         source_path = source_elem.text.strip() if source_elem.text else ""
         if not source_path:
+            notify(
+                "Background Error",
+                f"'{bg_name}' has an empty source",
+                f'{path}: <background name="{bg_name}"> has a <source> with no path; source '
+                "skipped; write the path as its text",
+            )
             continue
 
         if bg_type in (BackgroundType.BROWSE, BackgroundType.MULTI):

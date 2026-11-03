@@ -26,6 +26,12 @@ Enable either, reproduce the problem, then read the log.
 | Property Button Error: '\<id>' rename needs a widget | A `<button rename="true">` has a type other than `widget`; rename is ignored | Remove `rename`, or use it on a widget button |
 | Context Menu Error: '\<value>' is not true or false | `<contextmenu>` holds something other than `true` or `false`; it is treated as `true` | Write `true` or `false` |
 | Context Menu Error: '\<value>' is not a control id / enableon has no control id | A `<button id>` or an `enableon` entry in `<contextmenu>` is not a number; it is skipped, and with no `enableon` id left the context menu opens on every control | Use numeric control ids |
+| Subdialog Error: '\<id>' is not a control id / '\<id>' does nothing | A `<subdialog>` has a `buttonID` that is not a number, or no `mode`, `menu` or `<onclose>`; it is skipped | Use a numeric `buttonID`, or add `mode="..."` |
+| Shortcut Error: '\<name>' has no action | A `<shortcut>` has no `<action>` and no browse `<path>`; it is skipped | Add an `<action>` |
+| Background Error: '\<name>' has an empty source | A `<source>` in a background has no path; that source is skipped | Write the path as its text |
+| Property Error: include '\<name>' not defined | An `<include content="...">` in `properties.xml` names no include in `<includes>`; nothing is included | Define the include, or correct the name |
+| View Error: '\<name>' lists undefined view '\<id>' | A content rule's `<views>` lists an id no `<view>` defines; that id is skipped | Use a defined view id |
+| Override Error: '\<action>' has no action | An `<action replace="...">` in the `menus.xml` overrides has no text; it is skipped | Write the new action as its text |
 | Override Error: '\<icon>' has no icon / has a relative path | An `<icon>` in `<overrides><icons>` has no path, or a relative path while `<icons>` has no `<source>`; it is skipped | Write the icon path, add `<source>`, or use a full path |
 | View Error: '\<name>' lists no defined view | No id in a content rule's `<views>` is a defined view; the rule is skipped | List the ids of defined views |
 | View Error: '\<name>' library view / plugin view not defined | A content rule's `library` or `plugin` default is not a defined view; a bad `library` skips the rule, a bad `plugin` is ignored | Use a defined view id |

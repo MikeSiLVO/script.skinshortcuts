@@ -90,9 +90,18 @@ def _parse_content_rule(elem, path: str, valid_view_ids: set[str]) -> ViewConten
             report_missing("View Error", path, elem, field)
             return None
 
-    view_ids = [v.strip() for v in views_text.split(",")]
-    view_ids = [v for v in view_ids if v and v in valid_view_ids]
     written = f'<content name="{name}">'
+    view_ids = []
+    for view_id in filter(None, (v.strip() for v in views_text.split(","))):
+        if view_id in valid_view_ids:
+            view_ids.append(view_id)
+        else:
+            notify(
+                "View Error",
+                f"'{name}' lists undefined view '{view_id}'",
+                f"{path}: {written} <views> lists '{view_id}', which is not a defined view id; "
+                "it is skipped; use a defined view id",
+            )
 
     if not view_ids:
         notify(
