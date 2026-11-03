@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from skinshortcuts.exceptions import ConfigError
 from skinshortcuts.loaders.background import load_backgrounds
 from skinshortcuts.loaders.menu import load_groupings, load_menus
 from skinshortcuts.loaders.property import load_properties
@@ -280,6 +281,21 @@ def test_unknown_options_include_warns(tmp_path: Path, warned: list[str]) -> Non
         "</property></properties>"
     assert load_properties(write(tmp_path, xml)).properties["x"].options == []
     assert warned
+
+
+@pytest.mark.parametrize(
+    "loader",
+    [load_menus, load_widgets, load_backgrounds, load_properties, load_templates, load_views],
+    ids=["menus", "widgets", "backgrounds", "properties", "templates", "views"],
+)
+@pytest.mark.parametrize("xml", ["<unclosed>", "<wrong/>"], ids=["parse error", "wrong root"])
+def test_unusable_file_is_reported(
+    tmp_path: Path, warned: list[str], loader: Callable, xml: str
+) -> None:
+    """A file that is not XML, or has the wrong root, shows a toast and still raises."""
+    with pytest.raises(ConfigError):
+        loader(write(tmp_path, xml))
+    assert len(warned) == 1 and "'config.xml' could not be loaded" in warned[0]
 
 
 def test_shortcut_without_action_warns(tmp_path: Path, warned: list[str]) -> None:

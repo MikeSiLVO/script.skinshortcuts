@@ -17,7 +17,7 @@ from ..models.property import (
     SchemaProperty,
 )
 from ..conditions import suffix_condition
-from .base import get_bool, keep_first, parse_name_overrides, report_missing
+from .base import get_bool, keep_first, parse_name_overrides, parse_xml, report_missing
 
 
 class PropertyLoader:
@@ -32,21 +32,7 @@ class PropertyLoader:
         if not self.path.exists():
             return PropertySchema()
 
-        try:
-            tree = ET.parse(str(self.path))
-            root = tree.getroot()
-        except ET.ParseError as e:
-            raise PropertyConfigError(
-                str(self.path), f"XML parse error: {e}", e.position[0]
-            ) from e
-        except Exception as e:
-            raise PropertyConfigError(str(self.path), f"Failed to load file: {e}") from e
-
-        if root.tag != "properties":
-            raise PropertyConfigError(
-                str(self.path), f"Root element must be <properties>, got <{root.tag}>"
-            )
-
+        root = parse_xml(self.path, "properties", PropertyConfigError)
         self._parse_includes(root)
 
         properties = {}

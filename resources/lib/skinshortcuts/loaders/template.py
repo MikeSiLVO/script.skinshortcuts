@@ -32,7 +32,7 @@ from ..models.template import (
     VariableGroupReference,
     VariableReference,
 )
-from .base import get_bool, keep_first, report_missing
+from .base import get_bool, keep_first, parse_xml, report_missing
 
 _SUBMENU_UNSUPPORTED = {
     "propertyGroup": "move its values into <property> elements",
@@ -101,19 +101,7 @@ class TemplateLoader:
         if not self.path.exists():
             return TemplateSchema()
 
-        try:
-            tree = ET.parse(str(self.path))
-            root = tree.getroot()
-        except ET.ParseError as e:
-            raise TemplateConfigError(str(self.path), f"XML parse error: {e}", e.position[0]) from e
-        except Exception as e:
-            raise TemplateConfigError(str(self.path), f"Failed to load file: {e}") from e
-
-        if root.tag != "templates":
-            raise TemplateConfigError(
-                str(self.path), f"Root element must be <templates>, got <{root.tag}>"
-            )
-
+        root = parse_xml(self.path, "templates", TemplateConfigError)
         self._parse_expressions_section(root)
         self._parse_presets_section(root)
         self._parse_preset_groups_section(root)

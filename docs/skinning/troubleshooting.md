@@ -21,6 +21,7 @@ Enable either, reproduce the problem, then read the log.
 
 | Notification | Cause | Fix |
 |---|---|---|
+| Menu / Widget / Background / Property / Template / View Error: '\<file>' could not be loaded | The file is not valid XML, has the wrong root element, or cannot be read; nothing is built until it is fixed | Fix what the log line names |
 | \<Feature> Error: '\<name>' missing \<field>, or \<element> missing '\<field>' | A definition has no attribute or element it needs; it is skipped | Add what the log line names |
 | Property Button Error: '\<id>' is not a control id | A `<button>` in `properties.xml` has an id that is not a number; it is skipped | Use the id of the dialog control |
 | Property Button Error: '\<id>' rename needs a widget | A `<button rename="true">` has a type other than `widget`; rename is ignored | Remove `rename`, or use it on a widget button |

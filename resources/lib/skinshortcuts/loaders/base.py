@@ -15,22 +15,38 @@ from ..models.override import Override
 T = TypeVar("T")
 
 
+_FILE_HEADINGS = {
+    "menus": "Menu Error",
+    "widgets": "Widget Error",
+    "backgrounds": "Background Error",
+    "properties": "Property Error",
+    "templates": "Template Error",
+    "views": "View Error",
+}
+
+
 def parse_xml(path: str | Path, expected_root: str, error_class: type[ConfigError]) -> ET.Element:
-    """Parse XML file and validate root element."""
+    """Parse XML file and validate root element; one that cannot be used is reported and raised."""
     path = Path(path)
 
-    if not path.exists():
-        raise error_class(str(path), "File not found")
+    def fail(message: str, line: int | None = None) -> ConfigError:
+        error = error_class(str(path), message, line)
+        notify(
+            _FILE_HEADINGS[expected_root],
+            f"'{path.name}' could not be loaded",
+            f"{error}; file not loaded; fix the file",
+        )
+        return error
 
     try:
-        tree = ET.parse(str(path))
+        root = ET.parse(str(path)).getroot()
     except ET.ParseError as e:
-        line = e.position[0] if e.position else None
-        raise error_class(str(path), f"XML parse error: {e}", line) from e
+        raise fail(f"XML parse error: {e}", e.position[0] if e.position else None) from e
+    except OSError as e:
+        raise fail(f"cannot be read: {e}") from e
 
-    root = tree.getroot()
     if root.tag != expected_root:
-        raise error_class(str(path), f"Expected <{expected_root}>, got <{root.tag}>")
+        raise fail(f"Expected <{expected_root}>, got <{root.tag}>")
 
     return root
 
