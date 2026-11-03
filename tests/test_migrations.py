@@ -275,6 +275,39 @@ def test_a_baked_sort_key_cannot_be_retired(tmp_path, name):
     assert item.properties == {name: "5"}
 
 
+@pytest.fixture
+def sent(monkeypatch):
+    """Toast messages sent while overrides apply."""
+    captured = []
+    monkeypatch.setattr("skinshortcuts.migrations.notify", lambda _h, m, _d: captured.append(m))
+    return captured
+
+
+@pytest.mark.parametrize(
+    ("files", "message"),
+    [
+        ({"properties": SELF_RENAME}, "'listStyle' replaces itself"),
+        ({"widgets": UNDEFINED_TARGET}, "'old' points at undefined 'nosuchwidget'"),
+        (
+            {"properties": '<overrides><property replace="widgetLimit"></property></overrides>'},
+            "'widgetLimit' names a picker-owned key",
+        ),
+        (
+            {
+                "widgets": '<overrides><widget replace="keeper"></widget></overrides>'
+                '<widget name="keeper" label="Keeper"><path>p</path></widget>'
+            },
+            "'keeper' is still defined",
+        ),
+    ],
+    ids=["self", "undefined", "picker-owned", "still-defined"],
+)
+def test_a_refused_override_is_reported(tmp_path, sent, files, message):
+    """Each refused override sends one notification naming it."""
+    _apply(tmp_path, {}, **files)
+    assert sent == [message]
+
+
 def test_retiring_a_widget_leaves_the_sort_the_user_set(tmp_path):
     """Nothing derives limit/sort back; clearing the name must not take them too."""
     item, _ = _apply(

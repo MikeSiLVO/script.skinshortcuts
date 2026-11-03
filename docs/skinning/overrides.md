@@ -86,7 +86,7 @@ The item keeps its place in the menu, and the retired value is cleared along wit
 
 ## What Is Refused
 
-An override is ignored, with an error in the log, when it would put user data somewhere the skin cannot use:
+An override is ignored, with an [error notification](troubleshooting.md#error-notifications), when it would put user data somewhere the skin cannot use:
 
 * the name it points at is not defined by the skin
 * the name it replaces is still defined by the skin, which reads as a typo rather than a rename
