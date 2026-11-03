@@ -21,6 +21,7 @@ from .base import (
     iter_nested,
     parse_name_overrides,
     parse_xml,
+    report_missing,
     warn_duplicate_names,
 )
 
@@ -61,8 +62,9 @@ def load_backgrounds(
     for child in root:
         if child.tag == "background":
             bg = _parse_background(child, str(path), overrides)
-            backgrounds.append(bg)
-            groupings.append(bg)
+            if bg:
+                backgrounds.append(bg)
+                groupings.append(bg)
         elif child.tag == "group":
             group = _parse_background_group(child, str(path), overrides)
             if group:
@@ -85,22 +87,23 @@ def load_backgrounds(
 
 def _parse_background(
     elem, path: str, icon_overrides: IconOverrides | None = None
-) -> Background:
-    """Parse a background element; name and label are required."""
+) -> Background | None:
+    """Parse a background, reporting a missing field; drops path beside browse sources."""
     bg_name = get_attr(elem, "name")
-    if not bg_name:
-        raise BackgroundConfigError(path, "Background missing 'name' attribute")
-
     label = get_attr(elem, "label")
-    if not label:
-        raise BackgroundConfigError(path, f"Background '{bg_name}' missing 'label' attribute")
-
     bg_path = get_text(elem, "path")
     type_str = get_attr(elem, "type", "static")
     bg_type = TYPE_MAP.get(type_str.lower(), BackgroundType.STATIC)
 
+    if not bg_name:
+        report_missing("Background Error", path, elem, "name")
+        return None
+    if not label:
+        report_missing("Background Error", path, elem, "label")
+        return None
     if not bg_path and bg_type not in OPTIONAL_PATH_TYPES:
-        raise BackgroundConfigError(path, f"Background '{bg_name}' missing <path>")
+        report_missing("Background Error", path, elem, "<path>")
+        return None
 
     if (
         bg_path
@@ -175,11 +178,7 @@ def _parse_background_group(
     flat = get_bool(elem, "flat")
 
     if not group_name:
-        notify(
-            "Background Group Error",
-            "group missing 'name'",
-            f"{path}: <group> has no name; group skipped; add name=\"...\"",
-        )
+        report_missing("Background Group Error", path, elem, "name")
         return None
     if not label and not flat:
         notify(
@@ -198,7 +197,8 @@ def _parse_background_group(
     for child in elem:
         if child.tag == "background":
             bg = _parse_background(child, path, icon_overrides)
-            items.append(bg)
+            if bg:
+                items.append(bg)
         elif child.tag == "group":
             nested = _parse_background_group(child, path, icon_overrides)
             if nested:

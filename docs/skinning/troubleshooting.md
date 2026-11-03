@@ -21,7 +21,10 @@ Enable either, reproduce the problem, then read the log.
 
 | Notification | Cause | Fix |
 |---|---|---|
-| Shortcut / Widget / Background Group Error: group missing 'name' | A group in the picker groupings has no `name` attribute | Add `name="..."` to the group |
+| \<Feature> Error: '\<name>' missing \<field>, or \<element> missing '\<field>' | A menu, item, widget, background, property, button, fallback, view, content rule, template, preset or group has no attribute or element it needs; it is skipped | Add what the log line names |
+| Property Button Error: '\<id>' is not a control id | A `<button>` in `properties.xml` has an id that is not a number; it is skipped | Use the id of the dialog control |
+| View Error: '\<name>' lists no defined view | No id in a content rule's `<views>` is a defined view; the rule is skipped | List the ids of defined views |
+| View Error: '\<name>' library view / plugin view not defined | A content rule's `library` or `plugin` default is not a defined view; a bad `library` skips the rule, a bad `plugin` is ignored | Use a defined view id |
 | Shortcut / Widget / Background Group Error: '\<name>' missing label | A group has a name but no `label`, required unless the group is `flat` | Add `label="..."`, or mark it `flat="true"` |
 | Background Error: '\<name>' has path and source | A browse or multi background defines both; the fixed path is ignored | Keep one: a fixed `<path>` or a dynamic `<source>` |
 | Background Error: '\<group>' uses \<content> | backgrounds.xml has a `<content>` element, in a group or at the root (named `backgrounds`); it is skipped | Use a playlist or browse background with `<source>` instead |

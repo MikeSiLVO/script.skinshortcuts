@@ -32,7 +32,7 @@ from ..models.template import (
     VariableGroupReference,
     VariableReference,
 )
-from .base import get_bool
+from .base import get_bool, report_missing
 
 log = get_logger("TemplateLoader")
 
@@ -132,7 +132,8 @@ class TemplateLoader:
                     self._items_templates[items_name] = items_def
             else:
                 template = self._parse_template(elem)
-                templates.append(template)
+                if template:
+                    templates.append(template)
 
         submenus = []
         for elem in root.findall("submenu"):
@@ -172,13 +173,14 @@ class TemplateLoader:
             )
 
     def _parse_presets_section(self, root: ET.Element) -> None:
-        """Parse <presets> section."""
+        """Parse <presets> section, skipping a preset with no name."""
         section = root.find("presets")
         if section is None:
             return
         for elem in section.findall("preset"):
             preset = self._parse_preset(elem)
-            self._presets[preset.name] = preset
+            if preset:
+                self._presets[preset.name] = preset
 
     def _parse_preset_groups_section(self, root: ET.Element) -> None:
         """Parse <presetGroups> section."""
@@ -357,11 +359,12 @@ class TemplateLoader:
 
         return TemplateVar(name=name, values=values)
 
-    def _parse_preset(self, elem: ET.Element) -> Preset:
-        """Parse a preset element."""
+    def _parse_preset(self, elem: ET.Element) -> Preset | None:
+        """Parse a preset element, reporting one with no name."""
         name = (elem.get("name") or "").strip()
         if not name:
-            raise TemplateConfigError(str(self.path), "Preset missing name attribute")
+            report_missing("Template Error", self.path, elem, "name")
+            return None
 
         rows = []
         for values_elem in elem.findall("values"):
@@ -371,8 +374,8 @@ class TemplateLoader:
 
         return Preset(name=name, rows=rows)
 
-    def _parse_template(self, elem: ET.Element) -> Template:
-        """Parse a template, dropping duplicates; a raw one reports variables and drops markers."""
+    def _parse_template(self, elem: ET.Element) -> Template | None:
+        """Parse a template, dropping duplicates; reports no output, raw variables and markers."""
         outputs: list[TemplateOutput] = []
         for output_elem in elem.findall("output"):
             output_include = (output_elem.get("include") or "").strip()
@@ -389,9 +392,8 @@ class TemplateLoader:
         id_prefix = (elem.get("idprefix") or "").strip()
 
         if not outputs and not include:
-            raise TemplateConfigError(
-                str(self.path), "Template missing include attribute or output elements"
-            )
+            report_missing("Template Error", self.path, elem, "include", key="include")
+            return None
 
         build_str = (elem.get("build") or "").strip().lower()
         if build_str == "true":

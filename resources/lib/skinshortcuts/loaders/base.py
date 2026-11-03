@@ -103,6 +103,21 @@ def parse_name_overrides(root, tag: str) -> list[Override]:
     return overrides
 
 
+def report_missing(
+    heading: str, path: str | Path, elem: ET.Element, field: str, key: str = "name", scope: str = ""
+) -> None:
+    """Report an element skipped for lacking a value, named by its identifying attribute if set."""
+    name = get_attr(elem, key)
+    written = f'<{elem.tag} {key}="{name}">' if name else f"<{elem.tag}>"
+    where = f" in {scope}" if scope else ""
+    fix = f"add {field}" if field.startswith("<") else f'add {field}="..."'
+    notify(
+        heading,
+        f"'{name}' missing {field}" if name else f"{elem.tag} missing '{field}'",
+        f"{path}: {written}{where} has no {field}; {elem.tag} skipped; {fix}",
+    )
+
+
 _DUPLICATE_HEADINGS = {
     "menu": ("Menu Error", ""),
     "item": ("Menu Error", "item "),

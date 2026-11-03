@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from ..exceptions import PropertyConfigError
-from ..log import get_logger
+from ..log import get_logger, notify
 from ..models.property import (
     ButtonMapping,
     FallbackRule,
@@ -17,7 +17,7 @@ from ..models.property import (
     SchemaProperty,
 )
 from ..conditions import suffix_condition
-from .base import get_bool, parse_name_overrides
+from .base import get_bool, parse_name_overrides, report_missing
 
 log = get_logger("PropertyLoader")
 
@@ -54,14 +54,16 @@ class PropertyLoader:
         properties = {}
         for elem in root.findall("property"):
             prop = self._parse_property(elem)
-            properties[prop.name] = prop
+            if prop:
+                properties[prop.name] = prop
 
         fallbacks = {}
         fallbacks_elem = root.find("fallbacks")
         if fallbacks_elem is not None:
             for fb_elem in fallbacks_elem.findall("fallback"):
                 fb = self._parse_fallback(fb_elem)
-                fallbacks[fb.property_name] = fb
+                if fb:
+                    fallbacks[fb.property_name] = fb
 
         buttons = {}
         buttons_elem = root.find("buttons")
@@ -142,14 +144,15 @@ class PropertyLoader:
 
         return new_elem
 
-    def _parse_property(self, elem: ET.Element) -> SchemaProperty:
-        """Parse a property element."""
+    def _parse_property(self, elem: ET.Element) -> SchemaProperty | None:
+        """Parse a property element, reporting one with no name."""
         name = (elem.get("name") or "").strip()
         if not name:
-            raise PropertyConfigError(str(self.path), "Property missing name attribute")
+            report_missing("Property Error", self.path, elem, "name")
+            return None
 
         template_only = get_bool(elem, "templateonly")
-        prop_type = (elem.get("type") or "").strip()  # "widget", "background", "toggle"
+        prop_type = (elem.get("type") or "").strip()
 
         requires = (elem.get("requires") or "").strip()
         if not requires:
@@ -176,26 +179,26 @@ class PropertyLoader:
     def _parse_button(
         self, elem: ET.Element, default_suffix: bool = False
     ) -> ButtonMapping | None:
-        """Parse a button element; no id skips it, a bad id or a missing property raises."""
+        """Parse a button element; no id skips it, a bad id or a missing property is reported."""
         button_id_str = (elem.get("id") or "").strip()
         if not button_id_str:
             log.warning(f"{self.path}: <button> mapping missing 'id' attribute, skipping")
             return None
 
-        try:
-            button_id = int(button_id_str)
-        except ValueError:
-            raise PropertyConfigError(
-                str(self.path),
-                f"Invalid button id '{button_id_str}'",
-            ) from None
+        if not button_id_str.isdecimal():
+            notify(
+                "Property Button Error",
+                f"'{button_id_str}' is not a control id",
+                f'{self.path}: <button id="{button_id_str}"> is not a number; button skipped; '
+                "use the id of the dialog control",
+            )
+            return None
+        button_id = int(button_id_str)
 
         property_name = (elem.get("property") or "").strip()
         if not property_name:
-            raise PropertyConfigError(
-                str(self.path),
-                f"Button {button_id} missing property attribute",
-            )
+            report_missing("Property Button Error", self.path, elem, "property", key="id")
+            return None
 
         suffix = get_bool(elem, "suffix", default_suffix)
         title = (elem.get("title") or "").strip()
@@ -254,13 +257,12 @@ class PropertyLoader:
             icons=icons,
         )
 
-    def _parse_fallback(self, elem: ET.Element) -> PropertyFallback:
-        """Parse a fallback element."""
+    def _parse_fallback(self, elem: ET.Element) -> PropertyFallback | None:
+        """Parse a fallback element, reporting one with no property."""
         property_name = (elem.get("property") or "").strip()
         if not property_name:
-            raise PropertyConfigError(
-                str(self.path), "Fallback missing property attribute"
-            )
+            report_missing("Property Error", self.path, elem, "property", key="property")
+            return None
 
         rules = []
 

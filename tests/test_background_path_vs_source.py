@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
-from skinshortcuts.exceptions import BackgroundConfigError
 from skinshortcuts.loaders.background import load_backgrounds
 from skinshortcuts.models.background import BackgroundType
 
@@ -115,5 +112,4 @@ def test_static_still_requires_path(tmp_path):
     <background name="bg" label="BG" type="static" />
 </backgrounds>
 """)
-    with pytest.raises(BackgroundConfigError, match="missing <path>"):
-        load_backgrounds(path)
+    assert load_backgrounds(path).backgrounds == []

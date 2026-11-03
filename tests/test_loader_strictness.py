@@ -17,6 +17,16 @@ from skinshortcuts.log import Logger
 
 ITEM = '<item name="a"><label>A</label><action>Noop</action></item>'
 
+
+def rule(library: str = "50", views: str = "50", visible: str = "x", plugin: str = "") -> str:
+    """A views.xml defining view 50 and one content rule."""
+    extra = f' plugin="{plugin}"' if plugin else ""
+    return (
+        f'<views><view id="50" label="V"/><rules><content name="c" label="C" library="{library}"'
+        f"{extra}><visible>{visible}</visible><views>{views}</views></content></rules></views>"
+    )
+
+
 BROKEN = [
     ("widget name", load_widgets, '<widgets><widget label="W"><path>x://</path></widget></widgets>'),
     ("widget label", load_widgets, '<widgets><widget name="w"><path>x://</path></widget></widgets>'),
@@ -39,6 +49,9 @@ BROKEN = [
     ("item label", load_menus, '<menus><menu name="m"><item name="a"/></menu></menus>'),
     ("view id", load_views, '<views><view label="V"/></views>'),
     ("view label", load_views, '<views><view id="50"/></views>'),
+    ("content visible", load_views, rule(visible="")),
+    ("content views", load_views, rule(views="99")),
+    ("content library", load_views, rule(library="99")),
 ]
 
 DUPLICATES = [
@@ -115,12 +128,18 @@ def test_nameless_widget_group_is_skipped(tmp_path: Path, warned: list[str]) -> 
     assert warned
 
 
-@pytest.mark.xfail(strict=True, reason="loader strictness and duplicate handling vary by file")
 @pytest.mark.parametrize(("case", "loader", "xml"), BROKEN, ids=[b[0] for b in BROKEN])
 def test_broken_definition_warns_instead_of_raising(
     tmp_path: Path, warned: list[str], case: str, loader: Callable, xml: str
 ) -> None:
     loader(write(tmp_path, xml))
+    assert warned
+
+
+def test_undefined_plugin_view_is_dropped(tmp_path: Path, warned: list[str]) -> None:
+    """The rule stays with its library default; only the plugin default goes."""
+    content = load_views(write(tmp_path, rule(plugin="99"))).content_rules
+    assert [(c.name, c.plugin_default) for c in content] == [("c", "")]
     assert warned
 
 

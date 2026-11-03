@@ -35,6 +35,7 @@ from .base import (
     get_text,
     parse_content,
     parse_xml,
+    report_missing,
     warn_duplicate_names,
 )
 
@@ -70,17 +71,19 @@ def load_menus(path: str | Path) -> MenuConfig:
 
 
 def _parse_menus(root, path: str, icon_overrides: IconOverrides | None = None) -> list[Menu]:
-    """Parse menu and submenu elements from root."""
+    """Parse the top-level menu and submenu elements."""
     overrides = icon_overrides or IconOverrides()
     menus = []
 
     for elem in root.findall("menu"):
         menu = _parse_menu(elem, path, is_submenu=False, icon_overrides=overrides)
-        menus.append(menu)
+        if menu:
+            menus.append(menu)
 
     for elem in root.findall("submenu"):
         menu = _parse_menu(elem, path, is_submenu=True, icon_overrides=overrides)
-        menus.append(menu)
+        if menu:
+            menus.append(menu)
 
     warn_duplicate_names((m.name for m in menus), "menu", path)
 
@@ -300,11 +303,12 @@ def _parse_menu(
     path: str,
     is_submenu: bool = False,
     icon_overrides: IconOverrides | None = None,
-) -> Menu:
+) -> Menu | None:
     """Parse a menu or submenu element with its items, defaults and allow rules."""
     menu_name = get_attr(elem, "name")
     if not menu_name:
-        raise MenuConfigError(path, "Menu missing 'name' attribute")
+        report_missing("Menu Error", path, elem, "name")
+        return None
 
     menu_type = get_attr(elem, "type") or None
     is_widget_submenu = menu_type == "widgets"
@@ -313,7 +317,8 @@ def _parse_menu(
     items = []
     for item_elem in elem.findall("item"):
         item = _parse_item(item_elem, menu_name, path, is_widget_submenu, overrides)
-        items.append(item)
+        if item:
+            items.append(item)
     warn_duplicate_names((i.name for i in items), "item", path, f"menu '{menu_name}'")
 
     defaults = _parse_defaults(elem.find("defaults"))
@@ -354,16 +359,18 @@ def _parse_item(
     path: str,
     is_widget_submenu: bool = False,
     icon_overrides: IconOverrides | None = None,
-) -> MenuItem:
+) -> MenuItem | None:
     """Parse an item element: label, icon, actions, includes, properties and protection."""
     overrides = icon_overrides or IconOverrides()
     item_name = get_attr(elem, "name")
-    if not item_name:
-        raise MenuConfigError(path, f"Menu '{menu_name}' has item without 'name'")
-
     label = get_text(elem, "label")
+    scope = f"menu '{menu_name}'"
+    if not item_name:
+        report_missing("Menu Error", path, elem, "name", scope=scope)
+        return None
     if not label:
-        raise MenuConfigError(path, f"Item '{item_name}' missing <label>")
+        report_missing("Menu Error", path, elem, "<label>", scope=scope)
+        return None
 
     actions = []
     includes = []
@@ -561,11 +568,7 @@ def _parse_shortcut_group(
     flat = get_bool(elem, "flat")
 
     if not group_name:
-        notify(
-            "Shortcut Group Error",
-            "group missing 'name'",
-            f"{path}: <group> has no name; group skipped; add name=\"...\"",
-        )
+        report_missing("Shortcut Group Error", path, elem, "name")
         return None
     if not label and not flat:
         notify(
