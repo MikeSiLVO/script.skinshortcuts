@@ -24,9 +24,19 @@ _FILE_HEADINGS = {
     "views": "View Error",
 }
 
+# only the script's own names, each in its role; template bodies carry Kodi XML into the output
+_ELEMENTS = {name.lower(): name for name in (
+    "presetGroup", "presetGroups", "propertyGroup", "propertyGroups", "submenuPath",
+    "variableGroup",
+)}
+_ATTRIBUTES = {name.lower(): name for name in (
+    "buttonID", "controlType", "enableOn", "idPrefix", "noSuffix", "setFocus", "showIcons",
+    "showNone", "submenuPath", "templateOnly",
+)}
+
 
 def parse_xml(path: str | Path, expected_root: str, error_class: type[ConfigError]) -> ET.Element:
-    """Parse XML file and validate root element; one that cannot be used is reported and raised."""
+    """Parse XML file, script names matched in any case; an unusable file is reported and raised."""
     path = Path(path)
 
     def fail(message: str, line: int | None = None) -> ConfigError:
@@ -47,6 +57,15 @@ def parse_xml(path: str | Path, expected_root: str, error_class: type[ConfigErro
 
     if root.tag != expected_root:
         raise fail(f"Expected <{expected_root}>, got <{root.tag}>")
+
+    for elem in root.iter():
+        elem.tag = _ELEMENTS.get(elem.tag.lower(), elem.tag)
+        if any(key.lower() in _ATTRIBUTES for key in elem.attrib):
+            attrib: dict[str, str] = {}
+            for key, value in elem.attrib.items():
+                attrib.setdefault(_ATTRIBUTES.get(key.lower(), key), value)
+            elem.attrib.clear()
+            elem.attrib.update(attrib)
 
     return root
 

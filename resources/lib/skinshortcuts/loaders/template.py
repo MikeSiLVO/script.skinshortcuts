@@ -152,7 +152,7 @@ class TemplateLoader:
                 report_missing("Template Error", self.path, elem, "name")
                 continue
             value = (elem.text or "").strip()
-            nosuffix = get_bool(elem, "nosuffix")
+            nosuffix = get_bool(elem, "noSuffix")
             expression = Expression(value=f"[{value}]" if value else "", nosuffix=nosuffix)
             keep_first(self._expressions, name, expression, "expression", self.path)
 
@@ -361,13 +361,13 @@ class TemplateLoader:
                 outputs.append(
                     TemplateOutput(
                         include=output_include,
-                        id_prefix=(output_elem.get("idprefix") or "").strip(),
+                        id_prefix=(output_elem.get("idPrefix") or "").strip(),
                         suffix=(output_elem.get("suffix") or "").strip(),
                     )
                 )
 
         include = (elem.get("include") or "").strip()
-        id_prefix = (elem.get("idprefix") or "").strip()
+        id_prefix = (elem.get("idPrefix") or "").strip()
 
         if not outputs and not include:
             report_missing("Template Error", self.path, elem, "include", key="include")
@@ -379,7 +379,7 @@ class TemplateLoader:
         else:
             build = BuildMode.MENU
 
-        template_only = (elem.get("templateonly") or "").strip().lower()
+        template_only = (elem.get("templateOnly") or "").strip().lower()
         menu = (elem.get("menu") or "").strip()
 
         conditions = []

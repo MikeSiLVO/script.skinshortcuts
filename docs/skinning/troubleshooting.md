@@ -26,7 +26,7 @@ Enable either, reproduce the problem, then read the log.
 | Property Button Error: '\<id>' is not a control id | A `<button>` in `properties.xml` has an id that is not a number; it is skipped | Use the id of the dialog control |
 | Property Button Error: '\<id>' rename needs a widget | A `<button rename="true">` has a type other than `widget`; rename is ignored | Remove `rename`, or use it on a widget button |
 | Context Menu Error: '\<value>' is not true or false | `<contextmenu>` holds something other than `true` or `false`; it is treated as `true` | Write `true` or `false` |
-| Context Menu Error: '\<value>' is not a control id / enableon has no control id | A `<button id>` or an `enableon` entry in `<contextmenu>` is not a number; it is skipped, and with no `enableon` id left the context menu opens on every control | Use numeric control ids |
+| Context Menu Error: '\<value>' is not a control id / enableOn has no control id | A `<button id>` or an `enableOn` entry in `<contextmenu>` is not a number; it is skipped, and with no `enableOn` id left the context menu opens on every control | Use numeric control ids |
 | Subdialog Error: '\<id>' is not a control id / '\<id>' does nothing | A `<subdialog>` has a `buttonID` that is not a number, or no `mode`, `menu` or `<onclose>`; it is skipped | Use a numeric `buttonID`, or add `mode="..."` |
 | Shortcut Error: '\<name>' has no action | A `<shortcut>` has no `<action>` and no browse `<path>`; it is skipped | Add an `<action>` |
 | Background Error: '\<name>' has an empty source | A `<source>` in a background has no path; that source is skipped | Write the path as its text |

@@ -148,7 +148,7 @@ class PropertyLoader:
             report_missing("Property Error", self.path, elem, "name")
             return None
 
-        template_only = get_bool(elem, "templateonly")
+        template_only = get_bool(elem, "templateOnly")
         prop_type = (elem.get("type") or "").strip()
 
         requires = (elem.get("requires") or "").strip()

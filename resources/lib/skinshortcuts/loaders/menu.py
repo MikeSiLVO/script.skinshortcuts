@@ -133,7 +133,7 @@ def _parse_context_menu(root) -> ContextMenu:
 
     return ContextMenu(
         enabled=text != "false",
-        enable_on=_parse_enable_on(get_attr(elem, "enableon")),
+        enable_on=_parse_enable_on(get_attr(elem, "enableOn")),
         buttons=_parse_context_buttons(elem.findall("button")),
     )
 
@@ -163,7 +163,7 @@ def _parse_context_buttons(rows) -> list[ContextMenuButton]:
 
 
 def _parse_enable_on(value: str) -> list[int]:
-    """Control IDs the context action fires on, from a comma separated list; reports a bad one."""
+    """Control IDs the context action fires on, listed with commas; reports bad or missing IDs."""
     ids = []
     for part in value.split(","):
         part = part.strip()
@@ -173,7 +173,7 @@ def _parse_enable_on(value: str) -> list[int]:
             notify(
                 "Context Menu Error",
                 f"'{part}' is not a control id",
-                f'menus.xml: <contextmenu enableon="{value}"> lists \'{part}\'; it is skipped; '
+                f'menus.xml: <contextmenu enableOn="{value}"> lists \'{part}\'; it is skipped; '
                 "list numeric control ids",
             )
             continue
@@ -182,8 +182,8 @@ def _parse_enable_on(value: str) -> list[int]:
     if value and not ids:
         notify(
             "Context Menu Error",
-            "enableon has no control id",
-            f'menus.xml: <contextmenu enableon="{value}"> has no control id; the context menu '
+            "enableOn has no control id",
+            f'menus.xml: <contextmenu enableOn="{value}"> has no control id; the context menu '
             "opens on every control; list numeric control ids",
         )
 
@@ -235,7 +235,7 @@ def _parse_dialogs(root) -> list[SubDialog]:
             continue
 
         setfocus = None
-        setfocus_str = get_attr(elem, "setfocus")
+        setfocus_str = get_attr(elem, "setFocus")
         if setfocus_str and setfocus_str.isdecimal():
             setfocus = int(setfocus_str)
 
@@ -352,7 +352,7 @@ def _parse_menu(
     is_submenu: bool = False,
     icon_overrides: IconOverrides | None = None,
 ) -> Menu | None:
-    """Parse a menu or submenu element with its items, defaults and allow rules."""
+    """Parse menu or submenu with items, defaults, allow rules; reports no name or a repeat item."""
     menu_name = get_attr(elem, "name")
     if not menu_name:
         report_missing("Menu Error", path, elem, "name")
@@ -372,7 +372,7 @@ def _parse_menu(
     defaults = _parse_defaults(elem.find("defaults"))
     allow = _parse_allow(elem.find("allow"))
     container = get_attr(elem, "container") or None
-    controltype = get_attr(elem, "controltype") or ""
+    controltype = get_attr(elem, "controlType") or ""
     icons = get_bool(elem, "icons", True)
     startid_str = get_attr(elem, "id") or ""
     startid = int(startid_str) if startid_str.isdecimal() else 1
