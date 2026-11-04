@@ -9,7 +9,7 @@ from typing import Any, TypeVar
 
 from ..conditions import lookup
 from ..exceptions import ConfigError
-from ..log import notify
+from ..log import log_renamed, notify
 from ..models.override import Override
 
 T = TypeVar("T")
@@ -33,10 +33,12 @@ _ATTRIBUTES = {name.lower(): name for name in (
     "buttonID", "controlType", "enableOn", "idPrefix", "noSuffix", "setFocus", "showIcons",
     "showNone", "submenuPath", "templateOnly",
 )}
+_RENAMED = {"template_only": "templateOnly"}
+_ATTRIBUTES.update(_RENAMED)
 
 
 def parse_xml(path: str | Path, expected_root: str, error_class: type[ConfigError]) -> ET.Element:
-    """Parse XML file, script names matched in any case; an unusable file is reported and raised."""
+    """Parse XML file, script names in any case, old ones logged; bad file reported and raised."""
     path = Path(path)
 
     def fail(message: str, line: int | None = None) -> ConfigError:
@@ -63,7 +65,14 @@ def parse_xml(path: str | Path, expected_root: str, error_class: type[ConfigErro
         if any(key.lower() in _ATTRIBUTES for key in elem.attrib):
             attrib: dict[str, str] = {}
             for key, value in elem.attrib.items():
-                attrib.setdefault(_ATTRIBUTES.get(key.lower(), key), value)
+                name = _ATTRIBUTES.get(key.lower(), key)
+                if key.lower() in _RENAMED:
+                    log_renamed(
+                        f'{path.name}: <{elem.tag} {key}="{value}"> uses a deprecated attribute; '
+                        f"please update to use {name}, since {key} will be removed "
+                        "in a future version"
+                    )
+                attrib.setdefault(name, value)
             elem.attrib.clear()
             elem.attrib.update(attrib)
 

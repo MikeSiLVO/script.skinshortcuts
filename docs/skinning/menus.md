@@ -78,7 +78,7 @@ Defines a standalone menu that generates an include.
 | `action` | No | Action string for `build="auto"`. Menu is built when any item in another menu has this action |
 | `type` | No | Menu type. `widgets` puts the dialog in [widget mode](widgets.md#widget-menus) |
 | `submenuPath` | No | `all` emits the numbered `submenuPath.N` tail for widget submenus under this menu (see [Built-in Properties](builtin-properties.md#submenu-widget-path)) |
-| `template_only` | No | `submenu` skips the combined `skinshortcuts-{name}-submenu` include for this menu. Distinct from `standalone`, which controls the per-template include on a `<submenu>` |
+| `templateOnly` | No | `submenu` skips the combined `skinshortcuts-{name}-submenu` include for this menu. Distinct from `standalone`, which controls the per-template include on a `<submenu>` |
 
 **Conditional building:** Use `build="auto"` with `action` for menus that serve specific windows (e.g., hub windows). The menu include is only generated when a menu item elsewhere uses the matching action:
 
@@ -135,7 +135,7 @@ In addition to the attributes shared with `<menu>`:
 |-----------|---------|-------------|
 | `standalone` | `true` | When `false`, the per-template `skinshortcuts-{name}` include is not emitted. Submenu items still appear in the combined `skinshortcuts-{menu}-submenu` include. Use this when your skin only consumes submenus through the combined include and you want a cleaner generated output. |
 
-`build`, `action` and `template_only` are only acted on for `<menu>`, so setting them here does nothing.
+`build`, `action` and `templateOnly` are only acted on for `<menu>`, so setting them here does nothing.
 
 Link a submenu to an item:
 

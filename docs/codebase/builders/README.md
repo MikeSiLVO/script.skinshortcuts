@@ -19,7 +19,7 @@ The element names and their order in the file are in [FORMATS.md](../FORMATS.md#
 - Root `<menu>` menus only. A `<submenu>` gets no include of its own; its items reach the output through per-item instances.
 - A root menu that a templates.xml `<submenu name>` names is skipped, since that template builds it.
 - A `build="auto"` menu is built only when its `action` matches an action of an enabled item in a menu that is not itself `auto`.
-- Each built menu gets `skinshortcuts-{menu}`, then `skinshortcuts-{menu}-submenu` unless its `template_only` attribute contains `submenu`, then its custom widget includes.
+- Each built menu gets `skinshortcuts-{menu}`, then `skinshortcuts-{menu}-submenu` unless its `templateOnly` attribute contains `submenu`, then its custom widget includes.
 
 ## Entries
 

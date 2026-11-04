@@ -376,7 +376,7 @@ def _parse_menu(
     icons = get_bool(elem, "icons", True)
     startid_str = get_attr(elem, "id") or ""
     startid = int(startid_str) if startid_str.isdecimal() else 1
-    template_only = get_attr(elem, "template_only") or ""
+    template_only = get_attr(elem, "templateOnly") or ""
     build = (get_attr(elem, "build") or "true").lower()
     action = get_attr(elem, "action") or ""
     standalone = get_bool(elem, "standalone", True)

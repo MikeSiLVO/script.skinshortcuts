@@ -58,3 +58,11 @@ Enable either, reproduce the problem, then read the log.
 | View Error: content '\<name>' defined twice | Two content rules in `views.xml` share a name | Give each rule a unique name |
 | Template / Items Template / Submenu Template Error: '\<name>' defined twice | A `<var>` shares its name with another `<var>`, or with `<property>` elements, in the same template, property group, items or submenu template; the first definition is used | Keep one `<var>`, or only `<property>` elements |
 | Override Error: '\<name>' replaces itself / points at undefined '\<name>' / names a picker-owned key / is still defined | An entry in an `<overrides>` block would put user data somewhere the skin cannot use; it is ignored | See [What Is Refused](overrides.md#what-is-refused) |
+
+## Renamed names
+
+A log line saying an element "uses a deprecated attribute" points at an attribute that was renamed. The old name still works for now; a later version stops reading it.
+
+| Old name | New name |
+|---|---|
+| `template_only` | `templateOnly` |

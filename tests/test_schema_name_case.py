@@ -45,7 +45,7 @@ def test_element_name_reads_in_any_case(tmp_path: Path, name: str, case: Callabl
 
 
 @pytest.mark.parametrize("case", [str.lower, str.upper])
-@pytest.mark.parametrize("name", sorted(_ATTRIBUTES.values()))
+@pytest.mark.parametrize("name", sorted(set(_ATTRIBUTES.values())))
 def test_attribute_name_reads_in_any_case(tmp_path: Path, name: str, case: Callable) -> None:
     """An attribute the script names is respelled as the loaders read it."""
     assert parse(tmp_path, f'<x {case(name)}="1"/>')[0].attrib == {name: "1"}
@@ -76,3 +76,22 @@ def test_both_spellings_load_alike(tmp_path: Path, name: str, loader: Callable, 
         path.write_text(xml.format(spelling), encoding="utf-8")
         loaded.append(loader(path))
     assert loaded[0] == loaded[1] != loaded[2]
+
+
+def test_old_name_loads_with_one_info_line(tmp_path: Path, monkeypatch) -> None:
+    """An old name loads as its new one, logged once at info with no toast, however often read."""
+    lines: list[tuple[int, str]] = []
+    toasts: list[tuple] = []
+    monkeypatch.setattr("xbmc.log", lambda msg, level: lines.append((level, msg)))
+    monkeypatch.setattr("xbmcgui.Dialog.notification", lambda *args: toasts.append(args))
+    path = tmp_path / "menus.xml"
+    menu = f'<menus><menu name="m" template_only="submenu">{ITEM}</menu></menus>'
+    path.write_text(menu, encoding="utf-8")
+
+    assert [load_menus(path).menus[0].template_only for _ in range(2)] == ["submenu"] * 2
+    assert [line for line in lines if "deprecated attribute" in line[1]] == [(
+        1, 'script.skinshortcuts: menus.xml: <menu template_only="submenu"> uses a deprecated '
+        "attribute; please update to use templateOnly, since template_only will be removed in a "
+        "future version",
+    )]
+    assert toasts == []
