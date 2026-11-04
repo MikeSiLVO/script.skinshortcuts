@@ -205,8 +205,8 @@ shortcuts/
   </icons>
 
   <dialogs>
-    <subdialog buttonID="800" mode="widget1" setfocus="309" />
-    <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2" />
+    <subdialog buttonID="800" mode="widget1" setFocus="309" />
+    <subdialog buttonID="801" mode="widget2" setFocus="309" suffix=".2" />
   </dialogs>
 
   <overrides>
@@ -287,13 +287,13 @@ v2 (`overrides.xml`):
 v3 (`menus.xml`):
 
 ```xml
-<contextmenu enableon="211">
+<contextmenu enableOn="211">
   <button id="313" />
   <button id="302" label="$LOCALIZE[117]" />
 </contextmenu>
 ```
 
-`<enableon>` is an attribute taking a comma separated list, rows are `<button id="...">` with the label as an attribute, and Kodi conditions moved to `visible` (`condition` is now a [property condition](skinning/conditions.md)). Omit the rows for the built-in set, and omit `label` on a built-in button to take the script's own wording, which for 313 already follows the item's disabled state.
+`<enableon>` is an `enableOn` attribute taking a comma separated list, rows are `<button id="...">` with the label as an attribute, and Kodi conditions moved to `visible` (`condition` is now a [property condition](skinning/conditions.md)). Omit the rows for the built-in set, and omit `label` on a built-in button to take the script's own wording, which for 313 already follows the item's disabled state.
 
 ### Required Items (v3 only)
 
@@ -716,8 +716,8 @@ Single template generating multiple includes:
 
 ```xml
 <template>
-  <output include="widget1" idprefix="8011" />
-  <output include="widget2" idprefix="8021" suffix=".2" />
+  <output include="widget1" idPrefix="8011" />
+  <output include="widget2" idPrefix="8021" suffix=".2" />
   <condition>widgetPath</condition>
   <controls>
     <control type="panel" id="$PROPERTY[id]">

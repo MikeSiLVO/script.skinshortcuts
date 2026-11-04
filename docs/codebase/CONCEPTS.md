@@ -48,7 +48,7 @@ Rules that span several modules and that no single file shows. Each section name
 
 - A slot is a numbered copy of a property: `widget` is the base slot, `widget.2` slot 2, and every sibling takes the same tail (`widgetPath.2`). Slots let one item hold several widgets or backgrounds.
 - In the dialog, a subdialog with `suffix=".2"` opens a child on the same menu with that `property_suffix`. A property button with `suffix="true"` appends it to its property name and its `requires` check. Fallback rules, context menu rows and a suffixed button's options suffix their conditions too (`suffix_condition`).
-- In templates, an output with a suffix applies it to every condition (`suffix_condition`) and every `from` source (`suffix_property`) the template reads. Built-in names (`NO_SUFFIX_PROPERTIES` in conditions.py), names that already carry a slot, and `{NOSUFFIX:...}` content from a `nosuffix` expression stay as written.
+- In templates, an output with a suffix applies it to every condition (`suffix_condition`) and every `from` source (`suffix_property`) the template reads. Built-in names (`NO_SUFFIX_PROPERTIES` in conditions.py), names that already carry a slot, and `{NOSUFFIX:...}` content from a `noSuffix` expression stay as written.
 - `slot_suffixes` lists the slots an item holds; custom widget includes and `<value iterate>` use it.
 
 Skinner view: [Suffix Transforms](../skinning/properties.md#suffix-transforms).

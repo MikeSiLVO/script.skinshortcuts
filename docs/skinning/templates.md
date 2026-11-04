@@ -27,7 +27,7 @@ The `templates.xml` file defines how the script generates include files. Templat
 * [Includes](#includes)
 * [Submenus](#submenus)
 * [Conditions](#conditions)
-* [templateonly Attribute](#templateonly-attribute)
+* [templateOnly Attribute](#templateonly-attribute)
 * [Complete Example](#complete-example)
 
 ---
@@ -90,7 +90,7 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 ## Template Element
 
 ```xml
-<template include="MainMenu" idprefix="menu">
+<template include="MainMenu" idPrefix="menu">
   <condition>...</condition>
   <property name="style" from="widgetStyle" />
   <var name="aspect">...</var>
@@ -107,9 +107,9 @@ Without `templates.xml`, the script generates basic includes with menu items as 
 |-----------|----------|---------|-------------|
 | `include` | Unless `<output>` used | - | Output include name (`skinshortcuts-template-{include}`) |
 | `build` | No | `menu` | Build mode: `menu` or `true` |
-| `idprefix` | No | - | Prefix for computed control IDs |
+| `idPrefix` | No | - | Prefix for computed control IDs |
 | `menu` | No | (all menus) | Restrict the template to a single menu by name (e.g. `mainmenu`). When omitted, the template runs against every menu. |
-| `templateonly` | No | - | Skip include generation: `true` (always) or `auto` (if unassigned) |
+| `templateOnly` | No | - | Skip include generation: `true` (always) or `auto` (if unassigned) |
 
 ---
 
@@ -121,8 +121,8 @@ A single template can generate multiple outputs with different ID prefixes and s
 
 ```xml
 <template>
-  <output include="widget1" idprefix="8011" />
-  <output include="widget2" idprefix="8021" suffix=".2" />
+  <output include="widget1" idPrefix="8011" />
+  <output include="widget2" idPrefix="8021" suffix=".2" />
   <condition>widgetPath</condition>
 
   <propertyGroup content="widgetProps" />
@@ -142,7 +142,7 @@ A single template can generate multiple outputs with different ID prefixes and s
 | Attribute | Required | Description |
 |-----------|----------|-------------|
 | `include` | Yes | Output include name (`skinshortcuts-template-{include}`) |
-| `idprefix` | No | ID prefix for this output |
+| `idPrefix` | No | ID prefix for this output |
 | `suffix` | No | Suffix for property transforms (e.g., `.2`) |
 
 ### Suffix Transform
@@ -188,12 +188,12 @@ Multi-output eliminates the need for separate templates per widget slot. Instead
 
 ```xml
 <!-- OLD: Duplicate templates -->
-<template include="widget1" idprefix="8011">
+<template include="widget1" idPrefix="8011">
   <condition>widgetPath</condition>
   <!-- 200 lines of controls -->
 </template>
 
-<template include="widget2" idprefix="8021">
+<template include="widget2" idPrefix="8021">
   <condition>widgetPath.2</condition>
   <!-- Same 200 lines duplicated -->
 </template>
@@ -204,8 +204,8 @@ Use a single template with multiple outputs:
 ```xml
 <!-- NEW: Single template, multiple outputs -->
 <template>
-  <output include="widget1" idprefix="8011" />
-  <output include="widget2" idprefix="8021" suffix=".2" />
+  <output include="widget1" idPrefix="8011" />
+  <output include="widget2" idPrefix="8021" suffix=".2" />
   <condition>widgetPath</condition>
   <!-- 200 lines, only once -->
 </template>
@@ -378,7 +378,7 @@ These are special values available in `from` attributes and `$PROPERTY[]`:
 | `index` | Current item index (1-based) |
 | `name` | Item name identifier |
 | `menu` | Parent menu name |
-| `idprefix` | The template's idprefix value |
+| `idprefix` | The template's idPrefix value |
 | `id` | Computed ID: `{idprefix}{index}` |
 | `suffix` | Output suffix (e.g., `.2`) or empty string if none |
 
@@ -934,7 +934,7 @@ the same properties; they need no entry in widgets.xml, which is only what the p
 
 ```xml
 <dialogs>
-  <subdialog buttonID="406" mode="widgets" setfocus="309">
+  <subdialog buttonID="406" mode="widgets" setFocus="309">
     <onclose action="menu" menu="{item}.widgets" />
   </subdialog>
 </dialogs>
@@ -1301,12 +1301,12 @@ An expression expands as a single bracketed term, so it can be compounded or neg
 
 Because the expansion is its own group, a compact value list inside an expression has to name its property: `widgetType=movies | episodes` works, while a bare `movies | episodes` will not pick up `widgetType` from the condition referencing it.
 
-### The `nosuffix` Attribute
+### The `noSuffix` Attribute
 
-By default, property names inside an expression are suffix-transformed under a suffixed output or reference (e.g. in a `suffix=".2"` output, `widgetArt` becomes `widgetArt.2`). Set `nosuffix="true"` to keep the expression fixed so its property names are never suffixed:
+By default, property names inside an expression are suffix-transformed under a suffixed output or reference (e.g. in a `suffix=".2"` output, `widgetArt` becomes `widgetArt.2`). Set `noSuffix="true"` to keep the expression fixed so its property names are never suffixed:
 
 ```xml
-<expression name="GlobalToggle" nosuffix="true">someGlobalProp</expression>
+<expression name="GlobalToggle" noSuffix="true">someGlobalProp</expression>
 ```
 
 ---
@@ -1390,18 +1390,18 @@ See [Conditions](conditions.md) for full syntax reference.
 
 ---
 
-## templateonly Attribute
+## templateOnly Attribute
 
 Control include file generation:
 
 ```xml
 <!-- Never generate this include (internal use only) -->
-<template include="InternalHelper" templateonly="true">
+<template include="InternalHelper" templateOnly="true">
   ...
 </template>
 
 <!-- Skip if not assigned to any menu item -->
-<template include="MovieWidgets" templateonly="auto">
+<template include="MovieWidgets" templateOnly="auto">
   <condition>widgetType=movies</condition>
   ...
 </template>
@@ -1423,7 +1423,7 @@ The `auto` setting checks if any menu item has a property containing a reference
 </widget>
 ```
 
-When a user assigns this widget to a menu item, the `widgetPath` property contains `$INCLUDE[skinshortcuts-template-MovieWidgets]`. The builder detects this and marks the `MovieWidgets` template as "assigned", so it won't be skipped when `templateonly="auto"` is set.
+When a user assigns this widget to a menu item, the `widgetPath` property contains `$INCLUDE[skinshortcuts-template-MovieWidgets]`. The builder detects this and marks the `MovieWidgets` template as "assigned", so it won't be skipped when `templateOnly="auto"` is set.
 
 Templates using this pattern generate custom item lists where the template output becomes the widget content.
 
@@ -1461,7 +1461,7 @@ When `$INCLUDE[...]` appears as text content in an element (e.g., after `$PROPER
     </propertyGroup>
   </propertyGroups>
 
-  <template include="MainMenu" idprefix="menu">
+  <template include="MainMenu" idPrefix="menu">
     <property name="label" from="label" />
     <property name="action" from="path" />
     <propertyGroup content="widget" />

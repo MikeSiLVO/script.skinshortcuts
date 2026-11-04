@@ -45,7 +45,7 @@ Menu items in the generated includes have properties accessible via `ListItem.Pr
 
 Setting a `<property>` on an item using one of these names replaces the built-in value rather than adding a second entry. This also covers `submenuVisibility` and `hasSubmenu`.
 
-A `controltype` menu emits no `<property>` entries at all, so `id`, `name`, `menu`, `action`, `path` and `submenuVisibility` are absent there, and `icon` is left out as well. `label`, `label2`, `thumb`, `visible` and the actions are still written.
+A `controlType` menu emits no `<property>` entries at all, so `id`, `name`, `menu`, `action`, `path` and `submenuVisibility` are absent there, and `icon` is left out as well. `label`, `label2`, `thumb`, `visible` and the actions are still written.
 
 ### Usage
 
@@ -139,10 +139,10 @@ With `submenuPath="all"`, the widget count is the highest filled slot: an item w
   <menu name="mainmenu" submenuPath="all">   <!-- every widget submenu under this menu -->
 ```
 
-Custom widget content submenus do not produce `submenuPath`. To drop the property, declare it `templateonly` in `properties.xml`:
+Custom widget content submenus do not produce `submenuPath`. To drop the property, declare it `templateOnly` in `properties.xml`:
 
 ```xml
-<property name="submenuPath" templateonly="true" />
+<property name="submenuPath" templateOnly="true" />
 ```
 
 ---
@@ -238,7 +238,7 @@ Templates can define additional properties for output.
 
 ```xml
 <!-- templates.xml -->
-<template include="MainMenu" idprefix="menu">
+<template include="MainMenu" idPrefix="menu">
   <property name="id" from="id" />
   <property name="index" from="index" />
   <property name="focusCondition">Container(9000).HasFocus($PROPERTY[index])</property>
@@ -262,7 +262,7 @@ Templates can define additional properties for output.
 | `name` | Item name |
 | `menu` | Name of the menu holding the item |
 | `index` | One-based item index |
-| `idprefix` | The template's `idprefix` value |
+| `idprefix` | The template's `idPrefix` value |
 | `id` | Computed ID (`{idprefix}{index}`) |
 | `suffix` | Output suffix (e.g. `.2`), empty when the output has none |
 | `submenuVisibility` | The item's own name, for building a submenu visibility condition |

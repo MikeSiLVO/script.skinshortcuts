@@ -81,7 +81,7 @@ The includes file has an `<includes>` root holding, in this order:
 
 | Element | Source | Content |
 |---------|--------|---------|
-| `skinshortcuts-{menu}` | `IncludesBuilder` | One entry per enabled item of a root menu, an `<item>` or a `<control>` when the menu sets `controltype` |
+| `skinshortcuts-{menu}` | `IncludesBuilder` | One entry per enabled item of a root menu, an `<item>` or a `<control>` when the menu sets `controlType` |
 | `skinshortcuts-{menu}-submenu` | `IncludesBuilder` | Every enabled item of the menu's per-item submenus, each with a `parent` property |
 | `skinshortcuts-{item}-customwidget`, `skinshortcuts-{item}-customwidget{N}` | `IncludesBuilder` | The custom widget menu in the item's base slot or slot N |
 | `skinshortcuts-{template}` | `IncludesBuilder` | Items of a menus.xml `<submenu>` template, taken from the first non-empty per-item instance seeded from it; left out with `standalone="false"` |

@@ -25,13 +25,13 @@ The element names and their order in the file are in [FORMATS.md](../FORMATS.md#
 
 `_build_item` writes one entry per enabled item:
 
-- `id` counts from 1, or from the menu's `id` attribute for a `controltype` menu. Disabled items are skipped but still counted, so ids can have gaps.
-- `label`, `label2`, `icon` and `thumb`. `icon` is left out for a `controltype` menu or one with `icons="false"`.
+- `id` counts from 1, or from the menu's `id` attribute for a `controlType` menu. Disabled items are skipped but still counted, so ids can have gaps.
+- `label`, `label2`, `icon` and `thumb`. `icon` is left out for a `controlType` menu or one with `icons="false"`.
 - Include references from the menu defaults and the item, placed before or after the `<onclick>` elements by where they sat relative to the actions in menus.xml.
 - `<onclick>` elements in this order: `before` default actions, the item's conditional actions, its unconditional actions, `after` default actions. Each keeps its condition.
 - The item's `<visible>` condition.
-- For `<item>` output, properties: the built-ins `id`, `name`, `menu`, `action`, `path`, `submenuVisibility`, and `hasSubmenu` when the item's per-item submenu has items; then the menu's default properties under the item's own, and `submenuPath`. `menu` holds the template name for a per-item instance. Properties properties.xml marks `templateonly`, with their numbered slots, stay out of the menu include but still reach the template builder. Empty values are never written.
-- A `<control>` entry, for a menu with `controltype`, carries no properties.
+- For `<item>` output, properties: the built-ins `id`, `name`, `menu`, `action`, `path`, `submenuVisibility`, and `hasSubmenu` when the item's per-item submenu has items; then the menu's default properties under the item's own, and `submenuPath`. `menu` holds the template name for a per-item instance. Properties properties.xml marks `templateOnly`, with their numbered slots, stay out of the menu include but still reach the template builder. Empty values are never written.
+- A `<control>` entry, for a menu with `controlType`, carries no properties.
 
 Entries in `skinshortcuts-{menu}-submenu` also get a `parent` property, and when the root menu has a `container`, a visibility test against that container's selected item, ANDed with the entry's own `<visible>`.
 

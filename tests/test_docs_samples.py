@@ -122,12 +122,12 @@ def test_conditional_item_actions(tmp_path: Path) -> None:
 
 
 def test_context_menu_sample(tmp_path: Path) -> None:
-
+    """Migration guide's context menu sample loads its enableOn ids and rows."""
     from skinshortcuts.loaders.menu import load_menus
     path = write(
         tmp_path,
         "menus.xml",
-        f"<menus>\n{block_with(MIGRATION, '<contextmenu enableon="211">')}\n</menus>\n",
+        f"<menus>\n{block_with(MIGRATION, '<contextmenu enableOn="211">')}\n</menus>\n",
     )
     context = load_menus(path).context_menu
     assert context.enabled

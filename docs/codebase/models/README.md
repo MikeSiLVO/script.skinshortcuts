@@ -33,5 +33,5 @@ Dataclasses for everything the config files describe, plus the `BuildMode` and `
 
 - `PropertySchema.get_property` matches names ignoring case, and `declared_name` returns the spelling properties.xml uses.
 - `TemplateSchema` holds the named pieces (expressions, presets, presetGroups, propertyGroups, includes, variables, variableGroups, items templates) in dicts with a `get_*` per kind, and `templates` and `submenus` as lists.
-- `Template.get_outputs` gives the declared outputs, or one output built from `include` and `idprefix`.
+- `Template.get_outputs` gives the declared outputs, or one output built from `include` and `idPrefix`.
 - `ViewContent.get_default` gives the plugin default for plugin content when the rule sets one, else the library default.

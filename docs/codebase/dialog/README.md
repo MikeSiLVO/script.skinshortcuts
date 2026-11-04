@@ -35,7 +35,7 @@ A child is another `ManagementDialog` (`_run_child_dialog`) that receives the pa
 - `is_child` is true for any dialog given a manager. Only the root saves, on close; a child's edits sit in the shared manager until then.
 - While a child is open the parent sets the window property `additionalDialog`, and when the last child closes it mirrors its own dialog mode and suffix back to Home.
 - Submenu editing opens the item's per-item submenu, in mode `widgets` when the linked template is a widgets menu.
-- A subdialog with a `mode` opens a child on the same menu with that mode, its `suffix` as `property_suffix`, its `setfocus`, and the selected row pinned (`selected_index`), so list 212 shows the item being edited. Deleting that item closes the child. When the child closes, the first `menu` onclose action whose condition holds opens that menu.
+- A subdialog with a `mode` opens a child on the same menu with that mode, its `suffix` as `property_suffix`, its `setFocus`, and the selected row pinned (`selected_index`), so list 212 shows the item being edited. Deleting that item closes the child. When the child closes, the first `menu` onclose action whose condition holds opens that menu.
 - A subdialog with a `menu` and no `mode` opens that menu directly.
 - A menu opened by an onclose action or a `menu`-only subdialog runs in mode `custom-` plus the subdialog's mode, or `customwidget` when the subdialog has none.
 - Every dialog mirrors its mode and suffix to Home (`skinshortcuts-dialog`, `skinshortcuts-suffix`), so a Kodi dialog opened over it can read them.

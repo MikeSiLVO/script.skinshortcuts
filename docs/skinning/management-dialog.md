@@ -148,12 +148,12 @@ These aren't built-in. Define button mappings in your `properties.xml`.
 
 ## Context Menu
 
-The context action opens a menu of actions for the item selected in control 211. It fires anywhere in the dialog unless `enableon` limits it to specific controls. It also works in subdialogs, where it acts on the item the subdialog was opened for, so an `enableon` list has to include the controls a subdialog focuses or the menu is unreachable there.
+The context action opens a menu of actions for the item selected in control 211. It fires anywhere in the dialog unless `enableOn` limits it to specific controls. It also works in subdialogs, where it acts on the item the subdialog was opened for, so an `enableOn` list has to include the controls a subdialog focuses or the menu is unreachable there.
 
 Rows are declared in `menus.xml` and reference the button IDs above, so a row can trigger a button your dialog XML never draws:
 
 ```xml
-<contextmenu enableon="211">
+<contextmenu enableOn="211">
   <button id="305" label="$ADDON[script.skinshortcuts 32171]" />
   <button id="302" label="$LOCALIZE[117]" />
 </contextmenu>
@@ -414,8 +414,8 @@ In `menus.xml`:
 
 ```xml
 <dialogs>
-  <subdialog buttonID="800" mode="widget1" setfocus="309" />
-  <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2">
+  <subdialog buttonID="800" mode="widget1" setFocus="309" />
+  <subdialog buttonID="801" mode="widget2" setFocus="309" suffix=".2">
     <onclose condition="widgetType.2=custom" action="menu" menu="{customWidget.2}" />
   </subdialog>
   <!-- Direct menu opening (no mode change) -->

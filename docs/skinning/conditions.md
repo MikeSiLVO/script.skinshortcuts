@@ -441,8 +441,8 @@ For multi-widget support, templates can define multiple outputs with different s
 
 ```xml
 <template name="Widgets">
-  <output include="widget1" idprefix="8011" />
-  <output include="widget2" idprefix="8021" suffix=".2" />
+  <output include="widget1" idPrefix="8011" />
+  <output include="widget2" idPrefix="8021" suffix=".2" />
   ...
 </template>
 ```

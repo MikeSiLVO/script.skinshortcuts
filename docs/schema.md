@@ -2,6 +2,8 @@
 
 Quick reference for all XML configuration files. For detailed documentation, see the [skinning docs](skinning/).
 
+The script's camelCase names, such as `controlType` and `propertyGroup`, match in any case. Every other element and attribute name is written as shown.
+
 ***
 
 ## File Overview
@@ -100,13 +102,13 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
   </overrides>
 
   <dialogs>
-    <subdialog buttonID="800" mode="widget1" setfocus="309">
+    <subdialog buttonID="800" mode="widget1" setFocus="309">
       <onclose action="menu" menu="{customWidget}" condition="widgetType=custom" />
     </subdialog>
-    <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2" />
+    <subdialog buttonID="801" mode="widget2" setFocus="309" suffix=".2" />
   </dialogs>
 
-  <contextmenu enableon="211,212">
+  <contextmenu enableOn="211,212">
     <button id="305" label="$ADDON[script.skinshortcuts 32171]" />
     <button id="302" label="$LOCALIZE[117]" />
   </contextmenu>
@@ -120,8 +122,8 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 | Element | Parent | Required Attributes | Optional Attributes | Description |
 |---------|--------|---------------------|---------------------|-------------|
 | `<menus>` | - | - | - | Root element |
-| `<menu>` | menus | `name` | `container`, `type`, `controltype`, `id`, `icons`, `build`, `templateOnly`, `action`, `submenuPath` | Main menu definition. `type="widgets"` marks a widget submenu; `controltype` wraps items in `<control type="...">`; `id` sets the start control ID (requires `controltype`); `icons="false"` omits `<icon>` from the output; `build="auto"` only emits the menu if its action is assigned; `templateOnly="submenu"` skips the combined submenu include; `submenuPath="all"` emits the numbered `submenuPath.N` tail for widget submenus under this menu |
-| `<submenu>` | menus | `name` | `container`, `standalone`, `type`, `controltype`, `id`, `icons` | Submenu definition (built when referenced). `standalone="false"` skips the per-template `skinshortcuts-{name}` include. `type="widgets"` marks a widget submenu; `controltype` wraps items in `<control type="...">`; `id` sets the start control ID (requires `controltype`); `icons="false"` omits `<icon>` from the output. `build`, `action` and `templateOnly` are read but only act on `<menu>` |
+| `<menu>` | menus | `name` | `container`, `type`, `controlType`, `id`, `icons`, `build`, `templateOnly`, `action`, `submenuPath` | Main menu definition. `type="widgets"` marks a widget submenu; `controlType` wraps items in `<control type="...">`; `id` sets the start control ID (requires `controlType`); `icons="false"` omits `<icon>` from the output; `build="auto"` only emits the menu if its action is assigned; `templateOnly="submenu"` skips the combined submenu include; `submenuPath="all"` emits the numbered `submenuPath.N` tail for widget submenus under this menu |
+| `<submenu>` | menus | `name` | `container`, `standalone`, `type`, `controlType`, `id`, `icons` | Submenu definition (built when referenced). `standalone="false"` skips the per-template `skinshortcuts-{name}` include. `type="widgets"` marks a widget submenu; `controlType` wraps items in `<control type="...">`; `id` sets the start control ID (requires `controlType`); `icons="false"` omits `<icon>` from the output. `build`, `action` and `templateOnly` are read but only act on `<menu>` |
 | `<allow>` | menu/submenu | - | `widgets`, `backgrounds`, `submenus` | Feature toggles for dialog |
 | `<defaults>` | menu/submenu | - | `widget`, `background` | Default settings for items |
 | `<action>` | defaults | - | `when`, `condition` | Default action (before/after) |
@@ -151,9 +153,9 @@ Defines menu structure, shortcut picker groupings, icon sources, and action over
 | `<source>` | overrides/icons | - | - | Override source folder; may be a Kodi expression |
 | `<icon>` | overrides/icons | `replace` | - | Replacement icon path (relative to active source) |
 | `<dialogs>` | menus | - | - | Subdialog definitions |
-| `<subdialog>` | dialogs | `buttonID` | `mode`, `menu`, `setfocus`, `suffix` | Subdialog mapping; requires at least one of `mode`, `menu`, or an `<onclose>`. `menu` (without `mode`) opens that menu directly |
+| `<subdialog>` | dialogs | `buttonID` | `mode`, `menu`, `setFocus`, `suffix` | Subdialog mapping; requires at least one of `mode`, `menu`, or an `<onclose>`. `menu` (without `mode`) opens that menu directly |
 | `<onclose>` | subdialog | `action` | `menu`, `condition` | Action when subdialog closes |
-| `<contextmenu>` | menus | - | `enableon` | Context menu settings. Text `false` disables it; `enableon` is a comma separated list of control IDs the context action fires on (default: anywhere) |
+| `<contextmenu>` | menus | - | `enableOn` | Context menu settings. Text `false` disables it; `enableOn` is a comma separated list of control IDs the context action fires on (default: anywhere) |
 | `<button>` | contextmenu | `id` | `label`, `condition`, `visible` | Context menu row; clicking it clicks that dialog button. `label` defaults to the script's own label for built-in button IDs. Without any `<button>`, the built-in rows are shown |
 | `<submenuPath>` | menus | - | - | `all` emits the numbered `submenuPath.N` tail for every widget submenu (global default; per-menu form is the `submenuPath` attribute on `<menu>`) |
 
@@ -359,7 +361,7 @@ Defines property schemas, button mappings, and fallback values.
     </include>
   </includes>
 
-  <property name="widgetStyle" type="options" requires="widget" templateonly="false">
+  <property name="widgetStyle" type="options" requires="widget" templateOnly="false">
     <options>
       <option value="Panel" label="Panel" condition="..." />
       <option value="Wide" label="Wide" />
@@ -400,7 +402,7 @@ Defines property schemas, button mappings, and fallback values.
 | `<includes>` | properties | - | - | Reusable definitions |
 | `<include>` | includes | `name` | - | Include definition |
 | `<include/>` | options/fallback | `content` | `suffix` | Include reference |
-| `<property>` | properties | `name` | `type`, `value`, `requires`, `templateonly` | Property definition |
+| `<property>` | properties | `name` | `type`, `value`, `requires`, `templateOnly` | Property definition |
 | `<options>` | property | - | - | Option container |
 | `<option>` | options/include | `value`, `label` | `condition` | Option value |
 | `<icon>` | option | - | `condition` | Option icon (multiple allowed) |
@@ -433,8 +435,8 @@ Defines templates for generating skin includes. For detailed documentation, see 
 <templates>
   <!-- Named expressions -->
   <expressions>
-    <expression name="HasWidget" nosuffix="false">widgetPath</expression>
-    <expression name="WidgetContainer" nosuffix="true">9000</expression>
+    <expression name="HasWidget" noSuffix="false">widgetPath</expression>
+    <expression name="WidgetContainer" noSuffix="true">9000</expression>
   </expressions>
 
   <!-- Lookup tables -->
@@ -481,7 +483,7 @@ Defines templates for generating skin includes. For detailed documentation, see 
   </variables>
 
   <!-- Template with single output -->
-  <template include="MainMenu" idprefix="80" build="menu" menu="mainmenu" templateonly="auto">
+  <template include="MainMenu" idPrefix="80" build="menu" menu="mainmenu" templateOnly="auto">
     <condition>widgetType</condition>
     <property name="style" from="widgetStyle" condition="..." />
     <property name="staticValue">100</property>
@@ -534,8 +536,8 @@ Defines templates for generating skin includes. For detailed documentation, see 
 
   <!-- Template with multiple outputs -->
   <template>
-    <output include="widget1" idprefix="8011" />
-    <output include="widget2" idprefix="8021" suffix=".2" />
+    <output include="widget1" idPrefix="8011" />
+    <output include="widget2" idPrefix="8021" suffix=".2" />
     <condition>widgetPath</condition>
     <controls>...</controls>
   </template>
@@ -561,7 +563,7 @@ Defines templates for generating skin includes. For detailed documentation, see 
 |---------|--------|---------------------|---------------------|-------------|
 | `<templates>` | - | - | - | Root element |
 | `<expressions>` | templates | - | - | Named expression definitions |
-| `<expression>` | expressions | `name` | `nosuffix` | Reusable expression |
+| `<expression>` | expressions | `name` | `noSuffix` | Reusable expression |
 | `<presets>` | templates | - | - | Preset lookup tables |
 | `<preset>` | presets | `name` | - | Preset with conditional values |
 | `<values>` | preset | - | `condition`, *attributes* | Preset row with attribute values |
@@ -579,9 +581,9 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `<value>` | variable | - | `condition` | Variable value |
 | `<variableGroup>` | variables | `name` | - | Variable group definition |
 | `<variableGroup/>` | variableGroup | `content` | - | Nested group reference |
-| `<template>` | templates | - | `include`, `build`, `idprefix`, `templateonly`, `menu` | Template definition |
+| `<template>` | templates | - | `include`, `build`, `idPrefix`, `templateOnly`, `menu` | Template definition |
 | `<template items="...">` | templates | `items` | `source`, `filter` | Items-template variant: iteration body inserted at `<skinshortcuts insert="..."/>` markers; `source` selects the `{item}.source` submenu (defaults to the `items` value), `filter` is a per-subitem condition |
-| `<output>` | template | `include` | `idprefix`, `suffix` | Multi-output target |
+| `<output>` | template | `include` | `idPrefix`, `suffix` | Multi-output target |
 | `<condition>` | template | - | - | Template condition (ANDed) |
 | `<property>` | template/propertyGroup/items/submenu | `name` | `from`, `condition` | Property definition |
 | `<var>` | template/propertyGroup/items/submenu | `name` | - | Conditional variable |
@@ -642,7 +644,7 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `index` | Item index (1-based) |
 | `name` | Item name identifier |
 | `menu` | Parent menu name |
-| `idprefix` | Template's idprefix value |
+| `idprefix` | Template's idPrefix value |
 | `id` | Computed ID: `{idprefix}{index}` |
 | `suffix` | Output suffix (e.g., `.2`) or empty |
 | `label` | Item label |

@@ -412,8 +412,8 @@ Configure via [subdialogs](menus.md#subdialogs) in `menus.xml`:
 
 ```xml
 <dialogs>
-  <subdialog buttonID="800" mode="widget1" setfocus="309" />
-  <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2" />
+  <subdialog buttonID="800" mode="widget1" setFocus="309" />
+  <subdialog buttonID="801" mode="widget2" setFocus="309" suffix=".2" />
 </dialogs>
 ```
 
@@ -479,7 +479,7 @@ A widget submenu tied to a parent menu item via the subdialog system:
 </submenu>
 
 <dialogs>
-  <subdialog buttonID="406" mode="widgets" setfocus="309">
+  <subdialog buttonID="406" mode="widgets" setFocus="309">
     <onclose action="menu" menu="{item}.widgets" />
   </subdialog>
 </dialogs>
@@ -598,8 +598,8 @@ For additional widget slots, use [subdialogs](menus.md#subdialogs) with a suffix
 ```xml
 <!-- menus.xml -->
 <dialogs>
-  <subdialog buttonID="800" mode="widget1" setfocus="309" />
-  <subdialog buttonID="801" mode="widget2" setfocus="309" suffix=".2" />
+  <subdialog buttonID="800" mode="widget1" setFocus="309" />
+  <subdialog buttonID="801" mode="widget2" setFocus="309" suffix=".2" />
 </dialogs>
 ```
 

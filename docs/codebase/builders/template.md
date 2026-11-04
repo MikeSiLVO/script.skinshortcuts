@@ -6,11 +6,11 @@
 
 `TemplateBuilder.build`:
 
-1. For each `<template>` and each of its outputs (`Template.get_outputs`: the declared outputs, else one from `include` and `idprefix`), it gets or creates the include `skinshortcuts-template-{include}`. Outputs that share a name build into the same include.
+1. For each `<template>` and each of its outputs (`Template.get_outputs`: the declared outputs, else one from `include` and `idPrefix`), it gets or creates the include `skinshortcuts-template-{include}`. Outputs that share a name build into the same include.
 2. A raw template (`build="true"`) builds through `_build_raw_template`, every other one through `_build_template_into`.
 3. Each templates.xml `<submenu>` builds into `skinshortcuts-{include}` (`_build_submenu_template`).
 4. Every fixed variable name a template declares, directly or through a variableGroup, gets an empty placeholder variable when no item built it (`_add_placeholder_variables`), so a skin naming it still resolves.
-5. Variables are emitted first, then includes. Includes from a `templateonly="true"` template are left out, as are `templateonly="auto"` ones no menu item property assigns with `$INCLUDE[skinshortcuts-template-{include}]`. An include that ends up empty gets a `<description>` saying no items matched.
+5. Variables are emitted first, then includes. Includes from a `templateOnly="true"` template are left out, as are `templateOnly="auto"` ones no menu item property assigns with `$INCLUDE[skinshortcuts-template-{include}]`. An include that ends up empty gets a `<description>` saying no items matched.
 
 ## Menu templates
 
