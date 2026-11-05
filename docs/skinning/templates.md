@@ -155,6 +155,18 @@ When `suffix=".2"` is specified on an output:
 
 These names never take the suffix: `name`, `label`, `disabled`, `default`, `menu`, `index`, `id`, `idPrefix`, `suffix`.
 
+A property the template sets itself, such as one from a `<property>` or `<propertyGroup>`, already holds that output's value, so conditions read its name as written:
+
+```xml
+<property name="aspect" condition="widgetArt=Poster">stretch</property>
+<property name="aspect">scale</property>
+<controls>
+  <skinshortcuts include="PosterLayout" condition="aspect=stretch" />
+</controls>
+```
+
+In the `.2` output, `aspect` is worked out from `widgetArt.2`, and the marker tests that result.
+
 ### The `suffix` Built-in Property
 
 Within template controls, you can check the current output's suffix:

@@ -564,20 +564,19 @@ class TemplateBuilder:
 
         self._apply_fallbacks(item, context)
 
-        # First match wins for same-named properties
         resolved_props: set[str] = set()
         for prop in template.properties:
             if prop.name in resolved_props:
                 continue
             value = self._resolve_property(prop, item, context, output.suffix)
             if value is not None:
-                context[prop.name] = value
+                self._set_template_value(context, prop.name, value)
                 resolved_props.add(prop.name)
 
         for var in template.vars:
             value = self._resolve_var(var, item, context, output.suffix)
             if value is not None:
-                context[var.name] = value
+                self._set_template_value(context, var.name, value)
 
         for ref in template.preset_refs:
             effective_suffix = self._combine_suffixes(output.suffix, ref.suffix)
@@ -989,12 +988,12 @@ class TemplateBuilder:
                 continue
             resolved_props.add(prop.name)
             if from_source or prop.name not in context:
-                context[prop.name] = value
+                self._set_template_value(context, prop.name, value)
 
         for var in prop_group.vars:
             value = self._resolve_var(var, item, context, suffix)
             if value is not None:
-                context[var.name] = value
+                self._set_template_value(context, var.name, value)
 
     def _apply_preset(
         self,
@@ -1003,7 +1002,7 @@ class TemplateBuilder:
         context: dict[str, str],
         override_suffix: str = "",
     ) -> None:
-        """Apply preset values as properties, a suffix hitting conditions not the preset name."""
+        """Apply preset values to unset properties, suffixing conditions but not the preset name."""
         preset = self.schema.get_preset(ref.name)
         if not preset:
             return
@@ -1018,12 +1017,12 @@ class TemplateBuilder:
                 if self._eval_condition(condition, item, context):
                     for attr_name, attr_value in row.values.items():
                         if attr_name not in context:
-                            context[attr_name] = attr_value
+                            self._set_template_value(context, attr_name, attr_value)
                     return
             else:
                 for attr_name, attr_value in row.values.items():
                     if attr_name not in context:
-                        context[attr_name] = attr_value
+                        self._set_template_value(context, attr_name, attr_value)
                 return
 
     def _apply_preset_group(
@@ -1055,13 +1054,20 @@ class TemplateBuilder:
                     if values:
                         for attr_name, attr_value in values.items():
                             if attr_name not in context:
-                                context[attr_name] = attr_value
+                                self._set_template_value(context, attr_name, attr_value)
                         return
             elif child.values:
                 for attr_name, attr_value in child.values.items():
                     if attr_name not in context:
-                        context[attr_name] = attr_value
+                        self._set_template_value(context, attr_name, attr_value)
                 return
+
+    def _set_template_value(self, context: dict[str, str], name: str, value: str) -> None:
+        """Set a template-computed property, also under the output's suffix for its conditions."""
+        context[name] = value
+        slot_name = suffix_property(name, context.get("suffix", ""))
+        if slot_name != name:
+            context[slot_name] = value
 
     def _get_preset_values(
         self,
@@ -1276,7 +1282,7 @@ class TemplateBuilder:
         menu: Menu,
         variable_map: dict[str, ET.Element] | None = None,
     ) -> None:
-        """Recursively process an element, applying substitutions."""
+        """Recursively process an element, resolving markers and applying substitutions."""
         if elem.tag == "skinshortcuts":
             if elem.text and elem.text.strip() == "visibility":
                 if menu.container:
@@ -1295,7 +1301,9 @@ class TemplateBuilder:
                 elem.text = ""
             include_name = elem.get("include")
             if include_name:
-                condition = elem.get("condition")
+                condition = suffix_condition(
+                    self._expand_expressions(elem.get("condition", "")), context["suffix"]
+                )
                 if condition and not self._eval_condition(condition, item, context):
                     elem.set("_skinshortcuts_remove", "true")
                     elem.attrib.pop("include", None)
