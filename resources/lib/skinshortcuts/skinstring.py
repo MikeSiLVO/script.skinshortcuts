@@ -12,6 +12,7 @@ try:
 except ImportError:
     IN_KODI = False
 
+from .constants import MENUS_FILE, WIDGETS_FILE
 from .dialog.pickers import PickersMixin
 from .loaders.menu import load_menus
 from .loaders.widget import load_widgets
@@ -60,8 +61,8 @@ def pick_widget_skinstring(shortcuts_path: str, params: dict[str, str]) -> None:
     if not IN_KODI:
         return
 
-    widget_config = load_widgets(Path(shortcuts_path) / "widgets.xml")
-    menu_config = load_menus(Path(shortcuts_path) / "menus.xml")
+    widget_config = load_widgets(Path(shortcuts_path) / WIDGETS_FILE)
+    menu_config = load_menus(Path(shortcuts_path) / MENUS_FILE)
     picker = _StandalonePicker(shortcuts_path, menu_config.icon_overrides)
 
     if not widget_config.groupings:

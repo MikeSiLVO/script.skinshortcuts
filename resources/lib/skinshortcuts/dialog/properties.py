@@ -18,7 +18,7 @@ except ImportError:
 
 
 from ..conditions import check_visible, evaluate_condition, lookup, suffix_condition
-from ..constants import BACKGROUND_SIBLINGS, WIDGET_EXTRAS, WIDGET_SIBLINGS
+from ..constants import BACKGROUND_SIBLINGS, WIDGET_EXTRAS, WIDGET_SIBLINGS, WIDGETS_FILE
 from ..loaders.widget import load_widgets
 from ..localize import LANGUAGE, resolve_label
 from ..models.background import Background, BackgroundType, PlaylistSource
@@ -191,7 +191,7 @@ class PropertiesMixin:
 
         prefix = prop_name
         slot = prefix
-        widgets_path = Path(self.shortcuts_path) / "widgets.xml"
+        widgets_path = Path(self.shortcuts_path) / WIDGETS_FILE
         widget_config = load_widgets(widgets_path)
 
         if not widget_config.groupings:

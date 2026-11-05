@@ -19,6 +19,7 @@ except ImportError:
 
 from ..constants import (
     ADDONS_SOURCE_MAP,
+    MENUS_FILE,
     TARGET_MAP,
     WINDOW_MAP,
     extract_path_from_action,
@@ -259,7 +260,7 @@ class PickersMixin:
         if not item:
             return
 
-        menus_path = Path(self.shortcuts_path) / "menus.xml"
+        menus_path = Path(self.shortcuts_path) / MENUS_FILE
         groups = load_groupings(menus_path, self.menu_id)
 
         if not groups:

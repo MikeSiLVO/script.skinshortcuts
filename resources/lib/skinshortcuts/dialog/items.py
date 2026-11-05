@@ -14,6 +14,7 @@ except ImportError:
     IN_KODI = False
 
 from ..conditions import evaluate_condition, suffix_condition
+from ..constants import WIDGETS_FILE
 from ..localize import LANGUAGE, number_label, resolve_label
 from ..models.background import BrowseSource
 from ..models.menu import Action, ContextMenu, ContextMenuButton, IconSource, MenuItem
@@ -146,7 +147,7 @@ class ItemsMixin:
 
         from ..loaders.widget import load_widgets
 
-        widgets_path = Path(self.shortcuts_path) / "widgets.xml"
+        widgets_path = Path(self.shortcuts_path) / WIDGETS_FILE
         widget_config = load_widgets(widgets_path)
 
         item = self._get_selected_item()

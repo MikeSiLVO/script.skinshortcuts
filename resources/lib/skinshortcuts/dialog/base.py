@@ -13,7 +13,12 @@ try:
 except ImportError:
     IN_KODI = False
 
-from ..constants import extract_path_from_action, get_shortcuts_path
+from ..constants import (
+    MENUS_FILE,
+    PROPERTIES_FILE,
+    extract_path_from_action,
+    get_shortcuts_path,
+)
 from ..conditions import evaluate_condition, suffix_condition
 from ..exceptions import ConfigError
 from ..loaders.menu import load_menus
@@ -196,7 +201,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
             if self._shared_schema:
                 self.property_schema = self._shared_schema
             else:
-                schema_path = Path(self.shortcuts_path) / "properties.xml"
+                schema_path = Path(self.shortcuts_path) / PROPERTIES_FILE
                 self.property_schema = load_properties(schema_path)
 
         if not self.icon_sources:
@@ -206,7 +211,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 if self._shared_subdialogs:
                     self._subdialogs = {sd.button_id: sd for sd in self._shared_subdialogs}
             else:
-                menus_path = Path(self.shortcuts_path) / "menus.xml"
+                menus_path = Path(self.shortcuts_path) / MENUS_FILE
                 menu_config = load_menus(menus_path)
                 self.icon_sources = menu_config.icon_sources
                 self.context_menu = menu_config.context_menu
