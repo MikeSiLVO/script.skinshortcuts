@@ -575,9 +575,9 @@ v3 adds: `custom` (user-defined item list), `sets` (movie sets)
 
   <!-- Button mappings -->
   <buttons suffix="true">
-    <button id="350" property="widgetStyle" title="Widget Style" showNone="true" showIcons="true" requires="widget" />
+    <button id="350" property="widgetStyle" heading="Widget Style" showNone="true" showIcons="true" requires="widget" />
     <group suffix="false">
-      <button id="360" property="hideLabels" title="Hide Labels" type="toggle" />
+      <button id="360" property="hideLabels" type="toggle" />
     </group>
   </buttons>
 

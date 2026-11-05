@@ -52,7 +52,7 @@ Properties extend menu items beyond built-in fields (label, icon, action). Commo
 
   <!-- Button mappings -->
   <buttons suffix="true">
-    <button id="350" property="widgetStyle" title="Widget Style" />
+    <button id="350" property="widgetStyle" heading="Widget Style" />
     <group suffix="false">
       <button id="360" property="someProperty" />
     </group>
@@ -164,7 +164,7 @@ Map control IDs to properties.
 
 ```xml
 <buttons suffix="true">
-  <button id="350" property="widgetStyle" title="Widget Style"
+  <button id="350" property="widgetStyle" heading="Widget Style"
           showNone="true" showIcons="true" type="options" requires="widget" />
 
   <group suffix="false">
@@ -185,13 +185,25 @@ Map control IDs to properties.
 |-----------|----------|---------|-------------|
 | `id` | Yes | - | Control ID in dialog |
 | `property` | Yes | - | Property name to edit |
-| `title` | No | - | Dialog title |
+| `heading` | No | [by type](#dialog-headings) | Heading of the dialog the button opens |
 | `suffix` | No | parent | Override parent suffix setting |
 | `showNone` | No | `true` | Show "None" option |
 | `showIcons` | No | `true` | Show icons in select dialog |
 | `type` | No | - | Override property type |
 | `requires` | No | - | Property that must be set |
 | `rename` | No | `false` | `true` to prompt for a label after picking (`type="widget"` only) |
+
+### Dialog Headings
+
+Without a `heading`, the dialog a button opens has this one:
+
+| Type | Heading |
+|------|---------|
+| `widget` | Select widget |
+| `background` | Select background |
+| `options`, `text`, `number` | The property name |
+
+A `toggle` opens no dialog, so `heading` has no effect on it.
 
 ### `<group>` Element
 
@@ -373,10 +385,10 @@ Button mappings with `suffix="true"` automatically use the dialog's suffix.
   <property name="sortPreference" type="toggle" value="custom_value" />
 
   <buttons suffix="true">
-    <button id="350" property="widgetStyle" title="Widget Style" requires="widget" />
-    <button id="351" property="widgetArt" title="Widget Art" requires="widget" />
+    <button id="350" property="widgetStyle" heading="Widget Style" requires="widget" />
+    <button id="351" property="widgetArt" heading="Widget Art" requires="widget" />
     <group suffix="false">
-      <button id="360" property="hideLabels" title="Hide Labels" type="toggle" />
+      <button id="360" property="hideLabels" type="toggle" />
     </group>
   </buttons>
 

@@ -205,7 +205,7 @@ class PropertyLoader:
             return None
 
         suffix = get_bool(elem, "suffix", default_suffix)
-        title = get_attr(elem, "title")
+        heading = get_attr(elem, "heading")
         show_none = get_bool(elem, "showNone", True)
         show_icons = get_bool(elem, "showIcons", True)
         prop_type = get_attr(elem, "type")
@@ -216,7 +216,7 @@ class PropertyLoader:
             button_id=button_id,
             property_name=property_name,
             suffix=suffix,
-            title=title,
+            heading=heading,
             show_none=show_none,
             show_icons=show_icons,
             type=prop_type,

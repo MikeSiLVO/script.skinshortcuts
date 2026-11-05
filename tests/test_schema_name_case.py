@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from skinshortcuts.exceptions import TemplateConfigError
+from skinshortcuts.exceptions import MenuConfigError, TemplateConfigError
 from skinshortcuts.loaders.base import _ATTRIBUTES, _ELEMENTS, parse_xml
 from skinshortcuts.loaders.menu import load_menus
 from skinshortcuts.loaders.property import load_properties
@@ -95,3 +95,27 @@ def test_old_name_loads_with_one_info_line(tmp_path: Path, monkeypatch) -> None:
         "future version",
     )]
     assert toasts == []
+
+
+def test_button_title_loads_as_heading(tmp_path: Path, monkeypatch) -> None:
+    """A properties.xml button's old title loads as heading with its info line; nowhere else."""
+    lines: list[tuple[int, str]] = []
+    monkeypatch.setattr("xbmc.log", lambda msg, level: lines.append((level, msg)))
+    props = tmp_path / "properties.xml"
+    props.write_text(
+        '<properties><buttons><button id="1" property="p" title="Pick"/></buttons></properties>',
+        encoding="utf-8",
+    )
+    assert load_properties(props).buttons[1].heading == "Pick"
+
+    menus = tmp_path / "menus.xml"
+    menus.write_text('<menus><contextmenu><button id="2" title="Row"/></contextmenu></menus>')
+    context = parse_xml(menus, "menus", MenuConfigError).find("contextmenu/button")
+    templates = parse(tmp_path, '<presets><preset name="p"><values title="x"/></preset></presets>')
+    values = templates.find("presets/preset/values")
+    assert context is not None and context.attrib == {"id": "2", "title": "Row"}
+    assert values is not None and values.attrib == {"title": "x"}
+    assert [line for line in lines if "deprecated attribute" in line[1]] == [(
+        1, 'script.skinshortcuts: properties.xml: <button title="Pick"> uses a deprecated '
+        "attribute; please update to use heading, since title will be removed in a future version",
+    )]

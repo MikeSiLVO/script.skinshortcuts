@@ -40,7 +40,7 @@ def _current_background(dialog, button_id: int) -> str:
     """Current value a property button passes to the background picker."""
     seen: list[str] = []
 
-    def pick(_props, current_value="", _positions=None):
+    def pick(_props, current_value="", _positions=None, **_kwargs):
         seen.append(current_value)
 
     dialog._pick_background = pick

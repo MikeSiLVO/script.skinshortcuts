@@ -66,3 +66,4 @@ A log line saying an element "uses a deprecated attribute" points at an attribut
 | Old name | New name |
 |---|---|
 | `template_only` | `templateOnly` |
+| `title` on a properties.xml `<button>` | `heading` |

@@ -91,14 +91,18 @@ class PropertiesMixin:
             items: list[WidgetGroup | Widget | Content],
             item_props: dict[str, str],
             slot: str = "",
-        ) -> Widget | None | Literal[False]: ...
+            title: str = "",
+        ) -> Widget | None | Literal[False]:
+            """Pick a widget from groupings. False when the user picks "None"."""
 
         def _pick_background(
             self,
             item_props: dict[str, str],
             current_value: str = "",
             positions: dict[str, int] | None = None,
-        ) -> Background | None | Literal[False]: ...
+            title: str = "",
+        ) -> Background | None | Literal[False]:
+            """Pick a background from groupings. False when the user picks "None"."""
 
     def _requires_met(self, item: MenuItem, requires_name: str) -> bool:
         """Whether a required property is set; a widget or background also counts by its path."""
@@ -151,12 +155,12 @@ class PropertiesMixin:
         prop_type = button.type or (prop.type if prop else "")
 
         if prop_type == "widget":
-            widget = self._handle_widget_property(item, prop_name)
+            widget = self._handle_widget_property(item, prop_name, button.heading)
             if widget is not None and button.rename:
                 self._prompt_widget_rename(item, prop_name, widget)
             return True
         if prop_type == "background":
-            self._handle_background_property(item, prop_name)
+            self._handle_background_property(item, prop_name, button.heading)
             return True
         if prop_type == "toggle":
             self._handle_toggle_property(prop, item, prop_name)
@@ -180,7 +184,9 @@ class PropertiesMixin:
 
         return self._handle_options_property(prop, item, button, prop_name)
 
-    def _handle_widget_property(self, item: MenuItem, prop_name: str) -> Widget | None:
+    def _handle_widget_property(
+        self, item: MenuItem, prop_name: str, heading: str = ""
+    ) -> Widget | None:
         """Handle a widget-type property; widget dialogs give the item the pick's label and icon."""
         if self.manager is None:
             return None
@@ -199,7 +205,10 @@ class PropertiesMixin:
             return None
 
         item_props = self._get_item_properties(item)
-        result = self._pick_widget_from_groups(widget_config.groupings, item_props, slot)
+        title = resolve_label(heading) if heading else ""
+        result = self._pick_widget_from_groups(
+            widget_config.groupings, item_props, slot, title=title
+        )
         if result is None:
             return None
 
@@ -287,7 +296,9 @@ class PropertiesMixin:
         if self.manager is not None:
             self.manager.clear_custom_widget(self.menu_id, item.name, suffix)
 
-    def _handle_background_property(self, item: MenuItem, prop_name: str) -> None:
+    def _handle_background_property(
+        self, item: MenuItem, prop_name: str, heading: str = ""
+    ) -> None:
         """Handle a background-type property; a cancelled path pick reopens the picker."""
         if self.manager is None:
             return
@@ -300,9 +311,10 @@ class PropertiesMixin:
         current_bg = lookup(prefix, item.properties) or ""
         item_props = self._get_item_properties(item)
         positions: dict[str, int] = {}
+        title = resolve_label(heading) if heading else ""
 
         while True:
-            bg = self._pick_background(item_props, current_bg, positions)
+            bg = self._pick_background(item_props, current_bg, positions, title=title)
 
             if bg is None:
                 return
@@ -553,7 +565,7 @@ class PropertiesMixin:
     def _handle_text_property(self, item: MenuItem, button, prop_name: str) -> None:
         """Handle a text-type property via keyboard input."""
         current_value = resolve_label(item.properties.get(prop_name, ""))
-        title = resolve_label(button.title) if button.title else prop_name
+        title = resolve_label(button.heading) if button.heading else prop_name
 
         keyboard = xbmc.Keyboard(current_value, title)
         keyboard.doModal()
@@ -573,7 +585,7 @@ class PropertiesMixin:
     def _handle_number_property(self, item: MenuItem, button, prop_name: str) -> None:
         """Handle a number-type property via numeric input dialog."""
         current_value = item.properties.get(prop_name, "")
-        title = resolve_label(button.title) if button.title else prop_name
+        title = resolve_label(button.heading) if button.heading else prop_name
 
         result = xbmcgui.Dialog().input(title, current_value, type=xbmcgui.INPUT_NUMERIC)
         if not result and result != "0":
@@ -622,7 +634,7 @@ class PropertiesMixin:
             listitem.setArt({"icon": icon})
             listitems.append(listitem)
 
-        title = resolve_label(button.title) if button.title else prop_name
+        title = resolve_label(button.heading) if button.heading else prop_name
         current_value = item.properties.get(prop_name, "")
         preselect = -1
         offset = 1 if button.show_none else 0

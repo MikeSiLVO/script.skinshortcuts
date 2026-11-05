@@ -375,9 +375,9 @@ Defines property schemas, button mappings, and fallback values.
   <property name="customBg" type="background" />
 
   <buttons suffix="true">
-    <button id="350" property="widgetStyle" title="Widget Style" suffix="true" showNone="true" showIcons="true" type="options" requires="widget" />
+    <button id="350" property="widgetStyle" heading="Widget Style" suffix="true" showNone="true" showIcons="true" type="options" requires="widget" />
     <group suffix="false">
-      <button id="360" property="hideLabels" title="Hide Labels" type="toggle" />
+      <button id="360" property="hideLabels" type="toggle" />
     </group>
   </buttons>
 
@@ -408,7 +408,7 @@ Defines property schemas, button mappings, and fallback values.
 | `<icon>` | option | - | `condition` | Option icon (multiple allowed) |
 | `<buttons>` | properties | - | `suffix` | Button mappings |
 | `<group>` | buttons | - | `suffix` | Button group |
-| `<button>` | buttons/group | `id`, `property` | `title`, `suffix`, `showNone`, `showIcons`, `type`, `requires`, `rename` | Button mapping. `rename="true"` prompts for a custom label after picking (`type="widget"` only) |
+| `<button>` | buttons/group | `id`, `property` | `heading`, `suffix`, `showNone`, `showIcons`, `type`, `requires`, `rename` | Button mapping. `rename="true"` prompts for a custom label after picking (`type="widget"` only) |
 | `<fallbacks>` | properties | - | - | Fallback definitions |
 | `<fallback>` | fallbacks | `property` | - | Fallback for property |
 | `<when>` | fallback | `condition` | - | Conditional fallback |

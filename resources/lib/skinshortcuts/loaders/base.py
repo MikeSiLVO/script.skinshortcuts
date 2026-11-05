@@ -33,8 +33,17 @@ _ATTRIBUTES = {name.lower(): name for name in (
     "buttonID", "controlType", "enableOn", "idPrefix", "noSuffix", "setFocus", "showIcons",
     "showNone", "submenuPath", "templateOnly",
 )}
-_RENAMED = {"template_only": "templateOnly"}
-_ATTRIBUTES.update(_RENAMED)
+# old name: (new name, file root, element), "" where any; a common word is held to its element
+_RENAMED = {
+    "template_only": ("templateOnly", "", ""),
+    "title": ("heading", "properties", "button"),
+}
+
+
+def _renamed_to(key: str, root: str, tag: str) -> str:
+    """The new name of an attribute renamed on this element in this file; empty when it was not."""
+    new, on_root, on_tag = _RENAMED.get(key.lower(), ("", "", ""))
+    return new if on_root in ("", root) and on_tag in ("", tag) else ""
 
 
 def parse_xml(path: str | Path, expected_root: str, error_class: type[ConfigError]) -> ET.Element:
@@ -62,16 +71,18 @@ def parse_xml(path: str | Path, expected_root: str, error_class: type[ConfigErro
 
     for elem in root.iter():
         elem.tag = _ELEMENTS.get(elem.tag.lower(), elem.tag)
-        if any(key.lower() in _ATTRIBUTES for key in elem.attrib):
+        if any(key.lower() in _ATTRIBUTES or key.lower() in _RENAMED for key in elem.attrib):
             attrib: dict[str, str] = {}
             for key, value in elem.attrib.items():
-                name = _ATTRIBUTES.get(key.lower(), key)
-                if key.lower() in _RENAMED:
+                name = _renamed_to(key, root.tag, elem.tag)
+                if name:
                     log_renamed(
                         f'{path.name}: <{elem.tag} {key}="{value}"> uses a deprecated attribute; '
                         f"please update to use {name}, since {key} will be removed "
                         "in a future version"
                     )
+                else:
+                    name = _ATTRIBUTES.get(key.lower(), key)
                 attrib.setdefault(name, value)
             elem.attrib.clear()
             elem.attrib.update(attrib)

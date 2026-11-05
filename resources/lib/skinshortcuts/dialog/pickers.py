@@ -418,6 +418,7 @@ class PickersMixin:
         items: list[WidgetGroup | Widget | Content],
         item_props: dict[str, str],
         slot: str = "",
+        title: str = "",
     ) -> Widget | None | Literal[False]:
         """Pick a widget from groupings. False when the user picks "None"."""
         current_widget = item_props.get(slot, "")
@@ -426,7 +427,7 @@ class PickersMixin:
         result = self._pick_from_hierarchy(
             items,
             item_props,
-            title=LANGUAGE(32044),
+            title=title or LANGUAGE(32044),
             leaf_types=(Widget,),
             group_types=(WidgetGroup,),
             default_leaf_icon="DefaultAddonNone.png",
@@ -1119,6 +1120,7 @@ class PickersMixin:
         item_props: dict[str, str],
         current_value: str = "",
         positions: dict[str, int] | None = None,
+        title: str = "",
     ) -> Background | None | Literal[False]:
         """Pick a background from groupings. False when the user picks "None"."""
         if not self.manager:
@@ -1132,7 +1134,7 @@ class PickersMixin:
         return self._pick_from_hierarchy(
             groupings,
             item_props,
-            title=LANGUAGE(32045),
+            title=title or LANGUAGE(32045),
             leaf_types=(Background,),
             group_types=(BackgroundGroup,),
             default_leaf_icon="DefaultPicture.png",
