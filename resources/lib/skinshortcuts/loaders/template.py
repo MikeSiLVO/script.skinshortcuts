@@ -33,7 +33,7 @@ from ..models.template import (
     VariableGroupReference,
     VariableReference,
 )
-from .base import get_bool, keep_first, parse_xml, report_missing
+from .base import get_attr, get_bool, keep_first, parse_xml, report_missing
 
 R = TypeVar(
     "R", PropertyGroupReference, PresetReference, PresetGroupReference, VariableGroupReference
@@ -69,7 +69,7 @@ def _drop_duplicate_definitions(elem: ET.Element, heading: str, written: str) ->
     property_names: set[str] = set()
     var_names: set[str] = set()
     for child in list(elem):
-        name = (child.get("name") or "").strip().lower()
+        name = get_attr(child, "name").lower()
         if child.tag not in ("property", "var") or not name:
             continue
         if name in var_names or (child.tag == "var" and name in property_names):
@@ -116,7 +116,7 @@ class TemplateLoader:
 
         templates = []
         for elem in root.findall("template"):
-            items_name = (elem.get("items") or "").strip()
+            items_name = get_attr(elem, "items")
             if items_name:
                 items_def = self._parse_items_template(elem, items_name)
                 if items_def:
@@ -152,7 +152,7 @@ class TemplateLoader:
         if section is None:
             return
         for elem in section.findall("expression"):
-            name = (elem.get("name") or "").strip()
+            name = get_attr(elem, "name")
             if not name:
                 report_missing("Template Error", self.path, elem, "name")
                 continue
@@ -183,7 +183,7 @@ class TemplateLoader:
 
     def _parse_preset_group(self, elem: ET.Element) -> PresetGroup | None:
         """Parse a presetGroup element into its preset and values children, in order."""
-        name = (elem.get("name") or "").strip()
+        name = get_attr(elem, "name")
         if not name:
             report_missing("Template Error", self.path, elem, "name")
             return None
@@ -191,9 +191,9 @@ class TemplateLoader:
         children = []
         for child in elem:
             if child.tag == "preset":
-                preset_name = (child.get("content") or "").strip()
+                preset_name = get_attr(child, "content")
                 if preset_name:
-                    condition = (child.get("condition") or "").strip()
+                    condition = get_attr(child, "condition")
                     children.append(
                         PresetGroupChild(
                             preset_name=preset_name,
@@ -206,7 +206,7 @@ class TemplateLoader:
                         scope=f"presetGroup '{name}'",
                     )
             elif child.tag == "values":
-                condition = (child.get("condition") or "").strip()
+                condition = get_attr(child, "condition")
                 values = {k: v for k, v in child.attrib.items() if k != "condition"}
                 children.append(
                     PresetGroupChild(
@@ -223,7 +223,7 @@ class TemplateLoader:
         if section is None:
             return
         for elem in section.findall("propertyGroup"):
-            name = (elem.get("name") or "").strip()
+            name = get_attr(elem, "name")
             if not name:
                 report_missing("Template Error", self.path, elem, "name")
                 continue
@@ -264,7 +264,7 @@ class TemplateLoader:
 
     def _parse_variable_group(self, elem: ET.Element) -> VariableGroup | None:
         """Parse a variableGroup element: its variable references and nested group references."""
-        name = (elem.get("name") or "").strip()
+        name = get_attr(elem, "name")
         if not name:
             report_missing("Template Error", self.path, elem, "name")
             return None
@@ -277,7 +277,7 @@ class TemplateLoader:
 
         group_refs = []
         for group_elem in elem.findall("variableGroup"):
-            group_name = (group_elem.get("content") or "").strip()
+            group_name = get_attr(group_elem, "content")
             if group_name:
                 group_refs.append(VariableGroupReference(name=group_name))
             else:
@@ -290,11 +290,11 @@ class TemplateLoader:
 
     def _parse_variable_reference(self, elem: ET.Element) -> VariableReference | None:
         """Parse a variable reference within a variableGroup."""
-        name = (elem.get("content") or "").strip()
+        name = get_attr(elem, "content")
         if not name:
             report_missing("Template Error", self.path, elem, "content", key="content")
             return None
-        condition = (elem.get("condition") or "").strip()
+        condition = get_attr(elem, "condition")
         return VariableReference(name=name, condition=condition)
 
     def _parse_includes_section(self, root: ET.Element) -> None:
@@ -303,7 +303,7 @@ class TemplateLoader:
         if section is None:
             return
         for elem in section.findall("include"):
-            name = (elem.get("name") or "").strip()
+            name = get_attr(elem, "name")
             if not name:
                 report_missing("Template Error", self.path, elem, "name")
                 continue
@@ -315,7 +315,7 @@ class TemplateLoader:
 
     def _parse_property(self, elem: ET.Element) -> TemplateProperty | None:
         """Parse a property element, reporting one with no name."""
-        name = (elem.get("name") or "").strip()
+        name = get_attr(elem, "name")
         if not name:
             report_missing("Template Error", self.path, elem, "name")
             return None
@@ -323,13 +323,13 @@ class TemplateLoader:
         return TemplateProperty(
             name=name,
             value=(elem.get("value") or elem.text or "").strip(),
-            from_source=(elem.get("from") or "").strip(),
-            condition=(elem.get("condition") or "").strip(),
+            from_source=get_attr(elem, "from"),
+            condition=get_attr(elem, "condition"),
         )
 
     def _parse_var(self, elem: ET.Element) -> TemplateVar | None:
         """Parse a var element for internal template resolution."""
-        name = (elem.get("name") or "").strip()
+        name = get_attr(elem, "name")
         if not name:
             report_missing("Template Error", self.path, elem, "name")
             return None
@@ -337,21 +337,21 @@ class TemplateLoader:
         values = []
         for value_elem in elem.findall("value"):
             value = (value_elem.text or "").strip()
-            condition = (value_elem.get("condition") or "").strip()
+            condition = get_attr(value_elem, "condition")
             values.append(TemplateProperty(name=name, value=value, condition=condition))
 
         return TemplateVar(name=name, values=values)
 
     def _parse_preset(self, elem: ET.Element) -> Preset | None:
         """Parse a preset element, reporting one with no name."""
-        name = (elem.get("name") or "").strip()
+        name = get_attr(elem, "name")
         if not name:
             report_missing("Template Error", self.path, elem, "name")
             return None
 
         rows = []
         for values_elem in elem.findall("values"):
-            condition = (values_elem.get("condition") or "").strip()
+            condition = get_attr(values_elem, "condition")
             values = {k: v for k, v in values_elem.attrib.items() if k != "condition"}
             rows.append(PresetValues(condition=condition, values=values))
 
@@ -361,31 +361,31 @@ class TemplateLoader:
         """Parse a template, dropping duplicates, raw markers; reports no output, raw variables."""
         outputs: list[TemplateOutput] = []
         for output_elem in elem.findall("output"):
-            output_include = (output_elem.get("include") or "").strip()
+            output_include = get_attr(output_elem, "include")
             if output_include:
                 outputs.append(
                     TemplateOutput(
                         include=output_include,
-                        id_prefix=(output_elem.get("idPrefix") or "").strip(),
-                        suffix=(output_elem.get("suffix") or "").strip(),
+                        id_prefix=get_attr(output_elem, "idPrefix"),
+                        suffix=get_attr(output_elem, "suffix"),
                     )
                 )
 
-        include = (elem.get("include") or "").strip()
-        id_prefix = (elem.get("idPrefix") or "").strip()
+        include = get_attr(elem, "include")
+        id_prefix = get_attr(elem, "idPrefix")
 
         if not outputs and not include:
             report_missing("Template Error", self.path, elem, "include", key="include")
             return None
 
-        build_str = (elem.get("build") or "").strip().lower()
+        build_str = get_attr(elem, "build").lower()
         if build_str == "true":
             build = BuildMode.RAW
         else:
             build = BuildMode.MENU
 
-        template_only = (elem.get("templateOnly") or "").strip().lower()
-        menu = (elem.get("menu") or "").strip()
+        template_only = get_attr(elem, "templateOnly").lower()
+        menu = get_attr(elem, "menu")
 
         conditions = []
         for cond_elem in elem.findall("condition"):
@@ -478,13 +478,13 @@ class TemplateLoader:
 
     def _parse_submenu(self, elem: ET.Element) -> SubmenuTemplate:
         """Parse a submenu, reporting unbuilt features, dropping duplicates and include markers."""
-        include = (elem.get("include") or "").strip()
+        include = get_attr(elem, "include")
         level_str = (elem.get("level") or "0").strip()
         try:
             level = int(level_str)
         except ValueError:
             level = 0
-        name = (elem.get("name") or "").strip()
+        name = get_attr(elem, "name")
         written = f'<submenu include="{include}">'
         _drop_duplicate_definitions(elem, "Submenu Template Error", written)
 
@@ -542,8 +542,8 @@ class TemplateLoader:
 
     def _parse_items_template(self, elem: ET.Element, name: str) -> ItemsDefinition | None:
         """Parse <template items="X">, reporting and dropping duplicates and suffix=."""
-        source = (elem.get("source") or "").strip()
-        filter_cond = (elem.get("filter") or "").strip()
+        source = get_attr(elem, "source")
+        filter_cond = get_attr(elem, "filter")
 
         condition = ""
         cond_elem = elem.find("condition")
@@ -613,25 +613,25 @@ class TemplateLoader:
 
     def _parse_ref(self, elem: ET.Element, cls: type[R]) -> R | None:
         """Parse a preset or group reference, reporting one with no content."""
-        name = (elem.get("content") or "").strip()
+        name = get_attr(elem, "content")
         if not name:
             report_missing("Template Error", self.path, elem, "content", key="content")
             return None
 
-        suffix = (elem.get("suffix") or "").strip()
-        condition = (elem.get("condition") or "").strip()
+        suffix = get_attr(elem, "suffix")
+        condition = get_attr(elem, "condition")
 
         return cls(name=name, suffix=suffix, condition=condition)
 
     def _parse_variable_definition(self, elem: ET.Element) -> VariableDefinition | None:
         """Parse a variable definition, global or a template's, reporting one with no name."""
-        name = (elem.get("name") or "").strip()
+        name = get_attr(elem, "name")
         if not name:
             report_missing("Template Error", self.path, elem, "name")
             return None
 
-        condition = (elem.get("condition") or "").strip()
-        output = (elem.get("output") or "").strip()
+        condition = get_attr(elem, "condition")
+        output = get_attr(elem, "output")
 
         return VariableDefinition(
             name=name,

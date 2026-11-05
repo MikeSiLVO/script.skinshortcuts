@@ -17,7 +17,14 @@ from ..models.property import (
     SchemaProperty,
 )
 from ..conditions import suffix_condition
-from .base import get_bool, keep_first, parse_name_overrides, parse_xml, report_missing
+from .base import (
+    get_attr,
+    get_bool,
+    keep_first,
+    parse_name_overrides,
+    parse_xml,
+    report_missing,
+)
 
 
 class PropertyLoader:
@@ -98,7 +105,7 @@ class PropertyLoader:
         if includes_section is None:
             return
         for include_elem in includes_section.findall("include"):
-            name = (include_elem.get("name") or "").strip()
+            name = get_attr(include_elem, "name")
             if not name:
                 report_missing("Property Error", self.path, include_elem, "name")
                 continue
@@ -106,7 +113,7 @@ class PropertyLoader:
 
     def _expand_include(self, include_elem: ET.Element) -> list[ET.Element]:
         """Expand an include to suffixed element copies, reporting one unnamed or undefined."""
-        content_name = (include_elem.get("content") or "").strip()
+        content_name = get_attr(include_elem, "content")
         suffix = include_elem.get("suffix") or ""
         if not content_name:
             report_missing("Property Error", self.path, include_elem, "content", key="content")
@@ -143,26 +150,26 @@ class PropertyLoader:
 
     def _parse_property(self, elem: ET.Element) -> SchemaProperty | None:
         """Parse a property element, reporting one with no name."""
-        name = (elem.get("name") or "").strip()
+        name = get_attr(elem, "name")
         if not name:
             report_missing("Property Error", self.path, elem, "name")
             return None
 
         template_only = get_bool(elem, "templateOnly")
-        prop_type = (elem.get("type") or "").strip()
+        prop_type = get_attr(elem, "type")
 
-        requires = (elem.get("requires") or "").strip()
+        requires = get_attr(elem, "requires")
         if not requires:
             requires_elem = elem.find("requires")
             if requires_elem is not None:
-                requires = (requires_elem.get("property") or "").strip()
+                requires = get_attr(requires_elem, "property")
 
         options = []
         options_elem = elem.find("options")
         if options_elem is not None:
             options = self._parse_options(options_elem)
 
-        value = (elem.get("value") or "").strip()
+        value = get_attr(elem, "value")
 
         return SchemaProperty(
             name=name,
@@ -177,7 +184,7 @@ class PropertyLoader:
         self, elem: ET.Element, default_suffix: bool = False
     ) -> ButtonMapping | None:
         """Parse a button element, reporting one with no numeric id or no property."""
-        button_id_str = (elem.get("id") or "").strip()
+        button_id_str = get_attr(elem, "id")
         if not button_id_str:
             report_missing("Property Button Error", self.path, elem, "id", key="id")
             return None
@@ -192,17 +199,17 @@ class PropertyLoader:
             return None
         button_id = int(button_id_str)
 
-        property_name = (elem.get("property") or "").strip()
+        property_name = get_attr(elem, "property")
         if not property_name:
             report_missing("Property Button Error", self.path, elem, "property", key="id")
             return None
 
         suffix = get_bool(elem, "suffix", default_suffix)
-        title = (elem.get("title") or "").strip()
+        title = get_attr(elem, "title")
         show_none = get_bool(elem, "showNone", True)
         show_icons = get_bool(elem, "showIcons", True)
-        prop_type = (elem.get("type") or "").strip()
-        requires = (elem.get("requires") or "").strip()
+        prop_type = get_attr(elem, "type")
+        requires = get_attr(elem, "requires")
         rename = get_bool(elem, "rename")
 
         return ButtonMapping(
@@ -234,15 +241,15 @@ class PropertyLoader:
 
     def _parse_option(self, elem: ET.Element) -> SchemaOption:
         """Parse an option with its property condition, Kodi visibility condition and icons."""
-        value = (elem.get("value") or "").strip()
-        label = (elem.get("label") or "").strip()
-        condition = (elem.get("condition") or "").strip()
-        visible = (elem.get("visible") or "").strip()
+        value = get_attr(elem, "value")
+        label = get_attr(elem, "label")
+        condition = get_attr(elem, "condition")
+        visible = get_attr(elem, "visible")
 
         icons = []
         for icon_elem in elem.findall("icon"):
             icon_path = (icon_elem.text or "").strip()
-            icon_condition = (icon_elem.get("condition") or "").strip()
+            icon_condition = get_attr(icon_elem, "condition")
             if icon_path:
                 icons.append(IconVariant(path=icon_path, condition=icon_condition))
 
@@ -256,7 +263,7 @@ class PropertyLoader:
 
     def _parse_fallback(self, elem: ET.Element) -> PropertyFallback | None:
         """Parse a fallback element, reporting one with no property."""
-        property_name = (elem.get("property") or "").strip()
+        property_name = get_attr(elem, "property")
         if not property_name:
             report_missing("Property Error", self.path, elem, "property", key="property")
             return None
