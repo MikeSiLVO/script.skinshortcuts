@@ -262,8 +262,8 @@ Templates can define additional properties for output.
 | `name` | Item name |
 | `menu` | Name of the menu holding the item |
 | `index` | One-based item index |
-| `idprefix` | The template's `idPrefix` value |
-| `id` | Computed ID (`{idprefix}{index}`) |
+| `idPrefix` | The template's `idPrefix` value |
+| `id` | Computed ID (`{idPrefix}{index}`) |
 | `suffix` | Output suffix (e.g. `.2`), empty when the output has none |
 | `submenuVisibility` | The item's own name, for building a submenu visibility condition |
 

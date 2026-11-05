@@ -61,8 +61,9 @@ def test_iterate_scan_reaches_slot_one_hundred() -> None:
 
 
 def test_suffix_transform_section_lists_every_unsuffixed_name() -> None:
+    """The templates doc's Suffix Transform section lists every name the suffix skips, any case."""
     text = TEMPLATES_DOC.read_text(encoding="utf-8")
     section = re.search(r"### Suffix Transform\n(.*?)\n### ", text, re.S)
     assert section is not None
-    listed = set(re.findall(r"`(\w+)`", section.group(1)))
+    listed = {name.lower() for name in re.findall(r"`(\w+)`", section.group(1))}
     assert NO_SUFFIX_PROPERTIES <= listed

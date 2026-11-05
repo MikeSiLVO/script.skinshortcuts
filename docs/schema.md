@@ -644,8 +644,8 @@ Defines templates for generating skin includes. For detailed documentation, see 
 | `index` | Item index (1-based) |
 | `name` | Item name identifier |
 | `menu` | Parent menu name |
-| `idprefix` | Template's idPrefix value |
-| `id` | Computed ID: `{idprefix}{index}` |
+| `idPrefix` | Template's idPrefix value |
+| `id` | Computed ID: `{idPrefix}{index}` |
 | `suffix` | Output suffix (e.g., `.2`) or empty |
 | `label` | Item label |
 | `label2` | Item secondary label |

@@ -25,7 +25,7 @@
 `_build_context` builds the dict of values the substitutions read, in this order:
 
 1. The menu's default properties under the item's own properties.
-2. Built-ins: `index`, `name`, `menu`, `idprefix`, `id`, `suffix`, `label`, `label2`, `icon`, `visible`, `action`, `path`, `submenuVisibility`. These overwrite item properties of the same name.
+2. Built-ins: `index`, `name`, `menu`, `idPrefix`, `id`, `suffix`, `label`, `label2`, `icon`, `visible`, `action`, `path`, `submenuVisibility`. These overwrite item properties of the same name.
 3. properties.xml fallbacks, for each property still unset in each slot the item uses.
 4. The template's `<property>` elements, first match per name.
 5. The template's `<var>` elements, first matching value.

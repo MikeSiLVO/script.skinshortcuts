@@ -153,7 +153,7 @@ When `suffix=".2"` is specified on an output:
 2. **Conditions** are transformed: property names get suffixed whether they appear with a value (`condition="widgetType=movies"` → `condition="widgetType.2=movies"`) or as bare presence checks (`condition="widgetPath"` → `condition="widgetPath.2"`)
 3. **The `suffix` built-in property** is set and available in conditions
 
-These names never take the suffix: `name`, `label`, `disabled`, `default`, `menu`, `index`, `id`, `idprefix`, `suffix`.
+These names never take the suffix: `name`, `label`, `disabled`, `default`, `menu`, `index`, `id`, `idPrefix`, `suffix`.
 
 ### The `suffix` Built-in Property
 
@@ -378,8 +378,8 @@ These are special values available in `from` attributes and `$PROPERTY[]`:
 | `index` | Current item index (1-based) |
 | `name` | Item name identifier |
 | `menu` | Parent menu name |
-| `idprefix` | The template's idPrefix value |
-| `id` | Computed ID: `{idprefix}{index}` |
+| `idPrefix` | The template's idPrefix value |
+| `id` | Computed ID: `{idPrefix}{index}` |
 | `suffix` | Output suffix (e.g., `.2`) or empty string if none |
 
 An output suffix never applies to these; [Suffix Transform](#suffix-transform) lists every such name.
