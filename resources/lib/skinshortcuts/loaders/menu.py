@@ -199,7 +199,7 @@ def _parse_submenu_path(root) -> bool:
 
 
 def _parse_dialogs(root) -> list[SubDialog]:
-    """Parse subdialog definitions from <dialogs> element, reporting each one skipped."""
+    """Parse subdialog definitions from <dialogs> element, reporting skips and bad setFocus."""
     dialogs_elem = root.find("dialogs")
     if dialogs_elem is None:
         return []
@@ -236,8 +236,15 @@ def _parse_dialogs(root) -> list[SubDialog]:
 
         setfocus = None
         setfocus_str = get_attr(elem, "setFocus")
-        if setfocus_str and setfocus_str.isdecimal():
+        if setfocus_str.isdecimal():
             setfocus = int(setfocus_str)
+        elif setfocus_str:
+            notify(
+                "Subdialog Error",
+                f"'{setfocus_str}' is not a control id",
+                f'menus.xml: <subdialog buttonID="{button_id}" setFocus="{setfocus_str}"> needs a '
+                "numeric setFocus; setFocus ignored; use the id of the dialog control",
+            )
 
         suffix = get_attr(elem, "suffix") or ""
 

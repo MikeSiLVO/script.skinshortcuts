@@ -234,6 +234,7 @@ def write(tmp_path: Path, xml: str) -> Path:
 
 
 def test_nameless_widget_group_is_skipped(tmp_path: Path, warned: list[str]) -> None:
+    """A widget group with no name is skipped with a toast."""
     xml = '<widgets><group label="G"><widget name="w" label="W"><path>x://</path></widget>' \
         "</group></widgets>"
     assert load_widgets(write(tmp_path, xml)).groupings == []
@@ -264,6 +265,13 @@ def test_invalid_subdialog_button_id_warns(tmp_path: Path, warned: list[str]) ->
     assert warned
 
 
+def test_invalid_subdialog_set_focus_warns(tmp_path: Path, warned: list[str]) -> None:
+    """A non-numeric setFocus keeps the subdialog, without the focus, and shows a toast."""
+    xml = MENU % '<dialogs><subdialog buttonID="401" mode="x" setFocus="abc"/></dialogs>'
+    assert [d.setfocus for d in load_menus(write(tmp_path, xml)).subdialogs] == [None]
+    assert warned
+
+
 @pytest.mark.parametrize(
     ("kind", "loader", "xml", "pick"), DUPLICATES, ids=[d[0] for d in DUPLICATES]
 )
@@ -277,7 +285,7 @@ def test_repeated_name_warns_and_keeps_the_first(
 
 def test_unknown_options_include_warns(tmp_path: Path, warned: list[str]) -> None:
     """An include naming no defined include adds no options and shows a toast."""
-    xml ='<properties><property name="x"><options><include content="missing"/></options>' \
+    xml = '<properties><property name="x"><options><include content="missing"/></options>' \
         "</property></properties>"
     assert load_properties(write(tmp_path, xml)).properties["x"].options == []
     assert warned
