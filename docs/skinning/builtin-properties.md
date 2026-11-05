@@ -110,12 +110,12 @@ For additional widget slots, use suffixed properties:
 
 ### Submenu Widget Path
 
-When a menu item has a per-item widget submenu (opened via a `{item}.X` subdialog, with items carrying `widgetPath`), the item carries `submenuPath` — the `widgetPath` of its first enabled widget. The submenu is recognized by its widget content, so submenus added at runtime work without a `type="widgets"` definition.
+When a menu item has a per-item widget submenu (opened via a `{item}.X` subdialog, with items carrying `widgetPath`), the item carries `submenuPath`, the `widgetPath` of its first enabled widget. The submenu is recognized by its widget content, so submenus added at runtime work without a `type="widgets"` definition.
 
 | Property | Description |
 |----------|-------------|
 | `submenuPath` | First widget path of the item's widgets submenu (empty when the submenu has no widgets) |
-| `submenuPath.2`, `.3`, … | Remaining widget paths, in submenu order. Emitted only when `submenuPath="all"` is set (see below) |
+| `submenuPath.2`, `.3`, ... | Remaining widget paths, in submenu order. Emitted only when `submenuPath="all"` is set (see below) |
 
 This lets the parent menu item answer "which widget is on this item" and "does it have any widgets" without a hidden counter container:
 
