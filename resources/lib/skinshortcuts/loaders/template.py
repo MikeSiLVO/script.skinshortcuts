@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from typing import TypeVar
 
 from ..exceptions import TemplateConfigError
 from ..log import notify
@@ -33,6 +34,10 @@ from ..models.template import (
     VariableReference,
 )
 from .base import get_bool, keep_first, parse_xml, report_missing
+
+R = TypeVar(
+    "R", PropertyGroupReference, PresetReference, PresetGroupReference, VariableGroupReference
+)
 
 _SUBMENU_UNSUPPORTED = {
     "propertyGroup": "move its values into <property> elements",
@@ -353,7 +358,7 @@ class TemplateLoader:
         return Preset(name=name, rows=rows)
 
     def _parse_template(self, elem: ET.Element) -> Template | None:
-        """Parse a template, dropping duplicates; reports no output, raw variables and markers."""
+        """Parse a template, dropping duplicates, raw markers; reports no output, raw variables."""
         outputs: list[TemplateOutput] = []
         for output_elem in elem.findall("output"):
             output_include = (output_elem.get("include") or "").strip()
@@ -409,19 +414,19 @@ class TemplateLoader:
                 if var:
                     vars_list.append(var)
             elif child.tag == "propertyGroup":
-                ref = self._parse_property_group_ref(child)
+                ref = self._parse_ref(child, PropertyGroupReference)
                 if ref:
                     property_groups.append(ref)
             elif child.tag == "preset":
-                ref = self._parse_preset_ref(child)
+                ref = self._parse_ref(child, PresetReference)
                 if ref:
                     preset_refs.append(ref)
             elif child.tag == "presetGroup":
-                ref = self._parse_preset_group_ref(child)
+                ref = self._parse_ref(child, PresetGroupReference)
                 if ref:
                     preset_group_refs.append(ref)
             elif child.tag == "variableGroup":
-                ref = self._parse_variable_group_ref(child)
+                ref = self._parse_ref(child, VariableGroupReference)
                 if ref:
                     variable_groups.append(ref)
 
@@ -563,15 +568,15 @@ class TemplateLoader:
                 if var:
                     vars_list.append(var)
             elif child.tag == "preset":
-                ref = self._parse_preset_ref(child)
+                ref = self._parse_ref(child, PresetReference)
                 if ref:
                     preset_refs.append(ref)
             elif child.tag == "propertyGroup":
-                ref = self._parse_property_group_ref(child)
+                ref = self._parse_ref(child, PropertyGroupReference)
                 if ref:
                     property_groups.append(ref)
             elif child.tag == "variableGroup":
-                ref = self._parse_variable_group_ref(child)
+                ref = self._parse_ref(child, VariableGroupReference)
                 if ref:
                     variable_groups.append(ref)
 
@@ -606,8 +611,8 @@ class TemplateLoader:
             controls=copy.deepcopy(controls) if controls is not None else None,
         )
 
-    def _parse_property_group_ref(self, elem: ET.Element) -> PropertyGroupReference | None:
-        """Parse a property group reference element."""
+    def _parse_ref(self, elem: ET.Element, cls: type[R]) -> R | None:
+        """Parse a preset or group reference, reporting one with no content."""
         name = (elem.get("content") or "").strip()
         if not name:
             report_missing("Template Error", self.path, elem, "content", key="content")
@@ -616,59 +621,7 @@ class TemplateLoader:
         suffix = (elem.get("suffix") or "").strip()
         condition = (elem.get("condition") or "").strip()
 
-        return PropertyGroupReference(
-            name=name,
-            suffix=suffix,
-            condition=condition,
-        )
-
-    def _parse_preset_ref(self, elem: ET.Element) -> PresetReference | None:
-        """Parse a preset reference element for direct property resolution."""
-        name = (elem.get("content") or "").strip()
-        if not name:
-            report_missing("Template Error", self.path, elem, "content", key="content")
-            return None
-
-        suffix = (elem.get("suffix") or "").strip()
-        condition = (elem.get("condition") or "").strip()
-
-        return PresetReference(
-            name=name,
-            suffix=suffix,
-            condition=condition,
-        )
-
-    def _parse_preset_group_ref(self, elem: ET.Element) -> PresetGroupReference | None:
-        """Parse a presetGroup reference element in a template."""
-        name = (elem.get("content") or "").strip()
-        if not name:
-            report_missing("Template Error", self.path, elem, "content", key="content")
-            return None
-
-        suffix = (elem.get("suffix") or "").strip()
-        condition = (elem.get("condition") or "").strip()
-
-        return PresetGroupReference(
-            name=name,
-            suffix=suffix,
-            condition=condition,
-        )
-
-    def _parse_variable_group_ref(self, elem: ET.Element) -> VariableGroupReference | None:
-        """Parse a variableGroup reference element in a template."""
-        name = (elem.get("content") or "").strip()
-        if not name:
-            report_missing("Template Error", self.path, elem, "content", key="content")
-            return None
-
-        suffix = (elem.get("suffix") or "").strip()
-        condition = (elem.get("condition") or "").strip()
-
-        return VariableGroupReference(
-            name=name,
-            suffix=suffix,
-            condition=condition,
-        )
+        return cls(name=name, suffix=suffix, condition=condition)
 
     def _parse_variable_definition(self, elem: ET.Element) -> VariableDefinition | None:
         """Parse a variable definition, global or a template's, reporting one with no name."""
