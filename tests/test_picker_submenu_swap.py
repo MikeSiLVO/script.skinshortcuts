@@ -7,7 +7,6 @@ from pathlib import Path
 from skinshortcuts.manager import MenuManager
 from skinshortcuts.models.menu import submenu_key
 
-
 MENUS_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <menus>
   <menu name="mainmenu">

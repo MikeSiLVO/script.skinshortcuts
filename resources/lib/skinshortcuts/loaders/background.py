@@ -14,6 +14,7 @@ from ..models.background import (
     BrowseSource,
     PlaylistSource,
 )
+from ..models.menu import IconOverrides
 from .base import (
     get_attr,
     get_bool,
@@ -24,8 +25,6 @@ from .base import (
     report_missing,
     warn_duplicate_names,
 )
-
-from ..models.menu import IconOverrides
 
 TYPE_MAP = {
     "static": BackgroundType.STATIC,

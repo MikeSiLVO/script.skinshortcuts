@@ -11,7 +11,6 @@ from skinshortcuts.loaders.menu import load_groupings
 from skinshortcuts.manager import MenuManager
 from skinshortcuts.models.menu import Action
 
-
 MENUS_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <menus>
   <menu name="powermenu">

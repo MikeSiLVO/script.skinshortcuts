@@ -8,7 +8,6 @@ from skinshortcuts.builders.includes import IncludesBuilder
 from skinshortcuts.config import SkinConfig
 from skinshortcuts.loaders.template import load_templates
 
-
 MENUS_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <menus>
   <menu name="mainmenu" container="9000">

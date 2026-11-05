@@ -15,7 +15,7 @@ from ..playlists import parse_smart_playlist, playlists_base_path, unpack_multip
 from .browse import normalize_image
 
 if TYPE_CHECKING:
-    from ..models.menu import IconOverrides, Content
+    from ..models.menu import Content, IconOverrides
 
 log = get_logger("ContentProvider")
 

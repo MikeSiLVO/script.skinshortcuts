@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from skinshortcuts.models.menu import Action, MenuItem
 from skinshortcuts.userdata import (
-    MenuItemDiff,
     MenuDiff,
+    MenuItemDiff,
     UserData,
     _apply_diff,
     _create_item_from_diff,

@@ -14,7 +14,6 @@ from skinshortcuts.dialog.subdialogs import SubdialogsMixin
 from skinshortcuts.manager import MenuManager
 from skinshortcuts.models.menu import SubDialog
 
-
 MENUS_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <menus>
   <menu name="mainmenu">

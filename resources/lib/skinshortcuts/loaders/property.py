@@ -5,6 +5,7 @@ from __future__ import annotations
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from ..conditions import suffix_condition
 from ..exceptions import PropertyConfigError
 from ..log import notify
 from ..models.property import (
@@ -16,7 +17,6 @@ from ..models.property import (
     SchemaOption,
     SchemaProperty,
 )
-from ..conditions import suffix_condition
 from .base import (
     get_attr,
     get_bool,

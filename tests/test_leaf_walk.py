@@ -9,7 +9,7 @@ from skinshortcuts.loaders.background import load_backgrounds
 from skinshortcuts.loaders.widget import load_widgets
 from skinshortcuts.migrations import apply_overrides
 from skinshortcuts.models.property import PropertySchema
-from skinshortcuts.userdata import MenuItemDiff, MenuDiff, UserData
+from skinshortcuts.userdata import MenuDiff, MenuItemDiff, UserData
 
 WIDGETS_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <widgets>

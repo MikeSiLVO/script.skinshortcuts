@@ -38,8 +38,8 @@ from .properties import BUTTON_ONLY_TYPES
 
 if TYPE_CHECKING:
     from ..manager import MenuManager
-    from ..models.property import PropertySchema
     from ..models.menu import SubDialog
+    from ..models.property import PropertySchema
 
 CONTEXT_DEFAULT_BUTTONS = (
     CONTROL_SET_LABEL,

@@ -13,13 +13,13 @@ try:
 except ImportError:
     IN_KODI = False
 
+from ..conditions import evaluate_condition, suffix_condition
 from ..constants import (
     MENUS_FILE,
     PROPERTIES_FILE,
     extract_path_from_action,
     get_shortcuts_path,
 )
-from ..conditions import evaluate_condition, suffix_condition
 from ..exceptions import ConfigError
 from ..loaders.menu import load_menus
 from ..loaders.property import load_properties

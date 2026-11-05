@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-
-from .override import Override
 from enum import Enum, auto
 from typing import TYPE_CHECKING
+
+from .override import Override
 
 if TYPE_CHECKING:
     from typing import Union

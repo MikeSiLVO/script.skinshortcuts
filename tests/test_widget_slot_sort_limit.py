@@ -7,7 +7,6 @@ from pathlib import Path
 
 from skinshortcuts.config import SkinConfig
 
-
 WIDGETS_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <widgets>
   <widget name="recent-movies" label="Recently Added" type="movies" target="videos">

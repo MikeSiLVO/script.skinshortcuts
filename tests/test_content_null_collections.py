@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import xbmc
 import pytest
+import xbmc
 
 from skinshortcuts.models.menu import Content
 from skinshortcuts.providers.content import ContentProvider, _collection

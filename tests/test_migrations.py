@@ -6,7 +6,7 @@ import pytest
 
 def _userdata(props, removed=None):
     """Userdata with one mainmenu movies item holding given properties."""
-    from skinshortcuts.userdata import MenuItemDiff, MenuDiff, UserData
+    from skinshortcuts.userdata import MenuDiff, MenuItemDiff, UserData
     item = MenuItemDiff(name="movies", properties=dict(props))
     if removed:
         item.removed_properties = list(removed)

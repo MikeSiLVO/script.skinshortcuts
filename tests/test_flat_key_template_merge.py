@@ -8,7 +8,6 @@ from pathlib import Path
 
 from skinshortcuts.config import SkinConfig
 
-
 MENUS_XML = """<menus>
   <menu name="mainmenu">
     <item name="movies"><label>Movies</label></item>

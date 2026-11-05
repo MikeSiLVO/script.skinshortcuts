@@ -22,7 +22,6 @@ from .constants import DATA_DIR, DEFAULT_ICON
 from .log import get_logger
 from .models.menu import Action, IconOverrides, Menu, MenuItem
 
-
 log = get_logger("UserData")
 
 

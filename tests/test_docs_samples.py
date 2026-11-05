@@ -304,9 +304,8 @@ def test_template_items_iteration(tmp_path: Path) -> None:
 
 
 def test_starter_groupings(tmp_path: Path) -> None:
-
-    from skinshortcuts.loaders.menu import load_groupings
-    from skinshortcuts.loaders.menu import load_menus
+    """The starter groupings load beside mainmenu, all ten groups in their documented order."""
+    from skinshortcuts.loaders.menu import load_groupings, load_menus
     groupings = block_with(STARTER, '<group name="common"')
     path = write(
         tmp_path,
@@ -387,12 +386,13 @@ def test_content_targets_are_known(doc: Path) -> None:
 
 @pytest.mark.parametrize("line", sorted(blocks(SCHEMA_DOC)))
 def test_schema_samples_load(tmp_path: Path, line: int) -> None:
+    """Every schema doc fence loads through the loader its root tag names."""
     from skinshortcuts.loaders.background import load_backgrounds
     from skinshortcuts.loaders.menu import load_menus
     from skinshortcuts.loaders.property import load_properties
     from skinshortcuts.loaders.template import load_templates
-    from skinshortcuts.loaders.widget import load_widgets
     from skinshortcuts.loaders.views import load_views
+    from skinshortcuts.loaders.widget import load_widgets
 
     loaders = {
         "menus": load_menus,
@@ -421,8 +421,10 @@ TEMPLATE_SECTIONS = {
 
 @pytest.mark.parametrize("line", sorted(blocks(TEMPLATES_DOC)))
 def test_templates_doc_samples(tmp_path: Path, line: int) -> None:
-    from skinshortcuts.loaders.template import load_templates
+    """Every fence is well-formed XML; complete ones also load."""
     import xml.etree.ElementTree as ET
+
+    from skinshortcuts.loaders.template import load_templates
 
     body = blocks(TEMPLATES_DOC)[line]
     if body.lstrip().startswith("<?xml"):
@@ -451,8 +453,9 @@ MENUS_IN_MENU = {"item", "allow", "defaults"}
 @pytest.mark.parametrize("line", sorted(blocks(MENUS_DOC)))
 def test_menus_doc_samples(tmp_path: Path, line: int) -> None:
     """Every fence is well-formed XML; complete ones also load."""
-    from skinshortcuts.loaders.menu import load_menus
     import xml.etree.ElementTree as ET
+
+    from skinshortcuts.loaders.menu import load_menus
 
     body = blocks(MENUS_DOC)[line]
     if body.lstrip().startswith("<?xml"):
@@ -478,8 +481,9 @@ def test_menus_doc_samples(tmp_path: Path, line: int) -> None:
 @pytest.mark.parametrize("line", sorted(blocks(WIDGETS_DOC)))
 def test_widgets_doc_samples(tmp_path: Path, line: int) -> None:
     """Every fence is well-formed XML; complete ones also load."""
-    from skinshortcuts.loaders.widget import load_widgets
     import xml.etree.ElementTree as ET
+
+    from skinshortcuts.loaders.widget import load_widgets
 
     body = blocks(WIDGETS_DOC)[line]
     if body.lstrip().startswith("<?xml"):
@@ -504,8 +508,9 @@ BACKGROUNDS_DOC = ROOT / "docs" / "skinning" / "backgrounds.md"
 @pytest.mark.parametrize("line", sorted(blocks(BACKGROUNDS_DOC)))
 def test_backgrounds_doc_samples(tmp_path: Path, line: int) -> None:
     """Every fence is well-formed XML; complete ones also load."""
-    from skinshortcuts.loaders.background import load_backgrounds
     import xml.etree.ElementTree as ET
+
+    from skinshortcuts.loaders.background import load_backgrounds
 
     body = blocks(BACKGROUNDS_DOC)[line]
     if body.lstrip().startswith("<?xml"):
@@ -530,8 +535,9 @@ PROPERTIES_DOC = ROOT / "docs" / "skinning" / "properties.md"
 @pytest.mark.parametrize("line", sorted(blocks(PROPERTIES_DOC)))
 def test_properties_doc_samples(tmp_path: Path, line: int) -> None:
     """Every fence is well-formed XML; complete ones also load."""
-    from skinshortcuts.loaders.property import load_properties
     import xml.etree.ElementTree as ET
+
+    from skinshortcuts.loaders.property import load_properties
 
     body = blocks(PROPERTIES_DOC)[line]
     if body.lstrip().startswith("<?xml"):
@@ -556,8 +562,9 @@ VIEWS_DOC = ROOT / "docs" / "skinning" / "views.md"
 @pytest.mark.parametrize("line", sorted(blocks(VIEWS_DOC)))
 def test_views_doc_samples(tmp_path: Path, line: int) -> None:
     """Every fence is well-formed XML; complete ones also load."""
-    from skinshortcuts.loaders.views import load_views
     import xml.etree.ElementTree as ET
+
+    from skinshortcuts.loaders.views import load_views
 
     body = blocks(VIEWS_DOC)[line]
     if body.lstrip().startswith("<?xml"):

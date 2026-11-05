@@ -14,8 +14,8 @@ from .log import get_logger
 from .models.menu import Action, Menu, MenuItem, submenu_key
 from .playlists import cleanup_orphan_playlists
 from .userdata import (
-    MenuItemDiff,
     MenuDiff,
+    MenuItemDiff,
     UserData,
     merge_items,
     save_userdata,

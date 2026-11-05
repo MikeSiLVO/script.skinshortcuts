@@ -17,6 +17,7 @@ except ImportError:
     IN_KODI = False
 
 
+from ..conditions import check_visible, evaluate_condition
 from ..constants import (
     ADDONS_SOURCE_MAP,
     MENUS_FILE,
@@ -25,10 +26,12 @@ from ..constants import (
     extract_path_from_action,
     extract_window_from_action,
 )
-from ..conditions import check_visible, evaluate_condition
 from ..loaders.menu import load_groupings
 from ..localize import LANGUAGE, number_label, resolve_label
 from ..log import get_logger
+from ..models.background import Background, BackgroundGroup, BackgroundType
+from ..models.menu import Action, Content, IconOverrides, Input, MenuItem, Shortcut, ShortcutGroup
+from ..models.widget import Widget, WidgetGroup
 from ..playlists import (
     SORT_OPTIONS,
     SortOption,
@@ -38,9 +41,6 @@ from ..playlists import (
     save_playlist,
     unpack_multipath,
 )
-from ..models.background import Background, BackgroundGroup, BackgroundType
-from ..models.menu import Action, Content, IconOverrides, Input, MenuItem, Shortcut, ShortcutGroup
-from ..models.widget import Widget, WidgetGroup
 from ..providers.browse import get_browse_provider
 from ..providers.content import ContentProvider, library_node_type
 

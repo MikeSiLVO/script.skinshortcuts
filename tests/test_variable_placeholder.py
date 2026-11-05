@@ -7,7 +7,6 @@ from pathlib import Path
 
 from skinshortcuts.config import SkinConfig
 
-
 MENUS = """<?xml version="1.0"?>
 <menus>
   <menu name="mainmenu" container="9000">

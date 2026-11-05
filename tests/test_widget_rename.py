@@ -8,8 +8,8 @@ from skinshortcuts.builders.includes import IncludesBuilder
 from skinshortcuts.loaders.property import load_properties
 from skinshortcuts.models.menu import Menu, MenuItem
 from skinshortcuts.userdata import (
-    MenuItemDiff,
     MenuDiff,
+    MenuItemDiff,
     UserData,
     load_userdata,
     save_userdata,

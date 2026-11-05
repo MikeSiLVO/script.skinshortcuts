@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from ..exceptions import MenuConfigError
-from ..models.override import Override
+from ..log import notify
 from ..models.menu import (
     Action,
     Content,
@@ -28,7 +28,7 @@ from ..models.menu import (
     SubDialog,
     display_action,
 )
-from ..log import notify
+from ..models.override import Override
 from .base import (
     get_attr,
     get_bool,
