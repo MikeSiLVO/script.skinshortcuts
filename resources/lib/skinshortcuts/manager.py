@@ -105,8 +105,8 @@ class MenuManager:
             full.insert(at, item)
         return full
 
-    def _ensure_working_menu(self, menu_id: str) -> Menu:
-        """Ensure menu exists in working copy, create if needed."""
+    def ensure_working_menu(self, menu_id: str) -> Menu:
+        """Ensure menu exists in working copy, created as an empty submenu if missing."""
         if menu_id not in self.working:
             self.working[menu_id] = Menu(name=menu_id, is_submenu=True)
         return self.working[menu_id]
@@ -191,8 +191,8 @@ class MenuManager:
         label: str = "",
         item: MenuItem | None = None,
     ) -> MenuItem:
-        """Add a new item to a menu."""
-        menu = self._ensure_working_menu(menu_id)
+        """Add item to menu after the index or at end; one built unlabeled is a placeholder."""
+        menu = self.ensure_working_menu(menu_id)
 
         if item:
             new_item = item
@@ -231,7 +231,7 @@ class MenuManager:
 
     def restore_item(self, menu_id: str, item: MenuItem) -> bool:
         """Restore a deleted item, dropping any empty placeholder."""
-        menu = self._ensure_working_menu(menu_id)
+        menu = self.ensure_working_menu(menu_id)
 
         menu.items[:] = [i for i in menu.items if not (i.is_placeholder and not i.actions)]
 

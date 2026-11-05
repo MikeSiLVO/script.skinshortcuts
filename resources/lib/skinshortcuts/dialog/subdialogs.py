@@ -79,8 +79,8 @@ class SubdialogsMixin:
 
     def _run_child_dialog(self, menu_id: str, dialog_mode: str = "", **kwargs) -> None:
         """Run a child ManagementDialog on this dialog's objects, with additionalDialog set."""
-        if self.manager and menu_id not in self.manager.working:
-            self.manager._ensure_working_menu(menu_id)
+        if self.manager:
+            self.manager.ensure_working_menu(menu_id)
 
         from . import ManagementDialog
 
