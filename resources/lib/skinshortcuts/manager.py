@@ -326,9 +326,7 @@ class MenuManager:
         """Reset every <submenu> menu and its per-item copies; menus with no skin default stay."""
         changed = False
         for menu_id in list(self.working):
-            default = self.config.get_default_menu(menu_id)
-            if default is None and "/" in menu_id:
-                default = self._template_for_submenu_key(menu_id)
+            default = self._default_menu(menu_id)
             if default is not None and default.is_submenu and self.reset_menu(menu_id):
                 changed = True
         return changed
