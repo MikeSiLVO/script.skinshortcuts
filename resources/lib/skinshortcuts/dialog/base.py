@@ -15,6 +15,7 @@ except ImportError:
 
 from ..constants import extract_path_from_action, get_shortcuts_path
 from ..conditions import evaluate_condition, suffix_condition
+from ..exceptions import ConfigError
 from ..loaders.menu import load_menus
 from ..loaders.property import load_properties
 from ..localize import resolve_label
@@ -146,10 +147,42 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
         return self.getControl(control_id)  # type: ignore[return-value]
 
     def onInit(self):  # noqa: N802
-        """Load config and items, then display the list and set the window properties."""
+        """Load config and items, then display the list; closes when config cannot be loaded."""
         self._log(f"onInit: shortcuts_path={self.shortcuts_path}, menu_id={self.menu_id}")
         self._window_id = xbmcgui.getCurrentWindowDialogId()
 
+        try:
+            self._load_config()
+        except ConfigError:
+            self.close()
+            return
+
+        if not self.dialog_mode and self.manager:
+            menu = self.manager.working.get(self.menu_id)
+            if menu and menu.menu_type == "widgets":
+                self.dialog_mode = "widgets"
+
+        if self.property_suffix:
+            self.setProperty("skinshortcuts-suffix", self.property_suffix)
+        if self.dialog_mode:
+            self.setProperty("skinshortcuts-dialog", self.dialog_mode)
+
+        self._mirror_to_home()
+
+        self._load_items()
+        self._log(f"Loaded {len(self.items)} items for menu '{self.menu_id}'")
+        self._display_items()
+        self._update_window_properties()
+
+        if self._setfocus:
+            try:
+                self.setFocusId(self._setfocus)
+                self._log(f"Set focus to control {self._setfocus}")
+            except RuntimeError:
+                pass
+
+    def _load_config(self) -> None:
+        """Load the manager, property schema and menus.xml settings, or take the parent's."""
         if self.manager is None:
             if self._shared_manager:
                 self.manager = self._shared_manager
@@ -178,30 +211,6 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 self.icon_sources = menu_config.icon_sources
                 self.context_menu = menu_config.context_menu
                 self._subdialogs = {sd.button_id: sd for sd in menu_config.subdialogs}
-
-        if not self.dialog_mode and self.manager:
-            menu = self.manager.working.get(self.menu_id)
-            if menu and menu.menu_type == "widgets":
-                self.dialog_mode = "widgets"
-
-        if self.property_suffix:
-            self.setProperty("skinshortcuts-suffix", self.property_suffix)
-        if self.dialog_mode:
-            self.setProperty("skinshortcuts-dialog", self.dialog_mode)
-
-        self._mirror_to_home()
-
-        self._load_items()
-        self._log(f"Loaded {len(self.items)} items for menu '{self.menu_id}'")
-        self._display_items()
-        self._update_window_properties()
-
-        if self._setfocus:
-            try:
-                self.setFocusId(self._setfocus)
-                self._log(f"Set focus to control {self._setfocus}")
-            except RuntimeError:
-                pass
 
     def _mirror_to_home(self) -> None:
         """Mirror the dialog mode and suffix to Home, for a native dialog over this one."""

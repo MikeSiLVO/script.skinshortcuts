@@ -134,6 +134,8 @@ def build_includes(
     force: bool = False,
 ) -> bool:
     """Build includes.xml from skin config files, reloading the skin when the output changes."""
+    from .exceptions import ConfigError
+
     log.debug(f"build_includes called: path={shortcuts_path}, output={output_path}, force={force}")
 
     home = xbmcgui.Window(10000) if IN_KODI else None
@@ -227,6 +229,8 @@ def build_includes(
 
         return True
 
+    except ConfigError:
+        return False
     except Exception as e:
         log.error(f"Error building includes: {e}")
         import traceback
@@ -246,6 +250,8 @@ def clear_custom_widget(
     shortcuts_path: str | None = None,
 ) -> bool:
     """Clear an item's custom widget menu and optionally its widget properties; save and rebuild."""
+    from .exceptions import ConfigError
+
     if not menu or not item:
         log.warning("clear_custom_widget: menu and item are required")
         return False
@@ -275,6 +281,8 @@ def clear_custom_widget(
 
         return True
 
+    except ConfigError:
+        return False
     except Exception as e:
         log.error(f"Error clearing custom widget: {e}")
         import traceback
@@ -423,6 +431,8 @@ def play_channel(channel: str) -> None:
 
 def main() -> None:
     """Main entry point for RunScript; sets prop/value pairs on Home until the action ends."""
+    from .exceptions import ConfigError
+
     log.debug("Skin Shortcuts started")
 
     args: dict[str, str] = {}
@@ -459,6 +469,8 @@ def main() -> None:
 
     try:
         _dispatch(args)
+    except ConfigError:
+        pass
     finally:
         if home is not None:
             for name in window_props:
