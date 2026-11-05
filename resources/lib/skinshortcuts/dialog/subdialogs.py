@@ -15,7 +15,7 @@ except ImportError:
 
 from ..conditions import evaluate_condition
 from ..localize import LANGUAGE
-from ..models.menu import MenuItem
+from ..models.menu import MenuItem, submenu_key
 
 if TYPE_CHECKING:
     from ..manager import MenuManager
@@ -135,7 +135,7 @@ class SubdialogsMixin:
                 return
 
         self.manager.ensure_item_submenu(self.menu_id, item)
-        submenu_id = self.manager.submenu_key(self.menu_id, item.name)
+        submenu_id = submenu_key(self.menu_id, item.name)
         self._run_child_dialog(submenu_id, "widgets" if is_widget_submenu else "")
         self._refresh_selected_item()
 
@@ -187,7 +187,7 @@ class SubdialogsMixin:
     def _resolve_menu_reference(
         self, menu_ref: str, item: MenuItem, subdialog: SubDialog
     ) -> str:
-        """Resolve an onclose menu reference, creating a custom widget menu the first time."""
+        """Resolve an onclose menu name, creating a missing custom widget menu or item submenu."""
         if not self.manager:
             return ""
 
@@ -235,7 +235,7 @@ class SubdialogsMixin:
         # flat ref aliases the per-item submenu; route there or edits fork to a shadow copy
         if item.submenu and resolved == item.submenu:
             self.manager.ensure_item_submenu(self.menu_id, item)
-            return self.manager.submenu_key(self.menu_id, item.name)
+            return submenu_key(self.menu_id, item.name)
 
         return resolved
 

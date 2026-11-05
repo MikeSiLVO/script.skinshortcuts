@@ -21,7 +21,7 @@ from ..loaders.property import load_properties
 from ..localize import resolve_label
 from ..log import get_logger
 from ..manager import MenuManager
-from ..models.menu import ContextMenu, MenuItem
+from ..models.menu import ContextMenu, MenuItem, submenu_key
 from ..models.property import PropertySchema
 
 _log = get_logger("Dialog")
@@ -380,7 +380,7 @@ class DialogBaseMixin(xbmcgui.WindowXMLDialog):
                 if item.submenu
                 else None
             )
-            instance = self.manager.working.get(self.manager.submenu_key(self.menu_id, item.name))
+            instance = self.manager.working.get(submenu_key(self.menu_id, item.name))
             effective = instance if instance is not None else template
             if effective and any(not entry.is_placeholder for entry in effective.items):
                 stamp("hasSubmenu", "true")

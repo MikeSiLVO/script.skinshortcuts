@@ -17,7 +17,7 @@ from .loaders.views import load_views
 from .loaders.widget import load_widgets
 from .migrations import apply_overrides
 from .models.background import Background, BackgroundConfig, BackgroundGroup
-from .models.menu import IconOverrides, Menu, MenuItem, SubDialog
+from .models.menu import IconOverrides, Menu, MenuItem, SubDialog, submenu_key
 from .models.override import Override
 from .models.property import PropertySchema
 from .models.template import TemplateSchema
@@ -137,7 +137,7 @@ class SkinConfig:
             for item in merged.items:
                 template_name = item.submenu or ""
                 template = template_map.get(template_name) if template_name else None
-                key = f"{merged.name}/{item.name}"
+                key = submenu_key(merged.name, item.name)
                 instance_diff = userdata.menus.get(key)
                 if template is None:
                     if instance_diff is None:

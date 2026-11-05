@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from skinshortcuts.manager import MenuManager
+from skinshortcuts.models.menu import submenu_key
 
 
 MENUS_XML = """<?xml version="1.0" encoding="UTF-8"?>
@@ -34,6 +35,7 @@ def _setup(tmp_path: Path) -> tuple[Path, Path]:
 
 
 def test_drop_per_item_submenu_removes_working_key(tmp_path: Path):
+    """Dropping a seeded per-item submenu removes its working key."""
     skin, userdata = _setup(tmp_path)
     manager = MenuManager(skin, userdata_path=str(userdata))
 
@@ -41,7 +43,7 @@ def test_drop_per_item_submenu_removes_working_key(tmp_path: Path):
     item.submenu = "musicvideos"
     manager.ensure_item_submenu("mainmenu", item)
 
-    key = manager.submenu_key("mainmenu", item.name)
+    key = submenu_key("mainmenu", item.name)
     assert key in manager.working
     assert manager.working[key].items[0].name == "mv-recent"
 
@@ -50,6 +52,7 @@ def test_drop_per_item_submenu_removes_working_key(tmp_path: Path):
 
 
 def test_picker_reseeds_submenu_after_shortcut_swap(tmp_path: Path):
+    """The picker reseeds an item's submenu from the new template after a shortcut swap."""
     skin, userdata = _setup(tmp_path)
     manager = MenuManager(skin, userdata_path=str(userdata))
 
@@ -68,6 +71,7 @@ def test_picker_reseeds_submenu_after_shortcut_swap(tmp_path: Path):
 
 
 def test_drop_per_item_submenu_marks_changed(tmp_path: Path):
+    """Dropping a per-item submenu marks the manager changed."""
     skin, userdata = _setup(tmp_path)
     manager = MenuManager(skin, userdata_path=str(userdata))
 
@@ -81,6 +85,7 @@ def test_drop_per_item_submenu_marks_changed(tmp_path: Path):
 
 
 def test_drop_per_item_submenu_noop_when_key_absent(tmp_path: Path):
+    """Dropping a submenu that was never seeded is a no-op, leaving no change."""
     skin, userdata = _setup(tmp_path)
     manager = MenuManager(skin, userdata_path=str(userdata))
     manager._changed = False

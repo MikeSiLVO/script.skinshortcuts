@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from ..conditions import lookup, slot_suffixes, with_defaults
 from ..constants import extract_path_from_action
+from ..models.menu import submenu_key
 
 if TYPE_CHECKING:
     from ..models.menu import Menu, MenuItem, SubDialog
@@ -145,8 +146,7 @@ class IncludesBuilder:
         for parent_item in parent_menu.items:
             if parent_item.disabled:
                 continue
-            submenu_key = f"{parent_menu.name}/{parent_item.name}"
-            submenu = self._menu_map.get(submenu_key)
+            submenu = self._menu_map.get(submenu_key(parent_menu.name, parent_item.name))
             if not submenu:
                 continue
             for idx, sub_item in enumerate(submenu.items, start=1):
@@ -297,8 +297,7 @@ class IncludesBuilder:
                 "submenuVisibility": item.name,
             }
 
-            submenu_key = f"{menu.name}/{item.name}"
-            submenu = self._menu_map.get(submenu_key)
+            submenu = self._menu_map.get(submenu_key(menu.name, item.name))
             if submenu and submenu.items:
                 builtins["hasSubmenu"] = "True"
 

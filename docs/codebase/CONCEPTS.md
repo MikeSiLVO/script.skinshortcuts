@@ -28,7 +28,7 @@ Rules that span several modules and that no single file shows. Each section name
 
 ## Per-item submenus
 
-- Every item of a root menu can have its own submenu, keyed `{menu}/{item}` (`MenuManager.submenu_key`). The key is used as a menu name in `SkinConfig.menus`, in the manager's `working` and in userdata.
+- Every item of a root menu can have its own submenu, keyed `{menu}/{item}` (`submenu_key` in `models/menu.py`). The key is used as a menu name in `SkinConfig.menus`, in the manager's `working` and in userdata.
 - A menus.xml `<submenu>` is a template, not a menu the user edits. An item links one through `MenuItem.submenu`: the `submenu` attribute, or the shortcut picker when the picked shortcut's name matches a `<submenu>` ([auto-link](../skinning/menus.md#auto-link-by-shortcut-name)).
 - `SkinConfig.load` builds each instance by merging the template with the userdata diff stored under the item's key, and records the template in `Menu.template_origin`. An item with no template but a stored diff gets an instance built from the diff alone. A `<submenu>` that any item links is left out of `config.menus`; one that no item links stays in as an ordinary flat menu.
 - The manager seeds an instance from the template when the dialog opens an item that has none yet (`ensure_item_submenu`), discards it when the item's template changes (`drop_item_submenu`), and diffs it against the template on save.

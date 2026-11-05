@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from skinshortcuts.manager import MenuManager
+from skinshortcuts.models.menu import submenu_key
 
 SILVO = Path(__file__).parent / "fixtures" / "skins" / "skin.aeon.nox.silvo" / "shortcuts"
 
@@ -59,7 +60,7 @@ def test_tree_reset_drops_an_added_item_and_its_submenu(tmp_path: Path) -> None:
     added = manager.add_item("mainmenu", label="Mine")
     manager.set_submenu("mainmenu", added.name, "movies")
     manager.ensure_item_submenu("mainmenu", added)
-    key = manager.submenu_key("mainmenu", added.name)
+    key = submenu_key("mainmenu", added.name)
     manager.set_label(key, "movies-recent", "Mine too")
     assert key in saved(manager, userdata)
 

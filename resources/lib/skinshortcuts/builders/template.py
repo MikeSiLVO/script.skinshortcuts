@@ -19,6 +19,7 @@ from ..constants import extract_path_from_action
 from ..expressions import process_if_expressions, process_math_expressions
 from ..loaders.base import get_bool
 from ..log import get_logger, notify
+from ..models.menu import submenu_key
 from ..models.template import BuildMode, TemplateProperty
 
 log = get_logger("TemplateBuilder")
@@ -175,7 +176,7 @@ class TemplateBuilder:
         submenu_tpl: SubmenuTemplate,
         include_elem: ET.Element,
     ) -> None:
-        """Build a level-based submenu template."""
+        """Build a level-based submenu template, per enabled mainmenu item that has a submenu."""
         main_menu = self._menu_map.get("mainmenu")
         if not main_menu:
             log.debug("Main menu not found for level-based submenu template")
@@ -185,8 +186,7 @@ class TemplateBuilder:
             if item.disabled:
                 continue
 
-            submenu_key = f"{main_menu.name}/{item.name}"
-            submenu = self._menu_map.get(submenu_key)
+            submenu = self._menu_map.get(submenu_key(main_menu.name, item.name))
             if not submenu:
                 continue
 
