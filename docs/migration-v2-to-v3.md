@@ -33,7 +33,7 @@ This guide covers all changes needed to migrate a v2 skin to v3.
 * v2 user data (XML files) cannot be migrated automatically
 * v2 template syntax is different from v3
 
-Until a v3 `shortcuts/menus.xml` (or `views.xml`) exists, the script treats the skin as not-yet-migrated: `type=manage` and `type=buildxml` both abort and show the notification "This skin has not been updated; menu editing unavailable". This is expected - create `menus.xml` first.
+Until `shortcuts/menus.xml` or `views.xml` exists, the script treats the skin as a v2 skin: every action stops, and a modal says "This skin is built for Skin Shortcuts v2. Switch skins or downgrade the add-on." `type=manage` needs `menus.xml` itself, so create that first.
 
 ### No Built-in Shortcuts
 
