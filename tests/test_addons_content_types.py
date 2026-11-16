@@ -1,4 +1,4 @@
-"""Content source="addons" must query both plugin and script types."""
+"""Content source="addons" must query both plugin and script types, games by the game type."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from skinshortcuts.providers.content import ContentProvider
 
 PLUGINSOURCE = "xbmc.python.pluginsource"
 SCRIPT = "xbmc.python.script"
+GAME = "kodi.addon.game"
 
 
 def _provider(responses: dict[str, list[dict]]):
@@ -96,3 +97,23 @@ def test_target_aliases_map_to_content(target: str, content: str):
     provider.resolve(Content(source="addons", target=target))
 
     assert {c["content"] for c in calls} == {content}
+
+
+@pytest.mark.parametrize("target", ["game", "games"])
+def test_games_query_the_game_type_without_content(target: str):
+    provider, calls = _provider({})
+
+    provider.resolve(Content(source="addons", target=target))
+
+    assert calls == [{"type": GAME, "enabled": True, "properties": ["name", "thumbnail"]}]
+
+
+def test_game_plugin_browses_in_games_window():
+    provider, _ = _provider(
+        {GAME: [{"addonid": "plugin.game.x", "name": "Game X", "type": PLUGINSOURCE}]}
+    )
+
+    result = provider.resolve(Content(source="addons", target="games"))
+
+    assert result[0].browse_path == "plugin://plugin.game.x/"
+    assert result[0].browse_window == "games"

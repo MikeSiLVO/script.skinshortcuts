@@ -38,7 +38,7 @@ _SOURCES_TARGET_ALIASES: dict[str, str] = {
     "program": "programs",
 }
 
-# Addons.GetAddons content accepts: video, audio, image, executable, game
+# Addons.GetAddons content accepts: video, audio, image, executable; game goes by type
 _ADDONS_TARGET_ALIASES: dict[str, str] = {
     "video": "video",
     "videos": "video",
@@ -348,7 +348,7 @@ class ContentProvider:
         return shortcuts
 
     def _resolve_addons(self, target: str) -> list[ResolvedShortcut]:
-        """Resolve installed addons by content type. Empty target defaults to video."""
+        """Resolve enabled addons by content type, video by default."""
         cache_key = f"addons_{target}"
         if cache_key in self._cache:
             return self._cache[cache_key]
@@ -372,17 +372,20 @@ class ContentProvider:
             "game": "games",
         }
 
-        # content ignored without type; type = first extension point, so query both
+        if content == "game":
+            queries = [{"type": "kodi.addon.game"}]
+        else:
+            # type matches only an add-on's first extension point
+            queries = [
+                {"type": addon_type, "content": content}
+                for addon_type in ("xbmc.python.pluginsource", "xbmc.python.script")
+            ]
+
         addons: dict[str, dict] = {}
-        for addon_type in ("xbmc.python.pluginsource", "xbmc.python.script"):
+        for query in queries:
             result = self._jsonrpc(
                 "Addons.GetAddons",
-                {
-                    "type": addon_type,
-                    "content": content,
-                    "enabled": True,
-                    "properties": ["name", "thumbnail"],
-                },
+                {**query, "enabled": True, "properties": ["name", "thumbnail"]},
             )
             for addon in _collection(result, "addons"):
                 addon_id = addon.get("addonid", "")
