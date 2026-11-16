@@ -1,4 +1,4 @@
-"""Names the script coined match in any case; the rest of the XML keeps the case it was written."""
+"""Names the script coined are case-insensitive; the rest of the XML keeps its written case."""
 
 from __future__ import annotations
 

@@ -57,7 +57,7 @@ Skinner view: [Suffix Transforms](../skinning/properties.md#suffix-transforms).
 
 - Conditions, the includes builder and the template builder read properties through `conditions.lookup` (exact name first, then ignoring case) and `with_defaults`.
 - The dialog writes a property under the spelling properties.xml declares (`PropertySchema.declared_name`), so stored keys keep the skin's spelling.
-- A built-in output property (`id`, `name`, `menu`, `action`, `path`, `submenuVisibility`, `hasSubmenu`) that the item also sets, in any case, takes the item's value.
+- A built-in output property (`id`, `name`, `menu`, `action`, `path`, `submenuVisibility`, `hasSubmenu`) that the item also sets, matched case-insensitively, takes the item's value.
 
 ## Overrides and retired names
 

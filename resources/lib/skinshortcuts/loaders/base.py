@@ -47,7 +47,7 @@ def _renamed_to(key: str, root: str, tag: str) -> str:
 
 
 def parse_xml(path: str | Path, expected_root: str, error_class: type[ConfigError]) -> ET.Element:
-    """Parse XML file, script names in any case, old ones logged; bad file reported and raised."""
+    """Parse XML, script names case-insensitive, old ones logged; bad file reported and raised."""
     path = Path(path)
 
     def fail(message: str, line: int | None = None) -> ConfigError:
@@ -115,7 +115,7 @@ def get_int(elem: ET.Element, child: str, default: int | None = None) -> int | N
 
 
 def get_bool(elem: ET.Element, attr: str, default: bool = False) -> bool:
-    """Get boolean from attribute value: true or false in any case, anything else falls back."""
+    """Get boolean from attribute: case-insensitive true or false, anything else falls back."""
     value = (elem.get(attr) or "").strip().lower()
     if value == "true":
         return True

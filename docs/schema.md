@@ -2,7 +2,7 @@
 
 Quick reference for all XML configuration files. For detailed documentation, see the [skinning docs](skinning/).
 
-The script's camelCase names, such as `controlType` and `propertyGroup`, match in any case. Every other element and attribute name is written as shown.
+The script's camelCase names, such as `controlType` and `propertyGroup`, are case-insensitive. Every other element and attribute name is written as shown.
 
 ***
 

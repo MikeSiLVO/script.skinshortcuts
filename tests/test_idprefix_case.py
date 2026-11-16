@@ -1,4 +1,4 @@
-"""The idprefix built-in reads in any case, and an output suffix never applies to it."""
+"""The idprefix built-in is case-insensitive, and an output suffix never applies to it."""
 
 from __future__ import annotations
 

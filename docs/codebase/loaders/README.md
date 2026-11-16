@@ -20,7 +20,7 @@ One loader per skin config file, each turning the XML into the models in `models
 
 ## Shared helpers (base.py)
 
-- `parse_xml` validates the root element; `get_text`, `get_attr`, `get_int` and `get_bool` read values with defaults. `get_bool` accepts only `true` and `false`, in any case.
+- `parse_xml` validates the root element; `get_text`, `get_attr`, `get_int` and `get_bool` read values with defaults. `get_bool` accepts only `true` and `false`, case-insensitive.
 - `parse_content` reads a `<content>` element into `Content`, which stays unresolved until a picker opens.
 - `parse_name_overrides` reads the retired-name `<overrides>` block of widgets.xml, backgrounds.xml and properties.xml (see [Overrides and retired names](../CONCEPTS.md#overrides-and-retired-names)).
 - `iter_nested` walks a picker hierarchy, nested groups included.
