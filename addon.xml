@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.6~beta3" provider-name="MikeSiLVO">
+<addon id="script.skinshortcuts" name="Skin Shortcuts" version="3.0.6" provider-name="MikeSiLVO">
     <requires>
         <import addon="xbmc.python" version="3.0.2"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py"/>
     <extension point="xbmc.addon.metadata">
         <news>
-3.0.6~beta3
+3.0.6
   - Add: broken or repeated definitions in the config files are reported, with the fix in the log
   - Add: property buttons take a heading for every dialog they open
-  - Add: schema names read in any case
+  - Add: schema names are case-insensitive
   - Deprecated: title on property buttons, use heading instead; title will be removed in a future version
   - Deprecated: template_only, use templateOnly instead; template_only will be removed in a future version
-  - Misc fixes and improvements
-
-3.0.6~beta1 and beta2
   - Fix: widgets and backgrounds from skin items and menu defaults keep their path, label and type
   - Fix: custom widget menus add widgets and survive a submenu reset
   - Fix: a reset or restored item shows its widget and background straight away
@@ -26,7 +23,8 @@
   - Fix: an allow element leaves unlisted features allowed
   - Fix: special:// paths work in the path and output arguments
   - Fix: a templates.xml with only submenu templates builds them
-  - Fix: true/false attribute values read in any case
+  - Fix: true/false attribute values are case-insensitive
+  - Fix: addons content with a games target lists game add-ons
   - Misc fixes and improvements
 
         </news>
